@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="team.abc.ssm.modules.sys.dao.map.RoleFunctionDao">
+
+    <resultMap id="roleFunctionBean" type="team.abc.ssm.modules.sys.entity.map.RoleFunction">
+        <id column="id" property="id"/>
+        <result column="role_id" property="roleId"/>
+        <result column="function_id" property="functionId"/>
+        <result column="remarks" property="remarks"/>
+        <result column="create_user_id" property="createUserId"/>
+        <result column="modify_user_id" property="modifyUserId"/>
+        <result column="create_date" property="createDate"/>
+        <result column="modify_date" property="modifyDate"/>
+        <result column="del_flag" property="delFlag"/>
+    </resultMap>
+
+    <delete id="deleteByRole" parameterType="team.abc.ssm.modules.sys.entity.Role">
+        delete
+        from sys_map_role_function
+        where role_id = #{id}
+    </delete>
+
+    <insert id="insertList" parameterType="team.abc.ssm.modules.sys.entity.map.RoleFunction">
+        insert into sys_map_role_function(
+        role_id,
+        function_id,
+        id,
+        remarks,
+        create_user_id,
+        modify_user_id,
+        create_date,
+        modify_date,
+        del_flag)
+        values
+        <foreach collection="list" item="item" separator=",">
+            (#{item.roleId},
+            #{item.functionId},
+            #{item.id},
+            #{item.remarks},
+            #{item.createUserId},
+            #{item.modifyUserId},
+            #{item.createDate},
+            #{item.modifyDate},
+            #{item.delFlag})
+        </foreach>
+    </insert>
+</mapper>

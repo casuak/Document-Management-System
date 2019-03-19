@@ -1,0 +1,43 @@
+.my-table {
+    border: 0px;
+    width: 100%;
+}
+
+.my-table td{
+    padding: 15px 10px;
+    font-size: 14px;
+    text-align: center;
+}
+
+.my-table tr{
+
+}
+
+.my-table thead {
+
+}
+
+.my-table thead tr {
+    background: rgb(242, 242, 243);
+}
+
+.my-table thead tr td {
+
+}
+
+.my-table tbody {
+
+}
+
+.my-table tbody tr {
+    background: white;
+}
+
+/* 特殊行 */
+.my-table tbody tr:nth-child(2n) {
+    background: rgb(242, 242, 243);
+}
+
+.my-table tbody tr td {
+
+}

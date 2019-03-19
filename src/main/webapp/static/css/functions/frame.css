@@ -1,0 +1,116 @@
+.icon {
+    font-size: 14px;
+    width: 15px;
+}
+
+.title {
+    color: white;
+    font-size: 17px;
+    margin-left: 50px;
+    letter-spacing: 4px;
+    line-height: 48px;
+}
+
+/* 右上角头像加username */
+.userInfo {
+    float: right;
+    padding: 0 30px;
+    height: 40px;
+    position: relative;
+    top: 4px;
+    border-radius: 10px;
+}
+
+.userInfo:hover {
+    background: #4b99c6;
+    cursor: pointer;
+}
+
+/* 菜单文字不可被选中 */
+.ivu-menu, .username, .el-tabs__header {
+    -moz-user-select: none; /*火狐*/
+    -webkit-user-select: none; /*webkit浏览器*/
+    -ms-user-select: none; /*IE10*/
+    -khtml-user-select: none; /*早期浏览器*/
+    user-select: none;
+}
+
+/* 分类栏normal */
+.ivu-menu-submenu {
+    background: #272B2E;
+}
+
+/* 分类栏点开时 */
+.ivu-menu-dark.ivu-menu-vertical .ivu-menu-opened .ivu-menu-submenu-title {
+    background: #272B2E;
+}
+
+/* 分类栏hover */
+.ivu-menu-dark.ivu-menu-vertical .ivu-menu-item:hover, .ivu-menu-dark.ivu-menu-vertical .ivu-menu-submenu-title:hover {
+    /*background: #363E4F;*/
+    background: #272B2E;
+}
+
+/* 功能栏的颜色 */
+.ivu-menu-item {
+    background: black;
+}
+
+/* 功能栏hover */
+.ivu-menu-dark.ivu-menu-vertical .ivu-menu-submenu .ivu-menu-item:hover {
+    background: black !important;
+}
+
+/* 功能栏active */
+.ivu-menu-dark.ivu-menu-vertical .ivu-menu-submenu .ivu-menu-item-active, .ivu-menu-dark.ivu-menu-vertical .ivu-menu-submenu .ivu-menu-item-active {
+    background: #363E4F !important;
+}
+
+.ivu-menu-dark.ivu-menu-vertical .ivu-menu-submenu .ivu-menu-item-active, .ivu-menu-dark.ivu-menu-vertical .ivu-menu-submenu .ivu-menu-item-active:hover {
+    background: #363E4F !important;
+}
+
+/* 功能栏高度 */
+.ivu-menu-item {
+    height: 42px;
+    line-height: 0px;
+}
+
+.el-tabs__header {
+    margin: 0px;
+}
+
+.el-tabs__content {
+    height: 100%;
+}
+
+/* tab的下横线 */
+.el-tabs--card > .el-tabs__header {
+    background: #DEE1E6;
+}
+
+.el-tabs--card > .el-tabs__header .el-tabs__item {
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+}
+
+.el-tabs__item, .el-tabs--card > .el-tabs__header .el-tabs__item:hover {
+    /*color: gray;*/
+    padding: 0 17px 0 20px !important;
+}
+
+.el-tabs--card > .el-tabs__header .el-tabs__item.is-active {
+    border-bottom: 3px solid #70b6ff;
+}
+
+.el-tabs--card > .el-tabs__header .el-tabs__item:first-child .el-icon-close {
+    display: none;
+}
+
+.el-tabs--card > .el-tabs__header .el-tabs__item:hover {
+    border-bottom: 3px solid #70b6ff;
+}
+
+.el-tabs--card > .el-tabs__header .el-tabs__nav {
+    border: 0px;
+}

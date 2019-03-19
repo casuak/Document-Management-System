@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="team.abc.ssm.modules.sys.dao.RoleDao">
+
+    <resultMap id="roleBean" type="team.abc.ssm.modules.sys.entity.Role">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="code" property="code"/>
+        <result column="remarks" property="remarks"/>
+        <result column="create_user_id" property="createUserId"/>
+        <result column="modify_user_id" property="modifyUserId"/>
+        <result column="create_date" property="createDate"/>
+        <result column="modify_date" property="modifyDate"/>
+        <result column="del_flag" property="delFlag"/>
+    </resultMap>
+
+    <select id="getRolesByUsername" resultMap="roleBean" parameterType="string">
+        select a.*
+        from sys_entity_user b
+                 left join sys_map_user_role c on c.user_id = b.id
+                 left join sys_entity_role a on a.id = c.role_id
+        where b.username = #{0}
+    </select>
+
+    <!-- 获取所有角色 -->
+    <select id="getAllRoles" resultMap="roleBean">
+        select a.*
+        from sys_entity_role a
+    </select>
+
+    <select id="selectByPage" resultMap="roleBean" parameterType="team.abc.ssm.modules.sys.entity.Role">
+        select a.id
+        from sys_entity_role a
+        <where>
+            <if test="searchKey != '' and searchKey != null">
+                and a.name like concat('%', #{searchKey}, '%')
+            </if>
+        </where>
+        limit #{pageStart}, #{pageSize}
+    </select>
+
+    <select id="selectByIds" resultMap="roleBean">
+        select a.*
+        from sys_entity_role a
+        where a.id in
+        <foreach collection="list" item="item" open="(" separator="," close=")">
+            #{item.id}
+        </foreach>
+    </select>
+
+    <select id="selectSearchCount" resultType="int" parameterType="team.abc.ssm.common.persistence.Page">
+        select count(*) from sys_entity_role a
+        <where>
+            <if test="searchKey != '' and searchKey != null">
+                and a.name like concat('%', #{searchKey}, '%')
+            </if>
+        </where>
+    </select>
+</mapper>

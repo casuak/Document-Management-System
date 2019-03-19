@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="team.abc.ssm.modules.sys.dao.UserDao">
+
+    <resultMap id="userBean" type="team.abc.ssm.modules.sys.entity.User">
+        <id column="id" property="id"/>
+        <result column="username" property="username"/>
+        <result column="password" property="password"/>
+        <result column="remarks" property="remarks"/>
+        <result column="create_user_id" property="createUserId"/>
+        <result column="modify_user_id" property="modifyUserId"/>
+        <result column="create_date" property="createDate"/>
+        <result column="modify_date" property="modifyDate"/>
+        <result column="del_flag" property="delFlag"/>
+        <!-- 用户相关的角色列表 -->
+        <collection property="roleList" ofType="team.abc.ssm.modules.sys.entity.Role">
+            <id column="roleId" property="id"/>
+            <result column="roleName" property="name"/>
+            <result column="roleCode" property="code"/>
+        </collection>
+    </resultMap>
+
+    <!-- 通过用户名获取用户信息 -->
+    <select id="selectByUsername" parameterType="team.abc.ssm.modules.sys.entity.User" resultMap="userBean">
+        select
+        a.*,
+        c.id as roleId,
+        c.name as roleName,
+        c.code as roleCode
+        from sys_entity_user a
+        left join sys_map_user_role b on a.id = b.user_id
+        left join sys_entity_role c on b.role_id = c.id
+        where a.username = #{username}
+        limit 1
+    </select>
+
+    <!-- 获取所有用户列表 -->
+    <select id="selectAll" resultMap="userBean">
+        select
+        a.*,
+        c.id as roleId,
+        c.name as roleName,
+        c.code as roleCode
+        from sys_entity_user a
+        left join sys_map_user_role b on a.id = b.user_id
+        left join sys_entity_role c on b.role_id = c.id
+    </select>
+
+    <!-- 分页 + 搜索(模糊匹配用户名)获取用户id列表 -->
+    <select id="selectByPage" parameterType="team.abc.ssm.modules.sys.entity.User" resultMap="userBean">
+        select
+        a.id
+        from sys_entity_user a
+        <where>
+            <if test="page.searchKey != '' and page.searchKey != null">
+                and a.username like concat('%', #{page.searchKey}, '%')
+            </if>
+        </where>
+        limit #{page.pageStart}, #{page.pageSize}
+    </select>
+
+    <!-- 根据ids获取用户列表（有角色信息） -->
+    <select id="selectByIds" parameterType="team.abc.ssm.modules.sys.entity.User" resultMap="userBean">
+        select
+        a.*,
+        c.id as roleId,
+        c.name as roleName,
+        c.code as roleCode
+        from sys_entity_user a
+        left join sys_map_user_role b on a.id = b.user_id
+        left join sys_entity_role c on b.role_id = c.id
+        where a.id in
+        <foreach collection="list" open="(" separator="," close=")" item="user">
+            #{user.id}
+        </foreach>
+    </select>
+
+    <!-- 模糊搜索结果总数 -->
+    <select id="selectSearchCount" parameterType="team.abc.ssm.modules.sys.entity.User" resultType="int">
+        select
+        count(*)
+        from sys_entity_user a
+        <where>
+            <if test="page.searchKey != '' and page.searchKey != null">
+                and a.username like concat('%', #{page.searchKey}, '%')
+            </if>
+        </where>
+    </select>
+
+    <!-- 添加一名新用户 -->
+    <insert id="insert" parameterType="team.abc.ssm.modules.sys.entity.User">
+        insert into sys_entity_user (username,
+                                     `password`,
+                                     id,
+                                     remarks,
+                                     create_user_id,
+                                     modify_user_id,
+                                     create_date,
+                                     modify_date,
+                                     del_flag
+        )
+        values (#{username},
+                #{password},
+                #{id},
+                #{remarks},
+                #{createUserId},
+                #{modifyUserId},
+                #{createDate},
+                #{modifyDate},
+                #{delFlag})
+    </insert>
+
+    <!-- 更新指定id用户的信息 -->
+    <update id="update" parameterType="team.abc.ssm.modules.sys.entity.User">
+        update sys_entity_user
+        set `password` = #{password}
+        where id = #{id}
+    </update>
+
+    <!-- 删除指定id的用户 -->
+    <delete id="deleteByIds" parameterType="team.abc.ssm.modules.sys.entity.User">
+        delete from sys_entity_user where id in
+        <foreach collection="list" index="index" item="item"
+                 open="(" separator="," close=")">
+            #{item.id}
+        </foreach>
+    </delete>
+</mapper>

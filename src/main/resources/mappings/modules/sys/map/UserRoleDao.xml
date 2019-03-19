@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="team.abc.ssm.modules.sys.dao.map.UserRoleDao">
+
+    <resultMap id="userRoleBean" type="team.abc.ssm.modules.sys.entity.map.UserRole">
+        <id column="id" property="id"/>
+        <result column="user_id" property="userId"/>
+        <result column="role_id" property="roleId"/>
+        <result column="remarks" property="remarks"/>
+        <result column="create_user_id" property="createUserId"/>
+        <result column="modify_user_id" property="modifyUserId"/>
+        <result column="create_date" property="createDate"/>
+        <result column="modify_date" property="modifyDate"/>
+        <result column="del_flag" property="delFlag"/>
+    </resultMap>
+
+    <!-- 删除某个用户的所有角色关联 -->
+    <delete id="deleteByUserId" parameterType="team.abc.ssm.modules.sys.entity.User">
+        delete
+        from sys_map_user_role
+        where user_id = #{id}
+    </delete>
+
+    <!-- 批量添加 -->
+    <insert id="insert" parameterType="team.abc.ssm.modules.sys.entity.map.UserRole">
+        insert into sys_map_user_role (
+        user_id,
+        role_id,
+        id,
+        remarks,
+        create_user_id,
+        modify_user_id,
+        create_date,
+        modify_date,
+        del_flag)
+        values
+        <foreach collection="list" item="item" separator=",">
+            (#{item.userId},
+            #{item.roleId},
+            #{item.id},
+            #{item.remarks},
+            #{item.createUserId},
+            #{item.modifyUserId},
+            #{item.createDate},
+            #{item.modifyDate},
+            #{item.delFlag})
+        </foreach>
+    </insert>
+</mapper>
