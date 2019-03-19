@@ -24,7 +24,7 @@
             </el-button>
         </span>
         <span style="float: right;margin-right: 10px;">
-            <el-select v-model="table.entity.condition.type" size="small" @change="refreshTable_entity()" clearable
+            <el-select v-model="table.entity.condition.typeId" size="small" @change="refreshTable_entity()" clearable
                        filterable placeholder="选择字典类型">
                 <el-option v-for="(item, index) in options.dictType" :key="item.id" :label="item.nameCn"
                            :value="item.id"></el-option>
@@ -84,8 +84,8 @@
             <el-form-item label="键值（英文）" prop="nameEn">
                 <el-input v-model="dialog.insertEntity.formData.nameEn"></el-input>
             </el-form-item>
-            <el-form-item label="选择类型" prop="type">
-                <el-select v-model="dialog.insertEntity.formData.type" clearable>
+            <el-form-item label="选择类型" prop="typeId">
+                <el-select v-model="dialog.insertEntity.formData.typeId" clearable>
                     <el-option v-for="(item, index) in options.dictType" :key="item.id" :label="item.nameCn"
                                :value="item.id"></el-option>
                 </el-select>
@@ -119,8 +119,8 @@
             <el-form-item label="键值（英文）" prop="nameEn">
                 <el-input v-model="dialog.updateEntity.formData.nameEn"></el-input>
             </el-form-item>
-            <el-form-item label="选择类型" prop="type">
-                <el-select v-model="dialog.updateEntity.formData.type" clearable>
+            <el-form-item label="选择类型" prop="typeId">
+                <el-select v-model="dialog.updateEntity.formData.typeId" clearable>
                     <el-option v-for="(item, index) in options.dictType" :key="item.id" :label="item.nameCn"
                                :value="item.id"></el-option>
                 </el-select>

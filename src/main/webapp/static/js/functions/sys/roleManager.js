@@ -2,34 +2,38 @@ let app = new Vue({
     el: '#app',
     data: {
         urls: {
-            getRoleListByPage: '/api/sys/role/getListByPage',
-            updateRoleFunction: '/api/sys/map/roleFunction/update',
-            deleteRoleByIdList: '/api/sys/role/deleteByIdList',
+            // api for entity
+            insertEntity: '/api/sys/role/insert',
+            deleteEntityListByIds: '/api/sys/role/deleteListByIds',
+            updateEntity: '/api/sys/role/update',
+            selectEntityListByPage: '/api/sys/role/selectListByPage',
             getCategoryListByRole: '/api/sys/function/getCategoryListByRole',
             getCategoryList: '/api/sys/function/getCategoryList',
-            putRole: '/api/sys/role/put',
+            updateRoleFunction: '/api/sys/map/roleFunction/update',
         },
         fullScreenLoading: false,
         table: {
-            data: [],
-            loading: false,
-            selectionList: [],
-            params: {
-                pageIndex: 1,
-                pageSize: 10,
-                pageSizes: [5, 10, 20, 40],
-                searchKey: '',  // 搜索词
-                total: 2,       // 总数
+            entity: {
+                data: [],
+                loading: false,
+                selectionList: [],
+                params: {
+                    pageIndex: 1,
+                    pageSize: 10,
+                    pageSizes: [5, 10, 20, 40],
+                    searchKey: '',  // 搜索词
+                    total: 0,       // 总数
+                }
             }
         },
         dialog: {
-            add: {
+            insertEntity: {
                 visible: false,
                 loading: false,
                 formData: {},
                 rules: {},
             },
-            edit: {
+            updateEntity: {
                 visible: false,
                 loading: false,
                 formData: {},
@@ -50,47 +54,21 @@ let app = new Vue({
         functionTree: []
     },
     methods: {
-        // 处理选中的行变化
-        handleSelectionChange: function (val) {
-            this.table.selectionList = val;
-        },
-        // 处理pageSize变化
-        handleSizeChange: function (newSize) {
-            this.table.params.pageSize = newSize;
-            this.getRoleList();
-        },
-        // 处理pageIndex变化
-        handleCurrentChange: function (newIndex) {
-            this.table.params.pageIndex = newIndex;
-            this.getRoleList();
-        },
-        // 刷新table的数据
-        getRoleList: function () {
-            let data = {page: this.table.params};
-            let app = this;
-            app.table.loading = true;
-            ajaxPostJSON(this.urls.getRoleListByPage, data, function (d) {
-                app.table.loading = false;
-                app.table.data = d.data.resultList;
-                app.table.params.total = d.data.total;
-            });
-        },
-        // 添加信息提交
-        submitAddForm: function () {
+        insertEntity: function () {
             // 首先检测表单数据是否合法
-            this.$refs['form_add'].validate((valid) => {
+            this.$refs['form_insertEntity'].validate((valid) => {
                 if (valid) {
-                    let data = this.dialog.add.formData;
+                    let data = this.dialog.insertEntity.formData;
                     let app = this;
-                    app.dialog.add.loading = true;
-                    ajaxPostJSON(app.urls.putRole, data, function (d) {
-                        app.dialog.add.loading = false;
-                        app.dialog.add.visible = false;
+                    app.dialog.insertEntity.loading = true;
+                    ajaxPostJSON(app.urls.insertEntity, data, function (d) {
+                        app.dialog.insertEntity.loading = false;
+                        app.dialog.insertEntity.visible = false;
                         window.parent.app.showMessage('添加成功！', 'success');
-                        app.getRoleList(); // 添加完成后刷新页面
+                        app.refreshTable_entity(); // 添加完成后刷新页面
                     }, function () {
-                        app.dialog.add.loading = false;
-                        app.dialog.add.visible = false;
+                        app.dialog.insertEntity.loading = false;
+                        app.dialog.insertEntity.visible = false;
                         window.parent.app.showMessage('添加失败！', 'error');
                     });
                 } else {
@@ -99,54 +77,8 @@ let app = new Vue({
                 }
             });
         },
-        // 编辑角色信息提交
-        submitEditForm: function () {
-            // 首先检测表单数据是否合法
-            this.$refs['form_edit'].validate((valid) => {
-                if (valid) {
-                    let url = this.rootUrl + 'edit';
-                    let data = this.dialog.edit.formData;
-                    let app = this;
-                    app.dialog.edit.loading = true;
-                    ajaxPostJSON(url, data, function (d) {
-                        app.dialog.edit.loading = false;
-                        app.dialog.edit.visible = false;
-                        window.parent.app.showMessage('编辑成功！', 'success');
-                        app.getRoleList(); // 编辑完成后刷新页面
-                    }, function () {
-                        app.dialog.edit.loading = false;
-                        app.dialog.edit.visible = false;
-                        window.parent.app.showMessage('编辑失败！', 'error');
-                    });
-                } else {
-                    console.log("表单数据不合法！");
-                    return false;
-                }
-            });
-        },
-        // 编辑角色功能提交
-        submitEditFunction: function () {
-            let data = this.dialog.functionEdit.currentRole;
-            data.functionList = this.$refs.tree.getCheckedNodes();
-            let tmp = this.$refs.tree.getHalfCheckedNodes();
-            tmp.forEach(function (val, index) {
-                data.functionList.push(val);
-            });
-            let app = this;
-            app.dialog.functionEdit.loading = true;
-            ajaxPostJSON(this.urls.updateRoleFunction, data, function (d) {
-                app.dialog.functionEdit.loading = false;
-                window.parent.app.showMessage('修改成功!', 'success');
-            })
-        },
-        // 重置表单
-        resetForm: function (ref) {
-            this.$refs[ref].resetFields();
-        },
-        // 删除指定id的用户
-        delete: function (val, type = 'multi') {
-            // 未选中任何用户的情况下点选批量删除
-            if (type === 'multi' && val.length === 0) {
+        deleteEntityListByIds: function (val) {
+            if (val.length === 0) {
                 window.parent.app.showMessage('提示：未选中任何用户', 'warning');
                 return;
             }
@@ -155,34 +87,77 @@ let app = new Vue({
                 cancelButtonText: '取消',
                 type: 'warning'
             }).then(() => {
-                let idList = [];
-                if (type === 'single') {
-                    let id = val;
-                    idList.push(id);
-                } else {
-                    let selectionList = val;
-                    for (let i = 0; i < selectionList.length; i++) {
-                        idList.push(selectionList[i].id);
-                    }
-                }
-                let data = {
-                    idList: idList
-                };
+                let data = val;
                 let app = this;
                 app.fullScreenLoading = true;
-                ajaxPost(this.urls.deleteRoleByIdList, data, function (d) {
+                ajaxPostJSON(this.urls.deleteEntityListByIds, data, function (d) {
                     app.fullScreenLoading = false;
                     window.parent.app.showMessage('删除成功！', 'success');
-                    app.getRoleList();
+                    app.refreshTable_entity();
                 })
             }).catch(() => {
                 window.parent.app.showMessage('已取消删除', 'warning');
             });
         },
-        // 打开编辑窗口
-        openEditDialog: function (row) {
-            this.dialog.edit.visible = true;
-            this.dialog.edit.formData = copy(row);
+        updateEntity: function () {
+            // 首先检测表单数据是否合法
+            this.$refs['form_updateEntity'].validate((valid) => {
+                if (valid) {
+                    let data = this.dialog.updateEntity.formData;
+                    let app = this;
+                    app.dialog.updateEntity.loading = true;
+                    ajaxPostJSON(app.urls.updateEntity, data, function (d) {
+                        app.dialog.updateEntity.loading = false;
+                        app.dialog.updateEntity.visible = false;
+                        window.parent.app.showMessage('编辑成功！', 'success');
+                        app.refreshTable_entity(); // 编辑完成后刷新页面
+                    }, function () {
+                        app.dialog.updateEntity.loading = false;
+                        app.dialog.updateEntity.visible = false;
+                        window.parent.app.showMessage('编辑失败！', 'error');
+                    });
+                } else {
+                    console.log("表单数据不合法！");
+                    return false;
+                }
+            });
+        },
+        selectEntityListByPage: function () {
+            let data = {page: this.table.entity.params};
+            let app = this;
+            app.table.entity.loading = true;
+            ajaxPostJSON(this.urls.selectEntityListByPage, data, function (d) {
+                app.table.entity.loading = false;
+                app.table.entity.data = d.data.resultList;
+                app.table.entity.params.total = d.data.total;
+            });
+        },
+        // 刷新entity table数据
+        refreshTable_entity: function () {
+            this.selectEntityListByPage();
+        },
+        // 打开编辑entity窗口
+        openDialog_updateEntity: function (row) {
+            this.dialog.updateEntity.visible = true;
+            this.dialog.updateEntity.formData = copy(row);
+        },
+        // 处理选中的行变化
+        onSelectionChange_entity: function (val) {
+            this.table.entity.selectionList = val;
+        },
+        // 处理pageSize变化
+        onPageSizeChange_entity: function (newSize) {
+            this.table.entity.params.pageSize = newSize;
+            this.refreshTable_entity();
+        },
+        // 处理pageIndex变化
+        onPageIndexChange_entity: function (newIndex) {
+            this.table.entity.params.pageIndex = newIndex;
+            this.refreshTable_entity();
+        },
+        // 重置表单
+        resetForm: function (ref) {
+            this.$refs[ref].resetFields();
         },
         // 打开编辑角色功能窗口
         openFunctionDialog: function (row) {
@@ -209,21 +184,31 @@ let app = new Vue({
                 app.$refs.tree.setCheckedKeys(idList);
                 app.dialog.functionEdit.loading = false;
             })
-        }
+        },
+        // 编辑角色功能提交
+        submitEditFunction: function () {
+            let data = this.dialog.functionEdit.currentRole;
+            data.functionList = this.$refs.tree.getCheckedNodes();
+            let tmp = this.$refs.tree.getHalfCheckedNodes();
+            tmp.forEach(function (val, index) {
+                data.functionList.push(val);
+            });
+            let app = this;
+            app.dialog.functionEdit.loading = true;
+            ajaxPostJSON(this.urls.updateRoleFunction, data, function (d) {
+                app.dialog.functionEdit.loading = false;
+                window.parent.app.showMessage('修改成功!', 'success');
+            })
+        },
     },
     mounted: function () {
         // 首先获取所有功能
-        let data = null;
         let app = this;
         app.fullScreenLoading = true;
-        ajaxPost(this.urls.getCategoryList, data, function (d) {
+        ajaxPost(this.urls.getCategoryList, null, function (d) {
             app.fullScreenLoading = false;
             app.functionTree = d.data;
-            app.getRoleList();
+            app.refreshTable_entity();
         });
     }
-});
-
-$(document).ready(function () {
-
 });

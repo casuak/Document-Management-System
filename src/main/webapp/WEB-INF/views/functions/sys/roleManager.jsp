@@ -10,32 +10,35 @@
 <body>
 <div id="app" v-cloak style="background: white;height: 100%;overflow: hidden;" v-loading="fullScreenLoading">
     <%-- 顶栏 --%>
-    <div style="padding: 15px 20px 0px 15px;">
+    <div style="padding: 15px 20px 0 15px;">
         <span class="button-group">
-            <el-button size="small" type="success" @click="dialog.add.visible = true">
+            <el-button size="small" type="success" @click="dialog.insertEntity.visible=true">
                 <span>添加角色</span>
             </el-button>
-            <el-button size="small" type="danger" @click="delete(table.selectionList)" style="margin-left: 10px;">
+            <el-button size="small" type="danger" @click="deleteEntityListByIds(table.entity.selectionList)"
+                       style="margin-left: 10px;">
                 <span>批量删除</span>
             </el-button>
         </span>
         <span style="float: right;margin-right: 10px;">
             <el-input size="small" placeholder="请输入角色名搜索相关角色" suffix-icon="el-icon-search"
-                      style="width: 250px;margin-right: 10px;" v-model="table.params.searchKey"
-                      @keyup.enter.native="table.params.pageIndex=1;getRoleList()">
+                      style="width: 250px;margin-right: 10px;" v-model="table.entity.params.searchKey"
+                      @keyup.enter.native="table.entity.params.pageIndex=1;refreshTable_entity()">
             </el-input>
-            <el-button size="small" type="primary" style="position:relative;" @click="table.params.pageIndex=1;getRoleList()">
+            <el-button size="small" type="primary" style="position:relative;"
+                       @click="table.entity.params.pageIndex=1;refreshTable_entity()">
                 <span>搜索</span>
             </el-button>
         </span>
     </div>
-    <%-- 表格 --%>
-    <el-table :data="table.data" height="calc(100% - 116px)" v-loading="table.loading"
+    <%-- entity表格 --%>
+    <el-table :data="table.entity.data" height="calc(100% - 116px)" v-loading="table.entity.loading"
               style="width: 100%;overflow-y: hidden;margin-top: 20px;" class="scroll-bar"
-              @selection-change="handleSelectionChange" stripe>
+              @selection-change="onSelectionChange_entity" stripe>
         <el-table-column type="selection" width="40"></el-table-column>
-        <el-table-column label="角色名" prop="name" width="200"></el-table-column>
-        <el-table-column label="角色代码" prop="code" width="200"></el-table-column>
+        <el-table-column label="角色名" prop="name"></el-table-column>
+        <el-table-column label="角色代码" prop="code"></el-table-column>
+        <el-table-column label="排序" prop="sort"></el-table-column>
         <el-table-column label="创建时间">
             <template slot-scope="scope">
                 {{ formatTimestamp(scope.row.createDate) }}
@@ -48,62 +51,67 @@
                     <span>功能</span>
                 </el-button>
                 <el-button type="warning" size="mini" style="position:relative;bottom: 1px;margin-left: 6px;"
-                           @click="openEditDialog(scope.row)">
+                           @click="openDialog_updateEntity(scope.row)">
                     <span>编辑</span>
                 </el-button>
                 <el-button type="danger" size="mini" style="position:relative;bottom: 1px;margin-left: 6px;"
-                           @click="deleteRole(scope.row.id, 'single')">
+                           @click="deleteEntityListByIds([{id: scope.row.id}])">
                     <span>删除</span>
                 </el-button>
             </template>
         </el-table-column>
         <el-table-column width="50"></el-table-column>
     </el-table>
-    <%-- 分页 --%>
+    <%-- entity分页 --%>
     <el-pagination style="text-align: center;margin: 8px auto;"
-                   @size-change="handleSizeChange"
-                   @current-change="handleCurrentChange"
-                   :current-page="table.params.pageIndex"
-                   :page-sizes="table.params.pageSizes"
-                   :page-size="table.params.pageSize"
-                   :total="table.params.total"
+                   @size-change="onPageSizeChange_entity"
+                   @current-change="onPageIndexChange_entity"
+                   :current-page="table.entity.params.pageIndex"
+                   :page-sizes="table.entity.params.pageSizes"
+                   :page-size="table.entity.params.pageSize"
+                   :total="table.entity.params.total"
                    layout="total, sizes, prev, pager, next, jumper">
     </el-pagination>
-    <%-- 添加角色窗口 --%>
-    <el-dialog title="添加角色" :visible.sync="dialog.add.visible" @close="resetForm('form_add')" class="dialog-insertRole">
-        <%--<el-form label-position="left" label-width="80px" style="padding: 0 100px;"--%>
-                 <%--:model="dialog.add.formData" :rules="dialog.add.rules"--%>
-                 <%--ref="form_add" v-loading="dialog.add.loading" status-icon>--%>
-            <%--<el-form-item label="角色名" prop="name">--%>
-                <%--<el-input v-model="dialog.add.formData.name"></el-input>--%>
-            <%--</el-form-item>--%>
-            <%--<el-form-item label="角色代码" prop="code">--%>
-                <%--<el-input v-model="dialog.add.formData.code"></el-input>--%>
-            <%--</el-form-item>--%>
-        <%--</el-form>--%>
-        <%--<div slot="footer" class="dialog-footer">--%>
-            <%--<el-button size="medium" @click="dialog.add.visible=false">取 消</el-button>--%>
-            <%--<el-button size="medium" type="primary" @click="submitAddForm()" style="margin-left: 10px;">提 交--%>
-            <%--</el-button>--%>
-        <%--</div>--%>
-        <iframe src="/functions/sys/userManager" style="width: 100%;height: 450px;overflow-y: auto;border: 0;"></iframe>
-    </el-dialog>
-    <%-- 编辑角色窗口 --%>
-    <el-dialog title="编辑角色" :visible.sync="dialog.edit.visible" @close="resetForm('form_edit')">
-        <el-form label-position="left" label-width="80px"
-                 style="padding: 0 100px;height: 350px;overflow-y: scroll;"
-                 :model="dialog.edit.formData" :rules="dialog.edit.rules"
-                 ref="form_edit" v-loading="dialog.edit.loading" status-icon size="medium">
+    <%-- entity添加窗口 --%>
+    <el-dialog title="添加" :visible.sync="dialog.insertEntity.visible" @closed="resetForm('form_insertEntity')">
+        <el-form label-position="left" label-width="80px" style="padding: 0 100px;"
+                 :model="dialog.insertEntity.formData" :rules="dialog.insertEntity.rules"
+                 ref="form_insertEntity" v-loading="dialog.insertEntity.loading" status-icon>
             <el-form-item label="角色名" prop="name">
-                <el-input v-model="dialog.edit.formData.name"></el-input>
+                <el-input v-model="dialog.insertEntity.formData.name"></el-input>
             </el-form-item>
             <el-form-item label="角色代码" prop="code">
-                <el-input v-model="dialog.edit.formData.code"></el-input>
+                <el-input v-model="dialog.insertEntity.formData.code"></el-input>
+            </el-form-item>
+            <el-form-item label="排序" prop="sort">
+                <el-input v-model="dialog.insertEntity.formData.sort"></el-input>
             </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
-            <el-button size="medium" @click="dialog.edit.visible=false">取 消</el-button>
-            <el-button size="medium" type="primary" @click="submitEditForm" style="margin-left: 10px;">提 交
+            <el-button size="medium" @click="dialog.insertEntity.visible=false">取 消</el-button>
+            <el-button size="medium" type="primary" @click="insertEntity()" style="margin-left: 10px;">提 交
+            </el-button>
+        </div>
+    </el-dialog>
+    <%-- entity编辑窗口 --%>
+    <el-dialog title="编辑" :visible.sync="dialog.updateEntity.visible" @closed="resetForm('form_updateEntity')">
+        <el-form label-position="left" label-width="80px"
+                 style="padding: 0 100px;overflow-y: scroll;"
+                 :model="dialog.updateEntity.formData" :rules="dialog.updateEntity.rules"
+                 ref="form_updateEntity" v-loading="dialog.updateEntity.loading" status-icon size="medium">
+            <el-form-item label="角色名" prop="name">
+                <el-input v-model="dialog.updateEntity.formData.name"></el-input>
+            </el-form-item>
+            <el-form-item label="角色代码" prop="code">
+                <el-input v-model="dialog.updateEntity.formData.code"></el-input>
+            </el-form-item>
+            <el-form-item label="排序" prop="sort">
+                <el-input v-model="dialog.updateEntity.formData.sort"></el-input>
+            </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+            <el-button size="medium" @click="dialog.updateEntity.visible=false">取 消</el-button>
+            <el-button size="medium" type="primary" @click="updateEntity()" style="margin-left: 10px;">提 交
             </el-button>
         </div>
     </el-dialog>

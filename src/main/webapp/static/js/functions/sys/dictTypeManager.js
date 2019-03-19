@@ -28,7 +28,9 @@ let app = new Vue({
             insertEntity: {
                 visible: false,
                 loading: false,
-                formData: {},
+                formData: {
+                    parentId: null
+                },
                 rules: {},
             },
             updateEntity: {
@@ -68,7 +70,7 @@ let app = new Vue({
         },
         deleteEntityListByIds: function (val) {
             if (val.length === 0) {
-                window.parent.parent.app.showMessage('提示：未选中任何用户', 'warning');
+                window.parent.parent.app.showMessage('提示：未选中任何项', 'warning');
                 return;
             }
             window.parent.parent.app.$confirm('确认删除选中的角色', '警告', {
@@ -121,11 +123,11 @@ let app = new Vue({
                 app.table.entity.params.total = d.data.total;
             });
         },
-        selectEntityAllList: function (noFilter=false) {
+        selectEntityAllList: function (noFilter = false) {
             let app = this;
             ajaxPost(this.urls.selectEntityAllList, null, function (d) {
-                if(noFilter) {
-                    app.options.entity = d.data;
+                if (noFilter) {
+                    app.options.entity = copy(d.data);
                     return;
                 }
                 app.options.entity = d.data.filter((item) =>

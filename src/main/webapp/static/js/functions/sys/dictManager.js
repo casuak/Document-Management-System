@@ -33,7 +33,10 @@ let app = new Vue({
             insertEntity: {
                 visible: false,
                 loading: false,
-                formData: {},
+                formData: {
+                    parentId: '',
+                    typeId: ''
+                },
                 rules: {},
             },
             updateEntity: {
@@ -79,10 +82,10 @@ let app = new Vue({
         },
         deleteEntityListByIds: function (val) {
             if (val.length === 0) {
-                window.parent.app.showMessage('提示：未选中任何用户', 'warning');
+                window.parent.app.showMessage('提示：未选中任何项', 'warning');
                 return;
             }
-            window.parent.app.$confirm('确认删除选中的角色', '警告', {
+            window.parent.app.$confirm('确认删除选中的项', '警告', {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',
                 type: 'warning'

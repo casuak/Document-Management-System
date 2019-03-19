@@ -42,7 +42,7 @@ public class RoleService {
     }
 
     public Page<Role> getByPage(Page<Role> page) {
-        List<Role> roleList = roleDao.selectByPage(page);
+        List<Role> roleList = roleDao.selectListByPage(page);
         page.setResultList(roleDao.selectByIds(roleList));
         page.setTotal(roleDao.selectSearchCount(page));
         return page;
@@ -52,5 +52,14 @@ public class RoleService {
         role.preInsert();
         int count = roleDao.insert(role);
         return count == 1;
+    }
+
+    public boolean deleteListByIds(List<Role> roleList){
+        int count = roleDao.deleteListByIds(roleList);
+        return count == roleList.size();
+    }
+
+    public boolean update(Role role){
+        return roleDao.update(role) == 1;
     }
 }

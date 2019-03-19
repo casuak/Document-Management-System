@@ -3,10 +3,10 @@ let app = new Vue({
     data: {
         urls: {
             // api for entity
-            insertEntity: 'api/.../entity/insert',
-            deleteEntityListByIds: 'api/.../entity/deleteListByIds',
-            updateEntity: 'api/.../entity/update',
-            selectEntityListByPage: 'api/.../entity/getListByPage',
+            insertEntity: '/api/sys/role/insert',
+            deleteEntityListByIds: '/api/sys/role/deleteListByIds',
+            updateEntity: '/api/sys/role/update',
+            selectEntityListByPage: '/api/sys/role/selectListByPage',
         },
         fullScreenLoading: false,
         table: {
@@ -65,10 +65,10 @@ let app = new Vue({
         },
         deleteEntityListByIds: function (val) {
             if (val.length === 0) {
-                window.parent.app.showMessage('提示：未选中任何用户', 'warning');
+                window.parent.app.showMessage('提示：未选中任何项', 'warning');
                 return;
             }
-            window.parent.app.$confirm('确认删除选中的角色', '警告', {
+            window.parent.app.$confirm('确认删除选中的项', '警告', {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',
                 type: 'warning'
@@ -119,7 +119,7 @@ let app = new Vue({
             });
         },
         // 刷新entity table数据
-        refreshTable_entity: function(){
+        refreshTable_entity: function () {
             this.selectEntityListByPage();
         },
         // 打开编辑entity窗口

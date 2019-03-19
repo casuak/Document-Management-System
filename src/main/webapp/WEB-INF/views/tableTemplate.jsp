@@ -13,7 +13,7 @@
     <div style="padding: 15px 20px 0 15px;">
         <span class="button-group">
             <el-button size="small" type="success" @click="dialog.insertEntity.visible=true">
-                <span>添加角色</span>
+                <span>添加</span>
             </el-button>
             <el-button size="small" type="danger" @click="deleteEntityListByIds(table.entity.selectionList)"
                        style="margin-left: 10px;">
@@ -86,7 +86,7 @@
     <%-- entity编辑窗口 --%>
     <el-dialog title="编辑" :visible.sync="dialog.updateEntity.visible" @closed="resetForm('form_updateEntity')">
         <el-form label-position="left" label-width="80px"
-                 style="padding: 0 100px;height: 350px;overflow-y: scroll;"
+                 style="padding: 0 100px;overflow-y: scroll;"
                  :model="dialog.updateEntity.formData" :rules="dialog.updateEntity.rules"
                  ref="form_updateEntity" v-loading="dialog.updateEntity.loading" status-icon size="medium">
             <el-form-item label="角色名" prop="name">
@@ -98,7 +98,7 @@
         </el-form>
         <div slot="footer" class="dialog-footer">
             <el-button size="medium" @click="dialog.updateEntity.visible=false">取 消</el-button>
-            <el-button size="medium" type="primary" @click="updateEntity" style="margin-left: 10px;">提 交
+            <el-button size="medium" type="primary" @click="updateEntity()" style="margin-left: 10px;">提 交
             </el-button>
         </div>
     </el-dialog>

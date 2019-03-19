@@ -13,12 +13,12 @@ import team.abc.ssm.modules.sys.service.RoleService;
 
 import java.util.List;
 
-
 /**
- * getAllList       获取所有角色列表
- * getListByPage    分页查询角色
- * deleteByIdList   通过id批量删除
- * put              添加角色
+ * insert
+ * deleteListByIds
+ * update
+ * selectListByPage
+ * selectAllList
  */
 @Controller
 @RequestMapping("api/sys/role")
@@ -27,28 +27,37 @@ public class RoleApi extends BaseApi {
     @Autowired
     private RoleService roleService;
 
-    @RequestMapping(value = "getAllList", method = RequestMethod.POST)
+    @RequestMapping(value = "insert", method = RequestMethod.POST)
     @ResponseBody
-    public Object getAllList() {
-        return retMsg.Set(MsgType.SUCCESS, roleService.getAllRoles());
-    }
-
-    @RequestMapping(value = "getListByPage", method = RequestMethod.POST)
-    @ResponseBody
-    public Object getListByPage(@RequestBody Role role) {
-        return retMsg.Set(MsgType.SUCCESS, roleService.getByPage(role.getPage()));
-    }
-
-    @RequestMapping(value = "deleteByIdList", method = RequestMethod.POST)
-    @ResponseBody
-    public Object deleteByIdList(@RequestBody List<Role> roleList) {
-        return retMsg.Set(MsgType.SUCCESS);
-    }
-
-    @RequestMapping(value = "put", method = RequestMethod.POST)
-    @ResponseBody
-    public Object put(@RequestBody Role role){
+    public Object insert(@RequestBody Role role){
         roleService.insert(role);
         return retMsg.Set(MsgType.SUCCESS);
     }
+
+    @RequestMapping(value = "deleteListByIds", method = RequestMethod.POST)
+    @ResponseBody
+    public Object deleteListByIds(@RequestBody List<Role> roleList) {
+        roleService.deleteListByIds(roleList);
+        return retMsg.Set(MsgType.SUCCESS);
+    }
+
+    @RequestMapping(value = "update", method = RequestMethod.POST)
+    @ResponseBody
+    public Object update(@RequestBody Role role) {
+        roleService.update(role);
+        return retMsg.Set(MsgType.SUCCESS);
+    }
+
+    @RequestMapping(value = "selectListByPage", method = RequestMethod.POST)
+    @ResponseBody
+    public Object selectListByPage(@RequestBody Role role) {
+        return retMsg.Set(MsgType.SUCCESS, roleService.getByPage(role.getPage()));
+    }
+
+    @RequestMapping(value = "selectAllList", method = RequestMethod.POST)
+    @ResponseBody
+    public Object selectAllList() {
+        return retMsg.Set(MsgType.SUCCESS, roleService.getAllRoles());
+    }
+
 }

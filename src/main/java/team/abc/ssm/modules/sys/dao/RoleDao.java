@@ -7,7 +7,7 @@ import team.abc.ssm.modules.sys.entity.Role;
 
 import java.util.List;
 
-public interface RoleDao extends CrudDao<Role> {
+public interface RoleDao {
 
     // 通过用户名获取该用户拥有的所有角色
     List<Role> getRolesByUsername(String username);
@@ -17,7 +17,13 @@ public interface RoleDao extends CrudDao<Role> {
 
     List<Role> selectByIds(@Param("list") List<Role> entityList);
 
-    List<Role> selectByPage(Page<Role> page);
+    List<Role> selectListByPage(Page<Role> page);
 
     int selectSearchCount(Page page);
+
+    int insert(Role role);
+
+    int deleteListByIds(List<Role> roleList);
+
+    int update(Role role);
 }

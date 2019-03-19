@@ -1,28 +1,3 @@
-/**
- * 验证用户名
- * @param rule
- * @param value
- * @param callback
- */
-let validateUsername = function (rule, value, callback) {
-    let url = '/api/sys/user/checkUsername';
-    let data = {
-        username: value
-    };
-    if (value == null || value.length === 0) {
-        callback(new Error('用户名不能为空'));
-        return;
-    }
-    ajaxPostJSON(url, data, function (d) {
-        if (d.code === 'error') {
-            callback(new Error('用户名已被注册'));
-            callback(new Error('用户名已被注册'));
-        } else {
-            callback();
-        }
-    })
-};
-
 let app = new Vue({
     el: '#app',
     data: {
@@ -31,7 +6,7 @@ let app = new Vue({
             putUser: '/api/sys/user/put',
             updateUser: '/api/sys/user/update',
             deleteUserList: '/api/sys/user/deleteList',
-            getAllRoleList: '/api/sys/role/getAllList'
+            getAllRoleList: '/api/sys/role/selectAllList'
         },
         fullScreenLoading: false,
         table: {
@@ -258,3 +233,28 @@ let app = new Vue({
         });
     }
 });
+
+/**
+ * 验证用户名
+ * @param rule
+ * @param value
+ * @param callback
+ */
+function validateUsername(rule, value, callback) {
+    let url = '/api/sys/user/checkUsername';
+    let data = {
+        username: value
+    };
+    if (value == null || value.length === 0) {
+        callback(new Error('用户名不能为空'));
+        return;
+    }
+    ajaxPostJSON(url, data, function (d) {
+        if (d.code === 'error') {
+            callback(new Error('用户名已被注册'));
+            callback(new Error('用户名已被注册'));
+        } else {
+            callback();
+        }
+    })
+};

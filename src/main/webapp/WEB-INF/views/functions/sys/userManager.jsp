@@ -18,9 +18,6 @@
             <el-button size="small" type="danger" @click="deleteUser(table.selectionList)" style="margin-left: 10px;">
                 <span>批量删除</span>
             </el-button>
-            <%--<el-button size="small" type="primary" @click="test()">--%>
-                <%--<span>测试</span>--%>
-            <%--</el-button>--%>
         </span>
         <span style="float: right;margin-right: 10px;">
             <el-input size="small" placeholder="请输入用户名搜索相关用户" suffix-icon="el-icon-search"
@@ -86,7 +83,7 @@
     <%-- 编辑窗口 --%>
     <el-dialog title="编辑用户" :visible.sync="dialog.editUser.visible">
         <el-form label-position="left" label-width="80px"
-                 style="padding: 0 100px;height: 350px;overflow-y: scroll;"
+                 style="padding: 0 100px;overflow-y: scroll;"
                  :model="dialog.editUser.formData" :rules="dialog.editUser.rules"
                  ref="form_editUser" v-loading="dialog.editUser.loading" status-icon size="medium">
             <el-form-item label="用户名" prop="username" class="is-required">
