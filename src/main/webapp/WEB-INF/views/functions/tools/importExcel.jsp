@@ -73,13 +73,15 @@
                                            :label="excelColumn.name"
                                            :value="excelColumn.colIndex"></el-option>
                             </el-select>
+                            外键<switch v-model="excel"
                         </el-form-item>
                     </el-form>
                     <el-row type="flex" justify="end" style="margin-top: 15px;">
                         <el-col :span="12">
                             <span style="float: right;">
                                 <el-button type="primary" size="small" @click="currentStep -= 1">上一步</el-button>
-                                <el-button type="success" size="small" @click="excelToTable()">开始导入</el-button>
+                                <el-button type="success" size="small" :loading="loading.step3"
+                                           @click="excelToTable()">开始导入</el-button>
                             </span>
                         </el-col>
                     </el-row>

@@ -13,18 +13,14 @@ import java.io.InputStream;
 
 public class ExcelUtils {
 
-    public static Sheet getSheet(String excelName, int sheetIndex) {
+    public static Sheet getSheet(String excelName, int sheetIndex) throws IOException {
         File tempDir = new File(SystemPath.getTempDirPath());
         File excel = new File(tempDir, excelName);
         // 创建workbook
-        InputStream is = null;
-        Workbook workbook = null;
-        try {
-            is = new FileInputStream(excel.getPath());
-            workbook = new XSSFWorkbook(is);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        InputStream is;
+        Workbook workbook;
+        is = new FileInputStream(excel.getPath());
+        workbook = new XSSFWorkbook(is);
         // 只取第一个sheet
         return workbook.getSheetAt(sheetIndex);
     }

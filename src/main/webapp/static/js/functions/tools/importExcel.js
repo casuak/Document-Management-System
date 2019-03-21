@@ -17,7 +17,8 @@ let app = new Vue({
         },
         loading: {
             step1: false,
-            step2: false
+            step2: false,
+            step3: false,
         },
         tableColumnList: [],
         excelColumnList: [],
@@ -73,8 +74,9 @@ let app = new Vue({
                 tableName: app.options.tableList.value,
                 excelName: app.currentExcelFileId
             };
-            console.log(data);
+            app.loading.step3 = true;
             ajaxPostJSON(app.urls.excelToTable, data, function (d) {
+                app.loading.step3 = false;
                 console.log(d.data);
             })
         }

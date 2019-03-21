@@ -15,6 +15,7 @@ import team.abc.ssm.common.web.BaseApi;
 import team.abc.ssm.common.web.MsgType;
 import team.abc.ssm.modules.tools.service.DatabaseService;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -31,7 +32,7 @@ public class ImportExcelApi extends BaseApi {
     @ResponseBody
     public Object getColumnsInTableAndExcel(
             @RequestParam("tableName") String tableName,
-            @RequestParam("excelFileName") String excelFileName) {
+            @RequestParam("excelFileName") String excelFileName) throws IOException {
         // 只取第一个sheet
         Sheet sheet = ExcelUtils.getSheet(excelFileName, 0);
         Row firstRow = sheet.getRow(0);
@@ -54,7 +55,7 @@ public class ImportExcelApi extends BaseApi {
 
     @RequestMapping(value = "excelToTable", method = RequestMethod.POST)
     @ResponseBody
-    public Object excelToTable(@RequestBody ExcelToTable excelToTable) {
+    public Object excelToTable(@RequestBody ExcelToTable excelToTable) throws IOException {
         String excelName = excelToTable.getExcelName();
         String tableName = excelToTable.getTableName();
         List<TableColumn> tableColumnList = excelToTable.getTableColumnList();
