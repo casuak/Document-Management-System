@@ -10,6 +10,8 @@ create table sys_entity_user
 (
   user_type_id     varchar(100) comment '用户类型 from 字典表',
   sex_id           varchar(100) comment '性别 from 字典表',
+  foreign key (user_type_id) references sys_entity_dict (id),
+  foreign key (sex_id) references sys_entity_dict (id),
 
   username         varchar(100) comment '用户名',
   password         varchar(100) comment '密码',

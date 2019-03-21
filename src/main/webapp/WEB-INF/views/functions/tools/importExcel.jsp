@@ -22,7 +22,9 @@
                     <span>选择导入的Excel文件</span>
                 </div>
                 <div>
-                    <Upload type="drag" action="/api/tools/tempFile/upload" ref="upload" :on-success="onUploadSuccess">
+                    <Upload type="drag" action="/api/tools/tempFile/upload" ref="upload"
+                            :before-upload="beforeUpload" :on-success="onUploadSuccess"
+                            :default-file-list="fileList">
                         <div style="padding: 20px 0">
                             <Icon type="ios-cloud-upload" size="52" style="color: #3399ff"></Icon>
                             <p>Click or drag files here to upload</p>
@@ -31,7 +33,8 @@
                     <el-row type="flex" justify="end" style="margin-top: 15px;">
                         <el-col :span="12">
                             <span style="float: right;">
-                                <el-button type="success" size="small" @click="currentStep += 1">下一步</el-button>
+                                <el-button type="success" size="small" @click="currentStep += 1"
+                                           :loading="loading.step1">下一步</el-button>
                             </span>
                         </el-col>
                     </el-row>
@@ -62,11 +65,21 @@
                     <span>列名映射</span>
                 </div>
                 <div>
+                    <el-form size="mini" label-position="top">
+                        <el-form-item v-for="tableColumn in tableColumnList"
+                                      :label="tableColumn.name + '(' + tableColumn.comment + ')' + '(' + tableColumn.type + ')'">
+                            <el-select v-model="tableColumn.excelColumnIndex" clearable>
+                                <el-option v-for="excelColumn in excelColumnList" :key="excelColumn.colIndex"
+                                           :label="excelColumn.name"
+                                           :value="excelColumn.colIndex"></el-option>
+                            </el-select>
+                        </el-form-item>
+                    </el-form>
                     <el-row type="flex" justify="end" style="margin-top: 15px;">
                         <el-col :span="12">
                             <span style="float: right;">
                                 <el-button type="primary" size="small" @click="currentStep -= 1">上一步</el-button>
-                                <el-button type="success" size="small" @click="currentStep += 1">下一步</el-button>
+                                <el-button type="success" size="small" @click="excelToTable()">开始导入</el-button>
                             </span>
                         </el-col>
                     </el-row>

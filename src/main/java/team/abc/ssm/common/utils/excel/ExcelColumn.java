@@ -1,8 +1,9 @@
 package team.abc.ssm.common.utils.excel;
 
+
 public class ExcelColumn {
-    private String name;
-    private int colIndex;
+    private String name; // excel列名
+    private int colIndex; // excel中第几列
 
     public String getName() {
         return name;

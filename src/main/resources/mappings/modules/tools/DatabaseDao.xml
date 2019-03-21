@@ -4,4 +4,26 @@
     <select id="showTables" resultType="string">
         show tables
     </select>
+
+    <select id="selectTableColumns" parameterType="string" resultType="tableColumn">
+        select COLUMN_NAME    as name,
+               COLUMN_COMMENT as comment,
+               DATA_TYPE      as type
+        from INFORMATION_SCHEMA.Columns
+        where table_name = #{tableName}
+          and table_schema = 'docManager'
+    </select>
+
+    <insert id="insert" parameterType="map">
+        insert into ${tableName}
+        <foreach collection="columnList" separator="," item="column" index="index" open="(" close=")">
+            ${column}
+        </foreach>
+        values
+        <foreach collection="data" separator="," item="row">
+            <foreach collection="row" open="(" close=")" separator="," item="cell">
+                #{cell}
+            </foreach>
+        </foreach>
+    </insert>
 </mapper>

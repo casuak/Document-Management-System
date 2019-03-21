@@ -1,29 +1,24 @@
 package team.abc.ssm.modules.tools.api;
 
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.poi.xssf.usermodel.XSSFCell;
-import org.apache.poi.xssf.usermodel.XSSFRow;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
+import team.abc.ssm.common.utils.IdGen;
 import team.abc.ssm.common.utils.excel.ExcelColumn;
+import team.abc.ssm.common.utils.excel.ExcelToTable;
+import team.abc.ssm.common.utils.excel.ExcelUtils;
+import team.abc.ssm.common.utils.excel.TableColumn;
 import team.abc.ssm.common.web.BaseApi;
 import team.abc.ssm.common.web.MsgType;
 import team.abc.ssm.modules.tools.service.DatabaseService;
 
-import javax.servlet.http.HttpServletRequest;
-import java.io.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("api/tools/importExcel")
@@ -36,37 +31,65 @@ public class ImportExcelApi extends BaseApi {
     @ResponseBody
     public Object getColumnsInTableAndExcel(
             @RequestParam("tableName") String tableName,
-            @RequestParam("excelFileName") String excelFileName,
-            HttpServletRequest request) {
-        File dir = new File(request.getSession().getServletContext().getRealPath("WEB-INF/temp"));
-        File excel = new File(dir, excelFileName);
-
-        InputStream is = null;
-        XSSFWorkbook workbook = null;
-        try {
-            is = new FileInputStream(excel.getPath());
-            workbook = new XSSFWorkbook(is);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
+            @RequestParam("excelFileName") String excelFileName) {
         // 只取第一个sheet
-        XSSFSheet sheet = workbook.getSheetAt(0);
-        XSSFRow firstRow = sheet.getRow(0);
-
-//        int rowSize = firstRow.getLastCellNum();
-//        for (int rowIndex = 1; rowIndex < sheet.getLastRowNum(); rowIndex++) {
-//            XSSFRow row = sheet.getRow(rowIndex);
-//        }
-
-        List<ExcelColumn> columnList = new ArrayList<>();
-        for (int col = 0; col < firstRow.getLastCellNum(); col++) {
-            XSSFCell cell = firstRow.getCell(col);
-            if (cell == null)
-                continue;
-//            ExcelColumn column =
-//            columns.add(cell.getStringCellValue());
+        Sheet sheet = ExcelUtils.getSheet(excelFileName, 0);
+        Row firstRow = sheet.getRow(0);
+        List<ExcelColumn> excelColumnList = new ArrayList<>();
+        for (int colIndex = 0; colIndex < firstRow.getLastCellNum(); colIndex++) {
+            Cell cell = firstRow.getCell(colIndex);
+            if (cell == null) continue;
+            ExcelColumn col = new ExcelColumn();
+            col.setColIndex(colIndex);
+            col.setName(cell.getStringCellValue());
+            excelColumnList.add(col);
         }
-        return retMsg.Set(MsgType.SUCCESS);
+        Map<String, Object> result = new HashMap<>();
+        List<TableColumn> tableColumnList = databaseService.getTableColumns(tableName);
+        tableColumnList = tableColumnList.subList(0, tableColumnList.size() - 7); // 去掉后面7个属性
+        result.put("excelColumnList", excelColumnList);
+        result.put("tableColumnList", tableColumnList);
+        return retMsg.Set(MsgType.SUCCESS, result);
+    }
+
+    @RequestMapping(value = "excelToTable", method = RequestMethod.POST)
+    @ResponseBody
+    public Object excelToTable(@RequestBody ExcelToTable excelToTable) {
+        String excelName = excelToTable.getExcelName();
+        String tableName = excelToTable.getTableName();
+        List<TableColumn> tableColumnList = excelToTable.getTableColumnList();
+        Map<String, Object> params = new HashMap<>();
+        params.put("tableName", tableName);
+        List<String> columnList = new ArrayList<>();
+        columnList.add("id");
+        for (int i = 0; i < tableColumnList.size(); i++) {
+            TableColumn tableColumn = tableColumnList.get(i);
+            if (tableColumn.getExcelColumnIndex() == -1) continue;
+            columnList.add(tableColumn.getName());
+        }
+        params.put("columnList", columnList);
+        Sheet sheet = ExcelUtils.getSheet(excelName, 0);
+        List<List<Object>> data = new ArrayList<>();
+        for (int rowIndex = 1; rowIndex < sheet.getLastRowNum(); rowIndex++) {
+            List<Object> row = new ArrayList<>();
+            row.add(IdGen.uuid());
+            Row excelRow = sheet.getRow(rowIndex);
+            for (int i = 0; i < tableColumnList.size(); i++) {
+                TableColumn tableColumn = tableColumnList.get(i);
+                if (tableColumn.getExcelColumnIndex() == -1) continue;
+                Cell cell = excelRow.getCell(tableColumn.getExcelColumnIndex());
+                if (tableColumn.getType().equals("varchar")) {
+                    row.add(cell.getStringCellValue());
+                } else if (tableColumn.getType().equals("int")) {
+                    row.add((int) cell.getNumericCellValue());
+                } else if (tableColumn.getType().equals("datetime")) {
+                    row.add(cell.getDateCellValue());
+                }
+            }
+            data.add(row);
+        }
+        params.put("data", data);
+        databaseService.insert(params);
+        return retMsg.Set(MsgType.SUCCESS, params);
     }
 }

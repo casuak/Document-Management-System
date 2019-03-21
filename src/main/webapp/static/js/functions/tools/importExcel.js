@@ -4,7 +4,8 @@ let app = new Vue({
         urls: {
             showTables: '/api/tools/database/showTables',
             upload: 'api/tools/tempFile/upload',
-            getColumnsInTableAndExcel: '/api/tools/importExcel/getColumnsInTableAndExcel'
+            getColumnsInTableAndExcel: '/api/tools/importExcel/getColumnsInTableAndExcel',
+            excelToTable: '/api/tools/importExcel/excelToTable'
         },
         currentStep: 0,
         currentExcelFileId: '',
@@ -15,13 +16,31 @@ let app = new Vue({
             }
         },
         loading: {
+            step1: false,
             step2: false
-        }
+        },
+        tableColumnList: [],
+        excelColumnList: [],
+        fileList: []
     },
     methods: {
+        beforeUpload: function (file) {
+            let suffix = file.name.split('.').pop();
+            if (suffix !== 'xlsx') {
+                window.parent.app.showMessage('仅支持xlsx文件', 'error');
+                return false;
+            }
+            app.loading.step1 = true;
+        },
+        // step1
         onUploadSuccess: function (res, file) {
             app.currentExcelFileId = res.data;
+            app.loading.step1 = false;
+            app.fileList[0] = file;
+            app.$refs.upload.fileList.pop();
+            app.$refs.upload.fileList[0] = file;
         },
+        // after step2
         getColumnsInTableAndExcel: function () {
             let app = this;
             let data = {
@@ -32,9 +51,31 @@ let app = new Vue({
             ajaxPost(app.urls.getColumnsInTableAndExcel, data, function (d) {
                 console.log(d.data);
                 app.loading.step2 = false;
-                // app.currentStep += 1;
+                app.currentStep += 1;
+                app.tableColumnList = copy(d.data.tableColumnList);
+                app.excelColumnList = copy(d.data.excelColumnList);
             }, function () {
                 app.loading.step2 = false;
+            })
+        },
+        // 将excel中的数据导入table
+        excelToTable: function () {
+            let app = this;
+            let data = copy(app.tableColumnList);
+            for (let i = 0; i < data.length; i++) {
+                data[i].excelColumnIndex = parseInt(data[i].excelColumnIndex);
+                if (isNaN(data[i].excelColumnIndex)) {
+                    data[i].excelColumnIndex = -1;
+                }
+            }
+            data = {
+                tableColumnList: copy(data),
+                tableName: app.options.tableList.value,
+                excelName: app.currentExcelFileId
+            };
+            console.log(data);
+            ajaxPostJSON(app.urls.excelToTable, data, function (d) {
+                console.log(d.data);
             })
         }
     },

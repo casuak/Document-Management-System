@@ -63,10 +63,10 @@
         <property name="sessionIdGenerator" ref="sessionIdGenerator"/>
     </bean>
 
-    <!-- 会话验证调度器：每30分钟执行一次验证，设定会话超时及保存 -->
+    <!-- 会话验证调度器：每3000分钟执行一次验证，设定会话超时及保存 -->
     <bean id="sessionValidationScheduler"
           class="org.apache.shiro.session.mgt.ExecutorServiceSessionValidationScheduler">
-        <property name="interval" value="1800000"/>
+        <property name="interval" value="180000000"/>
         <property name="sessionManager" ref="sessionManager"/>
     </bean>
 
