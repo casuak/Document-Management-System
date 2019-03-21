@@ -68,8 +68,11 @@ public class ViewController extends BaseController {
     /** 系统功能 **/
 
     /**
-     * 备案模块
+     * 附加功能
      **/
-
-    /** 备案模块 **/
+    @RequestMapping(value = "functions/tools/importExcel", method = RequestMethod.GET)
+    public String tools_importExcel(){
+        return "functions/tools/importExcel";
+    }
+    /** 附加功能 **/
 }
