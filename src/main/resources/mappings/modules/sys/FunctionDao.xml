@@ -22,10 +22,10 @@
 
     <select id="selectByUsername" parameterType="string" resultMap="functionBean">
         select a.*
-        from sys_entity_user b
+        from sys_user b
                  left join sys_map_user_role c on c.user_id = b.id
                  left join sys_map_role_function d on d.role_id = c.role_id
-                 left join sys_entity_function a on a.id = d.function_id
+                 left join sys_function a on a.id = d.function_id
         where b.username = #{0}
           and a.enable = true
         group by a.id -- 避免重复获取同一功能
@@ -33,26 +33,26 @@
 
     <select id="selectAll" resultMap="functionBean">
         select a.*
-        from sys_entity_function a
+        from sys_function a
     </select>
 
     <select id="selectAllEnabled" resultMap="functionBean">
         select a.*
-        from sys_entity_function a
+        from sys_function a
         where a.enable = true
     </select>
 
     <select id="selectByRole" resultMap="functionBean" parameterType="team.abc.ssm.modules.sys.entity.Role">
         select a.*
-        from sys_entity_function a
+        from sys_function a
                  left join sys_map_role_function b on b.function_id = a.id
-                 left join sys_entity_role c on c.id = b.role_id
+                 left join sys_role c on c.id = b.role_id
         where c.id = #{id}
         group by a.id
     </select>
 
     <insert id="insert" parameterType="team.abc.ssm.modules.sys.entity.Function">
-        insert into sys_entity_function (`name`,
+        insert into sys_function (`name`,
                                          `code`,
                                          parent_id,
                                          url,
@@ -86,12 +86,12 @@
 
     <delete id="deleteById" parameterType="team.abc.ssm.modules.sys.entity.Function">
         delete
-        from sys_entity_function
+        from sys_function
         where id = #{id}
     </delete>
 
     <update id="updateIndex" parameterType="team.abc.ssm.modules.sys.entity.Function">
-        update sys_entity_function set `index` =
+        update sys_function set `index` =
         case id
         <foreach collection="list" item="item">
             when #{item.id} then #{item.index}
@@ -104,7 +104,7 @@
     </update>
 
     <update id="update" parameterType="team.abc.ssm.modules.sys.entity.Function">
-        update sys_entity_function
+        update sys_function
         set `name`         = #{name},
             `code`         = #{code},
             parent_id      = #{parentId},

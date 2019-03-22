@@ -18,7 +18,7 @@
     </resultMap>
 
     <insert id="insert" parameterType="team.abc.ssm.modules.sys.entity.DictType">
-        insert into sys_entity_dict_type (name_cn,
+        insert into sys_dict_type (name_cn,
                                           name_en,
                                           parent_id,
                                           sort,
@@ -44,14 +44,14 @@
     </insert>
 
     <delete id="deleteListByIds" parameterType="team.abc.ssm.modules.sys.entity.DictType">
-        delete from sys_entity_dict_type where id in
+        delete from sys_dict_type where id in
         <foreach collection="list" item="item" open="(" close=")" separator=",">
             #{item.id}
         </foreach>
     </delete>
 
     <update id="update" parameterType="team.abc.ssm.modules.sys.entity.DictType">
-        update sys_entity_dict_type
+        update sys_dict_type
         set name_cn        = #{nameCn},
             name_en        = #{nameEn},
             parent_id      = #{parentId},
@@ -71,8 +71,8 @@
         a.*,
         b.name_cn as parentNameCn,
         b.name_en as parentNameEn
-        from sys_entity_dict_type a
-        left join sys_entity_dict_type b on a.parent_id = b.id
+        from sys_dict_type a
+        left join sys_dict_type b on a.parent_id = b.id
         <where>
             <if test="page.searchKey != '' and page.searchKey != null">
                 and (
@@ -86,7 +86,7 @@
     </select>
 
     <select id="selectSearchCount" parameterType="team.abc.ssm.modules.sys.entity.DictType" resultType="int">
-        select count(*) from sys_entity_dict_type a
+        select count(*) from sys_dict_type a
         <where>
             <if test="page.searchKey != '' and page.searchKey != null">
                 and (
@@ -99,7 +99,7 @@
 
     <select id="selectAllList" resultMap="dictTypeBean">
         select *
-        from sys_entity_dict_type
+        from sys_dict_type
         order by sort
     </select>
 </mapper>

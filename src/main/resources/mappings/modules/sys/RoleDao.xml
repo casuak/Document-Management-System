@@ -16,21 +16,21 @@
 
     <select id="getRolesByUsername" resultMap="roleBean" parameterType="string">
         select a.*
-        from sys_entity_user b
+        from sys_user b
                  left join sys_map_user_role c on c.user_id = b.id
-                 left join sys_entity_role a on a.id = c.role_id
+                 left join sys_role a on a.id = c.role_id
         where b.username = #{0}
     </select>
 
     <!-- 获取所有角色 -->
     <select id="getAllRoles" resultMap="roleBean">
         select a.*
-        from sys_entity_role a
+        from sys_role a
     </select>
 
     <select id="selectListByPage" resultMap="roleBean" parameterType="role">
         select a.id
-        from sys_entity_role a
+        from sys_role a
         <where>
             <if test="searchKey != '' and searchKey != null">
                 and a.name like concat('%', #{searchKey}, '%')
@@ -42,7 +42,7 @@
 
     <select id="selectByIds" resultMap="roleBean">
         select a.*
-        from sys_entity_role a
+        from sys_role a
         where a.id in
         <foreach collection="list" item="item" open="(" separator="," close=")">
             #{item.id}
@@ -51,7 +51,7 @@
     </select>
 
     <select id="selectSearchCount" resultType="int" parameterType="team.abc.ssm.common.persistence.Page">
-        select count(*) from sys_entity_role a
+        select count(*) from sys_role a
         <where>
             <if test="searchKey != '' and searchKey != null">
                 and a.name like concat('%', #{searchKey}, '%')
@@ -60,7 +60,7 @@
     </select>
 
     <insert id="insert" parameterType="team.abc.ssm.modules.sys.entity.Role">
-        insert into sys_entity_role (`name`,
+        insert into sys_role (`name`,
                                      `code`,
                                      sort,
                                      id,
@@ -83,7 +83,7 @@
     </insert>
 
     <delete id="deleteListByIds" parameterType="team.abc.ssm.modules.sys.entity.Role">
-        delete from sys_entity_role where id in
+        delete from sys_role where id in
         <foreach collection="list" index="index" item="item"
                  open="(" separator="," close=")">
             #{item.id}
@@ -91,7 +91,7 @@
     </delete>
 
     <update id="update" parameterType="team.abc.ssm.modules.sys.entity.Role">
-        update sys_entity_role
+        update sys_role
         set `name`         = #{name},
             `code`         = #{code},
             sort           = #{sort},

@@ -21,7 +21,7 @@
     </resultMap>
 
     <insert id="insert" parameterType="team.abc.ssm.modules.sys.entity.Dict">
-        insert into sys_entity_dict (type_id,
+        insert into sys_dict (type_id,
                                      name_cn,
                                      name_en,
                                      parent_id,
@@ -49,14 +49,14 @@
     </insert>
 
     <delete id="deleteListByIds" parameterType="team.abc.ssm.modules.sys.entity.Dict">
-        delete from sys_entity_dict where id in
+        delete from sys_dict where id in
         <foreach collection="list" item="item" open="(" close=")" separator=",">
             #{item.id}
         </foreach>
     </delete>
 
     <update id="update" parameterType="team.abc.ssm.modules.sys.entity.Dict">
-        update sys_entity_dict
+        update sys_dict
         set type_id        = #{typeId},
             name_cn        = #{nameCn},
             name_en        = #{nameEn},
@@ -78,9 +78,9 @@
         a.*,
         b.name_cn as parentNameCn,
         c.name_cn as typeNameCn
-        from sys_entity_dict a
-        left join sys_entity_dict b on b.id = a.parent_id
-        left join sys_entity_dict_type c on c.id = a.type_id
+        from sys_dict a
+        left join sys_dict b on b.id = a.parent_id
+        left join sys_dict_type c on c.id = a.type_id
         <where>
             <if test="page.searchKey != '' and page.searchKey != null">
                 and (
@@ -97,7 +97,7 @@
     </select>
 
     <select id="selectSearchCount" parameterType="team.abc.ssm.modules.sys.entity.Dict" resultType="int">
-        select count(*) from sys_entity_dict a
+        select count(*) from sys_dict a
         <where>
             <if test="page.searchKey != '' and page.searchKey != null">
                 and (
@@ -114,8 +114,8 @@
     <select id="selectParentList" parameterType="team.abc.ssm.modules.sys.entity.Dict"
             resultMap="dictBean">
         select b.*
-        from sys_entity_dict b
+        from sys_dict b
         where b.type_id in
-              (select a.parent_id from sys_entity_dict_type a where a.id = #{typeId})
+              (select a.parent_id from sys_dict_type a where a.id = #{typeId})
     </select>
 </mapper>

@@ -7,9 +7,10 @@ public class TableColumn {
     private String type;
     private Integer excelColumnIndex; // excel表格中对应列
 
-    private boolean isFK; // 是否是外键
+    private boolean fk; // 是否是外键
     private String fkTable; // 外键指向的表
-    private String fkFiled; // 外键指向的表的字段
+    private String fkOriginalFiled; // 原字段
+    private String fkReplaceFiled; // 替换字段
 
     public String getName() {
         return name;
@@ -43,14 +44,6 @@ public class TableColumn {
         this.type = type;
     }
 
-    public boolean isFK() {
-        return isFK;
-    }
-
-    public void setFK(boolean FK) {
-        isFK = FK;
-    }
-
     public String getFkTable() {
         return fkTable;
     }
@@ -59,11 +52,27 @@ public class TableColumn {
         this.fkTable = fkTable;
     }
 
-    public String getFkFiled() {
-        return fkFiled;
+    public boolean isFk() {
+        return fk;
     }
 
-    public void setFkFiled(String fkFiled) {
-        this.fkFiled = fkFiled;
+    public void setFk(boolean fk) {
+        this.fk = fk;
+    }
+
+    public String getFkOriginalFiled() {
+        return fkOriginalFiled;
+    }
+
+    public void setFkOriginalFiled(String fkOriginalFiled) {
+        this.fkOriginalFiled = fkOriginalFiled;
+    }
+
+    public String getFkReplaceFiled() {
+        return fkReplaceFiled;
+    }
+
+    public void setFkReplaceFiled(String fkReplaceFiled) {
+        this.fkReplaceFiled = fkReplaceFiled;
     }
 }

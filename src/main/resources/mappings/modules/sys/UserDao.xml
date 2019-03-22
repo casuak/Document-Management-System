@@ -27,9 +27,9 @@
         c.id as roleId,
         c.name as roleName,
         c.code as roleCode
-        from sys_entity_user a
+        from sys_user a
         left join sys_map_user_role b on a.id = b.user_id
-        left join sys_entity_role c on b.role_id = c.id
+        left join sys_role c on b.role_id = c.id
         where a.username = #{username}
         limit 1
     </select>
@@ -41,16 +41,16 @@
         c.id as roleId,
         c.name as roleName,
         c.code as roleCode
-        from sys_entity_user a
+        from sys_user a
         left join sys_map_user_role b on a.id = b.user_id
-        left join sys_entity_role c on b.role_id = c.id
+        left join sys_role c on b.role_id = c.id
     </select>
 
     <!-- 分页 + 搜索(模糊匹配用户名)获取用户id列表 -->
     <select id="selectByPage" parameterType="team.abc.ssm.modules.sys.entity.User" resultMap="userBean">
         select
         a.id
-        from sys_entity_user a
+        from sys_user a
         <where>
             <if test="page.searchKey != '' and page.searchKey != null">
                 and a.username like concat('%', #{page.searchKey}, '%')
@@ -66,9 +66,9 @@
         c.id as roleId,
         c.name as roleName,
         c.code as roleCode
-        from sys_entity_user a
+        from sys_user a
         left join sys_map_user_role b on a.id = b.user_id
-        left join sys_entity_role c on b.role_id = c.id
+        left join sys_role c on b.role_id = c.id
         where a.id in
         <foreach collection="list" open="(" separator="," close=")" item="user">
             #{user.id}
@@ -79,7 +79,7 @@
     <select id="selectSearchCount" parameterType="team.abc.ssm.modules.sys.entity.User" resultType="int">
         select
         count(*)
-        from sys_entity_user a
+        from sys_user a
         <where>
             <if test="page.searchKey != '' and page.searchKey != null">
                 and a.username like concat('%', #{page.searchKey}, '%')
@@ -89,7 +89,7 @@
 
     <!-- 添加一名新用户 -->
     <insert id="insert" parameterType="team.abc.ssm.modules.sys.entity.User">
-        insert into sys_entity_user (username,
+        insert into sys_user (username,
                                      `password`,
                                      id,
                                      remarks,
@@ -112,14 +112,14 @@
 
     <!-- 更新指定id用户的信息 -->
     <update id="update" parameterType="team.abc.ssm.modules.sys.entity.User">
-        update sys_entity_user
+        update sys_user
         set `password` = #{password}
         where id = #{id}
     </update>
 
     <!-- 删除指定id的用户 -->
     <delete id="deleteByIds" parameterType="team.abc.ssm.modules.sys.entity.User">
-        delete from sys_entity_user where id in
+        delete from sys_user where id in
         <foreach collection="list" index="index" item="item"
                  open="(" separator="," close=")">
             #{item.id}

@@ -46,7 +46,7 @@ public class ImportExcelApi extends BaseApi {
             excelColumnList.add(col);
         }
         Map<String, Object> result = new HashMap<>();
-        List<TableColumn> tableColumnList = databaseService.getTableColumns(tableName);
+        List<TableColumn> tableColumnList = databaseService.selectColumnsInTable(tableName);
         tableColumnList = tableColumnList.subList(0, tableColumnList.size() - 7); // 去掉后面7个属性
         result.put("excelColumnList", excelColumnList);
         result.put("tableColumnList", tableColumnList);

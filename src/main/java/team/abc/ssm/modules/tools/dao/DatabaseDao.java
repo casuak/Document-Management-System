@@ -9,7 +9,7 @@ public interface DatabaseDao {
 
     List<String> showTables();
 
-    List<TableColumn> selectTableColumns(Map params);
+    List<TableColumn> selectColumnsInTable(Map params);
 
     int insert(Map<String, Object> params);
 }

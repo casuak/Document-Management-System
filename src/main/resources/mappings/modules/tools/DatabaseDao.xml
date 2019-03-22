@@ -5,7 +5,7 @@
         show tables
     </select>
 
-    <select id="selectTableColumns" parameterType="string" resultType="tableColumn">
+    <select id="selectColumnsInTable" parameterType="string" resultType="tableColumn">
         select COLUMN_NAME    as name,
                COLUMN_COMMENT as comment,
                DATA_TYPE      as type

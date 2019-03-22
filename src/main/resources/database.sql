@@ -6,12 +6,10 @@ use docManager;
 
 -- 1. 系统表 sys
 -- 1.1 用户表
-create table sys_entity_user
+create table sys_user
 (
   user_type_id     varchar(100) comment '用户类型 from 字典表',
   sex_id           varchar(100) comment '性别 from 字典表',
-  foreign key (user_type_id) references sys_entity_dict (id),
-  foreign key (sex_id) references sys_entity_dict (id),
 
   username         varchar(100) comment '用户名',
   password         varchar(100) comment '密码',
@@ -39,7 +37,7 @@ create table sys_entity_user
 );
 
 -- 1.2 角色表
-create table sys_entity_role
+create table sys_role
 (
   name           varchar(100) comment '角色名',
   code           varchar(100) comment '角色代码',
@@ -55,7 +53,7 @@ create table sys_entity_role
 );
 
 -- 1.3 功能
-create table sys_entity_function
+create table sys_function
 (
   parent_id      varchar(100) comment '功能所属的分类 from 功能表',
 
@@ -107,7 +105,7 @@ create table sys_map_role_function
 );
 
 -- 1.6 字典表
-create table sys_entity_dict
+create table sys_dict
 (
   type_id        varchar(100) comment '字典类型 from 字典类型表',
   parent_id      varchar(100) comment '父字典项 from 字典表',
@@ -126,7 +124,7 @@ create table sys_entity_dict
 );
 
 -- 1.7 字典类型表
-create table sys_entity_dict_type
+create table sys_dict_type
 (
   parent_id      varchar(100) comment '父类型 from 字典类型表',
 
@@ -145,12 +143,12 @@ create table sys_entity_dict_type
 
 -- 2. 公共基础信息 common
 -- 2.1 机构表
-create table common_entity_organize
+create table common_organize
 (
   parent_id      varchar(100) comment '夫机构 from 机构表',
 
-  code           varchar(100) comment '机构编号',
-  name           varchar(100) comment '机构名称',
+  org_code       varchar(100) comment '机构编号',
+  org_name       varchar(100) comment '机构名称',
   description    varchar(2048) comment '描述信息',
 
   id             varchar(100) primary key,
@@ -163,14 +161,14 @@ create table common_entity_organize
 );
 
 -- 2.2 学科表
-create table common_entity_subject
+create table common_subject
 (
   parent_id        varchar(100) comment '父学科 from 学科表',
   subject_level_id varchar(100) comment '学科等级 from 字典表',
 
 
-  name             varchar(100) comment '学科名',
-  code             varchar(100) comment '学科编号',
+  subject_name     varchar(100) comment '学科名',
+  subject_code     varchar(100) comment '学科编号',
   description      varchar(2048) comment '描述信息',
 
   id               varchar(100) primary key,
@@ -214,13 +212,13 @@ create table common_map_user_subject
 
 -- 3. 文献信息表 doc
 -- 3.1 论文表
-create table doc_entity_paper
+create table doc_paper
 (
   first_author_id    varchar(100) comment '第一作者 from 用户表',
   second_author_id   varchar(100) comment '第二作者 from 用户表',
   journal_id         varchar(100) comment '所属期刊 from 期刊表',
 
-  name               varchar(100) comment '论文名',
+  paper_name         varchar(100) comment '论文名',
   author_list        varchar(300) comment '全体作者名列表',
   first_author_name  varchar(100) comment '第一作者名字（从列表中分割出来，再和用户表匹配）',
   second_author_name varchar(100) comment '第二作者名字（同上）',
@@ -238,14 +236,14 @@ create table doc_entity_paper
 );
 
 -- 3.2 期刊表
-create table doc_entity_journal
+create table doc_journal
 (
   journal_level_id   varchar(100) comment '期刊分级 from 字典表',
   journal_subject_id varchar(100) comment '期刊学科 from 字典表',
   journal_status_id  varchar(100) comment '期刊地位 from 字典表',
   journal_content_id varchar(100) comment '期刊内容 from 字典表',
 
-  name               varchar(100) comment '期刊名',
+  journal_name       varchar(100) comment '期刊名',
   ISSN_num           varchar(100) comment '国际标准连续出版物号',
 
   id                 varchar(100) primary key,

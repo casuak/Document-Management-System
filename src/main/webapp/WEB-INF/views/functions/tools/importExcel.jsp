@@ -16,7 +16,7 @@
             <Step title="列名映射" content="包括选择是否自动生成id，字典id替换"></Step>
             <Step title="完成" content="这里是该步骤的描述信息"></Step>
         </Steps>
-        <div style="margin-top: 30px;width: 50%;">
+        <div style="margin-top: 30px;width: 850px;">
             <el-card v-if="currentStep==0">
                 <div slot="header">
                     <span>选择导入的Excel文件</span>
@@ -67,13 +67,33 @@
                 <div>
                     <el-form size="mini" label-position="top">
                         <el-form-item v-for="tableColumn in tableColumnList"
-                                      :label="tableColumn.name + '(' + tableColumn.comment + ')' + '(' + tableColumn.type + ')'">
-                            <el-select v-model="tableColumn.excelColumnIndex" clearable>
-                                <el-option v-for="excelColumn in excelColumnList" :key="excelColumn.colIndex"
-                                           :label="excelColumn.name"
-                                           :value="excelColumn.colIndex"></el-option>
-                            </el-select>
-                            外键<switch v-model="excel"
+                                      :label="tableColumn.name + ' （' + tableColumn.type + '）' + '（' + tableColumn.comment + '） '">
+                            <el-row>
+                                <el-select v-model="tableColumn.excelColumnIndex" clearable>
+                                    <el-option v-for="excelColumn in excelColumnList" :key="excelColumn.colIndex"
+                                               :label="excelColumn.name" :value="excelColumn.colIndex"></el-option>
+                                </el-select>
+                                <span style="margin-left: 10px;position:relative;top: 1px;">外键</span>
+                                <i-switch style="margin-left: 10px;" v-model="tableColumn.fk"></i-switch>
+                            </el-row>
+                            <el-row style="margin-top: 20px;" v-if="tableColumn.fk">
+                                <span style="margin-right: 5px;">外表</span>
+                                <el-select style="margin-right: 10px;" v-model="tableColumn.fkTable"
+                                           @change="getColumnsInTable(tableColumn)">
+                                    <el-option v-for="table in options.tableList.data" :key="table" :label="table"
+                                               :value="table"></el-option>
+                                </el-select>
+                                <span style="margin-right: 5px;">原字段</span>
+                                <el-select style="margin-right: 10px;" v-model="tableColumn.fkOriginalField">
+                                    <el-option v-for="col in tableColumn.fkColumnList" :key="col.name"
+                                               :label="col.name" :value="col.name"></el-option>
+                                </el-select>
+                                <span style="margin-right: 5px;">替换字段</span>
+                                <el-select v-model="tableColumn.fkReplaceField">
+                                    <el-option v-for="col in tableColumn.fkColumnList" :key="col.name"
+                                               :label="col.name" :value="col.name"></el-option>
+                                </el-select>
+                            </el-row>
                         </el-form-item>
                     </el-form>
                     <el-row type="flex" justify="end" style="margin-top: 15px;">

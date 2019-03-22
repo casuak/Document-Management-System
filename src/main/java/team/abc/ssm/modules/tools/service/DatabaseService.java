@@ -2,11 +2,9 @@ package team.abc.ssm.modules.tools.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import team.abc.ssm.common.utils.IdGen;
 import team.abc.ssm.common.utils.excel.TableColumn;
 import team.abc.ssm.modules.tools.dao.DatabaseDao;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,10 +19,10 @@ public class DatabaseService {
         return databaseDao.showTables();
     }
 
-    public List<TableColumn> getTableColumns(String tableName) {
+    public List<TableColumn> selectColumnsInTable(String tableName) {
         Map<String, Object> params = new HashMap<>();
         params.put("tableName", tableName);
-        return databaseDao.selectTableColumns(params);
+        return databaseDao.selectColumnsInTable(params);
     }
 
     public boolean insert(Map<String, Object> params) {
