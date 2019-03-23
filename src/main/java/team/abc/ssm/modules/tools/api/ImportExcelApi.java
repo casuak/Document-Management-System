@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import team.abc.ssm.common.utils.IdGen;
+import team.abc.ssm.common.utils.UserUtils;
 import team.abc.ssm.common.utils.excel.ExcelColumn;
 import team.abc.ssm.common.utils.excel.ExcelToTable;
 import team.abc.ssm.common.utils.excel.ExcelUtils;
@@ -16,10 +17,7 @@ import team.abc.ssm.common.web.MsgType;
 import team.abc.ssm.modules.tools.service.DatabaseService;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Controller
 @RequestMapping("api/tools/importExcel")
@@ -63,6 +61,10 @@ public class ImportExcelApi extends BaseApi {
         params.put("tableName", tableName);
         List<String> columnList = new ArrayList<>();
         columnList.add("id");
+        columnList.add("create_user_id");
+        columnList.add("create_date");
+        columnList.add("modify_user_id");
+        columnList.add("modify_date");
         for (int i = 0; i < tableColumnList.size(); i++) {
             TableColumn tableColumn = tableColumnList.get(i);
             if (tableColumn.getExcelColumnIndex() == -1) continue;
@@ -74,7 +76,7 @@ public class ImportExcelApi extends BaseApi {
         // 初始化mappingList（外键映射）
         List<Map<String, String>> mappingList = new ArrayList<>();
         for (int i = 0; i < tableColumnList.size(); i++) {
-            Map<String, String> map = null;
+            Map<String, String> map;
             TableColumn tableColumn = tableColumnList.get(i);
             if (!tableColumn.isFk()) {
                 map = new HashMap<>();
@@ -83,9 +85,15 @@ public class ImportExcelApi extends BaseApi {
             }
             mappingList.add(map);
         }
+        String userId = UserUtils.getCurrentUser().getId();
+        Date now = new Date();
         for (int rowIndex = 1; rowIndex < sheet.getLastRowNum(); rowIndex++) {
             List<Object> row = new ArrayList<>();
             row.add(IdGen.uuid());
+            row.add(userId);
+            row.add(now);
+            row.add(userId);
+            row.add(now);
             Row excelRow = sheet.getRow(rowIndex);
             for (int i = 0; i < tableColumnList.size(); i++) {
                 TableColumn tableColumn = tableColumnList.get(i);
@@ -109,7 +117,7 @@ public class ImportExcelApi extends BaseApi {
             data.add(row);
         }
         params.put("data", data);
-//        databaseService.insert(params);
+        databaseService.insert(params);
         return retMsg.Set(MsgType.SUCCESS, params);
     }
 }

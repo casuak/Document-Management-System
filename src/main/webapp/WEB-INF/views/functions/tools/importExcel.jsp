@@ -69,7 +69,7 @@
                         <el-form-item v-for="(tableColumn, index) in tableColumnList"
                                       :label="tableColumn.name + ' （' + tableColumn.type + '）' + '（' + tableColumn.comment + '） '">
                             <el-row>
-                                <el-select v-model="tableColumn.excelColumnIndex" clearable>
+                                <el-select v-model="tableColumn.excelColumnIndex" clearable filterable>
                                     <el-option v-for="excelColumn in excelColumnList" :key="excelColumn.colIndex"
                                                :label="excelColumn.name" :value="excelColumn.colIndex"></el-option>
                                 </el-select>

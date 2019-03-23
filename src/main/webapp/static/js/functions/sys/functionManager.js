@@ -54,6 +54,7 @@ let app = new Vue({
                         }
                     }
                 }
+                window.parent.app.refreshFunctions();
             });
         },
         // 打开编辑表单
@@ -85,6 +86,7 @@ let app = new Vue({
                 category.functionList = [];
                 app.tree.push(category);
                 app.treeLoading = false;
+                window.parent.app.refreshFunctions();
             })
         },
         // 添加功能到某个分类下
@@ -98,6 +100,7 @@ let app = new Vue({
                 window.parent.app.showMessage('添加成功', 'success');
                 app.tree[data.index].functionList.push(newFunction);
                 app.treeLoading = false;
+                window.parent.app.refreshFunctions();
             })
         },
         // 删除分类或功能
@@ -169,6 +172,7 @@ let app = new Vue({
         handleDragEnd: function (draggingNode, dropNode, dropType, ev) {
             // console.log('tree drag end: ', dropNode && dropNode.label, dropType);
         },
+        // 顺序、层级修改
         handleDrop: function (draggingNode, dropNode, dropType, ev) {
             let app = this;
             app.treeLoading = true;
@@ -183,6 +187,7 @@ let app = new Vue({
             ajaxPostJSON(this.urls.updateCategoryList, this.tree, function (d) {
                 app.treeLoading = false;
                 window.parent.app.showMessage('位置更新成功!', 'success');
+                window.parent.app.refreshFunctions();
             })
         },
         allowDrop: function (draggingNode, dropNode, type) {

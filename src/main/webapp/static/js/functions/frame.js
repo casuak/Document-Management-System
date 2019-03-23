@@ -89,6 +89,13 @@ app = new Vue({
                 message: message,
                 type: type
             });
+        },
+        // 刷新功能栏
+        refreshFunctions: function () {
+            let app = this;
+            ajaxPostJSON(app.urls.getCategoryListByUser, app.user, function (d) {
+                app.categoryList = d.data;
+            })
         }
     },
     mounted: function () {

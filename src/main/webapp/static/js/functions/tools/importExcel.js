@@ -111,7 +111,7 @@ let app = new Vue({
                 app.loading.step3 = false;
                 console.log(d.data);
             }, function () {
-                app.loading.step3 = true;
+                app.loading.step3 = false;
             })
         },
     },
