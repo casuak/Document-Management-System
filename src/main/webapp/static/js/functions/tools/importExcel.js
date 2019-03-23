@@ -8,7 +8,7 @@ let app = new Vue({
             excelToTable: '/api/tools/importExcel/excelToTable',
             selectColumnsInTable: '/api/tools/database/selectColumnsInTable'
         },
-        currentStep: 2,
+        currentStep: 0,
         currentExcelFileId: '',
         options: {
             tableList: {
@@ -68,10 +68,27 @@ let app = new Vue({
                 app.tableColumnList = copy(d.data.tableColumnList);
                 for (let i = 0; i < app.tableColumnList.length; i++) {
                     app.tableColumnList[i].fkColumnList = [];
+                    app.tableColumnList[i].loading = false;
                 }
                 app.excelColumnList = copy(d.data.excelColumnList);
             }, function () {
                 app.loading.step2 = false;
+            })
+        },
+        // 获取某张表的所有字段
+        getColumnsInTable: function (tableColumn) {
+            let app = this;
+            if (tableColumn.fk === false || tableColumn.fkTable === '' || tableColumn.fkTable == null)
+                return;
+            let data = {
+                tableName: tableColumn.fkTable
+            };
+            tableColumn.loading = true;
+            ajaxPost(app.urls.selectColumnsInTable, data, function (d) {
+                tableColumn.fkColumnList = copy(d.data);
+                tableColumn.loading = false;
+                app.tableColumnList.push({});
+                app.tableColumnList.pop();
             })
         },
         // 将excel中的数据导入table
@@ -93,24 +110,10 @@ let app = new Vue({
             ajaxPostJSON(app.urls.excelToTable, data, function (d) {
                 app.loading.step3 = false;
                 console.log(d.data);
+            }, function () {
+                app.loading.step3 = true;
             })
         },
-        // 获取某张表的所有字段
-        getColumnsInTable: function (tableColumn) {
-            // tableColumn.fkColumnList
-            if (tableColumn.fk === false || tableColumn.fkTable === '' || tableColumn.fkTable == null)
-                return;
-            let app = this;
-            let data = {
-                tableName: tableColumn.fkTable
-            };
-            ajaxPost(app.urls.selectColumnsInTable, data, function (d) {
-                tableColumn.fkColumnList = [];
-                for(let i = 0;i < d.data.length;i ++){
-                    tableColumn.fkColumnList.push(d.data[i]);
-                }
-            })
-        }
     },
     mounted: function () {
         let app = this;

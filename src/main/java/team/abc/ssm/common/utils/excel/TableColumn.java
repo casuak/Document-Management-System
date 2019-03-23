@@ -9,8 +9,8 @@ public class TableColumn {
 
     private boolean fk; // 是否是外键
     private String fkTable; // 外键指向的表
-    private String fkOriginalFiled; // 原字段
-    private String fkReplaceFiled; // 替换字段
+    private String fkOriginalField; // 原字段
+    private String fkReplaceField; // 替换字段
 
     public String getName() {
         return name;
@@ -60,19 +60,19 @@ public class TableColumn {
         this.fk = fk;
     }
 
-    public String getFkOriginalFiled() {
-        return fkOriginalFiled;
+    public String getFkOriginalField() {
+        return fkOriginalField;
     }
 
-    public void setFkOriginalFiled(String fkOriginalFiled) {
-        this.fkOriginalFiled = fkOriginalFiled;
+    public void setFkOriginalField(String fkOriginalField) {
+        this.fkOriginalField = fkOriginalField;
     }
 
-    public String getFkReplaceFiled() {
-        return fkReplaceFiled;
+    public String getFkReplaceField() {
+        return fkReplaceField;
     }
 
-    public void setFkReplaceFiled(String fkReplaceFiled) {
-        this.fkReplaceFiled = fkReplaceFiled;
+    public void setFkReplaceField(String fkReplaceField) {
+        this.fkReplaceField = fkReplaceField;
     }
 }

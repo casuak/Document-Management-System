@@ -12,4 +12,6 @@ public interface DatabaseDao {
     List<TableColumn> selectColumnsInTable(Map params);
 
     int insert(Map<String, Object> params);
+
+    List<Map<String, Object>> select2ColumnInTable(TableColumn tableColumn);
 }

@@ -26,4 +26,8 @@
             </foreach>
         </foreach>
     </insert>
+
+    <select id="select2ColumnInTable" parameterType="tableColumn" resultType="map">
+        select ${fkOriginalField}, ${fkReplaceField} from ${fkTable}
+    </select>
 </mapper>

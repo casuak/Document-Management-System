@@ -66,7 +66,7 @@
                 </div>
                 <div>
                     <el-form size="mini" label-position="top">
-                        <el-form-item v-for="tableColumn in tableColumnList"
+                        <el-form-item v-for="(tableColumn, index) in tableColumnList"
                                       :label="tableColumn.name + ' （' + tableColumn.type + '）' + '（' + tableColumn.comment + '） '">
                             <el-row>
                                 <el-select v-model="tableColumn.excelColumnIndex" clearable>
@@ -84,12 +84,13 @@
                                                :value="table"></el-option>
                                 </el-select>
                                 <span style="margin-right: 5px;">原字段</span>
-                                <el-select style="margin-right: 10px;" v-model="tableColumn.fkOriginalField">
+                                <el-select style="margin-right: 10px;" v-model="tableColumn.fkOriginalField"
+                                           :loading="tableColumn.loading">
                                     <el-option v-for="col in tableColumn.fkColumnList" :key="col.name"
                                                :label="col.name" :value="col.name"></el-option>
                                 </el-select>
                                 <span style="margin-right: 5px;">替换字段</span>
-                                <el-select v-model="tableColumn.fkReplaceField">
+                                <el-select v-model="tableColumn.fkReplaceField" :loading="tableColumn.loading">
                                     <el-option v-for="col in tableColumn.fkColumnList" :key="col.name"
                                                :label="col.name" :value="col.name"></el-option>
                                 </el-select>

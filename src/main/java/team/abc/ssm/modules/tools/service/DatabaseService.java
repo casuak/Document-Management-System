@@ -29,4 +29,16 @@ public class DatabaseService {
         databaseDao.insert(params);
         return true;
     }
+
+    public Map<String, String> select2ColumnInTable(TableColumn tableColumn) {
+        List<Map<String, Object>> list = databaseDao.select2ColumnInTable(tableColumn);
+        Map<String, String> map = new HashMap<>();
+        for (int i = 0; i < list.size(); i++) {
+            Map two = list.get(i);
+            String originalField = (String) two.get(tableColumn.getFkOriginalField());
+            String replaceField = (String) two.get(tableColumn.getFkReplaceField());
+            map.put(originalField, replaceField);
+        }
+        return map;
+    }
 }

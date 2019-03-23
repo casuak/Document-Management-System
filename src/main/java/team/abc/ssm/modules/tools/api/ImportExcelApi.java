@@ -71,6 +71,18 @@ public class ImportExcelApi extends BaseApi {
         params.put("columnList", columnList);
         Sheet sheet = ExcelUtils.getSheet(excelName, 0);
         List<List<Object>> data = new ArrayList<>();
+        // 初始化mappingList（外键映射）
+        List<Map<String, String>> mappingList = new ArrayList<>();
+        for (int i = 0; i < tableColumnList.size(); i++) {
+            Map<String, String> map = null;
+            TableColumn tableColumn = tableColumnList.get(i);
+            if (!tableColumn.isFk()) {
+                map = new HashMap<>();
+            } else {
+                map = databaseService.select2ColumnInTable(tableColumn);
+            }
+            mappingList.add(map);
+        }
         for (int rowIndex = 1; rowIndex < sheet.getLastRowNum(); rowIndex++) {
             List<Object> row = new ArrayList<>();
             row.add(IdGen.uuid());
@@ -80,7 +92,14 @@ public class ImportExcelApi extends BaseApi {
                 if (tableColumn.getExcelColumnIndex() == -1) continue;
                 Cell cell = excelRow.getCell(tableColumn.getExcelColumnIndex());
                 if (tableColumn.getType().equals("varchar")) {
-                    row.add(cell.getStringCellValue());
+                    if (tableColumn.isFk()) { // 外键替换
+                        String key = cell.getStringCellValue();
+                        String value = mappingList.get(i).get(key);
+                        if (value == null) value = key;
+                        row.add(value);
+                    } else {
+                        row.add(cell.getStringCellValue());
+                    }
                 } else if (tableColumn.getType().equals("int")) {
                     row.add((int) cell.getNumericCellValue());
                 } else if (tableColumn.getType().equals("datetime")) {
@@ -90,7 +109,7 @@ public class ImportExcelApi extends BaseApi {
             data.add(row);
         }
         params.put("data", data);
-        databaseService.insert(params);
+//        databaseService.insert(params);
         return retMsg.Set(MsgType.SUCCESS, params);
     }
 }
