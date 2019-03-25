@@ -11,10 +11,10 @@
 <div id="app" v-cloak>
     <div style="padding: 30px">
         <Steps :current="currentStep" status="process">
-            <Step title="选择导入的Excel文件" content="这里是该步骤的描述信息"></Step>
-            <Step title="选择导入的表" content="这里是该步骤的描述信息"></Step>
-            <Step title="列名映射" content="包括选择是否自动生成id，字典id替换"></Step>
-            <Step title="完成" content="这里是该步骤的描述信息"></Step>
+            <Step title="选择导入的Excel文件" content=""></Step>
+            <Step title="选择导入的表" content=""></Step>
+            <Step title="列名映射" content=""></Step>
+            <Step title="完成" content=""></Step>
         </Steps>
         <div style="margin-top: 30px;width: 850px;">
             <el-card v-if="currentStep==0">

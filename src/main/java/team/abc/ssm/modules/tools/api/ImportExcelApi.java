@@ -1,8 +1,10 @@
 package team.abc.ssm.modules.tools.api;
 
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +19,7 @@ import team.abc.ssm.common.web.MsgType;
 import team.abc.ssm.modules.tools.service.DatabaseService;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Controller
@@ -35,7 +38,7 @@ public class ImportExcelApi extends BaseApi {
         Sheet sheet = ExcelUtils.getSheet(excelFileName, 0);
         Row firstRow = sheet.getRow(0);
         List<ExcelColumn> excelColumnList = new ArrayList<>();
-        for (int colIndex = 0; colIndex < firstRow.getLastCellNum(); colIndex++) {
+        for (int colIndex = 0; colIndex <= firstRow.getLastCellNum(); colIndex++) {
             Cell cell = firstRow.getCell(colIndex);
             if (cell == null) continue;
             ExcelColumn col = new ExcelColumn();
@@ -45,7 +48,8 @@ public class ImportExcelApi extends BaseApi {
         }
         Map<String, Object> result = new HashMap<>();
         List<TableColumn> tableColumnList = databaseService.selectColumnsInTable(tableName);
-        tableColumnList = tableColumnList.subList(0, tableColumnList.size() - 7); // 去掉后面7个属性
+        tableColumnList = tableColumnList.subList(0, tableColumnList.size() - 6); // 去掉后面6个属性
+        tableColumnList = tableColumnList.subList(1, tableColumnList.size()); // 去掉首部的id属性
         result.put("excelColumnList", excelColumnList);
         result.put("tableColumnList", tableColumnList);
         return retMsg.Set(MsgType.SUCCESS, result);
@@ -65,8 +69,7 @@ public class ImportExcelApi extends BaseApi {
         columnList.add("create_date");
         columnList.add("modify_user_id");
         columnList.add("modify_date");
-        for (int i = 0; i < tableColumnList.size(); i++) {
-            TableColumn tableColumn = tableColumnList.get(i);
+        for (TableColumn tableColumn : tableColumnList) {
             if (tableColumn.getExcelColumnIndex() == -1) continue;
             columnList.add(tableColumn.getName());
         }
@@ -75,9 +78,8 @@ public class ImportExcelApi extends BaseApi {
         List<List<Object>> data = new ArrayList<>();
         // 初始化mappingList（外键映射）
         List<Map<String, String>> mappingList = new ArrayList<>();
-        for (int i = 0; i < tableColumnList.size(); i++) {
+        for (TableColumn tableColumn : tableColumnList) {
             Map<String, String> map;
-            TableColumn tableColumn = tableColumnList.get(i);
             if (!tableColumn.isFk()) {
                 map = new HashMap<>();
             } else {
@@ -87,7 +89,7 @@ public class ImportExcelApi extends BaseApi {
         }
         String userId = UserUtils.getCurrentUser().getId();
         Date now = new Date();
-        for (int rowIndex = 1; rowIndex < sheet.getLastRowNum(); rowIndex++) {
+        for (int rowIndex = 1; rowIndex <= sheet.getLastRowNum(); rowIndex++) {
             List<Object> row = new ArrayList<>();
             row.add(IdGen.uuid());
             row.add(userId);
@@ -99,19 +101,32 @@ public class ImportExcelApi extends BaseApi {
                 TableColumn tableColumn = tableColumnList.get(i);
                 if (tableColumn.getExcelColumnIndex() == -1) continue;
                 Cell cell = excelRow.getCell(tableColumn.getExcelColumnIndex());
-                if (tableColumn.getType().equals("varchar")) {
-                    if (tableColumn.isFk()) { // 外键替换
-                        String key = cell.getStringCellValue();
-                        String value = mappingList.get(i).get(key);
-                        if (value == null) value = key;
-                        row.add(value);
-                    } else {
-                        row.add(cell.getStringCellValue());
-                    }
-                } else if (tableColumn.getType().equals("int")) {
-                    row.add((int) cell.getNumericCellValue());
-                } else if (tableColumn.getType().equals("datetime")) {
-                    row.add(cell.getDateCellValue());
+                switch (tableColumn.getType()) {
+                    case "varchar":
+                        if (tableColumn.isFk()) { // 外键替换
+                            String key = cell.getStringCellValue();
+                            String value = mappingList.get(i).get(key);
+                            if (value == null) value = key;
+                            row.add(value);
+                        } else {
+                            row.add(cell.getStringCellValue());
+                        }
+                        break;
+                    case "int":
+                        row.add((int) cell.getNumericCellValue());
+                        break;
+                    case "datetime":
+                        int type = cell.getCellType();
+                        if (type == XSSFCell.CELL_TYPE_NUMERIC) {
+                            double value = cell.getNumericCellValue();
+                            Date date = DateUtil.getJavaDate(value);
+                            row.add(date);
+                        } else if (type == XSSFCell.CELL_TYPE_STRING) {
+                            double value = DateUtil.convertTime(cell.getStringCellValue());
+                            Date date = DateUtil.getJavaDate(value);
+                            row.add(date);
+                        }
+                        break;
                 }
             }
             data.add(row);

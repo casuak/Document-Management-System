@@ -1,5 +1,7 @@
 package team.abc.ssm.common.utils.excel;
 
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
@@ -23,5 +25,37 @@ public class ExcelUtils {
         workbook = new XSSFWorkbook(is);
         // 只取第一个sheet
         return workbook.getSheetAt(sheetIndex);
+    }
+
+    public static Object getCellValue(Row row, int colIndex) {
+        Object val;
+        try {
+            Cell cell = row.getCell(colIndex);
+            if (cell != null) {
+                switch (cell.getCellType()) {
+                    case Cell.CELL_TYPE_NUMERIC:
+                        val = cell.getNumericCellValue();
+                        break;
+                    case Cell.CELL_TYPE_STRING:
+                        val = cell.getStringCellValue();
+                        break;
+                    case Cell.CELL_TYPE_FORMULA:
+                        val = cell.getCellFormula();
+                        break;
+                    case Cell.CELL_TYPE_BOOLEAN:
+                        val = cell.getBooleanCellValue();
+                        break;
+                    case Cell.CELL_TYPE_ERROR:
+                        val = cell.getErrorCellValue();
+                        break;
+                    default:
+                        val = null;
+                        break;
+                }
+            } else val = null;
+        } catch (Exception e) {
+            return null;
+        }
+        return val;
     }
 }

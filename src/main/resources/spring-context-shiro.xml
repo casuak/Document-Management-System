@@ -72,8 +72,8 @@
 
     <!-- 会话管理器 -->
     <bean id="sessionManager" class="org.apache.shiro.web.session.mgt.DefaultWebSessionManager">
-        <!-- 全局会话超时时间（默认30分钟，单位毫秒） -->
-        <property name="globalSessionTimeout" value="1800000"/>
+        <!-- 全局会话超时时间（默认300分钟，单位毫秒） -->
+        <property name="globalSessionTimeout" value="18000000"/>
         <property name="deleteInvalidSessions" value="true"/>
         <property name="sessionValidationSchedulerEnabled" value="true"/>
         <property name="sessionValidationScheduler" ref="sessionValidationScheduler"/>
