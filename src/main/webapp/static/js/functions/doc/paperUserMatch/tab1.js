@@ -6,7 +6,7 @@ let app = new Vue({
             insertEntity: '/api/sys/role/insert',
             deleteEntityListByIds: '/api/sys/role/deleteListByIds',
             updateEntity: '/api/sys/role/update',
-            selectEntityListByPage: '/api/sys/role/selectListByPage',
+            selectEntityListByPage: '/api/doc/paper/selectListByPage',
         },
         fullScreenLoading: false,
         table: {

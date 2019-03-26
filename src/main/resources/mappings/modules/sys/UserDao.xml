@@ -70,8 +70,8 @@
         left join sys_map_user_role b on a.id = b.user_id
         left join sys_role c on b.role_id = c.id
         where a.id in
-        <foreach collection="list" open="(" separator="," close=")" item="user">
-            #{user.id}
+        <foreach collection="list" open="(" separator="," close=")" item="item">
+            #{item.id}
         </foreach>
     </select>
 

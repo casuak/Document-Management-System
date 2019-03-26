@@ -103,6 +103,10 @@ public class ImportExcelApi extends BaseApi {
                 Cell cell = excelRow.getCell(tableColumn.getExcelColumnIndex());
                 switch (tableColumn.getType()) {
                     case "varchar":
+                        if (cell.getCellType() != Cell.CELL_TYPE_STRING) {
+                            row.add(null);
+                            break;
+                        }
                         if (tableColumn.isFk()) { // 外键替换
                             String key = cell.getStringCellValue();
                             String value = mappingList.get(i).get(key);
@@ -113,7 +117,8 @@ public class ImportExcelApi extends BaseApi {
                         }
                         break;
                     case "int":
-                        row.add((int) cell.getNumericCellValue());
+                        if (cell.getCellType() != Cell.CELL_TYPE_NUMERIC)
+                            row.add((int) cell.getNumericCellValue());
                         break;
                     case "datetime":
                         int type = cell.getCellType();
@@ -122,9 +127,13 @@ public class ImportExcelApi extends BaseApi {
                             Date date = DateUtil.getJavaDate(value);
                             row.add(date);
                         } else if (type == XSSFCell.CELL_TYPE_STRING) {
-                            double value = DateUtil.convertTime(cell.getStringCellValue());
-                            Date date = DateUtil.getJavaDate(value);
-                            row.add(date);
+                            try {
+                                double value = DateUtil.convertTime(cell.getStringCellValue());
+                                Date date = DateUtil.getJavaDate(value);
+                                row.add(date);
+                            } catch (IllegalArgumentException e){
+                                row.add(null);
+                            }
                         }
                         break;
                 }

@@ -86,7 +86,12 @@ public class ViewController extends BaseController {
         return "functions/doc/paperUserMatch";
     }
 
-    // 论文用户匹配的四个标签页
+    // 论文用户匹配的5个标签页
+    @RequestMapping(value = "functions/doc/paperUserMatch/tab0", method = RequestMethod.GET)
+    public String doc_paperUserMatch_tab0(){
+        return "functions/doc/paperUserMatch/tab0";
+    }
+
     @RequestMapping(value = "functions/doc/paperUserMatch/tab1", method = RequestMethod.GET)
     public String doc_paperUserMatch_tab1(){
         return "functions/doc/paperUserMatch/tab1";

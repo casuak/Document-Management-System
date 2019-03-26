@@ -10,18 +10,9 @@
 <body>
 <div id="app" v-cloak>
     <%-- 未匹配；匹配出错；匹配成功；匹配完成 --%>
-    <el-tabs v-model="activeTabName" style="padding: 5px 20px;">
-        <el-tab-pane label="未匹配" name="tab1">
-            <iframe src="/functions/doc/paperUserMatch/tab1"></iframe>
-        </el-tab-pane>
-        <el-tab-pane label="匹配出错" name="tab2">
-            <iframe src="/functions/doc/paperUserMatch/tab2"></iframe>
-        </el-tab-pane>
-        <el-tab-pane label="匹配成功" name="tab3">
-            <iframe src="/functions/doc/paperUserMatch/tab3"></iframe>
-        </el-tab-pane>
-        <el-tab-pane label="匹配完成" name="tab4">
-            <iframe src="/functions/doc/paperUserMatch/tab4"></iframe>
+    <el-tabs v-model="activeTabName" style="height: 100%;overflow-y: hidden">
+        <el-tab-pane v-for="tab in tabList" :label="tab.label" :name="tab.name"  :lazy="true">
+            <iframe :src="tab.src"></iframe>
         </el-tab-pane>
     </el-tabs>
 </div>
