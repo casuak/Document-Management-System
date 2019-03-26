@@ -47,12 +47,26 @@ public class ImportExcelApi extends BaseApi {
             excelColumnList.add(col);
         }
         Map<String, Object> result = new HashMap<>();
-        List<TableColumn> tableColumnList = databaseService.selectColumnsInTable(tableName);
-        tableColumnList = tableColumnList.subList(0, tableColumnList.size() - 6); // 去掉后面6个属性
-        tableColumnList = tableColumnList.subList(1, tableColumnList.size()); // 去掉首部的id属性
+        List<TableColumn> _tableColumnList = databaseService.selectColumnsInTable(tableName);
+        // delete 7 properties whose name in (id, remarks, create_user_id, create_date,
+        // modify_user_id, modify_date, del_flag)
+        List<TableColumn> tableColumnList = new ArrayList<>();
+        for (TableColumn tableColumn : _tableColumnList) {
+            if (isColumnUseful(tableColumn.getName()))
+                tableColumnList.add(tableColumn);
+        }
         result.put("excelColumnList", excelColumnList);
         result.put("tableColumnList", tableColumnList);
         return retMsg.Set(MsgType.SUCCESS, result);
+    }
+
+    private boolean isColumnUseful(String columnName) {
+        String[] excludeColumns = new String[]{"id", "remarks", "create_user_id", "create_date", "modify_user_id", "modify_date", "del_flag"};
+        for (String s : excludeColumns) {
+            if (s.equals(columnName))
+                return false;
+        }
+        return true;
     }
 
     @RequestMapping(value = "excelToTable", method = RequestMethod.POST)
@@ -131,7 +145,7 @@ public class ImportExcelApi extends BaseApi {
                                 double value = DateUtil.convertTime(cell.getStringCellValue());
                                 Date date = DateUtil.getJavaDate(value);
                                 row.add(date);
-                            } catch (IllegalArgumentException e){
+                            } catch (IllegalArgumentException e) {
                                 row.add(null);
                             }
                         }

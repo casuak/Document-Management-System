@@ -1,13 +1,13 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ include file="/WEB-INF/views/include/taglib.jsp" %>
 <!DOCTYPE html>
-<html>
+<html style="overflow-y: auto;">
 <head>
     <title>ssm</title>
     <%@include file="/WEB-INF/views/include/blankHead.jsp" %>
     <link rel="stylesheet" href="/static/css/functions/tools/importExcel.css"/>
 </head>
-<body>
+<body style="overflow-y: auto;">
 <div id="app" v-cloak>
     <div style="padding: 30px">
         <Steps :current="currentStep" status="process">
