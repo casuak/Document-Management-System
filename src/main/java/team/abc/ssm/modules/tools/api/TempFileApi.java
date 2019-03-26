@@ -2,6 +2,7 @@ package team.abc.ssm.modules.tools.api;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -37,5 +38,29 @@ public class TempFileApi extends BaseApi {
             e.printStackTrace();
             return retMsg.Set(MsgType.ERROR);
         }
+    }
+
+    /*下载论文模板*/
+    @RequestMapping(value = "download",method = RequestMethod.GET)
+    @ResponseBody
+    public ResponseEntity<byte[]> download(
+            HttpServletRequest request
+    ) throws IOException {
+        String absoluteDirectory = request.getSession().getServletContext().getRealPath("/static");
+        System.out.println("abPath: "+absoluteDirectory);
+
+        String basePath = request.getSession().getServletContext().getRealPath("");
+        System.out.println("basePath: "+basePath);
+
+        String fileName = new String("论文导入模板".getBytes("UTF-8"),"iso-8859-1");
+        String fileType = "xlsx";
+
+        File file = new File(basePath+"static\\document\\论文导入模板.xlsx");
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+        headers.setContentDispositionFormData("attachment", fileName + "." + fileType);
+
+        return new ResponseEntity<>(FileUtils.readFileToByteArray(file), headers, HttpStatus.OK);
     }
 }

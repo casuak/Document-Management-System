@@ -12,6 +12,6 @@
 HOME
 </div>
 <%@include file="/WEB-INF/views/include/blankScript.jsp" %>
-<script src="/static/js/functions/home.js"></script>
+<%--<script src="/static/js/functions/home.js"></script>--%>
 </body>
 </html>

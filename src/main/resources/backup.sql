@@ -1,3 +1,9 @@
+-- 初始化数据库
+drop database if exists docManager;
+create database docManager;
+ALTER DATABASE docManager CHARACTER SET 'utf8mb4' COLLATE 'utf8mb4_unicode_ci';
+use docManager;
+
 create table common_map_teacher_student
 (
   id             varchar(100)         not null

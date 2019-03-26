@@ -16,10 +16,14 @@
             <Step title="列名映射" content=""></Step>
             <Step title="完成" content=""></Step>
         </Steps>
-        <div style="margin-top: 30px;width: 850px;">
+        <div style="margin: 30px 0px 0px 100px ;width: 850px;">
             <el-card v-if="currentStep==0">
                 <div slot="header">
                     <span>选择导入的Excel文件</span>
+                    <el-button type="primary" plain size="small"
+                               @click="downloadExcelTemp()">
+                        导入模板下载
+                    </el-button>
                 </div>
                 <div>
                     <Upload type="drag" action="/api/tools/tempFile/upload" ref="upload"
@@ -27,7 +31,7 @@
                             :default-file-list="fileList">
                         <div style="padding: 20px 0">
                             <Icon type="ios-cloud-upload" size="52" style="color: #3399ff"></Icon>
-                            <p>Click or drag files here to upload</p>
+                            <p>点击或者拖拽文件上传</p>
                         </div>
                     </Upload>
                     <el-row type="flex" justify="end" style="margin-top: 15px;">
@@ -127,5 +131,11 @@
 </div>
 <%@include file="/WEB-INF/views/include/blankScript.jsp" %>
 <script src="/static/js/functions/tools/importExcel.js"></script>
+<script>
+    //下载论文导入的Excel模板
+    function downloadExcelTemp(){
+        window.open("/api/tools/tempFile/download");
+    }
+</script>
 </body>
 </html>

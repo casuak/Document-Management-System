@@ -113,7 +113,7 @@ let app = new Vue({
             }, function () {
                 app.loading.step3 = false;
             })
-        },
+        }
     },
     mounted: function () {
         let app = this;
