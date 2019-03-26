@@ -19,7 +19,7 @@
         <result column="store_num" jdbcType="VARCHAR" property="storeNum"/>
         <result column="doc_type" jdbcType="VARCHAR" property="docType"/>
         <result column="publish_date" jdbcType="TIMESTAMP" property="publishDate"/>
-        <result column="journal_id" jdbcType="VARCHAR" property="ISSN"/>
+        <result column="ISSN" jdbcType="VARCHAR" property="ISSN"/>
         <result column="remarks" jdbcType="VARCHAR" property="remarks"/>
         <result column="create_user_id" jdbcType="VARCHAR" property="createUserId"/>
         <result column="modify_user_id" jdbcType="VARCHAR" property="modifyUserId"/>
@@ -366,7 +366,7 @@
                     when id = #{item.id,jdbcType=VARCHAR} then #{item.publishDate,jdbcType=TIMESTAMP}
                 </foreach>
             </trim>
-            <trim prefix="journal_id = case" suffix="end,">
+            <trim prefix="ISSN = case" suffix="end,">
                 <foreach collection="list" index="index" item="item">
                     when id = #{item.id,jdbcType=VARCHAR} then #{item.ISSN,jdbcType=VARCHAR}
                 </foreach>

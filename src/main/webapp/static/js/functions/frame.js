@@ -84,7 +84,7 @@ app = new Vue({
             document.getElementById(iframeId).contentWindow.location.reload(true);
         },
         // 通用方法1：消息提示
-        showMessage: function(message, type){
+        showMessage: function(message, type='success'){
             this.$message({
                 message: message,
                 type: type

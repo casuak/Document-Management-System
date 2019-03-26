@@ -22,6 +22,10 @@ public class UserService {
         return userDao.selectAll();
     }
 
+    public List<User> selectTeacherStudentList(){
+        return userDao.selectTeacherStudentList();
+    }
+
     public Page<User> getUsersByPage(User user) {
         // 先获取分页的users
         List<User> userList = userDao.selectByPage(user);

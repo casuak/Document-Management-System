@@ -1,5 +1,6 @@
 package team.abc.ssm.modules.doc.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -8,12 +9,17 @@ import java.util.List;
 
 import team.abc.ssm.modules.doc.dao.PaperDao;
 import team.abc.ssm.modules.doc.entity.Paper;
+import team.abc.ssm.modules.sys.entity.User;
+import team.abc.ssm.modules.sys.service.UserService;
 
 @Service
 public class PaperService {
 
     @Resource
     private PaperDao paperDao;
+
+    @Autowired
+    private UserService userService;
 
     public int deleteByPrimaryKey(String id) {
         return paperDao.deleteByPrimaryKey(id);
@@ -104,5 +110,19 @@ public class PaperService {
     public boolean deleteListByIds(List<Paper> paperList) {
         int count = paperDao.deleteListByIds(paperList);
         return count == paperList.size();
+    }
+
+    // match user
+    public boolean paperUserMatch() {
+        Paper params = new Paper();
+        params.setStatus("0");
+        List<Paper> paperList = paperDao.selectListByStatus(params);
+        List<User> userList = userService.selectTeacherStudentList();
+        for (Paper paper : paperList) {
+            String firstAuthorName = paper.getFirstAuthorName();
+            String secondAuthorName = paper.getSecondAuthorName();
+            // TODO: match author name with userList and set authorId if match success
+        }
+        return true;
     }
 }

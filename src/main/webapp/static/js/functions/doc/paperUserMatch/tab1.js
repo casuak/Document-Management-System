@@ -4,9 +4,10 @@ let app = new Vue({
         urls: {
             // api for entity
             insertEntity: '/api/sys/role/insert',
-            deleteEntityListByIds: '/api/sys/role/deleteListByIds',
+            deleteEntityListByIds: '/api/doc/paper/deleteListByIds',
             updateEntity: '/api/sys/role/update',
             selectEntityListByPage: '/api/doc/paper/selectListByPage',
+            paperUserMatch: '/api/doc/paper/paperUserMatch'
         },
         fullScreenLoading: false,
         table: {
@@ -65,10 +66,10 @@ let app = new Vue({
         },
         deleteEntityListByIds: function (val) {
             if (val.length === 0) {
-                window.parent.app.showMessage('提示：未选中任何项', 'warning');
+                window.parent.parent.app.showMessage('提示：未选中任何项', 'warning');
                 return;
             }
-            window.parent.app.$confirm('确认删除选中的项', '警告', {
+            window.parent.parent.app.$confirm('确认删除选中的项', '警告', {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',
                 type: 'warning'
@@ -78,11 +79,11 @@ let app = new Vue({
                 app.fullScreenLoading = true;
                 ajaxPostJSON(this.urls.deleteEntityListByIds, data, function (d) {
                     app.fullScreenLoading = false;
-                    window.parent.app.showMessage('删除成功！', 'success');
+                    window.parent.parent.app.showMessage('删除成功！', 'success');
                     app.refreshTable_entity();
                 })
             }).catch(() => {
-                window.parent.app.showMessage('已取消删除', 'warning');
+                window.parent.parent.app.showMessage('已取消删除', 'warning');
             });
         },
         updateEntity: function () {
@@ -109,7 +110,10 @@ let app = new Vue({
             });
         },
         selectEntityListByPage: function () {
-            let data = {page: this.table.entity.params};
+            let data = {
+                page: this.table.entity.params,
+                status: '0'
+            };
             let app = this;
             app.table.entity.loading = true;
             ajaxPostJSON(this.urls.selectEntityListByPage, data, function (d) {
@@ -117,6 +121,14 @@ let app = new Vue({
                 app.table.entity.data = d.data.resultList;
                 app.table.entity.params.total = d.data.total;
             });
+        },
+        // match paper's (status = '0') author with user
+        paperUserMatch: function () {
+            let app = this;
+            app.fullScreenLoading = true;
+            ajaxPost(app.urls.paperUserMatch, null, function (d) {
+                app.fullScreenLoading = false;
+            })
         },
         // 刷新entity table数据
         refreshTable_entity: function () {

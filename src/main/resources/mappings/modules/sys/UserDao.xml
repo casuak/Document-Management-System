@@ -46,6 +46,10 @@
         left join sys_role c on b.role_id = c.id
     </select>
 
+    <select id="selectTeacherStudentList" resultMap="userBean">
+        select a.* from sys_user a where a.user_type = 'teacher' or a.user_type = 'student'
+    </select>
+
     <!-- 分页 + 搜索(模糊匹配用户名)获取用户id列表 -->
     <select id="selectByPage" parameterType="team.abc.ssm.modules.sys.entity.User" resultMap="userBean">
         select

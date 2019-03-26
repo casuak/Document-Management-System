@@ -49,12 +49,9 @@ public class UserApi extends BaseApi {
     @RequestMapping(value = "update", method = RequestMethod.POST)
     @ResponseBody
     public Object update(@RequestBody User user) {
-        boolean success1 = userService.update(user);
-        boolean success2 = userRoleService.update(user, user.getRoleList());
-        if (success1 && success2)
+        if (userService.update(user))
             return retMsg.Set(MsgType.SUCCESS);
-        else
-            return retMsg.Set(MsgType.ERROR);
+        return retMsg.Set(MsgType.ERROR);
     }
 
     @RequestMapping(value = "getList", method = RequestMethod.POST)

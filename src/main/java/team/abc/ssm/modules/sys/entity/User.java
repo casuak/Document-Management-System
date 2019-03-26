@@ -7,7 +7,7 @@ import java.util.List;
 
 public class User extends DataEntity<User> {
 
-    private String userTypeId;
+    private String userType;
     private String sexId;
     private String username;
     private String password;
@@ -51,12 +51,12 @@ public class User extends DataEntity<User> {
         this.roleList = roleList;
     }
 
-    public String getUserTypeId() {
-        return userTypeId;
+    public String getUserType() {
+        return userType;
     }
 
-    public void setUserTypeId(String userTypeId) {
-        this.userTypeId = userTypeId;
+    public void setUserType(String userType) {
+        this.userType = userType;
     }
 
     public String getSexId() {

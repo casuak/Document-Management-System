@@ -12,7 +12,7 @@
     <%-- 顶栏 --%>
     <div style="padding: 15px 20px 0px 15px;">
         <span class="button-group">
-            <el-button size="small" type="success" @click="dialog.addUser.visible = true">
+            <el-button size="small" type="success" @click="openInsert()">
                 <span>添加用户</span>
             </el-button>
             <el-button size="small" type="danger" @click="deleteUser(table.selectionList)" style="margin-left: 10px;">
@@ -24,7 +24,8 @@
                       style="width: 250px;margin-right: 10px;" v-model="table.params.searchKey"
                       @keyup.enter.native="table.params.pageIndex=1;getUserList()">
             </el-input>
-            <el-button size="small" type="primary" style="position:relative;" @click="table.params.pageIndex=1;getUserList()">
+            <el-button size="small" type="primary" style="position:relative;"
+                       @click="table.params.pageIndex=1;getUserList()">
                 <span>搜索</span>
             </el-button>
         </span>
@@ -41,12 +42,18 @@
                 {{ formatTimestamp(scope.row.createDate) }}
             </template>
         </el-table-column>
-        <el-table-column label="操作" width="130" header-align="center" align="center">
+        <el-table-column label="操作" width="190" header-align="center" align="center">
             <template slot-scope="scope">
-                <el-button type="warning" size="mini" style="position:relative;bottom: 1px;" @click="openEditUser(scope.row)">
+                <el-button type="success" size="mini" style="position:relative;bottom: 1px;"
+                           @click="openMapRole(scope.row)">
+                    <span>角色</span>
+                </el-button>
+                <el-button type="warning" size="mini" style="position:relative;bottom: 1px;margin-left: 6px;"
+                           @click="openUpdate(scope.row)">
                     <span>编辑</span>
                 </el-button>
-                <el-button type="danger" size="mini" style="position:relative;bottom: 1px;margin-left: 6px;" @click="deleteUser(scope.row.id, 'single')">
+                <el-button type="danger" size="mini" style="position:relative;bottom: 1px;margin-left: 6px;"
+                           @click="deleteUser(scope.row.id, 'single')">
                     <span>删除</span>
                 </el-button>
             </template>
@@ -63,72 +70,44 @@
                    :total="table.params.total"
                    layout="total, sizes, prev, pager, next, jumper">
     </el-pagination>
-    <%-- 添加窗口 --%>
-    <el-dialog title="添加用户" :visible.sync="dialog.addUser.visible" @close="resetForm('form_addUser')">
+    <%-- 添加或编辑窗口 --%>
+    <el-dialog :title="dialog.insertOrUpdate.status == 'insert' ? '添加用户' : '编辑用户'"
+               :visible.sync="dialog.insertOrUpdate.visible" @close="resetForm('form_insertOrUpdate')">
         <el-form label-position="left" label-width="80px" style="padding: 0 100px;"
-                 :model="dialog.addUser.formData" :rules="dialog.addUser.rules"
-                 ref="form_addUser" v-loading="dialog.addUser.loading" status-icon >
-            <el-form-item label="用户名" prop="username" class="is-required">
-                <el-input v-model="dialog.addUser.formData.username"></el-input>
+                 :model="dialog.insertOrUpdate.formData" :rules="dialog.insertOrUpdate.rules"
+                 ref="form_insertOrUpdate" v-loading="dialog.insertOrUpdate.loading" status-icon>
+            <el-form-item label="用户名" :prop="dialog.insertOrUpdate.status == 'insert' ? 'username' : null"
+                          class="is-required">
+                <el-input v-model="dialog.insertOrUpdate.formData.username"
+                          :disabled="dialog.insertOrUpdate.status == 'update'"></el-input>
             </el-form-item>
             <el-form-item label="密码" prop="password">
-                <el-input v-model="dialog.addUser.formData.password"></el-input>
+                <el-input v-model="dialog.insertOrUpdate.formData.password"></el-input>
+            </el-form-item>
+            <el-form-item label="用户类型" prop="userType">
+                <el-select v-model="dialog.insertOrUpdate.formData.userType" placeholder="请选择">
+                    <el-option v-for="userType in dialog.insertOrUpdate.userTypeList" :key="userType.value"
+                               :label="userType.label" :value="userType.value"></el-option>
+                </el-select>
             </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
-            <el-button size="medium" @click="dialog.addUser.visible=false">取 消</el-button>
-            <el-button size="medium" type="primary" @click="addUser()" style="margin-left: 10px;">提 交</el-button>
+            <el-button size="medium" @click="dialog.insertOrUpdate.visible=false">取 消</el-button>
+            <el-button v-if="dialog.insertOrUpdate.status == 'insert'"
+                       size="medium" type="primary" @click="insertOrUpdate()" style="margin-left: 10px;">提 交
+            </el-button>
+            <el-button v-else size="medium" type="primary" @click="insertOrUpdate()" style="margin-left: 10px;">提 交
+            </el-button>
         </div>
     </el-dialog>
-    <%-- 编辑窗口 --%>
-    <el-dialog title="编辑用户" :visible.sync="dialog.editUser.visible">
-        <el-form label-position="left" label-width="80px"
-                 style="padding: 0 100px;overflow-y: scroll;"
-                 :model="dialog.editUser.formData" :rules="dialog.editUser.rules"
-                 ref="form_editUser" v-loading="dialog.editUser.loading" status-icon size="medium">
-            <el-form-item label="用户名" prop="username" class="is-required">
-                <el-input v-model="dialog.editUser.formData.username" disabled></el-input>
-            </el-form-item>
-            <el-form-item label="密码" prop="password">
-                <el-input v-model="dialog.editUser.formData.password"></el-input>
-            </el-form-item>
-            <%-- 一个角色都没有时显示 --%>
-            <el-form-item v-if="dialog.editUser.formData.roleList.length == 0" label="相关角色">
-                <el-dropdown @command="addRoleIntoUser" placement="right" trigger="click">
-                    <el-button>添加</el-button>
-                    <el-dropdown-menu slot="dropdown">
-                        <el-dropdown-item v-for="(role2, index) in dialog.editUser.roleOptions"
-                                          :command="role2">
-                            {{ role2.name }}
-                        </el-dropdown-item>
-                        <el-dropdown-item v-if="dialog.editUser.roleOptions.length == 0">
-                            没有角色啦
-                        </el-dropdown-item>
-                    </el-dropdown-menu>
-                </el-dropdown>
-            </el-form-item>
-            <el-form-item v-for="(role, index) in dialog.editUser.formData.roleList"
-                          :label="index == 0 ? '相关角色' : ''" :key="role.id">
-                <el-input v-model="role.name" :disabled="true" style="width: 195px;"></el-input>
-                <el-button @click="deleteRoleFromUser(role)">删除</el-button>
-                <el-dropdown v-if="index == dialog.editUser.formData.roleList.length - 1" @command="addRoleIntoUser"
-                             placement="right" trigger="click">
-                    <el-button>添加</el-button>
-                    <el-dropdown-menu slot="dropdown">
-                        <el-dropdown-item v-for="(role2, index) in dialog.editUser.roleOptions"
-                                          :command="role2">
-                            {{ role2.name }}
-                        </el-dropdown-item>
-                        <el-dropdown-item v-if="dialog.editUser.roleOptions.length == 0" command="noRole">
-                            没有角色啦
-                        </el-dropdown-item>
-                    </el-dropdown-menu>
-                </el-dropdown>
-            </el-form-item>
-        </el-form>
+    <%-- 编辑用户-角色关联 --%>
+    <el-dialog title="关联角色" :visible.sync="dialog.mapRole.visible" v-loading="dialog.mapRole.loading">
+        <el-tree ref="tree" :data="roleTree" :props="{label:'name'}" node-key="id" show-checkbox
+                 style="height: 300px;overflow-y: auto;">
+        </el-tree>
         <div slot="footer" class="dialog-footer">
-            <el-button size="medium" @click="dialog.editUser.visible=false">取 消</el-button>
-            <el-button size="medium" type="primary" @click="editUser()" style="margin-left: 10px;">提 交</el-button>
+            <el-button size="medium" @click="dialog.mapRole.visible=false">取 消</el-button>
+            <el-button size="medium" type="primary" @click="updateUserRole()" style="margin-left: 10px;">保 存</el-button>
         </div>
     </el-dialog>
 </div>

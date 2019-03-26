@@ -12,15 +12,15 @@
     <%-- 顶栏 --%>
     <div style="padding: 10px 20px 0 15px;">
         <span class="button-group">
-            <el-button size="small" type="success" @click="dialog.insertEntity.visible=true">
-                <span>添加论文</span>
-            </el-button>
+            <%--<el-button size="small" type="success" @click="dialog.insertEntity.visible=true">--%>
+                <%--<span>添加论文</span>--%>
+            <%--</el-button>--%>
             <el-button size="small" type="danger" @click="deleteEntityListByIds(table.entity.selectionList)"
                        style="margin-left: 10px;">
                 <span>批量删除</span>
             </el-button>
-            <el-button size="small" type="primary" style="margin-left: 10px;">
-                <span>将第一、二作者名和校内教师/学生进行匹配</span>
+            <el-button size="small" type="primary" style="margin-left: 10px;" @click="paperUserMatch()">
+                <span>自动匹配</span>
             </el-button>
         </span>
         <span style="float: right;margin-right: 10px;">
@@ -39,34 +39,33 @@
               style="width: 100%;overflow-y: hidden;margin-top: 10px;" class="scroll-bar"
               @selection-change="onSelectionChange_entity" stripe>
         <el-table-column type="selection" width="40"></el-table-column>
-        <el-table-column label="论文名" width="180">
+        <el-table-column label="论文名" min-width="30">
             <template slot-scope="scope">
                 <el-Tooltip open-delay="500" effect="dark" :content="scope.row.paperName" placement="top">
-                    <div style="overflow: hidden;text-overflow:ellipsis;white-space: nowrap;width: 150px;">
+                    <div style="overflow: hidden;text-overflow:ellipsis;white-space: nowrap;width: 95%;">
                         {{ scope.row.paperName }}
                     </div>
                 </el-Tooltip>
             </template>
         </el-table-column>
-        <el-table-column label="作者列表" width="180">
+        <el-table-column label="作者列表" min-width="20">
             <template slot-scope="scope">
                 <el-Tooltip open-delay="500" effect="dark" :content="scope.row.authorList" placement="top">
-                    <div style="overflow: hidden;text-overflow:ellipsis;white-space: nowrap;width: 150px;">
+                    <div style="overflow: hidden;text-overflow:ellipsis;white-space: nowrap;width: 95%;">
                         {{ scope.row.authorList }}
                     </div>
                 </el-Tooltip>
             </template>
         </el-table-column>
-        <el-table-column label="第一作者名" width="150" prop="firstAuthorName"></el-table-column>
-        <el-table-column label="第二作者名" width="150" prop="secondAuthorName"></el-table-column>
-        <el-table-column></el-table-column>
-        <el-table-column label="操作" width="190" header-align="center" align="center">
+        <el-table-column label="第一作者名" prop="firstAuthorName" width="130"></el-table-column>
+        <el-table-column label="第二作者名" prop="secondAuthorName" width="130"></el-table-column>
+        <el-table-column label="操作" width="100" header-align="center" align="center">
             <template slot-scope="scope">
-                <el-button type="warning" size="mini" style="position:relative;bottom: 1px;"
-                           @click="openDialog_updateEntity(scope.row)">
-                    <span>编辑</span>
-                </el-button>
-                <el-button type="danger" size="mini" style="position:relative;bottom: 1px;margin-left: 6px;"
+                <%--<el-button type="warning" size="mini" style="position:relative;bottom: 1px;"--%>
+                <%--@click="openDialog_updateEntity(scope.row)">--%>
+                <%--<span>编辑</span>--%>
+                <%--</el-button>--%>
+                <el-button type="danger" size="mini" style="position:relative;bottom: 1px;"
                            @click="deleteEntityListByIds([{id: scope.row.id}])">
                     <span>删除</span>
                 </el-button>

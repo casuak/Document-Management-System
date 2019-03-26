@@ -6,7 +6,8 @@ let app = new Vue({
             putUser: '/api/sys/user/put',
             updateUser: '/api/sys/user/update',
             deleteUserList: '/api/sys/user/deleteList',
-            getAllRoleList: '/api/sys/role/selectAllList'
+            getAllRoleList: '/api/sys/role/selectAllList',
+            updateUserRole: '/api/sys/map/userRole/update'
         },
         fullScreenLoading: false,
         table: {
@@ -22,14 +23,14 @@ let app = new Vue({
             }
         },
         dialog: {
-            addUser: {
+            insertOrUpdate: {
                 visible: false,
                 loading: false,
                 formData: {
                     id: '',
                     username: '',
                     password: '',
-                    roleList: []
+                    userType: '',
                 },
                 rules: {
                     username: [
@@ -39,30 +40,25 @@ let app = new Vue({
                     password: [
                         {required: true, message: '密码不能为空', trigger: 'blur'},
                         {required: true, message: '密码不能为空', trigger: 'change'},
+                    ],
+                    nothing: [
+                        {required: true, message: '密码不能为空', trigger: 'blur'},
                     ]
                 },
+                status: '', // insert or update
+                userTypeList: [
+                    {label: '管理员', value: 'admin'},
+                    {label: '教师', value: 'teacher'},
+                    {label: '学生', value: 'student'}
+                ]
             },
-            editUser: {
+            mapRole: {
                 visible: false,
                 loading: false,
-                formData: {
-                    id: '', // 动态初始化为当前选择的用户的id
-                    username: 'null', // 不可编辑
-                    password: 'null',
-                    roleList: []
-                },
-                rules: {
-                    password: [
-                        {required: true, message: '密码不能为空', trigger: 'blur'},
-                        {required: true, message: '密码不能为空', trigger: 'change'},
-                    ]
-                },
-                roleOptions: [],
+                currentUser: null
             }
         },
-        options: {
-            roleList: [], // 页面初始化时从后端获取
-        }
+        roleTree: [],
     },
     methods: {
         // 处理选中的行变化
@@ -90,54 +86,6 @@ let app = new Vue({
                 app.table.loading = false;
                 app.table.data = d.data.resultList;
                 app.table.params.total = d.data.total;
-            });
-        },
-        // 添加用户信息提交
-        addUser: function () {
-            // 首先检测表单数据是否合法
-            this.$refs['form_addUser'].validate((valid) => {
-                if (valid) {
-                    let data = this.dialog.addUser.formData;
-                    let app = this;
-                    app.dialog.addUser.loading = true;
-                    ajaxPostJSON(this.urls.putUser, data, function (d) {
-                        app.dialog.addUser.loading = false;
-                        app.dialog.addUser.visible = false;
-                        window.parent.app.showMessage('添加成功！', 'success');
-                        app.getUserList(); // 添加完成后刷新页面
-                    }, function () {
-                        app.dialog.addUser.loading = false;
-                        app.dialog.addUser.visible = false;
-                        window.parent.app.showMessage('添加失败！', 'error');
-                    });
-                } else {
-                    console.log("表单数据不合法！");
-                    return false;
-                }
-            });
-        },
-        // 编辑用户信息提交
-        editUser: function () {
-            // 首先检测表单数据是否合法
-            this.$refs['form_editUser'].validate((valid) => {
-                if (valid) {
-                    let data = this.dialog.editUser.formData;
-                    let app = this;
-                    app.dialog.editUser.loading = true;
-                    ajaxPostJSON(this.urls.updateUser, data, function (d) {
-                        app.dialog.editUser.loading = false;
-                        app.dialog.editUser.visible = false;
-                        window.parent.app.showMessage('编辑成功！', 'success');
-                        app.getUserList(); // 编辑完成后刷新页面
-                    }, function () {
-                        app.dialog.editUser.loading = false;
-                        app.dialog.editUser.visible = false;
-                        window.parent.app.showMessage('编辑失败！', 'error');
-                    });
-                } else {
-                    console.log("表单数据不合法！");
-                    return false;
-                }
             });
         },
         // 重置表单
@@ -184,41 +132,70 @@ let app = new Vue({
                 window.parent.app.showMessage('已取消删除', 'warning');
             });
         },
-        // 打开编辑用户窗口
-        openEditUser: function (userInfo) {
-            this.dialog.editUser.visible = true;
-            this.dialog.editUser.formData = copy(userInfo);
-            let roleOptions = [];
-            let roleList = userInfo.roleList;
-            // 选择用户没有的角色添加到选项中
-            for (let i = 0; i < this.options.roleList.length; i++) {
-                let exist = false;
-                for (let j = 0; j < roleList.length; j++) {
-                    if (this.options.roleList[i].name === roleList[j].name) {
-                        exist = true;
-                        break;
-                    }
-                }
-                if (!exist) {
-                    roleOptions.push(this.options.roleList[i]);
-                }
+        // 打开关联角色窗口
+        openMapRole: function (user) {
+            let app = this;
+            app.dialog.mapRole.visible = true;
+            let idList = [];
+            for (let i = 0; i < user.roleList.length; i++) {
+                idList.push(user.roleList[i].id);
             }
-            this.dialog.editUser.roleOptions = roleOptions;
+            app.dialog.mapRole.currentUser = user;
+            setTimeout(() => {
+                app.$refs.tree.setCheckedKeys(idList);
+            }, 10);
         },
-        // 删除用户的角色
-        deleteRoleFromUser: function (role) {
-            // 将删除的角色添加到选项中
-            this.dialog.editUser.roleOptions.push(role);
-            // 删除用户的角色
-            this.dialog.editUser.formData.roleList = this.dialog.editUser.formData.roleList.filter(item => item.id !== role.id);
+        // 更新用户和角色的关联
+        updateUserRole: function () {
+            let app = this;
+            let data = copy(app.dialog.mapRole.currentUser);
+            data.roleList = [];
+            let idList = app.$refs.tree.getCheckedKeys();
+            for (let i = 0; i < idList.length; i++) {
+                data.roleList.push({id: idList[i]});
+            }
+            app.dialog.mapRole.loading = true;
+            ajaxPostJSON(app.urls.updateUserRole, data, function (d) {
+                app.dialog.mapRole.loading = false;
+                window.parent.app.showMessage('保存成功!');
+            })
         },
-        // 添加用户的角色
-        addRoleIntoUser: function (role) {
-            if (role === 'noRole') return;
-            // 将添加的角色从选项中删除
-            this.dialog.editUser.roleOptions = this.dialog.editUser.roleOptions.filter(item => item.id !== role.id);
-            // 添加用户的角色
-            this.dialog.editUser.formData.roleList.push(role);
+        // 打开添加用户窗口
+        openInsert: function () {
+            this.dialog.insertOrUpdate.visible = true;
+            this.dialog.insertOrUpdate.status = 'insert';
+        },
+        // 打开编辑用户窗口
+        openUpdate: function (user) {
+            this.dialog.insertOrUpdate.visible = true;
+            this.dialog.insertOrUpdate.status = 'update';
+            this.dialog.insertOrUpdate.formData = copy(user);
+        },
+        // 添加或编辑用户信息
+        insertOrUpdate: function () {
+            this.$refs['form_insertOrUpdate'].validate((valid) => {
+                if (valid) {
+                    let data = this.dialog.insertOrUpdate.formData;
+                    let app = this;
+                    let url = app.dialog.insertOrUpdate.status === 'insert' ? app.urls.putUser : app.urls.updateUser;
+                    app.dialog.insertOrUpdate.loading = true;
+                    ajaxPostJSON(url, data, function (d) {
+                        app.dialog.insertOrUpdate.loading = false;
+                        app.dialog.insertOrUpdate.visible = false;
+                        let successMes = app.dialog.insertOrUpdate.status === 'insert' ? '添加成功!' : '编辑成功!';
+                        window.parent.app.showMessage(successMes, 'success');
+                        app.getUserList(); // 添加完成后刷新页面
+                    }, function () {
+                        app.dialog.insertOrUpdate.loading = false;
+                        app.dialog.insertOrUpdate.visible = false;
+                        let errorMes = app.dialog.insertOrUpdate.status === 'insert' ? '添加失败!' : '编辑失败!';
+                        window.parent.app.showMessage(errorMes, 'error');
+                    });
+                } else {
+                    console.log("表单数据不合法！");
+                    return false;
+                }
+            });
         }
     },
     mounted: function () {
@@ -228,7 +205,7 @@ let app = new Vue({
         app.fullScreenLoading = true;
         ajaxPost(this.urls.getAllRoleList, data, function (d) {
             app.fullScreenLoading = false;
-            app.options.roleList = d.data;
+            app.roleTree = d.data;
             app.getUserList();
         });
     }
@@ -257,4 +234,4 @@ function validateUsername(rule, value, callback) {
             callback();
         }
     })
-};
+}

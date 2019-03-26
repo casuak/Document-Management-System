@@ -21,7 +21,7 @@
             </el-button>
         </span>
         <span style="float: right;margin-right: 10px;">
-            <el-input size="small" placeholder="请输入角色名搜索相关角色" suffix-icon="el-icon-search"
+            <el-input size="small" placeholder="请输入类型搜索相关字典类型" suffix-icon="el-icon-search"
                       style="width: 250px;margin-right: 10px;" v-model="table.entity.params.searchKey"
                       @keyup.enter.native="table.entity.params.pageIndex=1;refreshTable_entity()">
             </el-input>

@@ -16,6 +16,7 @@ public class UserUtils {
      * 返回当前登陆用户
      */
     public static User getCurrentUser() {
+        refreshCurrentUser();
         Subject subject = SecurityUtils.getSubject();
         return (User) subject.getSession().getAttribute("user");
     }

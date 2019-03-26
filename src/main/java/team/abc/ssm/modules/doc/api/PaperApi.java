@@ -47,4 +47,11 @@ public class PaperApi extends BaseApi {
         paperService.deleteListByIds(paperList);
         return retMsg.Set(MsgType.SUCCESS);
     }
+
+    @RequestMapping(value = "paperUserMatch", method = RequestMethod.POST)
+    @ResponseBody
+    public Object paperUserMatch() {
+        paperService.paperUserMatch();
+        return retMsg.Set(MsgType.SUCCESS);
+    }
 }
