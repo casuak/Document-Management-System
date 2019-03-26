@@ -1,0 +1,37 @@
+package team.abc.ssm.modules.doc.dao;
+
+import java.util.List;
+import org.apache.ibatis.annotations.Param;
+import team.abc.ssm.modules.doc.entity.Paper;
+
+public interface PaperDao {
+    int deleteByPrimaryKey(String id);
+
+    int insert(Paper record);
+
+    int insertOrUpdate(Paper record);
+
+    int insertOrUpdateSelective(Paper record);
+
+    int insertSelective(Paper record);
+
+    Paper selectByPrimaryKey(String id);
+
+    int updateByPrimaryKeySelective(Paper record);
+
+    int updateByPrimaryKey(Paper record);
+
+    int updateBatch(List<Paper> list);
+
+    int batchInsert(@Param("list") List<Paper> list);
+
+    List<Paper> selectIdsByPage(Paper paper);
+
+    List<Paper> selectListByIds(List<Paper> list);
+
+    int selectSearchCount(Paper paper);
+
+    List<Paper> selectListByStatus(Paper paper);
+
+    int deleteListByIds(List<Paper> paperList);
+}
