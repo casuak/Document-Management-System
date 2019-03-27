@@ -37,7 +37,7 @@
                     <el-row type="flex" justify="end" style="margin-top: 15px;">
                         <el-col :span="12">
                             <span style="float: right;">
-                                <el-button type="success" size="small" @click="currentStep += 1"
+                                <el-button type="success" size="small" @click="toChooseTable()"
                                            :loading="loading.step1">下一步</el-button>
                             </span>
                         </el-col>
@@ -135,6 +135,22 @@
     //下载论文导入的Excel模板
     function downloadExcelTemp(){
         window.open("/api/tools/tempFile/download");
+    }
+    function toChooseTable() {
+        let obj = app.fileList;
+        if(obj.length === 0 || obj == null){
+            app.$alert('请先导入论文表', '提示', {
+                confirmButtonText: '确定',
+                callback: action => {
+                    this.$message({
+                        type: 'warning',
+                        message: `action: ${ action }`
+                    });
+                }
+            });
+        }else{
+            app.currentStep += 1;
+        }
     }
 </script>
 </body>
