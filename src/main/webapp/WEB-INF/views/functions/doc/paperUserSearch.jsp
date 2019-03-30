@@ -39,7 +39,7 @@
 
                 <div class="textLeft" >作者身份：</div>
                 <el-col :span="4">
-                    <el-select v-model="value" placeholder="请选择作者机构">
+                    <el-select v-model="Identity" placeholder="请选择作者身份">
                         <el-option
                                 v-for="item in identityList"
                                 :key="item.value"
@@ -51,7 +51,7 @@
 
                 <div class="textLeft">作者机构：</div>
                 <el-col :span="4">
-                    <el-select v-model="value" placeholder="请选择作者机构">
+                    <el-select v-model="institution" placeholder="请选择作者机构">
                         <el-option
                                 v-for="item in orgList"
                                 :key="item.value"
@@ -169,7 +169,8 @@
                 value: '选项5',
                 label: '车辆学院'
             }],
-            value: '',
+            Identity: '',
+            institution:'',
             tableData: [{
                 date: '2016-05-03',
                 name: '王小虎',

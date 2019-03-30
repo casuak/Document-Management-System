@@ -9,7 +9,7 @@
 </head>
 <body>
 <div id="app" v-cloak style="background: white;">
-HOME
+    HOME
 </div>
 <%@include file="/WEB-INF/views/include/blankScript.jsp" %>
 <%--<script src="/static/js/functions/home.js"></script>--%>
