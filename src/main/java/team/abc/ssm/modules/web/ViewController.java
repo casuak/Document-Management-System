@@ -4,6 +4,8 @@ import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
 import team.abc.ssm.common.web.BaseController;
 
 @Controller
@@ -66,11 +68,32 @@ public class ViewController extends BaseController {
     }
 
     /**
-     * 附加功能
+     * 工具箱
      **/
     @RequestMapping(value = "functions/tools/importExcel", method = RequestMethod.GET)
-    public String tools_importExcel() {
-        return "functions/tools/importExcel";
+    public String tool_importExcel() {
+        return "functions/tool/importExcel";
+    }
+
+    // excel导入的两个子页面
+    @RequestMapping(value = "functions/tool/importExcel/importData", method = RequestMethod.GET)
+    public String tool_importExcel_importData() {
+        return "functions/tool/importExcel/importData";
+    }
+
+    @RequestMapping(value = "functions/tool/importExcel/templateManager", method = RequestMethod.GET)
+    public String tool_importExcel_templateManager() {
+        return "functions/tool/importExcel/templateManager";
+    }
+
+    @RequestMapping(value = "functions/tool/importExcel/insertOrUpdateTemplate", method = RequestMethod.GET)
+    public ModelAndView tool_importExcel_insertOrUpdateTemplate(
+            @RequestParam("status") String status,
+            @RequestParam("templateId") String templateId) {
+        ModelAndView mv = new ModelAndView("functions/tool/importExcel/insertOrUpdateTemplate");
+        mv.addObject("status", status);
+        mv.addObject("templateId", templateId);
+        return mv;
     }
 
     /**
@@ -87,35 +110,35 @@ public class ViewController extends BaseController {
     }
 
     /*用户查询*/
-    @RequestMapping(value = "/functions/doc/paperUserSearch",method = RequestMethod.GET)
-    public String doc_paperUserSearch(){
+    @RequestMapping(value = "/functions/doc/paperUserSearch", method = RequestMethod.GET)
+    public String doc_paperUserSearch() {
         return "functions/doc/paperUserSearch";
     }
 
 
     // 论文用户匹配的5个标签页
     @RequestMapping(value = "functions/doc/paperUserMatch/tab0", method = RequestMethod.GET)
-    public String doc_paperUserMatch_tab0(){
+    public String doc_paperUserMatch_tab0() {
         return "functions/doc/paperUserMatch/tab0";
     }
 
     @RequestMapping(value = "functions/doc/paperUserMatch/tab1", method = RequestMethod.GET)
-    public String doc_paperUserMatch_tab1(){
+    public String doc_paperUserMatch_tab1() {
         return "functions/doc/paperUserMatch/tab1";
     }
 
     @RequestMapping(value = "functions/doc/paperUserMatch/tab2", method = RequestMethod.GET)
-    public String doc_paperUserMatch_tab2(){
+    public String doc_paperUserMatch_tab2() {
         return "functions/doc/paperUserMatch/tab2";
     }
 
     @RequestMapping(value = "functions/doc/paperUserMatch/tab3", method = RequestMethod.GET)
-    public String doc_paperUserMatch_tab3(){
+    public String doc_paperUserMatch_tab3() {
         return "functions/doc/paperUserMatch/tab3";
     }
 
     @RequestMapping(value = "functions/doc/paperUserMatch/tab4", method = RequestMethod.GET)
-    public String doc_paperUserMatch_tab4(){
+    public String doc_paperUserMatch_tab4() {
         return "functions/doc/paperUserMatch/tab4";
     }
 }

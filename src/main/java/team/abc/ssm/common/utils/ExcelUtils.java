@@ -1,4 +1,4 @@
-package team.abc.ssm.common.utils.excel;
+package team.abc.ssm.common.utils;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -8,16 +8,13 @@ import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import team.abc.ssm.common.utils.SystemPath;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
+import java.math.BigDecimal;
 
 public class ExcelUtils {
 
-    public static Sheet getSheet(String excelName, int sheetIndex) throws IOException {
-        File tempDir = new File(SystemPath.getTempDirPath());
-        File excel = new File(tempDir, excelName);
+    // 获取excel文件中指定sheet
+    public static Sheet getSheet(File excel, int sheetIndex) throws IOException {
         // 创建workbook
         InputStream is;
         Workbook workbook;
@@ -27,10 +24,40 @@ public class ExcelUtils {
         return workbook.getSheetAt(sheetIndex);
     }
 
-    public static Object getCellValue(Row row, int colIndex) {
+    // 通过table中的字段类型获取对应excel类型值
+    public static Object getCellValueByFieldType(Cell cell, String fieldType) {
+        Object val = null;
+        try {
+            switch (fieldType) {
+                case "varchar":
+                    val = cell.getStringCellValue();
+                    break;
+                case "int":
+                    val = (int) cell.getNumericCellValue();
+                case "decimal":
+                    // TODO
+                    val = cell.getNumericCellValue();
+                    break;
+                case "float":
+                    val = (float) cell.getNumericCellValue();
+                    break;
+                case "double":
+                    val = cell.getNumericCellValue();
+                    break;
+                case "datetime":
+                    val = cell.getDateCellValue();
+                    break;
+            }
+        } catch (Exception e) {
+            // do nothing
+        }
+        return val;
+    }
+
+    // 获取excel行中的指定列中的值
+    public static Object getCellValue(Cell cell) {
         Object val;
         try {
-            Cell cell = row.getCell(colIndex);
             if (cell != null) {
                 switch (cell.getCellType()) {
                     case Cell.CELL_TYPE_NUMERIC:
@@ -57,5 +84,13 @@ public class ExcelUtils {
             return null;
         }
         return val;
+    }
+
+    /**
+     * @param fileName the template file you want to know
+     * @return full path
+     */
+    public static String getTemplateFileFullPath(String fileName){
+        return SystemPath.getRootPath() + SystemPath.getExcelTemplatePath() + fileName;
     }
 }

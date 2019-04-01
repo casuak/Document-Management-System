@@ -1,0 +1,12 @@
+.map-title{
+    margin-right: 10px;
+    font-size: 14px;
+}
+
+.map-title .map-title-tip{
+    font-weight: bold;
+}
+
+.map-title .map-title-item{
+    margin-right: 10px;
+}

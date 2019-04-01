@@ -36,8 +36,11 @@ let app = new Vue({
         ]
     },
     methods: {
-        hello: function(tab){
-            tab.active = true;
+        test: function () {
+            let url = "/api/tool/tempFile/test";
+            ajaxPost(url, null, function (d) {
+                console.log(d);
+            })
         }
     }
 });

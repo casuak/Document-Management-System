@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="team.abc.ssm.modules.tool.dao.ImportExcelDao">
+    <select id="showTables" resultType="string">
+        show tables
+    </select>
+
+    <select id="selectFieldListByTableName" parameterType="string" resultType="TableField">
+        select COLUMN_NAME    as fieldName,
+               COLUMN_COMMENT as fieldComment,
+               DATA_TYPE      as fieldType
+        from INFORMATION_SCHEMA.Columns
+        where table_name = #{tableName}
+    </select>
+
+    <insert id="dynamicInsert" parameterType="dynamicInsertParam">
+        insert into ${tableName}
+        <foreach collection="fieldList" item="field" index="index" open="(" separator="," close=")">
+            ${field}
+        </foreach>
+        values
+        <foreach collection="data" separator="," item="row">
+            <foreach collection="row" open="(" close=")" separator="," item="cell">
+                #{cell}
+            </foreach>
+        </foreach>
+    </insert>
+
+    <select id="selectListByTwoField" resultType="map">
+        select ${currentField}, ${replaceField}
+        from ${tableName}
+    </select>
+
+    <insert id="insertExcelTemplate" parameterType="ExcelTemplate">
+        insert excel_template (id,
+                               template_name,
+                               table_name,
+                               excel_name,
+                               remarks,
+                               create_user_id,
+                               modify_user_id,
+                               create_date,
+                               modify_date,
+                               del_flag)
+        values (#{id},
+                #{templateName},
+                #{tableName},
+                #{excelName},
+                #{remarks},
+                #{createUserId},
+                #{modifyUserId},
+                #{createDate},
+                #{modifyDate},
+                #{delFlag})
+    </insert>
+
+    <insert id="insertColumnMapFieldList" parameterType="ColumnMapField">
+        insert excel_column_map_field
+        (id,
+        template_id,
+        field_name,
+        column_index,
+        column_name,
+        fk,
+        fk_table_name,
+        fk_current_field,
+        fk_replace_field,
+        fk_message,
+        fixed,
+        fixed_content,
+        remarks,
+        create_user_id,
+        modify_user_id,
+        create_date,
+        modify_date,
+        del_flag)
+        values
+        <foreach collection="list" separator="," item="item">
+            (#{item.id},
+            #{item.templateId},
+            #{item.fieldName},
+            #{item.columnIndex},
+            #{item.columnName},
+            #{item.fk},
+            #{item.fkTableName},
+            #{item.fkCurrentField},
+            #{item.fkReplaceField},
+            #{item.fkMessage},
+            #{item.fixed},
+            #{item.fixedContent},
+            #{item.remarks},
+            #{item.createUserId},
+            #{item.modifyUserId},
+            #{item.createDate},
+            #{item.modifyDate},
+            #{item.delFlag})
+        </foreach>
+    </insert>
+</mapper>

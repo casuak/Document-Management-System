@@ -36,7 +36,7 @@
         <sitemesh.version>2.4.2</sitemesh.version>
         <!--<activiti.version>5.21.0</activiti.version>-->
 
-        <!-- tools version setting -->
+        <!-- tool version setting -->
         <slf4j.version>1.7.7</slf4j.version>
         <commons-lang3.version>3.3.2</commons-lang3.version>
         <commons-io.version>2.4</commons-io.version>
