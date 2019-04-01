@@ -6,7 +6,7 @@ let app = new Vue({
         urls: {
             showTables: '/api/tool/importExcel/showTables',
             getColumnsInTableAndExcel: '/api/tool/importExcel/getColumnsInTableAndExcel',
-            insertExcelTemplate: '/api/tool/importExcel/insertExcelTemplate'
+            insertExcelTemplate: '/api/tool/excelTemplate/insert'
         },
         fullScreenLoading: false,
         defaultFileList: [],            // 默认的文件列表(最多一个)
@@ -15,13 +15,17 @@ let app = new Vue({
         excelColumnList: [],         // excel列(供选择)
         columnMapFieldList: [],            // excel列到table字段的映射(以table字段为基准)
         templateName: null,
+        loading: {
+            step1: false,
+            step2: false,
+        }
     },
     methods: {
         // 上传模板前调用
         beforeUpload: function (file) {
             let suffix = file.name.split('.').pop();
             if (suffix !== 'xlsx') {
-                window.parent.app.showMessage('仅支持xlsx文件', 'error');
+                window.parent.parent.parent.app.showMessage('仅支持xlsx文件', 'error');
                 return false;
             }
         },
@@ -34,17 +38,17 @@ let app = new Vue({
         },
         // 下一步(进入列名映射)
         nextStep: function () {
-            this.currentStep += 1;
             let app = this;
             let data = {
                 tableName: app.currentTableName,
                 excelName: app.currentTemplateName
             };
+            app.loading.step1 = true;
             ajaxPost(app.urls.getColumnsInTableAndExcel, data, function (d) {
                 app.excelColumnList = d.data.excelColumnList;
                 app.columnMapFieldList = d.data.columnMapFieldList;
-                console.log(JSON.stringify(app.excelColumnList));
-                console.log(JSON.stringify(app.columnMapFieldList));
+                app.currentStep += 1;
+                app.loading.step1 = false;
             })
         },
         // 上一步(选择和上传)
@@ -60,8 +64,11 @@ let app = new Vue({
                 excelName: app.currentTemplateName,
                 columnMapFieldList: app.columnMapFieldList
             };
+            app.loading.step2 = true;
             ajaxPostJSON(app.urls.insertExcelTemplate, data, function (d) {
-
+                app.loading.step2 = false;
+                window.parent.parent.parent.app.showMessage('新建模板成功!');
+                window.parent.app.insertOrUpdateDialog.visible = false;
             })
         },
     },

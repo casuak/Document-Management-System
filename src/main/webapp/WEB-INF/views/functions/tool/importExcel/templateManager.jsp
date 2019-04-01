@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>ssm</title>
+    <title>模板管理</title>
     <%@include file="/WEB-INF/views/include/blankHead.jsp" %>
     <link rel="stylesheet" href="/static/css/functions/tool/importExcel/templateManager.css"/>
 </head>
@@ -36,17 +36,9 @@
               style="width: 100%;overflow-y: hidden;margin-top: 10px;" class="scroll-bar"
               @selection-change="onSelectionChange_entity" stripe>
         <el-table-column type="selection" width="40"></el-table-column>
-        <el-table-column label="模板名" min-width="40">
-            <template slot-scope="scope">
-                <el-Tooltip open-delay="500" effect="dark" :content="scope.row.paperName" placement="top">
-                    <div style="overflow: hidden;text-overflow:ellipsis;white-space: nowrap;width: 95%;">
-                        {{ scope.row.paperName }}
-                    </div>
-                </el-Tooltip>
-            </template>
-        </el-table-column>
+        <el-table-column label="模板名" min-width="40" prop="templateName"></el-table-column>
         <el-table-column label="导入表名" min-width="40" prop="tableName"></el-table-column>
-        <el-table-column label="excel模板" min-width="40" prop="excelName"></el-table-column>
+        <el-table-column label="excel模板文件" min-width="40" prop="excelName"></el-table-column>
         <el-table-column label="操作" width="190" header-align="center" align="center">
             <template slot-scope="scope">
                 <el-button type="warning" size="mini" style="position:relative;bottom: 1px;margin-right: 5px;"
@@ -81,7 +73,7 @@
         </div>
     </el-dialog>
 </div>
-<%@include file="/WEB-INF/views/include/blankScript.jsp" %>
+<%@include file="/WEB-INF/views/include/blankScript.jsp"%>
 <script src="/static/js/functions/tool/importExcel/templateManager.js"></script>
 </body>
 </html>

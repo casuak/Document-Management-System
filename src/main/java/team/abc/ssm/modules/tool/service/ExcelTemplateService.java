@@ -12,6 +12,7 @@ import team.abc.ssm.modules.tool.entity.ExcelTemplate;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 @Service
 public class ExcelTemplateService {
@@ -49,6 +50,19 @@ public class ExcelTemplateService {
         }
         if (excelTemplate.getColumnMapFieldList().size() > 0)
             columnMapFieldDao.insertList(excelTemplate.getColumnMapFieldList());
+        return true;
+    }
+
+    public List<ExcelTemplate> selectListByPage(ExcelTemplate excelTemplate) {
+        return excelTemplateDao.selectListByPage(excelTemplate);
+    }
+
+    public int selectSeachCount(ExcelTemplate excelTemplate){
+        return excelTemplateDao.selectSearchCount(excelTemplate);
+    }
+
+    public boolean deleteListByIds(List<ExcelTemplate> excelTemplateList) {
+        excelTemplateDao.deleteListByIds(excelTemplateList);
         return true;
     }
 }

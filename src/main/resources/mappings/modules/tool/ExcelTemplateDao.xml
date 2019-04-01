@@ -2,6 +2,19 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="team.abc.ssm.modules.tool.dao.ExcelTemplateDao">
 
+    <resultMap id="excelTemplateBean" type="ExcelTemplate">
+        <id column="id" property="id"/>
+        <result column="template_name" property="templateName"/>
+        <result column="excel_name" property="excelName"/>
+        <result column="table_name" property="tableName"/>
+        <result column="remarks" property="remarks"/>
+        <result column="create_user_id" property="createUserId"/>
+        <result column="modify_user_id" property="modifyUserId"/>
+        <result column="create_date" property="createDate"/>
+        <result column="modify_date" property="modifyDate"/>
+        <result column="del_flag" property="delFlag"/>
+    </resultMap>
+
     <insert id="insert" parameterType="ExcelTemplate">
         insert excel_template (id,
                                template_name,
@@ -25,7 +38,30 @@
                 #{delFlag})
     </insert>
 
-    <delete id="deleteByIdList" parameterType="ExcelTemplate">
+    <select id="selectListByPage" parameterType="ExcelTemplate" resultMap="excelTemplateBean">
+        select a.* from excel_template a
+        <where>
+            <if test="page.searchKey != '' and page.searchKey != null">
+                a.template_name like concat('%', #{page.searchKey}, '%')
+                or a.table_name like concat('%', #{page.searchKey}, '%')
+            </if>
+        </where>
+        limit #{page.pageStart}, #{page.pageSize}
+    </select>
+
+    <select id="selectSearchCount" parameterType="ExcelTemplate" resultType="int">
+        select
+        count(*)
+        from excel_template a
+        <where>
+            <if test="page.searchKey != '' and page.searchKey != null">
+                a.template_name like concat('%', #{page.searchKey}, '%')
+                or a.table_name like concat('%', #{page.searchKey}, '%')
+            </if>
+        </where>
+    </select>
+
+    <delete id="deleteListByIds" parameterType="ExcelTemplate">
         delete from excel_template where id in
         <foreach collection="list" item="item" open="(" separator="," close=")">
             #{item.id}

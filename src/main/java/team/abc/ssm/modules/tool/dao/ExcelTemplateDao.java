@@ -8,5 +8,9 @@ public interface ExcelTemplateDao {
 
     int insert(ExcelTemplate excelTemplate);
 
-    int deleteByIdList(List<ExcelTemplate> excelTemplateList);
+    List<ExcelTemplate> selectListByPage(ExcelTemplate excelTemplate);
+
+    int selectSearchCount(ExcelTemplate excelTemplate);
+
+    int deleteListByIds(List<ExcelTemplate> excelTemplateList);
 }

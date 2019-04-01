@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>更新或插入模板</title>
+    <title>添加或更新模板表单</title>
     <%@include file="/WEB-INF/views/include/blankHead.jsp" %>
     <link rel="stylesheet" href="/static/css/functions/tool/importExcel/insertOrUpdateTemplate.css"/>
 </head>
@@ -124,11 +124,12 @@
     <%-- 右下按钮 --%>
     <div style="position: absolute;bottom: 27px;right: 45px;">
         <span v-if="currentStep==0">
-            <el-button size="small" type="success" @click="nextStep()">下一步</el-button>
+            <el-button size="small" type="success" @click="nextStep()" :loading="loading.step1">下一步</el-button>
         </span>
         <span v-if="currentStep==1">
-            <el-button size="small" type="warning" @click="beforeStep()">上一步</el-button>
-            <el-button size="small" type="success" @click="submit()">提&nbsp;&nbsp;&nbsp;交</el-button>
+            <el-button size="small" type="warning" @click="beforeStep()" :loading="loading.step2">上一步</el-button>
+            <el-button size="small" type="success" @click="submit()"
+                       :loading="loading.step2">提&nbsp;&nbsp;&nbsp;交</el-button>
         </span>
     </div>
 </div>

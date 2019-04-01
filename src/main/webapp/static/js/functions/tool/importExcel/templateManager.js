@@ -1,10 +1,10 @@
-let app = new Vue({
+app = new Vue({
     el: '#app',
     data: {
         urls: {
             // api for entity
-            deleteEntityListByIds: '/api/doc/paper/deleteListByIds',
-            selectEntityListByPage: '/api/doc/paper/selectListByPage',
+            deleteEntityListByIds: '/api/tool/excelTemplate/deleteListByIds',
+            selectEntityListByPage: '/api/tool/excelTemplate/selectListByPage',
         },
         fullScreenLoading: false,
         table: {
@@ -54,7 +54,6 @@ let app = new Vue({
         selectEntityListByPage: function () {
             let data = {
                 page: this.table.entity.params,
-                status: '-1'
             };
             let app = this;
             app.table.entity.loading = true;
@@ -75,8 +74,7 @@ let app = new Vue({
             if (status === 'insert') {
                 this.insertOrUpdateDialog.src += "''";
                 this.insertOrUpdateDialog.title = '新建模板';
-            }
-            else {
+            } else {
                 this.insertOrUpdateDialog.src += "'" + row.templateId + "'";
                 this.insertOrUpdateDialog.title = '编辑模板';
             }
