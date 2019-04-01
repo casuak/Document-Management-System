@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="team.abc.ssm.modules.tool.dao.ColumnMapFieldDao">
+    <insert id="insertList" parameterType="ColumnMapField">
+        insert excel_column_map_field
+        (id,
+        template_id,
+        field_name,
+        column_index,
+        column_name,
+        fk,
+        fk_table_name,
+        fk_current_field,
+        fk_replace_field,
+        fk_message,
+        fixed,
+        fixed_content,
+        remarks,
+        create_user_id,
+        modify_user_id,
+        create_date,
+        modify_date,
+        del_flag)
+        values
+        <foreach collection="list" separator="," item="item">
+            (#{item.id},
+            #{item.templateId},
+            #{item.fieldName},
+            #{item.columnIndex},
+            #{item.columnName},
+            #{item.fk},
+            #{item.fkTableName},
+            #{item.fkCurrentField},
+            #{item.fkReplaceField},
+            #{item.fkMessage},
+            #{item.fixed},
+            #{item.fixedContent},
+            #{item.remarks},
+            #{item.createUserId},
+            #{item.modifyUserId},
+            #{item.createDate},
+            #{item.modifyDate},
+            #{item.delFlag})
+        </foreach>
+    </insert>
+</mapper>

@@ -9,6 +9,7 @@ import team.abc.ssm.modules.tool.entity.ColumnMapField;
 import team.abc.ssm.modules.tool.entity.ExcelTemplate;
 import team.abc.ssm.modules.tool.entity.normal.ExcelColumn;
 import team.abc.ssm.modules.tool.entity.normal.TableField;
+import team.abc.ssm.modules.tool.service.ExcelTemplateService;
 import team.abc.ssm.modules.tool.service.ImportExcelService;
 
 import java.util.ArrayList;
@@ -27,6 +28,9 @@ public class ImportExcelApi extends BaseApi {
 
     @Autowired
     private ImportExcelService importExcelService;
+
+    @Autowired
+    private ExcelTemplateService excelTemplateService;
 
     /**
      * @return all tables' name in current database
@@ -70,16 +74,5 @@ public class ImportExcelApi extends BaseApi {
     @ResponseBody
     public Object getColumnsInTable(@RequestParam("tableName") String tableName) {
         return retMsg.Set(MsgType.SUCCESS, importExcelService.getTableFieldList(tableName, true));
-    }
-
-    /**
-     * @param excelTemplate include all info to create a new template
-     * @return is create successful
-     */
-    @RequestMapping(value = "insertExcelTemplate", method = RequestMethod.POST)
-    @ResponseBody
-    public Object insertExcelTemplate(@RequestBody ExcelTemplate excelTemplate) {
-        importExcelService.insertExcelTemplate(excelTemplate);
-        return retMsg.Set(MsgType.SUCCESS);
     }
 }

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="team.abc.ssm.modules.tool.dao.ExcelTemplateDao">
+
+    <insert id="insert" parameterType="ExcelTemplate">
+        insert excel_template (id,
+                               template_name,
+                               table_name,
+                               excel_name,
+                               remarks,
+                               create_user_id,
+                               modify_user_id,
+                               create_date,
+                               modify_date,
+                               del_flag)
+        values (#{id},
+                #{templateName},
+                #{tableName},
+                #{excelName},
+                #{remarks},
+                #{createUserId},
+                #{modifyUserId},
+                #{createDate},
+                #{modifyDate},
+                #{delFlag})
+    </insert>
+
+    <delete id="deleteByIdList" parameterType="ExcelTemplate">
+        delete from excel_template where id in
+        <foreach collection="list" item="item" open="(" separator="," close=")">
+            #{item.id}
+        </foreach>
+    </delete>
+
+</mapper>

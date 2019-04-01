@@ -23,8 +23,4 @@ public interface ImportExcelDao {
     // 获取table中的某2列的所有行的数据(用于形成键值映射)
     // tableName(String), currentField(String), replaceField(String)
     List<Map<String, Object>> selectListByTwoField(ColumnMapField columnMapField);
-
-    int insertExcelTemplate(ExcelTemplate excelTemplate);
-
-    int insertColumnMapFieldList(List<ColumnMapField> list);
 }

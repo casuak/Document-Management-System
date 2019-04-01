@@ -1,17 +1,16 @@
 package team.abc.ssm.modules.tool.service;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import team.abc.ssm.common.utils.ExcelUtils;
 import team.abc.ssm.common.utils.SystemPath;
+import team.abc.ssm.modules.tool.dao.ColumnMapFieldDao;
+import team.abc.ssm.modules.tool.dao.ExcelTemplateDao;
 import team.abc.ssm.modules.tool.dao.ImportExcelDao;
 import team.abc.ssm.modules.tool.entity.ColumnMapField;
-import team.abc.ssm.modules.tool.entity.ExcelTemplate;
 import team.abc.ssm.modules.tool.entity.normal.DynamicInsertParam;
 import team.abc.ssm.modules.tool.entity.normal.ExcelColumn;
 import team.abc.ssm.modules.tool.entity.normal.TableField;
@@ -119,35 +118,5 @@ public class ImportExcelService {
             map.put(currentField, replaceField);
         }
         return map;
-    }
-
-    /**
-     * @param excelTemplate include all info
-     * @return is successful
-     * @apiNote 1st: copy the file in temp dir to excelTemplate dir
-     * 2nd: insert ExcelTemplate
-     * 3rd: insert ColumnMapFieldList
-     */
-    @Transactional
-    public boolean insertExcelTemplate(ExcelTemplate excelTemplate) {
-        // 1st step: copy the file in temp dir to excelTemplate dir
-        File srcFile = new File(SystemPath.getRootPath() + SystemPath.getTempDirPath() + excelTemplate.getExcelName());
-        File targetDir = new File(SystemPath.getRootPath() + SystemPath.getExcelTemplatePath());
-        try {
-            FileUtils.copyFileToDirectory(srcFile, targetDir);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        // 2nd step: insert ExcelTemplate
-        excelTemplate.preInsert();
-        importExcelDao.insertExcelTemplate(excelTemplate);
-        // 3rd step: insert ColumnMapFieldList
-        for (ColumnMapField columnMapField : excelTemplate.getColumnMapFieldList()) {
-            columnMapField.preInsert();
-            columnMapField.setTemplateId(excelTemplate.getId());
-        }
-        if (excelTemplate.getColumnMapFieldList().size() > 0)
-            importExcelDao.insertColumnMapFieldList(excelTemplate.getColumnMapFieldList());
-        return true;
     }
 }
