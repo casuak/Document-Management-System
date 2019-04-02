@@ -66,9 +66,9 @@
     <el-dialog :title="insertOrUpdateDialog.title" :visible.sync="insertOrUpdateDialog.visible"
                class="dialog-insertOrUpdate"
                @close="">
-        <div v-loading="insertOrUpdateDialog.loading" style="height: 450px;">
+        <div v-loading="insertOrUpdateDialog.loading" style="height: 480px;">
             <iframe v-if="insertOrUpdateDialog.visible" :src="insertOrUpdateDialog.src"
-                    style="width: 100%;height: 450px;overflow-y: auto;border: 0;"
+                    style="width: 100%;height: 100%;overflow-y: auto;border: 0;"
                     @load="insertOrUpdateDialog.loading=false;"></iframe>
         </div>
     </el-dialog>

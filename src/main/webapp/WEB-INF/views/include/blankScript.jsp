@@ -3,11 +3,13 @@
 <script src="/static/plugins/jquery/jquery-3.3.1.min.js"></script>
 
 <script src="/static/plugins/vue/vue.min.js"></script>
-<script src="/static/plugins/iview/iview.min.js"></script>
+
+<script src="/static/plugins/iview@3.3.3/dist/iview.min.js"></script>
+<%--<script src="//unpkg.com/iview/dist/iview.min.js"></script>--%>
 
 <script src="/static/plugins/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
 
-<script src="/static/plugins/element-ui@2.4.11/lib/index.js"></script>
+<script src="/static/plugins/element-ui@2.7.0/lib/index.js"></script>
 
 <%-- upload file --%>
 <script src="/static/plugins/crypto1/crypto/crypto.js"></script>
