@@ -109,13 +109,6 @@ public class ViewController extends BaseController {
         return "functions/doc/paperUserMatch";
     }
 
-    /*用户查询*/
-    @RequestMapping(value = "/functions/doc/paperUserSearch", method = RequestMethod.GET)
-    public String doc_paperUserSearch() {
-        return "functions/doc/paperUserSearch";
-    }
-
-
     // 论文用户匹配的5个标签页
     @RequestMapping(value = "functions/doc/paperUserMatch/tab0", method = RequestMethod.GET)
     public String doc_paperUserMatch_tab0() {

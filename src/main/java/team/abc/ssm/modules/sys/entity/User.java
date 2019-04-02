@@ -1,10 +1,12 @@
 package team.abc.ssm.modules.sys.entity;
 
+import lombok.ToString;
 import team.abc.ssm.common.persistence.DataEntity;
 
 import java.util.Date;
 import java.util.List;
 
+@ToString
 public class User extends DataEntity<User> {
 
     private String userType;

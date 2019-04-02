@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="team.abc.ssm.modules.doc.dao.PaperSearchMapper">
+
+    <select id="getAllAuthorIdentity" resultType="java.lang.String">
+        select name_cn from docmanager.sys_dict `dict` where dict.type_id = (
+          select id from docmanager.sys_dict_type `type` where type.name_cn = '作者身份'
+        )
+    </select>
+
+    <select id="getAllOrganize" resultType="team.abc.ssm.modules.organization.domain.CommonOrganize">
+        select* from docmanager.common_organize `org` where org.del_flag != -1
+    </select>
+
+</mapper>
