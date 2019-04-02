@@ -10,3 +10,28 @@
 .map-title .map-title-item{
     margin-right: 10px;
 }
+
+.ivu-card-body{
+    padding: 10px 15px 20px 16px;
+}
+
+.el-table__row:hover{
+    background: transparent;
+}
+
+.el-table__expanded-cell{
+    padding: 10px 0 0 57px !important;
+}
+
+.demo-table-expand {
+    font-size: 0;
+}
+.demo-table-expand label {
+    width: 90px;
+    color: #99a9bf;
+}
+.demo-table-expand .el-form-item {
+    margin-right: 0;
+    margin-bottom: 0;
+    width: 50%;
+}
