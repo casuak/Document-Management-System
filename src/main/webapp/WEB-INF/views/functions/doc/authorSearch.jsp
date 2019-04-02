@@ -88,17 +88,6 @@
                 </el-input>
             </div>
         </div>
-
-        <span style="float: right;margin-right: 10px;">
-            <el-input size="small" placeholder="请输入角色名搜索相关角色" suffix-icon="el-icon-search"
-                      style="width: 250px;margin-right: 10px;" v-model="table.entity.params.searchKey"
-                      @keyup.enter.native="table.entity.params.pageIndex=1;refreshTable_entity()">
-            </el-input>
-            <el-button size="small" type="primary" style="position:relative;"
-                       @click="table.entity.params.pageIndex=1;refreshTable_entity()">
-                <span>搜索</span>
-            </el-button>
-        </span>
     </div>
     <%-- 顶栏 --%>
     <div style="padding: 15px 20px 0 15px;margin-top: 35px">
@@ -122,18 +111,17 @@
                 {{ formatTimestamp(scope.row.createDate) }}
             </template>
         </el-table-column>
+
+
         <el-table-column label="操作" width="190" header-align="center" align="center">
             <template slot-scope="scope">
                 <el-button type="warning" size="mini" style="position:relative;bottom: 1px;"
                            @click="openDialog_updateEntity(scope.row)">
                     <span>编辑</span>
                 </el-button>
-                <el-button type="danger" size="mini" style="position:relative;bottom: 1px;margin-left: 6px;"
-                           @click="deleteEntityListByIds([{id: scope.row.id}])">
-                    <span>删除</span>
-                </el-button>
             </template>
         </el-table-column>
+
         <el-table-column width="50"></el-table-column>
     </el-table>
     <%-- entity分页 --%>

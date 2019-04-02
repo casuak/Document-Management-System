@@ -190,5 +190,6 @@ let app = new Vue({
 });
 
 window.onload = function () {
-    a
+
+    console.log("hellozm ")
 };
