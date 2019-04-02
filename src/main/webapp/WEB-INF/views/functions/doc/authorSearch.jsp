@@ -12,129 +12,180 @@
 <head>
     <title>作者查询</title>
     <%@include file="/WEB-INF/views/include/blankHead.jsp" %>
-    <link rel="stylesheet" href="/static/css/functions/doc/paperUserMatch.css"/>
+    <link rel="stylesheet" href="/static/css/tableTemplate.css"/>
     <style>
-        .textLeft{
+        .textLeft {
             margin-left: 10px;
             font-size: 14px;
             float: left;
             padding-top: 20px;
         }
-        .el-col{
+
+        .el-col {
             padding-top: 10px;
+        }
+        .header-panel{
+            margin-top: 10px;
+            padding:5px 18px
+        }
+        .singleSelect{
+            float: left;
+            margin-left: 20px;
         }
     </style>
 </head>
 <body>
-<div id="app" v-cloak>
-    <el-container>
-        <el-header  style="margin-bottom: 30px">
-            <el-row>
-                <div class="textLeft" >作者角色(可多选)：</div>
-                <el-col :span="3">
-                    <el-checkbox-group v-model="checkboxGroup1">
-                        <el-checkbox-button v-for="city in cities" :label="city" :key="city">{{city}}</el-checkbox-button>
-                    </el-checkbox-group>
-                </el-col>
+<div id="app" v-cloak style="background: white;height: 100%;overflow: hidden;" v-loading="fullScreenLoading">
 
-                <div class="textLeft" >作者身份：</div>
-                <el-col :span="4">
-                    <el-select v-model="Identity" placeholder="请选择作者身份">
-                        <el-option
-                                v-for="item in identityList"
-                                :key="item.value"
-                                :label="item.label"
-                                :value="item.value">
-                        </el-option>
-                    </el-select>
-                </el-col>
+    <div class="header-panel">
+       <div style="float: left">
+           <span>作者角色： </span>
+           <template>
+               <el-select v-model="inputValue.roleId" clearable placeholder="请选择作者角色">
+                   <el-option
+                           v-for="item in condition.role"
+                           :key="item.value"
+                           :label="item.label"
+                           :value="item.value">
+                   </el-option>
+               </el-select>
+           </template>
+       </div>
+        <div class="singleSelect">
+            <span>所在机构： </span>
+            <template>
+                <el-select v-model="inputValue.orgId" clearable placeholder="请选择所属机构">
+                    <el-option
+                            v-for="item in condition.organization"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                    </el-option>
+                </el-select>
+            </template>
+        </div>
+        <div class="singleSelect">
+            <span>所属学科： </span>
+            <template>
+                <el-select v-model="inputValue.subId" clearable placeholder="请选择作者角色">
+                    <el-option
+                            v-for="item in condition.subject"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                    </el-option>
+                </el-select>
+            </template>
+        </div>
 
-                <div class="textLeft">作者机构：</div>
-                <el-col :span="4">
-                    <el-select v-model="institution" placeholder="请选择作者机构">
-                        <el-option
-                                v-for="item in orgList"
-                                :key="item.value"
-                                :label="item.label"
-                                :value="item.value">
-                        </el-option>
-                    </el-select>
-                </el-col>
+        <div class="singleSelect">
+            <span style="float: left;padding-top: 9px">作者姓名： </span>
+            <div style="float: left">
+                <el-input
+                        placeholder="请输入作者姓名"
+                        v-model="inputValue.authorName"
+                        clearable>
+                </el-input>
+            </div>
+        </div>
 
-                <div class="textLeft">作者姓名：</div>
-                <el-col :span="4">
-                    <el-input v-model="input"
-                              placeholder="请输入作者姓名"
-                              clearable
-                              style="width:200px"></el-input>
-                </el-col>
-            </el-row>
-            <el-row>
-                <div class="textLeft" style="margin-left: 90px">
-                    操作：
-                </div>
-                <el-col :span="4">
-                    <el-button type="primary" icon="el-icon-search">查询</el-button>
-                </el-col>
-            </el-row>
-        </el-header>
-        <el-main>
-            <el-table
-                    :data="tableData"
-                    height="600"
-                    border
-                    stripe
-                    highlight-current-row
-                    style="width: 100%">
-                <el-table-column
-                        align="center"
-                        type="index">
-                </el-table-column>
-                <el-table-column
-                        prop="name"
-                        label="姓名"
-                        align="center"
-                        width="180">
-                </el-table-column>
-                <el-table-column
-                        prop="identity"
-                        label="身份"
-                        align="center"
-                        width="180">
-                </el-table-column>
-                <el-table-column
-                        prop="org"
-                        label="机构"
-                        align="center"
-                        width="180">
-                </el-table-column>
-                <el-table-column
-                        prop="address"
-                        align="center"
-                        label="地址">
-                </el-table-column>
-                <el-table-column
-                        align="center"
-                        label="操作">
-                    <template slot-scope="scope">
-                        <el-button
-                                size="mini"
-                                type="primary" plain
-                                @click="viewDocInfo(scope.$index, scope.row)"
-                        >查看所属文献信息</el-button>
-                        <el-button
-                                size="mini"
-                                type="danger"
-                                @click="handleDelete(scope.$index, scope.row)"
-                        >删除</el-button>
-                    </template>
-                </el-table-column>
-            </el-table>
-        </el-main>
-    </el-container>
-
+        <span style="float: right;margin-right: 10px;">
+            <el-input size="small" placeholder="请输入角色名搜索相关角色" suffix-icon="el-icon-search"
+                      style="width: 250px;margin-right: 10px;" v-model="table.entity.params.searchKey"
+                      @keyup.enter.native="table.entity.params.pageIndex=1;refreshTable_entity()">
+            </el-input>
+            <el-button size="small" type="primary" style="position:relative;"
+                       @click="table.entity.params.pageIndex=1;refreshTable_entity()">
+                <span>搜索</span>
+            </el-button>
+        </span>
+    </div>
+    <%-- 顶栏 --%>
+    <div style="padding: 15px 20px 0 15px;margin-top: 35px">
+        <span class="button-group">
+            <el-button size="small" type="success" @click="dialog.insertEntity.visible=true">
+                <span>查询</span>
+            </el-button>
+            <el-button size="small" type="danger" @click="deleteEntityListByIds(table.entity.selectionList)"
+                       style="margin-left: 10px;">
+                <span>批量删除</span>
+            </el-button>
+        </span>
+    </div>
+    <%-- entity表格 --%>
+    <el-table :data="table.entity.data" height="calc(100% - 116px)" v-loading="table.entity.loading"
+              style="width: 100%;overflow-y: hidden;margin-top: 20px;" class="scroll-bar"
+              @selection-change="onSelectionChange_entity" stripe>
+        <el-table-column type="selection" width="40"></el-table-column>
+        <el-table-column label="创建时间">
+            <template slot-scope="scope">
+                {{ formatTimestamp(scope.row.createDate) }}
+            </template>
+        </el-table-column>
+        <el-table-column label="操作" width="190" header-align="center" align="center">
+            <template slot-scope="scope">
+                <el-button type="warning" size="mini" style="position:relative;bottom: 1px;"
+                           @click="openDialog_updateEntity(scope.row)">
+                    <span>编辑</span>
+                </el-button>
+                <el-button type="danger" size="mini" style="position:relative;bottom: 1px;margin-left: 6px;"
+                           @click="deleteEntityListByIds([{id: scope.row.id}])">
+                    <span>删除</span>
+                </el-button>
+            </template>
+        </el-table-column>
+        <el-table-column width="50"></el-table-column>
+    </el-table>
+    <%-- entity分页 --%>
+    <el-pagination style="text-align: center;margin: 8px auto;"
+                   @size-change="onPageSizeChange_entity"
+                   @current-change="onPageIndexChange_entity"
+                   :current-page="table.entity.params.pageIndex"
+                   :page-sizes="table.entity.params.pageSizes"
+                   :page-size="table.entity.params.pageSize"
+                   :total="table.entity.params.total"
+                   layout="total, sizes, prev, pager, next, jumper">
+    </el-pagination>
+    <%-- entity添加窗口 --%>
+    <el-dialog title="添加" :visible.sync="dialog.insertEntity.visible" @closed="resetForm('form_insertEntity')">
+        <el-form label-position="left" label-width="80px" style="padding: 0 100px;"
+                 :model="dialog.insertEntity.formData" :rules="dialog.insertEntity.rules"
+                 ref="form_insertEntity" v-loading="dialog.insertEntity.loading" status-icon>
+            <el-form-item label="角色名" prop="name">
+                <el-input v-model="dialog.insertEntity.formData.name"></el-input>
+            </el-form-item>
+            <el-form-item label="角色代码" prop="code">
+                <el-input v-model="dialog.insertEntity.formData.code"></el-input>
+            </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+            <el-button size="medium" @click="dialog.insertEntity.visible=false">取 消</el-button>
+            <el-button size="medium" type="primary" @click="insertEntity()" style="margin-left: 10px;">提 交
+            </el-button>
+        </div>
+    </el-dialog>
+    <%-- entity编辑窗口 --%>
+    <el-dialog title="编辑" :visible.sync="dialog.updateEntity.visible" @closed="resetForm('form_updateEntity')">
+        <el-form label-position="left" label-width="80px"
+                 style="padding: 0 100px;overflow-y: scroll;"
+                 :model="dialog.updateEntity.formData" :rules="dialog.updateEntity.rules"
+                 ref="form_updateEntity" v-loading="dialog.updateEntity.loading" status-icon size="medium">
+            <el-form-item label="角色名" prop="name">
+                <el-input v-model="dialog.updateEntity.formData.name"></el-input>
+            </el-form-item>
+            <el-form-item label="角色代码" prop="code">
+                <el-input v-model="dialog.updateEntity.formData.code"></el-input>
+            </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+            <el-button size="medium" @click="dialog.updateEntity.visible=false">取 消</el-button>
+            <el-button size="medium" type="primary" @click="updateEntity()" style="margin-left: 10px;">提 交
+            </el-button>
+        </div>
+    </el-dialog>
 </div>
 <%@include file="/WEB-INF/views/include/blankScript.jsp" %>
-<script src="${pageContext.request.contextPath}/static/js/functions/doc/paperUserSearch.js"></script>
+<%--当前页js--%>
+<script src="${pageContext.request.contextPath}/static/js/functions/doc/authorSearch.js"></script>
 </body>
 </html>
