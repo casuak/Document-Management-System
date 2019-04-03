@@ -38,7 +38,12 @@
         <el-table-column type="selection" width="40"></el-table-column>
         <el-table-column label="模板名" min-width="40" prop="templateName"></el-table-column>
         <el-table-column label="导入表名" min-width="40" prop="tableName"></el-table-column>
-        <el-table-column label="excel模板文件" min-width="40" prop="excelName"></el-table-column>
+        <el-table-column label="excel模板文件" min-width="40" prop="excelName">
+            <template slot-scope="{row}">
+                <a :href="'/api/tool/file/downloadExcelTemplate?excelName='
+                + row.excelName + '&downloadName=' + row.templateName">{{ row.excelName }}</a>
+            </template>
+        </el-table-column>
         <el-table-column label="操作" width="190" header-align="center" align="center">
             <template slot-scope="scope">
                 <el-button type="warning" size="mini" style="position:relative;bottom: 1px;margin-right: 5px;"
@@ -65,7 +70,7 @@
     <%-- entity添加或编辑弹窗 --%>
     <el-dialog :title="insertOrUpdateDialog.title" :visible.sync="insertOrUpdateDialog.visible"
                class="dialog-insertOrUpdate"
-               @close="">
+               @close="refreshTable_entity()">
         <div v-loading="insertOrUpdateDialog.loading" style="height: 480px;">
             <iframe v-if="insertOrUpdateDialog.visible" :src="insertOrUpdateDialog.src"
                     style="width: 100%;height: 100%;overflow-y: auto;border: 0;"
@@ -73,7 +78,7 @@
         </div>
     </el-dialog>
 </div>
-<%@include file="/WEB-INF/views/include/blankScript.jsp"%>
+<%@include file="/WEB-INF/views/include/blankScript.jsp" %>
 <script src="/static/js/functions/tool/importExcel/templateManager.js"></script>
 </body>
 </html>

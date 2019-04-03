@@ -9,7 +9,9 @@
 </head>
 <body>
 <div id="app" v-cloak>
-    数据导入
+    <p>选择模板</p>
+    <p>下载模板</p>
+    <p>上传数据文件</p>
 </div>
 <%@include file="/WEB-INF/views/include/blankScript.jsp" %>
 <script src="/static/js/functions/tool/importExcel/importData.js"></script>

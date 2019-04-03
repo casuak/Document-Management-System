@@ -6,7 +6,9 @@ import java.util.List;
 
 public interface ExcelTemplateDao {
 
-    int insert(ExcelTemplate excelTemplate);
+    int insertOrUpdate(ExcelTemplate excelTemplate);
+
+    ExcelTemplate selectById(String id);
 
     List<ExcelTemplate> selectListByPage(ExcelTemplate excelTemplate);
 

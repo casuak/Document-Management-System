@@ -7,4 +7,8 @@ import java.util.List;
 public interface ColumnMapFieldDao {
 
     int insertList(List<ColumnMapField> list);
+
+    List<ColumnMapField> selectByTemplateId(String templateId);
+
+    int deleteByTemplateId(String templateId);
 }

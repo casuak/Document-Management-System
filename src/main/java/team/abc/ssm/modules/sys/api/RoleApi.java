@@ -14,7 +14,7 @@ import team.abc.ssm.modules.sys.service.RoleService;
 import java.util.List;
 
 /**
- * insert
+ * insertOrUpdate
  * deleteListByIds
  * update
  * selectListByPage

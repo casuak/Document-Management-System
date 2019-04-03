@@ -29,9 +29,6 @@ public class ImportExcelApi extends BaseApi {
     @Autowired
     private ImportExcelService importExcelService;
 
-    @Autowired
-    private ExcelTemplateService excelTemplateService;
-
     /**
      * @return all tables' name in current database
      */
@@ -70,9 +67,9 @@ public class ImportExcelApi extends BaseApi {
      * @param tableName target table
      * @return all fields' info in table
      */
-    @RequestMapping(value = "getAllColumnsInTable", method = RequestMethod.POST)
+    @RequestMapping(value = "selectAllFieldsInTable", method = RequestMethod.POST)
     @ResponseBody
-    public Object getColumnsInTable(@RequestParam("tableName") String tableName) {
+    public Object selectAllFieldsInTable(@RequestParam("tableName") String tableName) {
         return retMsg.Set(MsgType.SUCCESS, importExcelService.getTableFieldList(tableName, true));
     }
 }

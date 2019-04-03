@@ -15,7 +15,7 @@ import team.abc.ssm.modules.sys.service.DictService;
 import java.util.List;
 
 /**
- * insert
+ * insertOrUpdate
  * deleteListByIds
  * update
  * selectListByPage

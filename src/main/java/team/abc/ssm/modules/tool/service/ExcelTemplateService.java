@@ -9,9 +9,12 @@ import team.abc.ssm.modules.tool.dao.ColumnMapFieldDao;
 import team.abc.ssm.modules.tool.dao.ExcelTemplateDao;
 import team.abc.ssm.modules.tool.entity.ColumnMapField;
 import team.abc.ssm.modules.tool.entity.ExcelTemplate;
+import team.abc.ssm.modules.tool.entity.normal.ExcelColumn;
+import team.abc.ssm.modules.tool.entity.normal.TableField;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -23,12 +26,15 @@ public class ExcelTemplateService {
     @Autowired
     private ColumnMapFieldDao columnMapFieldDao;
 
+    @Autowired
+    private ImportExcelService importExcelService;
+
     /**
      * @param excelTemplate include all info
      * @return is successful
      * @apiNote 1st: copy the file in temp dir to excelTemplate dir
-     * 2nd: insert ExcelTemplate
-     * 3rd: insert ColumnMapFieldList
+     * 2nd: insertOrUpdate ExcelTemplate
+     * 3rd: insertOrUpdate ColumnMapFieldList
      */
     @Transactional
     public boolean insert(ExcelTemplate excelTemplate) {
@@ -40,10 +46,10 @@ public class ExcelTemplateService {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        // 2nd step: insert ExcelTemplate
+        // 2nd step: insertOrUpdate ExcelTemplate
         excelTemplate.preInsert();
-        excelTemplateDao.insert(excelTemplate);
-        // 3rd step: insert ColumnMapFieldList
+        excelTemplateDao.insertOrUpdate(excelTemplate);
+        // 3rd step: insertOrUpdate ColumnMapFieldList
         for (ColumnMapField columnMapField : excelTemplate.getColumnMapFieldList()) {
             columnMapField.preInsert();
             columnMapField.setTemplateId(excelTemplate.getId());
@@ -53,11 +59,56 @@ public class ExcelTemplateService {
         return true;
     }
 
+    @Transactional
+    public boolean update(ExcelTemplate excelTemplate) {
+        // 1st step: update ExcelTemplate
+        excelTemplate.preUpdate();
+        excelTemplateDao.insertOrUpdate(excelTemplate);
+        // 2nd step: delete and insertOrUpdate ColumnMapFieldList
+        columnMapFieldDao.deleteByTemplateId(excelTemplate.getId());
+        for (ColumnMapField columnMapField : excelTemplate.getColumnMapFieldList()) {
+            columnMapField.preInsert();
+            columnMapField.setTemplateId(excelTemplate.getId());
+        }
+        if (excelTemplate.getColumnMapFieldList().size() > 0)
+            columnMapFieldDao.insertList(excelTemplate.getColumnMapFieldList());
+        return true;
+    }
+
+    /**
+     * @return the complete info of ExcelTemplate
+     */
+    public ExcelTemplate selectById(String id) {
+        ExcelTemplate excelTemplate = excelTemplateDao.selectById(id);
+        String excelName = excelTemplate.getExcelName();
+        String tableName = excelTemplate.getTableName();
+        List<ExcelColumn> excelColumnList = importExcelService.getExcelColumnList(excelName, false);
+        List<ColumnMapField> _columnMapFieldList = columnMapFieldDao.selectByTemplateId(id);
+        // add info from table field and reorder
+        List<TableField> tableFieldList = importExcelService.getTableFieldList(tableName, false);
+        List<ColumnMapField> columnMapFieldList = new ArrayList<>();
+        for (TableField tableField : tableFieldList) {
+            for (ColumnMapField columnMapField : _columnMapFieldList) {
+                if (tableField.getFieldName().equals(columnMapField.getFieldName())) {
+                    columnMapField.setFieldType(tableField.getFieldType());
+                    columnMapField.setFieldComment(tableField.getFieldComment());
+                    columnMapField.setTableName(tableName);
+                    columnMapFieldList.add(columnMapField);
+                    break;
+                }
+            }
+        }
+        // end
+        excelTemplate.setExcelColumnList(excelColumnList);
+        excelTemplate.setColumnMapFieldList(columnMapFieldList);
+        return excelTemplate;
+    }
+
     public List<ExcelTemplate> selectListByPage(ExcelTemplate excelTemplate) {
         return excelTemplateDao.selectListByPage(excelTemplate);
     }
 
-    public int selectSeachCount(ExcelTemplate excelTemplate){
+    public int selectSearchCount(ExcelTemplate excelTemplate) {
         return excelTemplateDao.selectSearchCount(excelTemplate);
     }
 

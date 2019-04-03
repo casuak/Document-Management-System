@@ -75,7 +75,7 @@ app = new Vue({
                 this.insertOrUpdateDialog.src += "''";
                 this.insertOrUpdateDialog.title = '新建模板';
             } else {
-                this.insertOrUpdateDialog.src += "'" + row.templateId + "'";
+                this.insertOrUpdateDialog.src += "'" + row.id + "'";
                 this.insertOrUpdateDialog.title = '编辑模板';
             }
             this.insertOrUpdateDialog.loading = true;

@@ -1,6 +1,21 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="team.abc.ssm.modules.tool.dao.ColumnMapFieldDao">
+    <resultMap id="columnMapFieldBean" type="columnmapfield">
+        <id column="id" property="id"/>
+        <result column="template_id" property="templateId"/>
+        <result column="field_name" property="fieldName"/>
+        <result column="column_name" property="columnName"/>
+        <result column="column_index" property="columnIndex"/>
+        <result column="fk" property="fk"/>
+        <result column="fk_table_name" property="fkTableName"/>
+        <result column="fk_current_field" property="fkCurrentField"/>
+        <result column="fk_replace_field" property="fkReplaceField"/>
+        <result column="fk_message" property="fkMessage"/>
+        <result column="fixed" property="fixed"/>
+        <result column="fixed_content" property="fixedContent"/>
+    </resultMap>
+
     <insert id="insertList" parameterType="ColumnMapField">
         insert excel_column_map_field
         (id,
@@ -43,4 +58,16 @@
             #{item.delFlag})
         </foreach>
     </insert>
+
+    <select id="selectByTemplateId" parameterType="string" resultMap="columnMapFieldBean">
+        select *
+        from excel_column_map_field
+        where template_id = #{0}
+    </select>
+
+    <delete id="deleteByTemplateId" parameterType="string">
+        delete
+        from excel_column_map_field
+        where template_id = #{0}
+    </delete>
 </mapper>

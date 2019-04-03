@@ -1,6 +1,7 @@
 package team.abc.ssm.modules.tool.entity;
 
 import team.abc.ssm.common.persistence.DataEntity;
+import team.abc.ssm.modules.tool.entity.normal.ExcelColumn;
 
 import java.util.List;
 
@@ -19,7 +20,8 @@ public class ExcelTemplate extends DataEntity<ExcelTemplate> {
     private String excelDataName;   // 存放数据的excel文件的名字(默认存放在/WEB-INF/temp)
 
     // 多表查询
-    private List<ColumnMapField> columnMapFieldList;     // excel列到table字段的映射
+    private List<ColumnMapField> columnMapFieldList;     // excel列到table字段的映射(以field为基准)
+    private List<ExcelColumn> excelColumnList;           // 模板文件中的所有列
 
     public String getTemplateName() {
         return templateName;
@@ -59,5 +61,13 @@ public class ExcelTemplate extends DataEntity<ExcelTemplate> {
 
     public void setExcelName(String excelName) {
         this.excelName = excelName;
+    }
+
+    public List<ExcelColumn> getExcelColumnList() {
+        return excelColumnList;
+    }
+
+    public void setExcelColumnList(List<ExcelColumn> excelColumnList) {
+        this.excelColumnList = excelColumnList;
     }
 }

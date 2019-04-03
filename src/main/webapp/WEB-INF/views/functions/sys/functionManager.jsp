@@ -17,7 +17,7 @@
                     <el-button icon="el-icon-plus" size="mini" type="success" @click="addCategory()">添加分类</el-button>
                 </span>
             </div>
-            <el-tree style="overflow-y: auto;height: calc(100% - 40px);" :props="treeProp"
+            <el-tree style="overflow-y: auto;height: calc(100% - 40px);" :props="treeProp" class="scroll-bar"
                      :data="tree" node-key="id" @node-drag-start="handleDragStart" @node-drag-enter="handleDragEnter"
                      @node-drag-leave="handleDragLeave" @node-drag-over="handleDragOver" @node-drag-end="handleDragEnd"
                      @node-drop="handleDrop" draggable :allow-drop="allowDrop" :allow-drag="allowDrag"

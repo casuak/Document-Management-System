@@ -2,10 +2,7 @@ package team.abc.ssm.modules.tool.api;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import team.abc.ssm.common.persistence.Page;
 import team.abc.ssm.common.web.BaseApi;
 import team.abc.ssm.common.web.MsgType;
@@ -25,10 +22,13 @@ public class ExcelTemplateApi extends BaseApi {
      * @param excelTemplate include all info to create a new template
      * @return is create successful
      */
-    @RequestMapping(value = "insert", method = RequestMethod.POST)
+    @RequestMapping(value = "insertOrUpdate", method = RequestMethod.POST)
     @ResponseBody
     public Object insert(@RequestBody ExcelTemplate excelTemplate) {
-        excelTemplateService.insert(excelTemplate);
+        if (excelTemplate.getId() == null)
+            excelTemplateService.insert(excelTemplate);
+        else
+            excelTemplateService.update(excelTemplate);
         return retMsg.Set(MsgType.SUCCESS);
     }
 
@@ -37,7 +37,7 @@ public class ExcelTemplateApi extends BaseApi {
     public Object selectListByPage(@RequestBody ExcelTemplate excelTemplate) {
         Page<ExcelTemplate> page = new Page<>();
         page.setResultList(excelTemplateService.selectListByPage(excelTemplate));
-        page.setTotal(excelTemplateService.selectSeachCount(excelTemplate));
+        page.setTotal(excelTemplateService.selectSearchCount(excelTemplate));
         return retMsg.Set(MsgType.SUCCESS, page);
     }
 
@@ -46,5 +46,11 @@ public class ExcelTemplateApi extends BaseApi {
     public Object deleteListByIds(@RequestBody List<ExcelTemplate> excelTemplateList) {
         excelTemplateService.deleteListByIds(excelTemplateList);
         return retMsg.Set(MsgType.SUCCESS);
+    }
+
+    @RequestMapping(value = "selectById", method = RequestMethod.POST)
+    @ResponseBody
+    public Object selectById(@RequestParam("templateId") String templateId) {
+        return retMsg.Set(MsgType.SUCCESS, excelTemplateService.selectById(templateId));
     }
 }

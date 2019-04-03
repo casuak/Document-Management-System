@@ -5,8 +5,10 @@ let app = new Vue({
         tableList: [],                  // 数据库中的所有表(供选择)
         urls: {
             showTables: '/api/tool/importExcel/showTables',
+            selectAllFieldsInTable: '/api/tool/importExcel/selectAllFieldsInTable',
             getColumnsInTableAndExcel: '/api/tool/importExcel/getColumnsInTableAndExcel',
-            insertExcelTemplate: '/api/tool/excelTemplate/insert'
+            insertOrUpdateExcelTemplate: '/api/tool/excelTemplate/insertOrUpdate',
+            selectExcelTemplateById: '/api/tool/excelTemplate/selectById'
         },
         fullScreenLoading: false,
         defaultFileList: [],            // 默认的文件列表(最多一个)
@@ -399,7 +401,9 @@ let app = new Vue({
         loading: {
             step1: false,
             step2: false,
+            table: false
         },
+        expandRowKeys: []
     },
     methods: {
         // 上传模板前调用
@@ -419,6 +423,10 @@ let app = new Vue({
         },
         // 下一步(进入列名映射)
         nextStep: function () {
+            if (pageParams.status === 'update') {
+                this.currentStep += 1;
+                return;
+            }
             let app = this;
             let data = {
                 tableName: app.currentTableName,
@@ -428,6 +436,10 @@ let app = new Vue({
             ajaxPost(app.urls.getColumnsInTableAndExcel, data, function (d) {
                 app.excelColumnList = d.data.excelColumnList;
                 app.columnMapFieldList = d.data.columnMapFieldList;
+                for (let i = 0; i < app.columnMapFieldList.length; i++) {
+                    app.columnMapFieldList[i].loading_fkFieldList = false;
+                    app.columnMapFieldList[i].fkFieldList = [];
+                }
                 console.log(JSON.stringify(app.excelColumnList));
                 console.log(JSON.stringify(app.columnMapFieldList));
                 app.currentStep += 1;
@@ -438,22 +450,24 @@ let app = new Vue({
         beforeStep: function () {
             this.currentStep -= 1;
         },
-        // 提交模板信息(创建新模板)
+        // 提交模板信息(创建或更新模板)
         submit: function () {
             let app = this;
             let data = {
+                id: app.templateId ? app.templateId : null,
                 templateName: app.templateName,
                 tableName: app.currentTableName,
                 excelName: app.currentTemplateName,
                 columnMapFieldList: app.columnMapFieldList
             };
             app.loading.step2 = true;
-            ajaxPostJSON(app.urls.insertExcelTemplate, data, function (d) {
+            ajaxPostJSON(app.urls.insertOrUpdateExcelTemplate, data, function (d) {
                 app.loading.step2 = false;
                 window.parent.parent.parent.app.showMessage('新建模板成功!');
                 window.parent.app.insertOrUpdateDialog.visible = false;
             })
         },
+        // save column name
         setColumnName($event, row) {
             for (let i = 0; i < this.excelColumnList.length; i++) {
                 if (this.excelColumnList[i].columnIndex === $event) {
@@ -461,13 +475,55 @@ let app = new Vue({
                     return;
                 }
             }
+        },
+        // called when fkTableName change
+        onFkTableNameChange: function ($event, row, index) {
+            let app = this;
+            let data = {
+                tableName: $event
+            };
+            row.loading_fkFieldList = true;
+            row.fkCurrentField = null;
+            row.fkReplaceField = null;
+            ajaxPost(app.urls.selectAllFieldsInTable, data, function (d) {
+                row.fkFieldList = d.data;
+                app.$set(row, 'loading_fkFieldList', false);
+                app.columnMapFieldList.push({});
+                app.columnMapFieldList.pop();
+            }, null, true);
+        },
+        onExpandChange: function (row, expandedRow) {
+            this.expandRowKeys = [];
+            for (let i = 0; i < expandedRow.length; i++) {
+                this.expandRowKeys.push(expandedRow[i].fieldName);
+            }
         }
     },
     mounted: function () {
         let app = this;
-        app.fullScreenLoading = false;
+        app.fullScreenLoading = true;
+        app.pageParams = pageParams;
+        // get table list
         ajaxPost(app.urls.showTables, null, function (d) {
             app.tableList = d.data;
+            app.fullScreenLoading = false;
+            // set step according to page status
+            if (pageParams.status === 'insert') {
+                app.currentStep = 0;
+            } else {
+                app.currentStep = 1;
+                let data = {templateId: pageParams.templateId};
+                app.fullScreenLoading = true;
+                ajaxPost(app.urls.selectExcelTemplateById, data, function (d) {
+                    app.fullScreenLoading = false;
+                    app.columnMapFieldList = d.data.columnMapFieldList;
+                    app.excelColumnList = d.data.excelColumnList;
+                    app.currentTableName = d.data.tableName;
+                    app.currentTemplateName = d.data.excelName;
+                    app.templateName = d.data.templateName;
+                    app.templateId = d.data.id;
+                })
+            }
         })
     }
 });
