@@ -35,7 +35,7 @@ public class PaperSearchController {
         return modelAndView;
     }
 
-    /*初始化文献查询页面*/
+    /*初始化文献管理页面*/
     @RequestMapping(value = "docInitial", method = RequestMethod.GET)
     public ModelAndView docInitial() {
         ModelAndView modelAndView = new ModelAndView();

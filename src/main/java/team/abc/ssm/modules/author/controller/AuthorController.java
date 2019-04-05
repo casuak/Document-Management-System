@@ -15,6 +15,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class AuthorController {
 
 //    @RequestMapping(value = "selectAuthorByPage",method = RequestMethod.GET)
-////    @ResponseBody
-////    public Object selectAuthorByPage(){}
+//    @ResponseBody
+//    public Object selectAuthorByPage(){}
 }
