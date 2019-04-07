@@ -52,7 +52,7 @@
     </div>
     <%-- 步骤2 --%>
     <div v-if="currentStep==1" style="margin-bottom: 45px;height: 100%;">
-        <el-table :data="columnMapFieldList" size="mini" height="360" v-loading="loading.table"
+        <el-table :data="columnMapFieldList" size="mini" height="360" v-loading="loading.table" ref="table"
                   @expand-change="onExpandChange" row-key="fieldName" :expand-row-keys="expandRowKeys">
             <el-table-column type="expand">
                 <template slot-scope="{row, $index}">
@@ -70,19 +70,23 @@
                                            :label="tableName"></el-option>
                             </el-select>
                         </el-form-item>
-                        <el-form-item label="原字段" v-show="row.fk">
+                        <el-form-item label="原字段" v-if="row.fk">
                             <el-select clearable filterable style="width: 250px;margin-right: 10px;"
                                        v-model="row.fkCurrentField" :loading="row.loading_fkFieldList">
                                 <el-option v-for="tableField in row.fkFieldList" :key="tableField.fieldName"
                                            :value="tableField.fieldName" :label="tableField.fieldName"></el-option>
                             </el-select>
                         </el-form-item>
-                        <el-form-item label="替换字段" v-show="row.fk">
+                        <el-form-item label="替换字段" v-if="row.fk">
                             <el-select clearable filterable style="width: 250px;margin-right: 10px;"
                                        v-model="row.fkReplaceField" :loading="row.loading_fkFieldList">
                                 <el-option v-for="tableField in row.fkFieldList" :key="tableField.fieldName"
                                            :value="tableField.fieldName" :label="tableField.fieldName"></el-option>
                             </el-select>
+                        </el-form-item>
+                        <el-form-item label="固定值" v-if="row.fixed">
+                            <i-input v-model="row.fixedContent" style="width: 300px;" size="small"
+                                     placeholder="请输入" style="position: relative;bottom: 1px;"></i-input>
                         </el-form-item>
                     </el-form>
                 </template>
@@ -92,7 +96,7 @@
                 <template slot-scope="{row}">
                     <el-select v-model="row.columnIndex" clearable filterable size="mini"
                                @clear="row.columnIndex=-1;row.columnName=null"
-                               @change="setColumnName($event, row)">
+                               @change="setColumnName($event, row)" :disabled="row.fixed">
                         <el-option v-for="excelColumn in excelColumnList" :key="excelColumn.columnIndex"
                                    :label="excelColumn.columnName" :value="excelColumn.columnIndex"></el-option>
                         <el-option v-show="false" :key="-1" :value="-1" label="请选择"></el-option>
@@ -101,12 +105,14 @@
             </el-table-column>
             <el-table-column label="外  键" width="80" align="center">
                 <template slot-scope="{row}">
-                    <i-switch v-model="row.fk" @on-change="row.fixed=false"></i-switch>
+                    <el-switch v-model="row.fk"
+                               @change="row.fixed=false;$refs.table.toggleRowExpansion(row, $event)"></el-switch>
                 </template>
             </el-table-column>
             <el-table-column label="固定值" width="80" align="center">
                 <template slot-scope="{row}">
-                    <i-switch v-model="row.fixed" @on-change="row.fk=false"></i-switch>
+                    <el-switch v-model="row.fixed"
+                               @change="row.fk=false;$refs.table.toggleRowExpansion(row, $event)"></el-switch>
                 </template>
             </el-table-column>
             <el-table-column></el-table-column>
