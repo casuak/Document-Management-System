@@ -1,5 +1,7 @@
 package team.abc.ssm.modules.doc.api;
 
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -54,6 +56,10 @@ public class PaperSearchController {
     public ModelAndView docInitial() {
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("functions/doc/docSearch");
+        List<Map<String, String>> paperType = paperSearchService.getPaperType();
+        System.out.println("paperType: "+paperType.toString());
+        JSONArray paperTypeJson = JSONArray.fromObject(paperType);
+        modelAndView.addObject("paperType", paperTypeJson);
         return modelAndView;
     }
 
@@ -72,9 +78,9 @@ public class PaperSearchController {
     ) {
         //论文查询参数
         String paperName = request.getParameter("paperName");
-        String firstAuthor = request.getParameter("firstAuthor");
-        String secondAuthor = request.getParameter("secondAuthor");
-        String otherAuthor = request.getParameter("otherAuthor");
+        String firstAuthorWorkNum = request.getParameter("firstAuthorWorkNum");
+        String secondAuthorWorkNum = request.getParameter("secondAuthorWorkNum");
+        String otherAuthorWorkNum = request.getParameter("otherAuthorWorkNum");
         String journalNum = request.getParameter("journalNum");
         String storeNum = request.getParameter("storeNum");
         String docType = request.getParameter("docType");
@@ -96,9 +102,9 @@ public class PaperSearchController {
 
 
         List<Paper> paperList = paperSearchService.getPaperList(
-                paperName,firstAuthor,secondAuthor,otherAuthor,journalNum,storeNum,docType,paperPageIndex,paperPageSize
+                "", "", "", "", "", "", "", 10, 10
         );
-
+        System.out.println(paperList);
         //请求返回体：
         AjaxMessage retMsg = new AjaxMessage();
         return retMsg.Set(MsgType.SUCCESS, "hello");
