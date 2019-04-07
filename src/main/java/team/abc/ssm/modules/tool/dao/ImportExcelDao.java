@@ -21,6 +21,6 @@ public interface ImportExcelDao {
     int dynamicInsert(DynamicInsertParam dynamicInsertParam);
 
     // 获取table中的某2列的所有行的数据(用于形成键值映射)
-    // tableName(String), currentField(String), replaceField(String)
+    // tableName(String), fkCurrentField(String), fkReplaceField(String)
     List<Map<String, Object>> selectListByTwoField(ColumnMapField columnMapField);
 }

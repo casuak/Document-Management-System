@@ -34,6 +34,11 @@ public class ViewController extends BaseController {
         return "register";
     }
 
+    @RequestMapping(value = "403", method = RequestMethod.GET)
+    public String _403() {
+        return "403";
+    }
+
     /**
      * 系统功能
      **/

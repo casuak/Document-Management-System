@@ -34,6 +34,9 @@ let app = new Vue({
                 visible: false,
                 loading: false,
                 formData: {
+                    nameCn: '',
+                    nameEn: '',
+                    sort: 0,
                     parentId: '',
                     typeId: ''
                 },

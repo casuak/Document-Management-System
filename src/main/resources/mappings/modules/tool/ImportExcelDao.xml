@@ -27,7 +27,7 @@
     </insert>
 
     <select id="selectListByTwoField" resultType="map">
-        select ${currentField}, ${replaceField}
-        from ${tableName}
+        select ${fkCurrentField}, ${fkReplaceField}
+        from ${fkTableName}
     </select>
 </mapper>
