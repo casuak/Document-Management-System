@@ -14,7 +14,7 @@
     <%@include file="/WEB-INF/views/include/blankHead.jsp" %>
     <link rel="stylesheet" href="/static/css/tableTemplate.css"/>
     <style>
-        html{
+        html {
             height: 100%;
             overflow: auto;
         }
@@ -51,7 +51,6 @@
 
         .operateRow {
             padding: 7px 0;
-
         }
     </style>
 </head>
@@ -200,7 +199,7 @@
                         <div class="commonInput">
                             <el-input
                                     placeholder="输入版权主体"
-                                    v-model="optionView.copyright.subject"
+                                    v-model="optionView.copyright.copySubject"
                                     clearable>
                             </el-input>
                         </div>
@@ -210,7 +209,7 @@
                         <div class="commonInput">
                             <el-input
                                     placeholder="输入版权类型"
-                                    v-model="optionView.copyright.type"
+                                    v-model="optionView.copyright.copyType"
                                     clearable>
                             </el-input>
                         </div>
@@ -233,9 +232,12 @@
                 </row>
             </div>
 
-            <div class="operateRow">
+            <div style="height: 10px"></div>
+            <row>
                 <el-button type="primary" size="medium">搜索文献</el-button>
-            </div>
+                <el-button type="danger" size="medium" @click="test2()">Test1</el-button>
+                <el-button type="success" size="medium" @click="test3()">Test2</el-button>
+            </row>
         </el-header>
         <el-main style="margin-top: -35px">
             <%--paper列表--%>
@@ -455,8 +457,8 @@
                 },
                 copyright: {
                     show: false,
-                    subject: "",
-                    type: ""
+                    copySubject: "",
+                    copyType: ""
                 },
                 commonSelect: {
                     show: true,
@@ -476,7 +478,13 @@
             fullScreenLoading: false,
             table: {
                 paperTable: {
-                    data: [],
+                    data: [
+                        // {
+                        //     name:"",
+                        //     firstAuthor:"",
+                        //     secondAuthor:""
+                        // }
+                    ],
                     loading: false,
                     selectionList: [],
                     params: {
@@ -551,7 +559,7 @@
 
         if (app.doc.checkedDoc.length > 0) {
             app.optionView.commonSelect.show = false;
-        }else{
+        } else {
             app.optionView.commonSelect.show = true;
         }
         for (let i = 0; i < app.doc.checkedDoc.length; i++) {
@@ -570,6 +578,107 @@
                     break;
             }
         }
+    }
+
+    //1. 格式化URL参数(传入单个参数对象)
+    function formatParams(data) {
+        let arr = [];
+        for (let name in data) {
+            arr.push(encodeURIComponent(name) + '=' + encodeURIComponent(data[name]));
+        }
+        // 添加一个随机数参数，防止缓存
+        arr.push('v' + Math.random() + '=' + Math.random());
+        //console.log(arr.join('&'));
+        return arr.join('&');
+    }
+
+    //2. 格式化REL参数(传入参数对象数组)
+    function formatParamsArray(data) {
+        let arr = [];
+        for (let i = 0; i < data.length; i++) {
+            let tmpData = data[i];
+            for (let name in tmpData) {
+                arr.push(encodeURIComponent(name) + '=' + encodeURIComponent(tmpData[name]));
+            }
+        }
+        arr.push('v=' + Math.random());
+        return arr.join('&');
+    }
+
+    // 测试
+    function test() {
+        let tmpData = {
+            id: "tmpId",
+            name: "tmpName"
+        };
+        ajaxGet('/api/doc/search/test', tmpData, function success(res) {
+                console.log("ok");
+                console.log(res);
+                console.log(res.data.paper)
+            },
+            function error(res) {
+                console.log("请求失败"),
+                    console.log(res);
+            })
+    }
+
+    function test2() {
+        let paperConditionParam = {
+            paperName: "论文名1",
+            firstAuthor: "第一作者1",
+            secondAuthor: "第二作者1",
+            otherAuthor: "其他作者1",
+            journalNum: "期刊号1",
+            storeNum: "入仓号1",
+            docType: "文献类型1",
+            paperPageIndex:1,
+            paperPageSize:10
+        };
+        let patentConditionParam = {
+            applicationNum: "专利申请号2",
+            publicNum: "专利公开号2",
+            countryCode: "专利国别码2",
+            patentPageIndex:1,
+            patentPageSize:10
+        };
+        let copyrightConditionParam = {
+            copySubject: "版权主体2",
+            copyType: "版权类型2",
+            copyPageIndex:1,
+            copyPageSize:10
+        };
+        let paramObjectArray = [paperConditionParam, patentConditionParam, copyrightConditionParam];
+        let conditionParam = formatParamsArray(paramObjectArray);
+
+        //输出条件参数
+        console.log(conditionParam);
+        ajaxPost("/api/doc/search/getDocList", conditionParam,
+            function success(res) {
+                console.log(res);
+            },
+            function error(res) {
+                console.log(res)
+            }
+        )
+
+    }
+
+    function test3() {
+        //模态框测试：
+        app.$prompt('Module Test', 'Notice', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+        }).then(({ value }) => {
+            app.$message({
+                type: 'success',
+                message: '输入信息是: ' + value
+            });
+        }).catch(() => {
+            app.$message({
+                type: 'info',
+                message: '取消输入'
+            });
+        });
     }
 </script>
 <%--<script src="/static/js/functions/doc/docSearch.js"></script>--%>
