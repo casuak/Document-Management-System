@@ -12,7 +12,6 @@ import team.abc.ssm.modules.tool.entity.normal.TableField;
 import team.abc.ssm.modules.tool.service.ExcelTemplateService;
 import team.abc.ssm.modules.tool.service.ImportExcelService;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -72,20 +71,5 @@ public class ImportExcelApi extends BaseApi {
     @ResponseBody
     public Object selectAllFieldsInTable(@RequestParam("tableName") String tableName) {
         return retMsg.Set(MsgType.SUCCESS, importExcelService.getTableFieldList(tableName, true));
-    }
-
-    /**
-     * @param excelTemplate include template params and data file's name in server
-     * @return isSuccess
-     */
-    @RequestMapping(value = "importExcelToTable", method = RequestMethod.POST)
-    @ResponseBody
-    public Object importExcelToTable(@RequestBody ExcelTemplate excelTemplate) {
-        try {
-            importExcelService.importExcelToTable(excelTemplate);
-            return retMsg.Set(MsgType.SUCCESS);
-        } catch (IOException e) {
-            return retMsg.Set(MsgType.ERROR);
-        }
     }
 }

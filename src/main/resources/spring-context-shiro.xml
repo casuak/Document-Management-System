@@ -23,7 +23,7 @@
         <!-- 配置登陆请求地址 -->
         <property name="loginUrl" value="/login"/>
         <!-- 如果您请求的资源不在您的权限范围内，则跳转到/403请求地址 -->
-        <property name="unauthorizedUrl" value="/403"/>
+        <property name="unauthorizedUrl" value="/403.jsp"/>
         <!-- 退出 -->
         <property name="filters">
             <util:map>

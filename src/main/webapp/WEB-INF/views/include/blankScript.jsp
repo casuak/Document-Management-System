@@ -1,7 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 
 <script src="/static/plugins/jquery/jquery-3.3.1.min.js"></script>
-<script src="/static/plugins/axios@0.18.0/dist/axios.min.js"></script>
 
 <script src="/static/plugins/vue/vue.min.js"></script>
 

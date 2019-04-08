@@ -10,7 +10,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>tableTemplate</title>
+    <title>docSearch</title>
     <%@include file="/WEB-INF/views/include/blankHead.jsp" %>
     <link rel="stylesheet" href="/static/css/tableTemplate.css"/>
     <style>
@@ -143,9 +143,9 @@
                             </el-input>
                         </div>
                     </div>
-                    <%--paper-文献类型--%>
+                    <%--paper-论文种类--%>
                     <div class="commonInputSection">
-                        <span class="inputSpanText">文献类型: </span>
+                        <span class="inputSpanText">论文种类: </span>
                         <div class="commonInput">
                             <el-select v-model="optionView.paper.paperType" clearable placeholder="选择论文种类">
                                 <el-option
@@ -245,7 +245,6 @@
         <el-main style="margin-top: -35px">
             <%--paper列表--%>
             <div v-show="optionView.paper.show">
-                <%-- entity表格 --%>
                 <el-table :data="table.paperTable.data"
                           height="calc(100% - 116px)"
                           :header-cell-style="{background:'rgb(254, 240, 240)',color:'#555'}"
@@ -254,18 +253,49 @@
                           class="scroll-bar"
                 <%--@selection-change="onSelectionChange_entity"--%>
                           stripe>
-                    <el-table-column type="selection" width="40"></el-table-column>
-                    <el-table-column label="创建时间">
-                        <%--<template slot-scope="scope">--%>
-                        <%--{{ formatTimestamp(scope.row.createDate) }}--%>
-                        <%--</template>--%>
+                    <el-table-column type="selection" width="40">
+                    </el-table-column>
+                    <el-table-column
+                            type="index"
+                            label="序号"
+                            width="50">
+                    </el-table-column>
+                    <el-table-column
+                            prop="paperName"
+                            label="论文名"
+                            width="180">
+                    </el-table-column>
+                    <el-table-column
+                            prop="paperType"
+                            label="论文种类"
+                            width="180">
+                    </el-table-column>
+                    <el-table-column
+                            prop="journalNum"
+                            label="期刊号"
+                            width="180">
+                    </el-table-column>
+                    <el-table-column
+                            prop="storeNum"
+                            label="入藏号"
+                            width="180">
+                    </el-table-column>
+                    <el-table-column
+                            prop="firstAuthor"
+                            label="第一作者"
+                            width="180">
+                    </el-table-column>
+                    <el-table-column
+                            prop="secondAuthor"
+                            label="第二作者"
+                            width="180">
                     </el-table-column>
                     <el-table-column label="操作" width="190" header-align="center" align="center">
                         <template slot-scope="scope">
-                            <el-button type="warning" size="mini" style="position:relative;bottom: 1px;"
-                            <%--@click="openDialog_updateEntity(scope.row)"--%>
+                            <el-button type="primary" size="mini" style="position:relative;bottom: 1px;"
+                            @click="viewDocDetails(scope.row)"
                             >
-                                <span>编辑</span>
+                                <span>查看</span>
                             </el-button>
                             <el-button type="danger" size="mini" style="position:relative;bottom: 1px;margin-left: 6px;"
                             <%--@click="deleteEntityListByIds([{id: scope.row.id}])"--%>
@@ -276,7 +306,8 @@
                     </el-table-column>
                     <el-table-column width="50"></el-table-column>
                 </el-table>
-                <%-- entity分页 --%>
+
+                <%-- 分页 --%>
                 <el-pagination style="text-align: center;margin: 8px auto;"
                 <%--@size-change="onPageSizeChange_entity"--%>
                 <%--@current-change="onPageIndexChange_entity"--%>
@@ -290,26 +321,45 @@
             <%--patent列表--%>
             <div v-show="optionView.patent.show">
                 <%-- entity表格 --%>
-                <el-table :data="table.paperTable.data"
+                <el-table :data="table.patentTable.data"
                           :header-cell-style="{background:'rgb(253, 246, 236)',color:'#555'}"
                           height="calc(100% - 116px)"
-                          v-loading="table.paperTable.loading"
+                          v-loading="table.patentTable.loading"
                           style="width: 100%;overflow-y: hidden;margin-top: 20px;" c
                           lass="scroll-bar"
                 <%--@selection-change="onSelectionChange_entity"--%>
                           stripe>
                     <el-table-column type="selection" width="40"></el-table-column>
-                    <el-table-column label="创建时间">
-                        <%--<template slot-scope="scope">--%>
-                        <%--{{ formatTimestamp(scope.row.createDate) }}--%>
-                        <%--</template>--%>
+                    <el-table-column
+                            type="index"
+                            label="序号"
+                            width="50">
+                    </el-table-column>
+                    <el-table-column
+                            prop="applicationNum"
+                            label="专利申请号"
+                            width="180">
+                    </el-table-column>
+                    <el-table-column
+                            prop="publicNum"
+                            label="专利公开号"
+                            width="180">
+                    </el-table-column>
+                    <el-table-column
+                            prop="countryCode"
+                            label="专利国别码"
+                            width="180">
+                    </el-table-column>
+                    <el-table-column
+                            prop="countryCode"
+                            label="tmp">
                     </el-table-column>
                     <el-table-column label="操作" width="190" header-align="center" align="center">
                         <template slot-scope="scope">
-                            <el-button type="warning" size="mini" style="position:relative;bottom: 1px;"
-                            <%--@click="openDialog_updateEntity(scope.row)"--%>
+                            <el-button type="primary" size="mini" style="position:relative;bottom: 1px;"
+                                       @click="viewDocDetails(scope.row)"
                             >
-                                <span>编辑</span>
+                                <span>查看</span>
                             </el-button>
                             <el-button type="danger" size="mini" style="position:relative;bottom: 1px;margin-left: 6px;"
                             <%--@click="deleteEntityListByIds([{id: scope.row.id}])"--%>
@@ -324,36 +374,50 @@
                 <el-pagination style="text-align: center;margin: 8px auto;"
                 <%--@size-change="onPageSizeChange_entity"--%>
                 <%--@current-change="onPageIndexChange_entity"--%>
-                               :current-page="table.paperTable.params.pageIndex"
-                               :page-sizes="table.paperTable.params.pageSizes"
-                               :page-size="table.paperTable.params.pageSize"
-                               :total="table.paperTable.params.total"
+                               :current-page="table.patentTable.params.pageIndex"
+                               :page-sizes="table.patentTable.params.pageSizes"
+                               :page-size="table.patentTable.params.pageSize"
+                               :total="table.patentTable.params.total"
                                layout="total, sizes, prev, pager, next, jumper">
                 </el-pagination>
             </div>
             <%--copyr列表--%>
             <div v-show="optionView.copyright.show">
                 <%-- entity表格 --%>
-                <el-table :data="table.paperTable.data"
+                <el-table :data="table.copyrightTable.data"
                           :header-cell-style="{background:'rgb(240, 249, 235)',color:'#555'}"
                           height="calc(100% - 116px)"
-                          v-loading="table.paperTable.loading"
+                          v-loading="table.copyrightTable.loading"
                           style="width: 100%;overflow-y: hidden;margin-top: 20px;"
                           class="scroll-bar"
                 <%--@selection-change="onSelectionChange_entity"--%>
                           stripe>
                     <el-table-column type="selection" width="40"></el-table-column>
-                    <el-table-column label="创建时间">
-                        <%--<template slot-scope="scope">--%>
-                        <%--{{ formatTimestamp(scope.row.createDate) }}--%>
-                        <%--</template>--%>
+                    <el-table-column
+                            type="index"
+                            label="序号"
+                            width="50">
+                    </el-table-column>
+                    <el-table-column
+                            prop="copySubject"
+                            label="版权主体"
+                            width="180">
+                    </el-table-column>
+                    <el-table-column
+                            prop="copyType"
+                            label="版权类型"
+                            width="180">
+                    </el-table-column>
+                    <el-table-column
+                            prop="tmp"
+                            label="tmp">
                     </el-table-column>
                     <el-table-column label="操作" width="190" header-align="center" align="center">
                         <template slot-scope="scope">
-                            <el-button type="warning" size="mini" style="position:relative;bottom: 1px;"
+                            <el-button type="primary" size="mini" style="position:relative;bottom: 1px;"
                             <%--@click="openDialog_updateEntity(scope.row)"--%>
                             >
-                                <span>编辑</span>
+                                <span>查看</span>
                             </el-button>
                             <el-button type="danger" size="mini" style="position:relative;bottom: 1px;margin-left: 6px;"
                             <%--@click="deleteEntityListByIds([{id: scope.row.id}])"--%>
@@ -368,20 +432,20 @@
                 <el-pagination style="text-align: center;margin: 8px auto;"
                 <%--@size-change="onPageSizeChange_entity"--%>
                 <%--@current-change="onPageIndexChange_entity"--%>
-                               :current-page="table.paperTable.params.pageIndex"
-                               :page-sizes="table.paperTable.params.pageSizes"
-                               :page-size="table.paperTable.params.pageSize"
-                               :total="table.paperTable.params.total"
+                               :current-page="table.copyrightTable.params.pageIndex"
+                               :page-sizes="table.copyrightTable.params.pageSizes"
+                               :page-size="table.copyrightTable.params.pageSize"
+                               :total="table.copyrightTable.params.total"
                                layout="total, sizes, prev, pager, next, jumper">
                 </el-pagination>
             </div>
             <%--common列表--%>
             <div v-show="optionView.commonSelect.show">
                 <%-- entity表格 --%>
-                <el-table :data="table.paperTable.data"
+                <el-table :data="table.commonTable.data"
                           :header-cell-style="{background:'rgb(217, 236, 255)',color:'#555'}"
                           height="calc(100% - 116px)"
-                          v-loading="table.paperTable.loading"
+                          v-loading="table.commonTable.loading"
                           style="width: 100%;overflow-y: hidden;margin-top: 20px;"
                           class="scroll-bar"
                 <%--@selection-change="onSelectionChange_entity"--%>
@@ -394,10 +458,10 @@
                     </el-table-column>
                     <el-table-column label="操作" width="190" header-align="center" align="center">
                         <template slot-scope="scope">
-                            <el-button type="warning" size="mini" style="position:relative;bottom: 1px;"
+                            <el-button type="primary" size="mini" style="position:relative;bottom: 1px;"
                             <%--@click="openDialog_updateEntity(scope.row)"--%>
                             >
-                                <span>编辑</span>
+                                <span>查看</span>
                             </el-button>
                             <el-button type="danger" size="mini" style="position:relative;bottom: 1px;margin-left: 6px;"
                             <%--@click="deleteEntityListByIds([{id: scope.row.id}])"--%>
@@ -412,10 +476,10 @@
                 <el-pagination style="text-align: center;margin: 8px auto;"
                 <%--@size-change="onPageSizeChange_entity"--%>
                 <%--@current-change="onPageIndexChange_entity"--%>
-                               :current-page="table.paperTable.params.pageIndex"
-                               :page-sizes="table.paperTable.params.pageSizes"
-                               :page-size="table.paperTable.params.pageSize"
-                               :total="table.paperTable.params.total"
+                               :current-page="table.commonTable.params.pageIndex"
+                               :page-sizes="table.commonTable.params.pageSizes"
+                               :page-size="table.commonTable.params.pageSize"
+                               :total="table.commonTable.params.total"
                                layout="total, sizes, prev, pager, next, jumper">
                 </el-pagination>
             </div>
@@ -476,14 +540,34 @@
                 }
             },
             fullScreenLoading: false,
+            //表格
             table: {
                 paperTable: {
                     data: [
-                        // {
-                        //     name:"",
-                        //     firstAuthor:"",
-                        //     secondAuthor:""
-                        // }
+                        {
+                            paperName: "论文名1",
+                            firstAuthor: "第一作者1",
+                            secondAuthor: "第二作者1",
+                            paperType: "综合论文",
+                            journalNum: "期刊号1",
+                            storeNum: "入藏号1"
+                        },
+                        {
+                            paperName: "论文名2",
+                            firstAuthor: "第一作者2",
+                            secondAuthor: "第二作者2",
+                            paperType: "综合论文",
+                            journalNum: "期刊号2",
+                            storeNum: "入藏号2"
+                        },
+                        {
+                            paperName: "论文名2",
+                            firstAuthor: "第一作者2",
+                            secondAuthor: "第二作者2",
+                            paperType: "综合论文",
+                            journalNum: "期刊号2",
+                            storeNum: "入藏号2"
+                        }
                     ],
                     loading: false,
                     selectionList: [],
@@ -547,6 +631,19 @@
                 this.doc.checkAll = checkedCount === 3;
                 this.doc.isIndeterminate = checkedCount > 0 && checkedCount < 3;
                 optionViewSelect();
+            },
+            //查看文献详情：
+            viewDocDetails(row) {
+                parent.addTab1("文献详情test1","api/doc/search/docDetails");
+                // alert($('#default', window.parent.document).html());
+                console.log(row);
+                ajaxGet("api/doc/search/docDetails",null,
+                function success(res) {
+                    console.log(res);
+                },
+                function error(res) {
+                    console.log(res);
+                })
             }
         }
     });
@@ -608,10 +705,10 @@
     //初始化界面时候加载默认参数：
     function initialize() {
         let tmp = ${paperType};
-        for (let i = 0; i< tmp.length;i++){
+        for (let i = 0; i < tmp.length; i++) {
             let tmpItem = {
-                value:tmp[i].id,
-                label:tmp[i].name_cn
+                value: tmp[i].id,
+                label: tmp[i].name_cn
             };
             console.log(tmpItem);
             app.optionValue.paperTypeOption.push(tmpItem);
@@ -676,6 +773,7 @@
         //         console.log("error "+res)
         //     }
         // )
+
     }
 
     function test3() {

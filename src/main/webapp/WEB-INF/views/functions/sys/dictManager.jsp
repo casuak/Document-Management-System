@@ -74,9 +74,7 @@
                    layout="total, sizes, prev, pager, next, jumper">
     </el-pagination>
     <%-- entity添加窗口 --%>
-    <el-dialog title="添加" :visible.sync="dialog.insertEntity.visible"
-               @closed="resetForm('form_insertEntity')"
-               @open="dialog.insertEntity.formData.typeId=table.entity.condition.typeId">
+    <el-dialog title="添加" :visible.sync="dialog.insertEntity.visible" @closed="resetForm('form_insertEntity')">
         <el-form label-position="left" label-width="140px" style="padding: 0 100px;"
                  :model="dialog.insertEntity.formData" :rules="dialog.insertEntity.rules"
                  ref="form_insertEntity" v-loading="dialog.insertEntity.loading" status-icon>

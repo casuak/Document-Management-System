@@ -63,6 +63,14 @@ public class PaperSearchController {
         return modelAndView;
     }
 
+    /*跳转文献详情页面*/
+    @RequestMapping(value = "docDetails",method = RequestMethod.GET)
+    public ModelAndView docDetails(){
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("functions/doc/docSearch/docDetails");
+        return modelAndView;
+    }
+
     /*跳转当前用户文献列表页面*/
     @RequestMapping(value = "searchDocList", method = RequestMethod.GET)
     public String searchDocList() {

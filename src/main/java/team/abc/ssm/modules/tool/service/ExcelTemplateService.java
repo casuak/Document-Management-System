@@ -116,12 +116,4 @@ public class ExcelTemplateService {
         excelTemplateDao.deleteListByIds(excelTemplateList);
         return true;
     }
-
-    public boolean updateSelf(ExcelTemplate excelTemplate) {
-        return excelTemplateDao.insertOrUpdate(excelTemplate) == 1;
-    }
-
-    public List<ExcelTemplate> selectAll(ExcelTemplate conditions) {
-        return excelTemplateDao.selectAll(conditions);
-    }
 }

@@ -40,12 +40,8 @@
         <el-table-column label="导入表名" min-width="40" prop="tableName"></el-table-column>
         <el-table-column label="excel模板文件" min-width="40" prop="excelName">
             <template slot-scope="{row}">
-                <a @click="downloadExcelTemplate(row.excelName, row.templateName)">{{ row.excelName }}</a>
-            </template>
-        </el-table-column>
-        <el-table-column label="启用" width="100" align="center">
-            <template slot-scope="{row}">
-                <el-switch v-model="row.enable" @change="switchEnable(row)"></el-switch>
+                <a :href="'/api/tool/file/downloadExcelTemplate?excelName='
+                + row.excelName + '&downloadName=' + row.templateName">{{ row.excelName }}</a>
             </template>
         </el-table-column>
         <el-table-column label="操作" width="190" header-align="center" align="center">

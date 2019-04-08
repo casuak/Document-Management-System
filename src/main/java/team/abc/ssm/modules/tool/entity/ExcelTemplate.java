@@ -15,7 +15,6 @@ public class ExcelTemplate extends DataEntity<ExcelTemplate> {
     private String templateName;    // 模板名（导入方案名）
     private String tableName;       // 目标表名
     private String excelName;       // excel模板文件的名字(默认存放/WEB-INF/excelTemplate)
-    private boolean enable;         // 是否启用，创建时为false，后单独修改
 
     // 此为临时数据，不存在表中，而是来自客户端
     private String excelDataName;   // 存放数据的excel文件的名字(默认存放在/WEB-INF/temp)
@@ -70,13 +69,5 @@ public class ExcelTemplate extends DataEntity<ExcelTemplate> {
 
     public void setExcelColumnList(List<ExcelColumn> excelColumnList) {
         this.excelColumnList = excelColumnList;
-    }
-
-    public boolean isEnable() {
-        return enable;
-    }
-
-    public void setEnable(boolean enable) {
-        this.enable = enable;
     }
 }

@@ -29,10 +29,7 @@ let app = new Vue({
                 visible: false,
                 loading: false,
                 formData: {
-                    nameCn: '',
-                    nameEn: '',
-                    parentId: null,
-                    sort: 0
+                    parentId: null
                 },
                 rules: {},
             },
@@ -76,7 +73,7 @@ let app = new Vue({
                 window.parent.parent.app.showMessage('提示：未选中任何项', 'warning');
                 return;
             }
-            window.parent.parent.app.$confirm('确认删除选中的字典类型', '警告', {
+            window.parent.parent.app.$confirm('确认删除选中的角色', '警告', {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',
                 type: 'warning'

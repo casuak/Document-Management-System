@@ -10,9 +10,9 @@
 <body>
 <div id="app" v-cloak>
     <%-- 未匹配；匹配出错；匹配成功；匹配完成 --%>
-    <el-tabs v-model="activeTabName" style="height: 100%;overflow-y: hidden" @tab-click="tabClick">
-        <el-tab-pane v-for="tab in tabList" :label="tab.label" :name="tab.name" :lazy="true">
-            <iframe :src="tab.src" :id="tab.name"></iframe>
+    <el-tabs v-model="activeTabName" style="height: 100%;overflow-y: hidden">
+        <el-tab-pane v-for="tab in tabList" :label="tab.label" :name="tab.name"  :lazy="true">
+            <iframe :src="tab.src"></iframe>
         </el-tab-pane>
     </el-tabs>
 </div>

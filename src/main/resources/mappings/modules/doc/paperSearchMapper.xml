@@ -65,7 +65,7 @@
     <select id="getPaperTypeMap" resultType="java.util.HashMap">
         select name_cn,id from docmanager.sys_dict where type_id = (
           select id from docmanager.sys_dict_type where sys_dict_type.name_cn = '论文种类'
-        ) and del_flag != -1
+        ) and del_flag = 1
     </select>
 
 </mapper>

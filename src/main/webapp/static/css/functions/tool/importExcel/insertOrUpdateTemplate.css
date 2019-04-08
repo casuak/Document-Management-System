@@ -1,43 +1,37 @@
-.map-title {
+.map-title{
     margin-right: 10px;
     font-size: 14px;
 }
 
-.map-title .map-title-tip {
+.map-title .map-title-tip{
     font-weight: bold;
 }
 
-.map-title .map-title-item {
+.map-title .map-title-item{
     margin-right: 10px;
 }
 
-.ivu-card-body {
+.ivu-card-body{
     padding: 10px 15px 20px 16px;
 }
 
-.el-table__row:hover {
+.el-table__row:hover{
     background: transparent;
 }
 
-.el-table__expanded-cell {
+.el-table__expanded-cell{
     padding: 10px 0 0 57px !important;
 }
 
 .demo-table-expand {
     font-size: 0;
 }
-
 .demo-table-expand label {
     width: 90px;
     color: #99a9bf;
 }
-
 .demo-table-expand .el-form-item {
     margin-right: 0;
     margin-bottom: 0;
     width: 90%;
-}
-
-.el-table__body-wrapper {
-    overflow-y: scroll;
 }

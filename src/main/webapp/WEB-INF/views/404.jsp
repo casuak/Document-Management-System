@@ -5,15 +5,13 @@
 <head>
     <title>ssm</title>
     <%@include file="/WEB-INF/views/include/blankHead.jsp" %>
-    <link rel="stylesheet" href="/static/css/404.css"/>
+    <link rel="stylesheet" href="/static/css/"/>
 </head>
 <body>
-<div id="app" v-cloak style="background-color: white;">
-    <h1 class="tt">
-        404 NOT FOUND
-    </h1>
+<div id="app" v-cloak>
+404
 </div>
 <%@include file="/WEB-INF/views/include/blankScript.jsp" %>
-<script src="/static/js/404.js"></script>
+<script src="/static/js/"></script>
 </body>
 </html>

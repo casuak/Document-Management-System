@@ -57,5 +57,37 @@
 </div>
 <%@include file="/WEB-INF/views/include/blankScript.jsp" %>
 <script src="/static/js/functions/frame.js"></script>
+<script>
+    <%--function:子页面添加新的tab--%>
+    function addTab1(title, url) {
+        let exist = false;
+        let index = -1;
+        // 判断是否已经有url相同的标签页被打开
+        for (let i = 0; i < app.tabList.length; i++) {
+            if (app.tabList[i].url === url) {
+                exist = true;
+                index = i;
+                break;
+            }
+        }
+        // 标签页已被打开，则不再添加新的标签页，而是设置目标标签页为active
+        if (exist === true) {
+            app.activeTabName = app.tabList[index].name;
+            app.tabList[index].loading = true; // tab页进入加载状态
+            app.refreshTab(app.activeTabName);
+        } else {
+            let newTabName = 'tab' + app.tabNameCount;
+            app.tabNameCount += 1;
+            app.tabList.push({
+                title: title,
+                url: url,
+                name: newTabName,
+                loading: true // tab页进入加载状态
+            });
+            app.activeTabName = newTabName;
+        }
+        return app.activeTabName;
+    }
+</script>
 </body>
 </html>
