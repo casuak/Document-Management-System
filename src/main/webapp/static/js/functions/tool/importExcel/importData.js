@@ -9,7 +9,7 @@ let app = new Vue({
         urls: {
             selectAllExcelTemplate: '/api/tool/excelTemplate/selectAll',
             downloadExcelTemplate: '/api/tool/excelTemplate/downloadExcelTemplate',
-            importExcelToTable: '/api/tool/importExcel/importExcelToTable'
+            importExcelToTable: '/api/tool/excelTemplate/importExcelToTable'
         },
         excelTemplateList: [],
         defaultFileList: [],

@@ -25,6 +25,10 @@ public interface PaperDao {
 
     int batchInsert(@Param("list") List<Paper> list);
 
+    /**
+     * custom dao below
+     */
+
     List<Paper> selectIdsByPage(Paper paper);
 
     List<Paper> selectListByIds(List<Paper> list);
@@ -34,4 +38,6 @@ public interface PaperDao {
     List<Paper> selectListByStatus(Paper paper);
 
     int deleteListByIds(List<Paper> paperList);
+
+    int deleteByStatus(String status);
 }

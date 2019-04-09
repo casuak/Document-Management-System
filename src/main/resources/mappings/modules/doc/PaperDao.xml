@@ -670,14 +670,9 @@
         select a.id
         from doc_paper a
         <where>
+            a.status = #{status}
             <if test="page.searchKey != null and page.searchKey != ''">
                 and a.paper_name like concat('%', #{page.searchKey}, '%')
-            </if>
-            <if test="status == '-1'">
-                and a.status is null
-            </if>
-            <if test="status != '-1'">
-                and a.status = #{status}
             </if>
         </where>
         limit #{page.pageStart}, #{page.pageSize}
@@ -696,14 +691,9 @@
         select count(*)
         from doc_paper a
         <where>
+            a.status = #{status}
             <if test="page.searchKey != null and page.searchKey != ''">
                 and a.paper_name like concat('%', #{page.searchKey}, '%')
-            </if>
-            <if test="status == -1">
-                and a.status is null
-            </if>
-            <if test="status != -1">
-                and a.status = #{status}
             </if>
         </where>
     </select>
@@ -711,12 +701,7 @@
     <select id="selectListByStatus" parameterType="paper" resultMap="BaseResultMap">
         select * from doc_paper a
         <where>
-            <if test="status == '-1'">
-                a.status is null
-            </if>
-            <if test="status != '-1'">
-                and a.status = #{status}
-            </if>
+            a.status = #{status}
         </where>
     </select>
 
@@ -737,5 +722,11 @@
                 </where>
             </otherwise>
         </choose>
+    </delete>
+
+    <delete id="deleteByStatus" parameterType="string">
+        delete
+        from doc_paper
+        where status = #{0}
     </delete>
 </mapper>
