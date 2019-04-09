@@ -4,9 +4,9 @@ let app = new Vue({
         currentStep: 1,                 // 当前进行到的步骤(共2步)
         tableList: [],                  // 数据库中的所有表(供选择)
         urls: {
-            showTables: '/api/tool/excelTemplate/showTables',
-            selectAllFieldsInTable: '/api/tool/excelTemplate/selectAllFieldsInTable',
-            getColumnsInTableAndExcel: '/api/tool/excelTemplate/getColumnsInTableAndExcel',
+            showTables: '/api/tool/importExcel/showTables',
+            selectAllFieldsInTable: '/api/tool/importExcel/selectAllFieldsInTable',
+            getColumnsInTableAndExcel: '/api/tool/importExcel/getColumnsInTableAndExcel',
             insertOrUpdateExcelTemplate: '/api/tool/excelTemplate/insertOrUpdate',
             selectExcelTemplateById: '/api/tool/excelTemplate/selectById'
         },

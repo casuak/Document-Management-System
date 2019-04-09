@@ -12,13 +12,12 @@
     <%-- 顶栏 --%>
     <div style="padding: 10px 20px 0 15px;">
         <span class="button-group">
+            <%--<el-button size="small" type="success" @click="dialog.insertEntity.visible=true">--%>
+                <%--<span>添加论文</span>--%>
+            <%--</el-button>--%>
             <el-button size="small" type="danger" @click="deleteEntityListByIds(table.entity.selectionList)"
                        style="margin-left: 10px;">
                 <span>批量删除</span>
-            </el-button>
-            <el-button size="small" type="warning" @click="deleteAllListNotInitial()"
-                       style="margin-left: 10px;">
-                <span>全部删除</span>
             </el-button>
             <el-button size="small" type="primary" style="margin-left: 10px;" @click="initAllPaper()">
                 <span>初始化</span>
@@ -39,8 +38,8 @@
     <el-table :data="table.entity.data" height="calc(100% - 116px)" v-loading="table.entity.loading"
               style="width: 100%;overflow-y: hidden;margin-top: 10px;" class="scroll-bar"
               @selection-change="onSelectionChange_entity" stripe>
-        <el-table-column type="selection" width="40" fixed="left"></el-table-column>
-        <el-table-column label="论文名" width="300" fixed="left">
+        <el-table-column type="selection" width="40"></el-table-column>
+        <el-table-column label="论文名" min-width="40">
             <template slot-scope="scope">
                 <el-Tooltip open-delay="500" effect="dark" :content="scope.row.paperName" placement="top">
                     <div style="overflow: hidden;text-overflow:ellipsis;white-space: nowrap;width: 95%;">
@@ -49,7 +48,7 @@
                 </el-Tooltip>
             </template>
         </el-table-column>
-        <el-table-column label="作者列表" width="200">
+        <el-table-column label="作者列表" min-width="30">
             <template slot-scope="scope">
                 <el-Tooltip open-delay="500" effect="dark" :content="scope.row.authorList" placement="top">
                     <div style="overflow: hidden;text-overflow:ellipsis;white-space: nowrap;width: 95%;">
@@ -58,18 +57,12 @@
                 </el-Tooltip>
             </template>
         </el-table-column>
-        <el-table-column label="第一作者名" width="150" prop="firstAuthorName"></el-table-column>
-        <el-table-column label="第二作者名" width="150" prop="secondAuthorName"></el-table-column>
-        <el-table-column label="第一作者工号/学号" width="150" prop="firstAuthorId"></el-table-column>
-        <el-table-column label="第二作者工号/学号" width="150" prop="secondAuthorId"></el-table-column>
-        <el-table-column label="ISSN" width="150" prop="ISSN"></el-table-column>
-        <el-table-column label="入藏号" width="300" prop="storeNum" align="center"></el-table-column>
-        <el-table-column label="论文种类" width="150" prop="docType" align="center"></el-table-column>
-        <el-table-column label="发布日期" width="150" prop="publishDate"></el-table-column>
-        <el-table-column label="PY" width="150" prop="_PY"></el-table-column>
-        <el-table-column label="PD" width="150" prop="_PD"></el-table-column>
-        <el-table-column label="操作" width="100" header-align="center" align="center" fixed="right">
+        <el-table-column label="操作" width="100" header-align="center" align="center">
             <template slot-scope="scope">
+                <%--<el-button type="warning" size="mini" style="position:relative;bottom: 1px;"--%>
+                           <%--@click="openDialog_updateEntity(scope.row)">--%>
+                    <%--<span>编辑</span>--%>
+                <%--</el-button>--%>
                 <el-button type="danger" size="mini" style="position:relative;bottom: 1px;"
                            @click="deleteEntityListByIds([{id: scope.row.id}])">
                     <span>删除</span>
@@ -87,6 +80,43 @@
                    :total="table.entity.params.total"
                    layout="total, sizes, prev, pager, next, jumper">
     </el-pagination>
+    <%-- entity添加窗口 --%>
+    <el-dialog title="添加" :visible.sync="dialog.insertEntity.visible" @closed="resetForm('form_insertEntity')">
+        <el-form label-position="left" label-width="80px" style="padding: 0 100px;"
+                 :model="dialog.insertEntity.formData" :rules="dialog.insertEntity.rules"
+                 ref="form_insertEntity" v-loading="dialog.insertEntity.loading" status-icon>
+            <el-form-item label="角色名" prop="name">
+                <el-input v-model="dialog.insertEntity.formData.name"></el-input>
+            </el-form-item>
+            <el-form-item label="角色代码" prop="code">
+                <el-input v-model="dialog.insertEntity.formData.code"></el-input>
+            </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+            <el-button size="medium" @click="dialog.insertEntity.visible=false">取 消</el-button>
+            <el-button size="medium" type="primary" @click="insertEntity()" style="margin-left: 10px;">提 交
+            </el-button>
+        </div>
+    </el-dialog>
+    <%-- entity编辑窗口 --%>
+    <el-dialog title="编辑" :visible.sync="dialog.updateEntity.visible" @closed="resetForm('form_updateEntity')">
+        <el-form label-position="left" label-width="80px"
+                 style="padding: 0 100px;overflow-y: scroll;"
+                 :model="dialog.updateEntity.formData" :rules="dialog.updateEntity.rules"
+                 ref="form_updateEntity" v-loading="dialog.updateEntity.loading" status-icon size="medium">
+            <el-form-item label="角色名" prop="name">
+                <el-input v-model="dialog.updateEntity.formData.name"></el-input>
+            </el-form-item>
+            <el-form-item label="角色代码" prop="code">
+                <el-input v-model="dialog.updateEntity.formData.code"></el-input>
+            </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+            <el-button size="medium" @click="dialog.updateEntity.visible=false">取 消</el-button>
+            <el-button size="medium" type="primary" @click="updateEntity()" style="margin-left: 10px;">提 交
+            </el-button>
+        </div>
+    </el-dialog>
 </div>
 <%@include file="/WEB-INF/views/include/blankScript.jsp" %>
 <script src="/static/js/functions/doc/paperUserMatch/tab0.js"></script>

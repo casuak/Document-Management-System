@@ -98,15 +98,6 @@ app = new Vue({
                 type: type
             });
         },
-        // 通用方法2：确认框
-        showConfirm: function (yesFunction, noFunction = () => {
-        }, title = '警告', content = '请确认当前的操作', type = 'warning') {
-            this.$confirm(content, title, {
-                confirmButtonText: '确定',
-                cancelButtonText: '取消',
-                type: type
-            }).then(yesFunction, noFunction);
-        },
         // 刷新功能栏
         refreshFunctions: function () {
             let app = this;

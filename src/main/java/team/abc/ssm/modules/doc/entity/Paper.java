@@ -1,6 +1,5 @@
 package team.abc.ssm.modules.doc.entity;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import team.abc.ssm.common.persistence.DataEntity;
 
 import java.util.Date;
@@ -65,9 +64,6 @@ public class Paper extends DataEntity<Paper> {
 	* 出版日期
 	*/
     private Date publishDate;
-
-    private Date _PD;
-    private int _PY;
 
     /**
 	* 所属期刊 from 期刊表
@@ -170,28 +166,11 @@ public class Paper extends DataEntity<Paper> {
         this.publishDate = publishDate;
     }
 
-    @JsonProperty("ISSN")
     public String getISSN() {
         return ISSN;
     }
 
     public void setISSN(String ISSN) {
         this.ISSN = ISSN;
-    }
-
-    public Date get_PD() {
-        return _PD;
-    }
-
-    public void set_PD(Date _PD) {
-        this._PD = _PD;
-    }
-
-    public int get_PY() {
-        return _PY;
-    }
-
-    public void set_PY(int _PY) {
-        this._PY = _PY;
     }
 }

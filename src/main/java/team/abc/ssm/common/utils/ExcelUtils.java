@@ -1,11 +1,15 @@
 package team.abc.ssm.common.utils;
 
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import team.abc.ssm.common.utils.SystemPath;
 
 import java.io.*;
+import java.math.BigDecimal;
 
 public class ExcelUtils {
 
@@ -41,8 +45,6 @@ public class ExcelUtils {
                     val = cell.getNumericCellValue();
                     break;
                 case "datetime":
-                case "timestamp":
-                case "date":
                     val = cell.getDateCellValue();
                     break;
             }
@@ -82,5 +84,13 @@ public class ExcelUtils {
             return null;
         }
         return val;
+    }
+
+    /**
+     * @param fileName the template file you want to know
+     * @return full path
+     */
+    public static String getTemplateFileFullPath(String fileName){
+        return SystemPath.getRootPath() + SystemPath.getExcelTemplatePath() + fileName;
     }
 }

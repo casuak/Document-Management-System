@@ -29,8 +29,8 @@
     border: 0px !important;
 }
 
-.el-table th.is-leaf, tr .gutter, .el-table__fixed-right-patch{
-    background: aliceblue !important;
+.el-table th.is-leaf, tr .gutter{
+    background: aliceblue;
 }
 
 .el-button--mini{

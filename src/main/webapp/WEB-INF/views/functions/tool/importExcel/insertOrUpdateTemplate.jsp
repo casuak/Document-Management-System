@@ -99,7 +99,7 @@
                                @change="setColumnName($event, row)" :disabled="row.fixed">
                         <el-option v-for="excelColumn in excelColumnList" :key="excelColumn.columnIndex"
                                    :label="excelColumn.columnName" :value="excelColumn.columnIndex"></el-option>
-                        <el-option v-show="false" :key="-1" :value="-1" label="请选择 ……"></el-option>
+                        <el-option v-show="false" :key="-1" :value="-1" label="请选择"></el-option>
                     </el-select>
                 </template>
             </el-table-column>

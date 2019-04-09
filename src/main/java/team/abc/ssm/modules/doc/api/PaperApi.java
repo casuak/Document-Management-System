@@ -2,7 +2,10 @@ package team.abc.ssm.modules.doc.api;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import team.abc.ssm.common.persistence.Page;
 import team.abc.ssm.common.web.BaseApi;
 import team.abc.ssm.common.web.MsgType;
@@ -31,9 +34,6 @@ public class PaperApi extends BaseApi {
         return retMsg.Set(MsgType.SUCCESS, data);
     }
 
-    /**
-     * step1
-     */
     @RequestMapping(value = "initAll", method = RequestMethod.POST)
     @ResponseBody
     public Object initAll() {
@@ -48,23 +48,10 @@ public class PaperApi extends BaseApi {
         return retMsg.Set(MsgType.SUCCESS);
     }
 
-    /**
-     * step2
-     */
     @RequestMapping(value = "paperUserMatch", method = RequestMethod.POST)
     @ResponseBody
     public Object paperUserMatch() {
         paperService.paperUserMatch();
-        return retMsg.Set(MsgType.SUCCESS);
-    }
-
-    /**
-     * delete all papers' that was not initialized
-     */
-    @RequestMapping(value = "deleteByStatus", method = RequestMethod.POST)
-    @ResponseBody
-    public Object deleteByStatus(@RequestParam("status") String status){
-        paperService.deleteByStatus(status);
         return retMsg.Set(MsgType.SUCCESS);
     }
 }
