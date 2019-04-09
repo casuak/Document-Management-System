@@ -7,7 +7,8 @@ let app = new Vue({
             deleteEntityListByIds: '/api/doc/paper/deleteListByIds',
             updateEntity: '/api/sys/role/update',
             selectEntityListByPage: '/api/doc/paper/selectListByPage',
-            initAllPaper: '/api/doc/paper/initAll'
+            initAllPaper: '/api/doc/paper/initAll',
+            deleteAllListNotInitial: '/api/doc/paper/deleteByStatus'
         },
         fullScreenLoading: false,
         table: {
@@ -41,29 +42,6 @@ let app = new Vue({
         options: {},
     },
     methods: {
-        insertEntity: function () {
-            // 首先检测表单数据是否合法
-            this.$refs['form_insertEntity'].validate((valid) => {
-                if (valid) {
-                    let data = this.dialog.insertEntity.formData;
-                    let app = this;
-                    app.dialog.insertEntity.loading = true;
-                    ajaxPostJSON(app.urls.insertEntity, data, function (d) {
-                        app.dialog.insertEntity.loading = false;
-                        app.dialog.insertEntity.visible = false;
-                        window.parent.app.showMessage('添加成功！', 'success');
-                        app.refreshTable_entity(); // 添加完成后刷新页面
-                    }, function () {
-                        app.dialog.insertEntity.loading = false;
-                        app.dialog.insertEntity.visible = false;
-                        window.parent.app.showMessage('添加失败！', 'error');
-                    });
-                } else {
-                    console.log("表单数据不合法！");
-                    return false;
-                }
-            });
-        },
         deleteEntityListByIds: function (val) {
             if (val.length === 0) {
                 window.parent.parent.app.showMessage('提示：未选中任何项', 'warning');
@@ -84,29 +62,6 @@ let app = new Vue({
                 })
             }).catch(() => {
                 window.parent.parent.app.showMessage('已取消删除', 'warning');
-            });
-        },
-        updateEntity: function () {
-            // 首先检测表单数据是否合法
-            this.$refs['form_updateEntity'].validate((valid) => {
-                if (valid) {
-                    let data = this.dialog.updateEntity.formData;
-                    let app = this;
-                    app.dialog.updateEntity.loading = true;
-                    ajaxPostJSON(app.urls.updateEntity, data, function (d) {
-                        app.dialog.updateEntity.loading = false;
-                        app.dialog.updateEntity.visible = false;
-                        window.parent.app.showMessage('编辑成功！', 'success');
-                        app.refreshTable_entity(); // 编辑完成后刷新页面
-                    }, function () {
-                        app.dialog.updateEntity.loading = false;
-                        app.dialog.updateEntity.visible = false;
-                        window.parent.app.showMessage('编辑失败！', 'error');
-                    });
-                } else {
-                    console.log("表单数据不合法！");
-                    return false;
-                }
             });
         },
         selectEntityListByPage: function () {
@@ -158,6 +113,21 @@ let app = new Vue({
         resetForm: function (ref) {
             this.$refs[ref].resetFields();
         },
+        deleteAllListNotInitial: function () {
+            let app = this;
+            window.parent.parent.app.showConfirm('警告', '确认删除所有未初始化的论文', 'error',
+                function () {
+                    app.fullScreenLoading = true;
+                    let data = {
+                        status: '-1'
+                    };
+                    ajaxPost(app.urls.deleteAllListNotInitial, data, function (d) {
+                        app.fullScreenLoading = false;
+                        app.refreshTable_entity();
+                        window.parent.parent.app.showMessage("删除成功");
+                    })
+                }, function () {});
+        }
     },
     mounted: function () {
         this.refreshTable_entity();
