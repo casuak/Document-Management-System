@@ -12,4 +12,60 @@
         select* from docmanager.common_organize `org` where org.del_flag != -1
     </select>
 
+    <select id="getPaperList" resultType="team.abc.ssm.modules.doc.entity.Paper">
+        select *from docmanager.doc_paper
+        where  `del_flag` != -1
+        <if test="paperName != null and paperName != ''">
+            and `paper_name` = #{paperName}
+        </if>
+        <if test="journalNum != null and journalNum != ''">
+            and `ISSN` = #{journalNum}
+        </if>
+        <if test="storeNum != null and storeNum != ''">
+            and `store_Num` = #{storeNum}
+        </if>
+        <if test="docType != null and docType != ''">
+            and `doc_type` = #{docType}
+        </if>
+        <if test="firstAuthorWorkNum != null and firstAuthorWorkNum != ''">
+            and id in (
+                select paper_id from docmanager.doc_map_user_paper `map` where map.author_type_id = (
+                select `id` from docmanager.sys_dict `dict` where dict.type_id = (
+                select `id` from docmanager.sys_dict_type `type` where  type.name_cn = '作者身份'
+                ) and dict.name_cn = '第一作者'
+                )
+                and user_id = (select `id` from Sys_User_Info where user_workID = #{firstAuthorWorkNum})
+            )
+        </if>
+        <if test="secondAuthorWorkNum != null and secondAuthorWorkNum != ''">
+            and id in (
+            select paper_id from docmanager.doc_map_user_paper `map` where map.author_type_id = (
+            select `id` from docmanager.sys_dict `dict` where dict.type_id = (
+            select `id` from docmanager.sys_dict_type `type` where  type.name_cn = '作者身份'
+            ) and dict.name_cn = '第二作者'
+            )
+            and user_id = (select `id` from Sys_User_Info where user_workID = #{secondAuthorWorkNum})
+            )
+        </if>
+        <if test="otherAuthorWorkNum != null and otherAuthorWorkNum != ''">
+            and id in (
+            select paper_id from docmanager.doc_map_user_paper `map` where map.author_type_id = (
+            select `id` from docmanager.sys_dict `dict` where dict.type_id = (
+            select `id` from docmanager.sys_dict_type `type` where  type.name_cn = '作者身份'
+            ) and dict.name_cn = '其他作者'
+            )
+            and user_id = (select `id` from Sys_User_Info where user_workID = #{otherAuthorWorkNum})
+            )
+        </if>
+        <if test="paperPageIndex !=0 and paperPageSize != 0">
+            limit #{paperPageIndex} ,#{paperPageSize}
+        </if>
+    </select>
+
+    <select id="getPaperTypeMap" resultType="java.util.HashMap">
+        select name_cn,id from docmanager.sys_dict where type_id = (
+          select id from docmanager.sys_dict_type where sys_dict_type.name_cn = '论文种类'
+        ) and del_flag != -1
+    </select>
+
 </mapper>
