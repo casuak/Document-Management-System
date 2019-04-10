@@ -1,6 +1,7 @@
 package team.abc.ssm.modules.doc.dao;
 
 import org.apache.ibatis.annotations.Param;
+import team.abc.ssm.common.persistence.Page;
 import team.abc.ssm.modules.doc.entity.Paper;
 import team.abc.ssm.modules.organization.domain.CommonOrganize;
 import team.abc.ssm.modules.sys.entity.User;
@@ -10,6 +11,19 @@ import java.util.Map;
 
 public interface PaperSearchMapper {
 
+    /*按页获取paperList*/
+    public List<Paper> getPaperListByPage(
+            @Param("paperName") String paperName,
+            @Param("firstAuthorWorkNum") String firstAuthorWorkNum,
+            @Param("secondAuthorWorkNum") String secondAuthorWorkNum,
+            @Param("otherAuthorWorkNum") String otherAuthorWorkNum,
+            @Param("issn") String issn,
+            @Param("storeNum") String storeNum,
+            @Param("docType") String docType,
+            @Param("pageIndex") int paperPageIndex,
+            @Param("pageSize") int paperPageSize
+    );
+
     /*获取所有的作者身份(中文)*/
     public List<String> getAllAuthorIdentity();
 
@@ -18,6 +32,9 @@ public interface PaperSearchMapper {
 
     /*获取所有机构*/
     public List<CommonOrganize> getAllOrganize();
+
+    /*获取所有的有效论文数量(del_flag不等于-1)*/
+    public Integer getPaperNum();
 
     /*条件获取PaperList*/
     public List<Paper> getPaperList(
@@ -31,4 +48,7 @@ public interface PaperSearchMapper {
             @Param("paperPageIndex") int paperPageIndex,
             @Param("paperPageSize") int paperPageSize
     );
+
+    /*根据Id返回paper*/
+    Paper getPaperById(String paperId);
 }

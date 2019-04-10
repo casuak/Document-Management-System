@@ -5,11 +5,9 @@ import net.sf.json.JSONObject;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+import team.abc.ssm.common.persistence.Page;
 import team.abc.ssm.common.web.AjaxMessage;
 import team.abc.ssm.common.web.MsgType;
 import team.abc.ssm.modules.author.service.AuthorService;
@@ -60,6 +58,26 @@ public class PaperSearchController {
         System.out.println("paperType: "+paperType.toString());
         JSONArray paperTypeJson = JSONArray.fromObject(paperType);
         modelAndView.addObject("paperType", paperTypeJson);
+        return modelAndView;
+    }
+
+    /*跳转文献详情页面*/
+    @RequestMapping(value = "docDetails",method = RequestMethod.GET)
+    public ModelAndView docDetails(){
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("functions/doc/docSearch/docDetails");
+        return modelAndView;
+    }
+
+    /*跳转论文详情页面*/
+    @RequestMapping(value = "paperDetails",method = RequestMethod.GET)
+    public ModelAndView paperDetails(
+            ModelAndView modelAndView,
+            @RequestParam(value = "id") String paperId){
+        Paper resPaper = paperSearchService.getPaperById(paperId);
+        modelAndView.setViewName("functions/doc/docSearch/docDetails");
+        modelAndView.addObject("paperObj",resPaper);
+        modelAndView.addObject("isPaper",true);
         return modelAndView;
     }
 
@@ -139,4 +157,32 @@ public class PaperSearchController {
 
     }
 
+    /*按页返回paper项(不包含搜索参数)*/
+    @RequestMapping(value = "selectPaperListByPage",method = RequestMethod.POST)
+    @ResponseBody
+    public Object selectListByPage(
+            @RequestBody Paper paper
+    ){
+        /*参数解析*/
+        String paperName = paper.getPaperName();
+        String firstAuthorWorkNum = paper.getFirstAuthorName();
+        String secondAuthorWorkNum = paper.getSecondAuthorName();
+        String otherAuthorWorkNum = paper.getAuthorList();
+        String ISSN = paper.getISSN();
+        String storeNum = paper.getStoreNum();
+        String docType = paper.getDocType();
+        Page<Paper> page = paper.getPage();
+
+        List<Paper> paperList = paperSearchService.getPaperListByPage(paperName,firstAuthorWorkNum,secondAuthorWorkNum,otherAuthorWorkNum,ISSN,storeNum,docType,page);
+
+        int paperAmount = paperSearchService.getPaperAmount();
+
+        HashMap<String,Object> resDataMap = new HashMap<>();
+        resDataMap.put("paperList",paperList);
+        resDataMap.put("paperAmount",paperAmount);
+        System.out.println(resDataMap);
+
+        AjaxMessage retMsg = new AjaxMessage();
+        return retMsg.Set(MsgType.SUCCESS,resDataMap);
+    }
 }
