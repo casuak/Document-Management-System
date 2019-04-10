@@ -15,4 +15,6 @@ public interface ExcelTemplateDao {
     int selectSearchCount(ExcelTemplate excelTemplate);
 
     int deleteListByIds(List<ExcelTemplate> excelTemplateList);
+
+    List<ExcelTemplate> selectAll(ExcelTemplate condition);
 }

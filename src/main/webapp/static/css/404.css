@@ -1,0 +1,12 @@
+.tt {
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    /*background-color: #F69;*/
+
+    display: block;
+    position: relative;
+    color: red;
+    top: calc(50% - 12px);
+}

@@ -5,6 +5,8 @@ app = new Vue({
             // api for entity
             deleteEntityListByIds: '/api/tool/excelTemplate/deleteListByIds',
             selectEntityListByPage: '/api/tool/excelTemplate/selectListByPage',
+            downloadExcelTemplate: '/api/tool/excelTemplate/downloadExcelTemplate',
+            updateSelf: '/api/tool/excelTemplate/updateSelf'
         },
         fullScreenLoading: false,
         table: {
@@ -99,6 +101,23 @@ app = new Vue({
         resetForm: function (ref) {
             this.$refs[ref].resetFields();
         },
+        downloadExcelTemplate: function (excelName, downloadName) {
+            let requestUrl = this.urls.downloadExcelTemplate +
+                "?excelName=" + excelName + "&downloadName=" + downloadName;
+            // location.href = requestUrl;
+            window.open(requestUrl);
+        },
+        // 切换模板是否启用
+        switchEnable: function (template) {
+            this.fullScreenLoading = true;
+            let app = this;
+            ajaxPostJSON(this.urls.updateSelf, template, function (d) {
+                app.fullScreenLoading = false;
+                window.parent.parent.app.showMessage('启用状态切换成功!');
+            }, function(d){
+                app.fullScreenLoading = false;
+            })
+        }
     },
     mounted: function () {
         this.refreshTable_entity();
