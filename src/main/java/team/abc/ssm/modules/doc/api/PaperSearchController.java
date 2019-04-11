@@ -158,9 +158,9 @@ public class PaperSearchController {
     }
 
     /*按页返回paper项(不包含搜索参数)*/
-    @RequestMapping(value = "selectPaperListByPage",method = RequestMethod.POST)
+    @RequestMapping(value = "selectPaperListByPagePost",method = RequestMethod.POST)
     @ResponseBody
-    public Object selectListByPage(
+    public Object selectListByPagePost(
             @RequestBody Paper paper
     ){
         /*参数解析*/
@@ -184,5 +184,54 @@ public class PaperSearchController {
 
         AjaxMessage retMsg = new AjaxMessage();
         return retMsg.Set(MsgType.SUCCESS,resDataMap);
+    }
+
+    /*查看论文统计详情*/
+    @RequestMapping(value = "selectPaperListByPageGet",method = RequestMethod.GET)
+    @ResponseBody
+    public Object selectPaperListByPageGet(
+            @RequestParam(value = "paperName") String paperName,
+            @RequestParam(value = "firstAuthorName") String firstAuthorWorkNum,
+            @RequestParam(value = "secondAuthorName") String secondAuthorWorkNum,
+            @RequestParam(value = "authorList") String otherAuthorWorkNum,
+            @RequestParam(value = "ISSN") String ISSN,
+            @RequestParam(value = "storeNum") String storeNum,
+            @RequestParam(value = "docType") String docType,
+            @RequestParam(value = "pageIndex") int pageIndex,
+            @RequestParam(value = "pageSize") int pageSize
+    ){
+        ModelAndView modelAndView = new ModelAndView();
+        Map<String,Object> commonParams = new HashMap<>();
+        Map<String,Object> paperParams = new HashMap<>();
+        List<Map<String,Object>> statisticsParams;
+
+        Page<Paper> tmpPage = new Page<>();
+        tmpPage.setPageIndex(pageIndex);
+        tmpPage.setPageSize(pageSize);
+
+        List<Paper> paperList = paperSearchService.getPaperListByPage(paperName,firstAuthorWorkNum,secondAuthorWorkNum,
+                otherAuthorWorkNum,ISSN,storeNum,docType,tmpPage);
+        int paperAmount = paperSearchService.getPaperAmount();
+        List<Map<String, String>> paperType = paperSearchService.getPaperType();
+        JSONArray paperTypeJson = JSONArray.fromObject(paperType);
+
+        modelAndView.setViewName("functions/doc/docManage/paperList");
+        modelAndView.addObject("paperList",paperList);
+        modelAndView.addObject("paperAmount",paperAmount);
+        modelAndView.addObject("paperType", paperTypeJson);
+
+        return modelAndView;
+    }
+
+    /*查看专利统计详情*/
+    @RequestMapping(value = "selectPatentListByPageGet",method = RequestMethod.GET)
+    public Object selectPatentListByPageGet(){
+        return  null;
+    }
+
+    /*查看著作权统计详情*/
+    @RequestMapping(value = "selectCopyrightListByPageGet",method = RequestMethod.GET)
+    public Object selectCopyrightListByPageGet(){
+        return  null;
     }
 }

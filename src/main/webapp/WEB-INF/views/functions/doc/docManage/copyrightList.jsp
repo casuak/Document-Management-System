@@ -1,8 +1,8 @@
 <%--
   Created by IntelliJ IDEA.
   User: zm
-  Date: 2019/4/2
-  Time: 14:27
+  Date: 2019/4/11
+  Time: 9:00
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" %>
@@ -10,7 +10,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>docSearch</title>
+    <title>著作权统计详情</title>
     <%@include file="/WEB-INF/views/include/blankHead.jsp" %>
     <link rel="stylesheet" href="/static/css/tableTemplate.css"/>
     <style>
@@ -72,10 +72,10 @@
 <div id="app" v-cloak style="background: white;height: 100%;" v-loading="fullScreenLoading">
     <el-container>
         <el-header height="100%">
-            <div style="margin-top: 10px" class="tmp">
+            <div style="margin-top: 10px">
                 <template>
                     <el-checkbox :indeterminate="doc.isIndeterminate" v-model="doc.checkAll"
-                                 style="float: left;margin-left:10px;margin-right: 10px"
+                                 style="float: left;margin-right: 10px"
                                  @change="handleCheckAllChange">全选
                     </el-checkbox>
                     <el-checkbox-group v-model="doc.checkedDoc" @change="handleCheckedDocsChange">
@@ -315,13 +315,13 @@
 
             <row>
                 <el-button type="primary" size="medium" @click="selectAllDoc()">统计搜索</el-button>
-              <%--  <el-button type="danger" size="medium" @click="selectPaperListByPage()">论文搜索</el-button>
+                <el-button type="danger" size="medium" @click="selectPaperListByPage('post')">论文搜索</el-button>
                 <el-button type="warning" size="medium" @click="">专利搜索</el-button>
-                <el-button type="success" size="medium" @click="">著作权搜索</el-button>--%>
+                <el-button type="success" size="medium" @click="">著作权搜索</el-button>
             </row>
         </el-header>
 
-<%--        <hr style="width: 97%;margin: 10px auto;"/>--%>
+        <hr style="width: 97%;margin: 10px auto;"/>
 
         <el-main style="margin-top: -35px">
             <%--common列表--%>
@@ -369,10 +369,9 @@
                     </el-table-column>
                     <el-table-column label="操作" width="190" header-align="center" align="center">
                         <template slot-scope="scope">
-                            <el-button type="primary" plain
-                                       size="mini"
-                                       style="position:relative;bottom: 1px;"
-                                       @click="viewPaperStatistics(scope.row)">
+                            <el-button type="primary" size="mini" style="position:relative;bottom: 1px;"
+                                       @click="openDialog_updateEntity(scope.row)"
+                            >
                                 <span>查看统计详情</span>
                             </el-button>
                         </template>
@@ -391,7 +390,7 @@
                 </el-pagination>--%>
             </div>
 
-           <%-- &lt;%&ndash;paper列表&ndash;%&gt;
+            <%--paper列表--%>
             <div v-show="optionView.paper.show">
                 <el-table :data="table.paperTable.data"
                           highlight-current-row
@@ -400,7 +399,7 @@
                           v-loading="table.paperTable.loading"
                           style="width: 100%;overflow-y: hidden;margin-top: 20px;"
                           class="scroll-bar"
-                &lt;%&ndash;@selection-change="onSelectionChange_entity"&ndash;%&gt;
+                <%--@selection-change="onSelectionChange_entity"--%>
                           stripe>
                     <el-table-column type="selection" width="50">
                     </el-table-column>
@@ -442,7 +441,7 @@
                                 <span>查看</span>
                             </el-button>
                             <el-button type="danger" size="mini" style="position:relative;bottom: 1px;margin-left: 6px;"
-                            &lt;%&ndash;@click="deleteEntityListByIds([{id: scope.row.id}])"&ndash;%&gt;
+                            <%--@click="deleteEntityListByIds([{id: scope.row.id}])"--%>
                             >
                                 <span>删除</span>
                             </el-button>
@@ -451,7 +450,7 @@
                     <el-table-column width="50"></el-table-column>
                 </el-table>
 
-                &lt;%&ndash; 分页 &ndash;%&gt;
+                <%-- 分页 --%>
                 <el-pagination style="text-align: center;margin: 8px auto;"
                                @size-change="onPageSizeChange_paper"
                                @current-change="onPageIndexChange_paper"
@@ -463,16 +462,16 @@
                 </el-pagination>
             </div>
 
-            &lt;%&ndash;patent列表&ndash;%&gt;
+            <%--patent列表--%>
             <div v-show="optionView.patent.show">
-                &lt;%&ndash; entity表格 &ndash;%&gt;
+                <%-- entity表格 --%>
                 <el-table :data="table.patentTable.data"
                           :header-cell-style="{background:'rgb(253, 246, 236)',color:'#555'}"
                           max-height="500"
                           v-loading="table.patentTable.loading"
                           style="width: 100%;overflow-y: hidden;margin-top: 20px;" c
                           lass="scroll-bar"
-                &lt;%&ndash;@selection-change="onSelectionChange_entity"&ndash;%&gt;
+                <%--@selection-change="onSelectionChange_entity"--%>
                           stripe>
                     <el-table-column type="selection" width="40"></el-table-column>
                     <el-table-column
@@ -507,7 +506,7 @@
                                 <span>查看</span>
                             </el-button>
                             <el-button type="danger" size="mini" style="position:relative;bottom: 1px;margin-left: 6px;"
-                            &lt;%&ndash;@click="deleteEntityListByIds([{id: scope.row.id}])"&ndash;%&gt;
+                            <%--@click="deleteEntityListByIds([{id: scope.row.id}])"--%>
                             >
                                 <span>删除</span>
                             </el-button>
@@ -515,10 +514,10 @@
                     </el-table-column>
                     <el-table-column width="50"></el-table-column>
                 </el-table>
-                &lt;%&ndash; entity分页 &ndash;%&gt;
+                <%-- entity分页 --%>
                 <el-pagination style="text-align: center;margin: 8px auto;"
-                &lt;%&ndash;@size-change="onPageSizeChange_entity"&ndash;%&gt;
-                &lt;%&ndash;@current-change="onPageIndexChange_entity"&ndash;%&gt;
+                <%--@size-change="onPageSizeChange_entity"--%>
+                <%--@current-change="onPageIndexChange_entity"--%>
                                :current-page="table.patentTable.params.pageIndex"
                                :page-sizes="table.patentTable.params.pageSizes"
                                :page-size="table.patentTable.params.pageSize"
@@ -527,16 +526,16 @@
                 </el-pagination>
             </div>
 
-            &lt;%&ndash;copyr列表&ndash;%&gt;
+            <%--copyr列表--%>
             <div v-show="optionView.copyright.show">
-                &lt;%&ndash; entity表格 &ndash;%&gt;
+                <%-- entity表格 --%>
                 <el-table :data="table.copyrightTable.data"
                           :header-cell-style="{background:'rgb(240, 249, 235)',color:'#555'}"
                           max-height="500"
                           v-loading="table.copyrightTable.loading"
                           style="width: 100%;overflow-y: hidden;margin-top: 20px;"
                           class="scroll-bar"
-                &lt;%&ndash;@selection-change="onSelectionChange_entity"&ndash;%&gt;
+                <%--@selection-change="onSelectionChange_entity"--%>
                           stripe>
                     <el-table-column type="selection" width="40"></el-table-column>
                     <el-table-column
@@ -561,12 +560,12 @@
                     <el-table-column label="操作" width="190" header-align="center" align="center">
                         <template slot-scope="scope">
                             <el-button type="primary" size="mini" style="position:relative;bottom: 1px;"
-                            &lt;%&ndash;@click="openDialog_updateEntity(scope.row)"&ndash;%&gt;
+                            <%--@click="openDialog_updateEntity(scope.row)"--%>
                             >
                                 <span>查看</span>
                             </el-button>
                             <el-button type="danger" size="mini" style="position:relative;bottom: 1px;margin-left: 6px;"
-                            &lt;%&ndash;@click="deleteEntityListByIds([{id: scope.row.id}])"&ndash;%&gt;
+                            <%--@click="deleteEntityListByIds([{id: scope.row.id}])"--%>
                             >
                                 <span>删除</span>
                             </el-button>
@@ -574,24 +573,23 @@
                     </el-table-column>
                     <el-table-column width="50"></el-table-column>
                 </el-table>
-                &lt;%&ndash; entity分页 &ndash;%&gt;
+                <%-- entity分页 --%>
                 <el-pagination style="text-align: center;margin: 8px auto;"
-                &lt;%&ndash;@size-change="onPageSizeChange_entity"&ndash;%&gt;
-                &lt;%&ndash;@current-change="onPageIndexChange_entity"&ndash;%&gt;
+                <%--@size-change="onPageSizeChange_entity"--%>
+                <%--@current-change="onPageIndexChange_entity"--%>
                                :current-page="table.copyrightTable.params.pageIndex"
                                :page-sizes="table.copyrightTable.params.pageSizes"
                                :page-size="table.copyrightTable.params.pageSize"
                                :total="table.copyrightTable.params.total"
                                layout="total, sizes, prev, pager, next, jumper">
                 </el-pagination>
-            </div>--%>
+            </div>
         </el-main>
         <%--<el-footer>--%>
         <%--footer--%>
         <%--</el-footer>--%>
     </el-container>
 </div>
-
 
 <%@include file="/WEB-INF/views/include/blankScript.jsp" %>
 <script>
@@ -829,8 +827,8 @@
                 optionViewSelect();
             },
 
-            /*查看论文统计详情*/
-            viewPaperStatistics: function (row) {
+            //查看详情
+            openDialog_updateEntity: function (row) {
                 let data = {
                     paperName: app.optionView.paper.paperName,
                     firstAuthorName: app.optionView.paper.firstAuthorWorkNum,            //其实是FA工号
@@ -859,15 +857,6 @@
                  window.parent.app.addTab("title", "api/doc/search/selectPaperListByPage")*/
             },
 
-            /*查看patent统计详情*/
-            viewPatentStatistics:function(row){
-
-            },
-            /*查看copyright统计详情*/
-            viewCopyrightStatistics:function(row){
-
-            },
-
             /*paper_table函数*/
             insertPaper: function () {
 
@@ -878,7 +867,7 @@
             updatePaper: function () {
 
             },
-            selectPaperListByPage: function () {
+            selectPaperListByPage: function (requestType) {
                 //formatParams
                 let data = {
                     paperName: app.optionView.paper.paperName,
@@ -1131,34 +1120,6 @@
             });
         });
     }
-
-    // function paperSearch() {
-    //     let data = {
-    //         paperName:app.optionView.paper.paperName,
-    //         firstAuthorName:app.optionView.paper.firstAuthorWorkNum,            //其实是FA工号
-    //         secondAuthorName:app.optionView.paper.secondAuthorWorkNum,          //其实是SA工号
-    //         authorList:app.optionView.paper.otherAuthorWorkNum,                 //其实是OA工号
-    //         ISSN:app.optionView.paper.journalNum,
-    //         storeNum:app.optionView.paper.storeNum,
-    //         docType:app.optionView.paper.paperType,
-    //         page: app.table.paperTable.params
-    //     };
-    //
-    //     console.log(data);
-    //     app.table.paperTable.loading = true;
-    //     ajaxPostJSON("/api/doc/search/selectListByPage", data,
-    //         function success(res) {
-    //             app.table.paperTable.loading = false;
-    //             console.log(res);
-    //             app.table.paperTable.data = res.data;
-    //             //app.table.entity.params.total = d.data.total;
-    //         },
-    //         function error(res) {
-    //             console.log("error: " + res);
-    //         });
-    // }
 </script>
-
-<%--<script src="/static/js/functions/doc/docSearch.js"></script>--%>
 </body>
 </html>
