@@ -42,7 +42,7 @@ public interface PaperSearchMapper {
             @Param("firstAuthorWorkNum") String firstAuthorWorkNum,
             @Param("secondAuthorWorkNum") String secondAuthorWorkNum,
             @Param("otherAuthorWorkNum") String otherAuthorWorkNum,
-            @Param("journalNum") String journalNum,
+            @Param("ISSN") String ISSN,
             @Param("storeNum") String storeNum,
             @Param("docType") String docType,
             @Param("paperPageIndex") int paperPageIndex,

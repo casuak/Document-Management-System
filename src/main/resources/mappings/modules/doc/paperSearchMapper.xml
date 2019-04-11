@@ -41,8 +41,8 @@
         <if test="paperName != null and paperName != ''">
             and `paper_name` = #{paperName}
         </if>
-        <if test="journalNum != null and journalNum != ''">
-            and `ISSN` = #{journalNum}
+        <if test="ISSN != null and ISSN != ''">
+            and `ISSN` = #{ISSN}
         </if>
         <if test="storeNum != null and storeNum != ''">
             and `store_Num` = #{storeNum}
@@ -86,9 +86,9 @@
     </select>
 
     <select id="getPaperTypeMap" resultType="java.util.HashMap">
-        select name_cn,id from docmanager.sys_dict where type_id = (
+        select name_en,id from docmanager.sys_dict where type_id = (
           select id from docmanager.sys_dict_type where sys_dict_type.name_cn = '论文种类'
-        ) and del_flag = 1
+        ) and del_flag != -1
     </select>
 
     <select id="getPaperNum" resultType="java.lang.Integer">

@@ -72,6 +72,7 @@ public class Paper extends DataEntity<Paper> {
     /**
 	* 所属期刊 from 期刊表
 	*/
+    @JsonProperty(value = "ISSN")
     private String ISSN;
 
     public String getAuthorList() {
@@ -193,5 +194,26 @@ public class Paper extends DataEntity<Paper> {
 
     public void set_PY(int _PY) {
         this._PY = _PY;
+    }
+
+    @Override
+    public String toString() {
+        return "Paper{" +
+                "authorList='" + authorList + '\'' +
+                ", firstAuthorName='" + firstAuthorName + '\'' +
+                ", secondAuthorName='" + secondAuthorName + '\'' +
+                ", firstAuthorId='" + firstAuthorId + '\'' +
+                ", secondAuthorId='" + secondAuthorId + '\'' +
+                ", status='" + status + '\'' +
+                ", status1='" + status1 + '\'' +
+                ", status2='" + status2 + '\'' +
+                ", paperName='" + paperName + '\'' +
+                ", storeNum='" + storeNum + '\'' +
+                ", docType='" + docType + '\'' +
+                ", publishDate=" + publishDate +
+                ", _PD=" + _PD +
+                ", _PY=" + _PY +
+                ", ISSN='" + ISSN + '\'' +
+                '}';
     }
 }

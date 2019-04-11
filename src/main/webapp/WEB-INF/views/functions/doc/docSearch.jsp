@@ -212,7 +212,7 @@
                         <div class="commonInput">
                             <el-input
                                     placeholder="输入论文期刊号"
-                                    v-model="optionView.paper.journalNum"
+                                    v-model="optionView.paper.ISSN"
                                     clearable>
                             </el-input>
                         </div>
@@ -419,7 +419,7 @@
                             label="论文种类">
                     </el-table-column>
                     <el-table-column
-                            prop="issn"
+                            prop="ISSN"
                             label="期刊号">
                     </el-table-column>
                     <el-table-column
@@ -682,7 +682,7 @@
                     firstAuthorWorkNum: "",
                     secondAuthorWorkNum: "",
                     otherAuthorWorkNum: "",
-                    journalNum: "",
+                    ISSN: "",
                     storeNum: "",
                     paperType: ""
                 },
@@ -837,8 +837,8 @@
                     secondAuthorName: app.optionView.paper.secondAuthorWorkNum,          //其实是SA工号
                     authorList: app.optionView.paper.otherAuthorWorkNum,                 //其实是OA工号
                     storeNum: app.optionView.paper.storeNum,
-                    docType: app.optionView.paper.paperType,
-                    ISSN: app.optionView.paper.journalNum,
+                    paperType: app.optionView.paper.paperType,
+                    ISSN: app.optionView.paper.ISSN,
                     pageIndex: app.table.paperTable.params.pageIndex,
                     pageSize: app.table.paperTable.params.pageSize
                 };
@@ -846,17 +846,6 @@
                 let getLink = "/api/doc/search/selectPaperListByPageGet?" + getParam;
                 console.log(getLink)
                 window.parent.app.addTab("论文", getLink);
-                /* let title;
-                 if (row.docType === "论文") {
-                     title = "论文";
-                     window.parent.app.addTab("title",)
-
-                 } else if (row.docType === "专利") {
-                     title = "专利";
-                 } else {
-                     title = "著作权";
-                 }
-                 window.parent.app.addTab("title", "api/doc/search/selectPaperListByPage")*/
             },
 
             /*查看patent统计详情*/
@@ -887,7 +876,7 @@
                     authorList: app.optionView.paper.otherAuthorWorkNum,                 //其实是OA工号
                     storeNum: app.optionView.paper.storeNum,
                     docType: app.optionView.paper.paperType,
-                    ISSN: app.optionView.paper.journalNum,
+                    ISSN: app.optionView.paper.ISSN,
                     page: app.table.paperTable.params
                 };
                 console.log("post: " + data);
@@ -954,6 +943,7 @@
                 let patentIndex = $.inArray('专利', app.doc.checkedDoc);
                 let copyrightIndex = $.inArray('著作权', app.doc.checkedDoc);
 
+                app.table.commonTable.loading = true;
                 /*全部未选中则是统一显示在commonTable中*/
                 if (paperIndex === -1 && patentIndex === -1 && copyrightIndex === -1) {
                     console.log("commonTable Search");
@@ -969,6 +959,8 @@
                 if (copyrightIndex !== -1) {
                     app.selectCopyrightListByPage();
                 }
+
+                app.table.commonTable.loading = false;
             },
 
             /*查看文献详情：*/
@@ -1039,11 +1031,12 @@
 
     //初始化界面时候加载默认参数：
     function initialize() {
+        /*初始化paperType*/
         let tmp = ${paperType};
         for (let i = 0; i < tmp.length; i++) {
             let tmpItem = {
                 value: tmp[i].id,
-                label: tmp[i].name_cn
+                label: tmp[i].name_en
             };
             console.log(tmpItem);
             app.optionValue.paperTypeOption.push(tmpItem);
@@ -1079,7 +1072,7 @@
             firstAuthorWorkNum: app.optionView.paper.firstAuthorWorkNum,
             secondAuthorWorkNum: app.optionView.paper.secondAuthorWorkNum,
             otherAuthorWorkNum: app.optionView.paper.otherAuthorWorkNum,
-            journalNum: app.optionView.paper.journalNum,
+            ISSN: app.optionView.paper.ISSN,
             storeNum: app.optionView.paper.storeNum,
             docType: app.optionView.paper.paperType,                    //paperType 的id
             paperPageIndex: app.table.paperTable.params.pageIndex,
@@ -1138,7 +1131,7 @@
     //         firstAuthorName:app.optionView.paper.firstAuthorWorkNum,            //其实是FA工号
     //         secondAuthorName:app.optionView.paper.secondAuthorWorkNum,          //其实是SA工号
     //         authorList:app.optionView.paper.otherAuthorWorkNum,                 //其实是OA工号
-    //         ISSN:app.optionView.paper.journalNum,
+    //         ISSN:app.optionView.paper.ISSN,
     //         storeNum:app.optionView.paper.storeNum,
     //         docType:app.optionView.paper.paperType,
     //         page: app.table.paperTable.params

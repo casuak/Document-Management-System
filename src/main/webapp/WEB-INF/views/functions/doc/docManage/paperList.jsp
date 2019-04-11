@@ -198,7 +198,7 @@
                         <div class="commonInput">
                             <el-input
                                     placeholder="输入论文期刊号"
-                                    v-model="optionView.paper.journalNum"
+                                    v-model="optionView.paper.ISSN"
                                     clearable>
                             </el-input>
                         </div>
@@ -269,7 +269,7 @@
                             label="论文种类">
                     </el-table-column>
                     <el-table-column
-                            prop="issn"
+                            prop="ISSN"
                             label="期刊号">
                     </el-table-column>
                     <el-table-column
@@ -406,7 +406,7 @@
                     firstAuthorWorkNum: "",
                     secondAuthorWorkNum: "",
                     otherAuthorWorkNum: "",
-                    journalNum: "",
+                    ISSN: "",
                     storeNum: "",
                     paperType: ""
                 },
@@ -551,7 +551,7 @@
                     authorList: app.optionView.paper.otherAuthorWorkNum,                 //其实是OA工号
                     storeNum: app.optionView.paper.storeNum,
                     docType: app.optionView.paper.paperType,
-                    ISSN: app.optionView.paper.journalNum,
+                    ISSN: app.optionView.paper.ISSN,
                     pageIndex: app.table.paperTable.params.pageIndex,
                     pageSize: app.table.paperTable.params.pageSize
                 };
@@ -591,7 +591,7 @@
                     authorList: app.optionView.paper.otherAuthorWorkNum,                 //其实是OA工号
                     storeNum: app.optionView.paper.storeNum,
                     docType: app.optionView.paper.paperType,
-                    ISSN: app.optionView.paper.journalNum,
+                    ISSN: app.optionView.paper.ISSN,
                     page: app.table.paperTable.params
                 };
                 console.log("post: " + data);
@@ -599,7 +599,7 @@
                 ajaxPostJSON("/api/doc/search/selectPaperListByPagePost", data,
                     function success(res) {
                         app.table.paperTable.loading = false;
-                        console.log("post请求成功" + res);
+                        console.log("post请求成功" + res.data.paperList);
                         app.table.paperTable.data = res.data.paperList;
                         app.table.paperTable.params.total = res.data.paperAmount;
                     },
@@ -747,7 +747,7 @@
         for (let i = 0; i < tmp.length; i++) {
             let tmpItem = {
                 value: tmp[i].id,
-                label: tmp[i].name_cn
+                label: tmp[i].name_en
             };
             console.log(tmpItem);
             app.optionValue.paperTypeOption.push(tmpItem);
@@ -755,6 +755,19 @@
     }
 
     window.onload = function () {
+        let paperParams = ${paperParams};
+        console.log("paperParams: "+ paperParams);
+        console.log("paperName: "+paperParams.paperName);
+        console.log("ISSN: "+paperParams.ISSN);
+
+        app.optionView.paper.paperName = paperParams.paperName;
+        app.optionView.paper.firstAuthorWorkNum = paperParams.firstAuthorWorkNum;
+        app.optionView.paper.secondAuthorWorkNum = paperParams.secondAuthorWorkNum;
+        app.optionView.paper.otherAuthorWorkNum = paperParams.otherAuthorWorkNum;
+        app.optionView.paper.ISSN = paperParams.ISSN;
+        app.optionView.paper.storeNum = paperParams.storeNum;
+        app.optionView.paper.paperType = paperParams.paperType;
+
         app.selectPaperListByPage();
         initialize();
     };
@@ -783,7 +796,7 @@
             firstAuthorWorkNum: app.optionView.paper.firstAuthorWorkNum,
             secondAuthorWorkNum: app.optionView.paper.secondAuthorWorkNum,
             otherAuthorWorkNum: app.optionView.paper.otherAuthorWorkNum,
-            journalNum: app.optionView.paper.journalNum,
+            ISSN: app.optionView.paper.ISSN,
             storeNum: app.optionView.paper.storeNum,
             docType: app.optionView.paper.paperType,                    //paperType 的id
             paperPageIndex: app.table.paperTable.params.pageIndex,

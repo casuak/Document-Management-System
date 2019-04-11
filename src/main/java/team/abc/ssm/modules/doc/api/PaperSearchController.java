@@ -55,9 +55,9 @@ public class PaperSearchController {
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("functions/doc/docSearch");
         List<Map<String, String>> paperType = paperSearchService.getPaperType();
+
         System.out.println("paperType: "+paperType.toString());
-        JSONArray paperTypeJson = JSONArray.fromObject(paperType);
-        modelAndView.addObject("paperType", paperTypeJson);
+        modelAndView.addObject("paperType", JSONArray.fromObject(paperType));
         return modelAndView;
     }
 
@@ -81,13 +81,6 @@ public class PaperSearchController {
         return modelAndView;
     }
 
-    /*跳转当前用户文献列表页面*/
-    @RequestMapping(value = "searchDocList", method = RequestMethod.GET)
-    public String searchDocList() {
-        System.out.println("ok");
-        return "functions/doc/paperUserSearch/userPaper";
-    }
-
     /*根据条件返回相应的论文+专利+著作权的列表*/
     @RequestMapping(value = "getDocList", method = RequestMethod.POST)
     @ResponseBody
@@ -99,7 +92,7 @@ public class PaperSearchController {
         String firstAuthorWorkNum = request.getParameter("firstAuthorWorkNum");
         String secondAuthorWorkNum = request.getParameter("secondAuthorWorkNum");
         String otherAuthorWorkNum = request.getParameter("otherAuthorWorkNum");
-        String journalNum = request.getParameter("journalNum");
+        String ISSN = request.getParameter("ISSN");
         String storeNum = request.getParameter("storeNum");
         String docType = request.getParameter("docType");
         int paperPageIndex = Integer.parseInt(request.getParameter("paperPageIndex"));
@@ -180,7 +173,7 @@ public class PaperSearchController {
         HashMap<String,Object> resDataMap = new HashMap<>();
         resDataMap.put("paperList",paperList);
         resDataMap.put("paperAmount",paperAmount);
-        System.out.println(resDataMap);
+        System.out.println("resDataMap: "+ resDataMap);
 
         AjaxMessage retMsg = new AjaxMessage();
         return retMsg.Set(MsgType.SUCCESS,resDataMap);
@@ -196,29 +189,37 @@ public class PaperSearchController {
             @RequestParam(value = "authorList") String otherAuthorWorkNum,
             @RequestParam(value = "ISSN") String ISSN,
             @RequestParam(value = "storeNum") String storeNum,
-            @RequestParam(value = "docType") String docType,
+            @RequestParam(value = "paperType") String paperType,
             @RequestParam(value = "pageIndex") int pageIndex,
             @RequestParam(value = "pageSize") int pageSize
     ){
+        System.out.println("ISSN"+ISSN);
         ModelAndView modelAndView = new ModelAndView();
         Map<String,Object> commonParams = new HashMap<>();
         Map<String,Object> paperParams = new HashMap<>();
-        List<Map<String,Object>> statisticsParams;
+
+        paperParams.put("paperName",paperName);
+        paperParams.put("firstAuthorWorkNum",firstAuthorWorkNum);
+        paperParams.put("secondAuthorWorkNum",secondAuthorWorkNum);
+        paperParams.put("otherAuthorWorkNum",otherAuthorWorkNum);
+        paperParams.put("ISSN",ISSN);
+        paperParams.put("storeNum",storeNum);
+        paperParams.put("paperType",paperType);
 
         Page<Paper> tmpPage = new Page<>();
         tmpPage.setPageIndex(pageIndex);
         tmpPage.setPageSize(pageSize);
 
         List<Paper> paperList = paperSearchService.getPaperListByPage(paperName,firstAuthorWorkNum,secondAuthorWorkNum,
-                otherAuthorWorkNum,ISSN,storeNum,docType,tmpPage);
+                otherAuthorWorkNum,ISSN,storeNum,paperType,tmpPage);
         int paperAmount = paperSearchService.getPaperAmount();
-        List<Map<String, String>> paperType = paperSearchService.getPaperType();
-        JSONArray paperTypeJson = JSONArray.fromObject(paperType);
+        List<Map<String, String>> paperTypeOption = paperSearchService.getPaperType();
 
         modelAndView.setViewName("functions/doc/docManage/paperList");
         modelAndView.addObject("paperList",paperList);
         modelAndView.addObject("paperAmount",paperAmount);
-        modelAndView.addObject("paperType", paperTypeJson);
+        modelAndView.addObject("paperType", JSONArray.fromObject(paperTypeOption));
+        modelAndView.addObject("paperParams",JSONObject.fromObject(paperParams));
 
         return modelAndView;
     }

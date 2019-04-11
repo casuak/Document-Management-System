@@ -25,7 +25,6 @@ public class PaperSearchService {
                                           String issn,String storeNum,String docType,Page<Paper> page){
         int pageStart = page.getPageStart();
         int pageSize = page.getPageSize();
-        System.out.println("service");
         return paperSearchMapper.getPaperListByPage(paperName,FAWorkNum,SAWorkNum,OAWorkNum,issn,storeNum,docType,pageStart,pageSize);
     }
 
@@ -37,10 +36,10 @@ public class PaperSearchService {
 
     /*条件返回指定的PaperList*/
     public List<Paper> getPaperList(String paperName, String firstAuthorWorkNum, String secondAuthorWorkNum,
-                                    String otherAuthorWorkNum, String journalNum, String storeNum, String docType,
+                                    String otherAuthorWorkNum, String ISSN, String storeNum, String docType,
                                     int paperPageIndex, int paperPageSize){
         List<Paper> paperList = paperSearchMapper.getPaperList(paperName,firstAuthorWorkNum,secondAuthorWorkNum,
-                otherAuthorWorkNum,journalNum,storeNum,docType,paperPageIndex,paperPageSize);
+                otherAuthorWorkNum,ISSN,storeNum,docType,paperPageIndex,paperPageSize);
         return paperList;
     }
 
