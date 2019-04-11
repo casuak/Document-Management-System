@@ -9,13 +9,15 @@ import java.util.List;
 @ToString
 public class User extends DataEntity<User> {
 
-    private String userType;
-    private String sexId;
+    private String userType;    // 用户类型：teacher, student, (其他随意)
+    private String sexId;       // 性别(存储的是字典表id)
     private String username;
     private String password;
-    private String workId;
-    private String realName;
-    private String idNumber;
+    private String workId;      // 工号或学号
+    private String realName;    // 真名(中文)
+    private String nicknames;   // 别名列表(以分号做分割)
+    private String pinyinName;  // 真名的拼音(非数据库)
+    private String idNumber;    // 身份证号
     private String duty;
     private String title;
     private String mobile;
@@ -171,5 +173,21 @@ public class User extends DataEntity<User> {
 
     public void setHireDate(Date hireDate) {
         this.hireDate = hireDate;
+    }
+
+    public String getNicknames() {
+        return nicknames;
+    }
+
+    public void setNicknames(String nicknames) {
+        this.nicknames = nicknames;
+    }
+
+    public String getPinyinName() {
+        return pinyinName;
+    }
+
+    public void setPinyinName(String pinyinName) {
+        this.pinyinName = pinyinName;
     }
 }

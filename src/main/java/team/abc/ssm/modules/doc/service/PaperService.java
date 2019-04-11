@@ -99,11 +99,11 @@ public class PaperService {
                 firstAuthorName = null;
                 secondAuthorName = null;
             } else if (authorList.length == 1) {
-                firstAuthorName = authorList[0];
+                firstAuthorName = authorList[0].trim();
                 secondAuthorName = null;
             } else {
-                firstAuthorName = authorList[0];
-                secondAuthorName = authorList[1];
+                firstAuthorName = authorList[0].trim();
+                secondAuthorName = authorList[1].trim();
             }
             paper.setFirstAuthorName(firstAuthorName);
             paper.setSecondAuthorName(secondAuthorName);
@@ -134,10 +134,16 @@ public class PaperService {
         params.setStatus("0");
         List<Paper> paperList = paperDao.selectListByStatus(params);
         List<User> userList = userService.selectTeacherStudentList();
+        // 1. set pinyin
+        for (User user : userList){
+//            String pinyin =
+        }
         for (Paper paper : paperList) {
             String firstAuthorName = paper.getFirstAuthorName();
             String secondAuthorName = paper.getSecondAuthorName();
-            // TODO: match author name with userList and set authorId if match success
+            for (User user : userList) {
+
+            }
         }
         return true;
     }
