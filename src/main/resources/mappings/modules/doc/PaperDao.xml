@@ -18,6 +18,7 @@
         <result column="paper_name" jdbcType="VARCHAR" property="paperName"/>
         <result column="store_num" jdbcType="VARCHAR" property="storeNum"/>
         <result column="doc_type" jdbcType="VARCHAR" property="docType"/>
+        <result column="doc_type_value" property="docTypeValue"/>
         <result column="publish_date" jdbcType="TIMESTAMP" property="publishDate"/>
         <result column="ISSN" jdbcType="VARCHAR" property="ISSN"/>
         <result column="remarks" jdbcType="VARCHAR" property="remarks"/>
@@ -679,8 +680,11 @@
     </select>
 
     <select id="selectListByIds" parameterType="paper" resultMap="BaseResultMap">
-        select a.*
+        select
+        a.*,
+        b.name_en as doc_type_value
         from doc_paper a
+        left join sys_dict b on b.id = a.doc_type
         where a.id in
         <foreach collection="list" open="(" separator="," close=")" item="item">
             #{item.id}

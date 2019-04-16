@@ -71,7 +71,16 @@
         <el-table-column label="第二作者工号/学号" width="150" prop="secondAuthorId" align="center"></el-table-column>
         <el-table-column label="ISSN" width="150" prop="ISSN" align="center"></el-table-column>
         <el-table-column label="入藏号" width="300" prop="storeNum" align="center"></el-table-column>
-        <el-table-column label="论文种类" width="150" prop="docType" align="center"></el-table-column>
+        <el-table-column label="论文种类" width="150" prop="docTypeValue" align="center"></el-table-column>
+        <el-table-column label="单位名称" width="200" header-align="center" align="center">
+            <template slot-scope="{row}">
+                <el-Tooltip open-delay="500" effect="dark" :content="row.danwei" placement="top">
+                    <div style="overflow: hidden;text-overflow: ellipsis;white-space: nowrap;width: 95%;">
+                        {{ row.danwei }}
+                    </div>
+                </el-Tooltip>
+            </template>
+        </el-table-column>
         <el-table-column label="发布日期" width="150" prop="publishDate" align="center">
             <template slot-scope="{row}">
                 {{ row.publishDate === null ? '' : (new Date(row.publishDate)).Format("yyyy-MM-dd") }}

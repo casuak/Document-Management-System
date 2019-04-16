@@ -4,8 +4,16 @@
 
     <resultMap id="userBean" type="team.abc.ssm.modules.sys.entity.User">
         <id column="id" property="id"/>
+        <result column="user_type" property="userType"/>
         <result column="username" property="username"/>
         <result column="password" property="password"/>
+        <result column="real_name" property="realName"/>
+        <result column="nicknames" property="nicknames"/>
+        <result column="work_id" property="workId"/>
+        <result column="sex_id" property="sexId"/>
+        <result column="political_status" property="politicalStatus"/>
+        <result column="hire_date" property="hireDate"/>
+        <result column="id_number" property="idNumber"/>
         <result column="remarks" property="remarks"/>
         <result column="create_user_id" property="createUserId"/>
         <result column="modify_user_id" property="modifyUserId"/>
@@ -47,7 +55,7 @@
     </select>
 
     <select id="selectTeacherStudentList" resultMap="userBean">
-        select a.* from sys_user a where a.user_type = 'teacher' or a.user_type = 'student'
+        select a.* from sys_user a where a.user_type in ('student', 'teacher', 'doctor')
     </select>
 
     <!-- 分页 + 搜索(模糊匹配用户名)获取用户id列表 -->

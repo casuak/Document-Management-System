@@ -57,9 +57,12 @@ public class Paper extends DataEntity<Paper> {
     private String storeNum;
 
     /**
-	* 文献类型
+	* 文献类型 字典id
 	*/
     private String docType;
+
+    // 值
+    private String docTypeValue;
 
     /**
 	* 出版日期
@@ -68,6 +71,8 @@ public class Paper extends DataEntity<Paper> {
 
     private Date _PD;
     private int _PY;
+
+    private String danwei; // 单位名称
 
     /**
 	* 所属期刊 from 期刊表
@@ -215,5 +220,21 @@ public class Paper extends DataEntity<Paper> {
                 ", _PY=" + _PY +
                 ", ISSN='" + ISSN + '\'' +
                 '}';
+    }
+
+    public String getDocTypeValue() {
+        return docTypeValue;
+    }
+
+    public void setDocTypeValue(String docTypeValue) {
+        this.docTypeValue = docTypeValue;
+    }
+
+    public String getDanwei() {
+        return danwei;
+    }
+
+    public void setDanwei(String danwei) {
+        this.danwei = danwei;
     }
 }

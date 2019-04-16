@@ -15,7 +15,7 @@ public class User extends DataEntity<User> {
     private String password;
     private String workId;      // 工号或学号
     private String realName;    // 真名(中文)
-    private String nicknames;   // 别名列表(以分号做分割)
+    private String nicknames;   // 别名列表(以分号做分割)(拼音,匹配时使用)
     private String pinyinName;  // 真名的拼音(非数据库)
     private String idNumber;    // 身份证号
     private String duty;

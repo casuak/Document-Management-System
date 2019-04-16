@@ -15,7 +15,7 @@ public interface UserDao {
     // 获取所有用户列表
     List<User> selectAll();
 
-    // 获取用户类型为老师和学生的用户列表
+    // 获取用户类型为老师和学生和博士后的用户列表
     List<User> selectTeacherStudentList();
 
     // 分页 + 搜索(模糊匹配用户名)获取用户列表（无角色信息）

@@ -1,5 +1,6 @@
 package team.abc.ssm.modules.doc.service;
 
+import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -76,15 +77,16 @@ public class PaperService {
         return paperDao.selectSearchCount(paper);
     }
 
-    // 1. update status = 0 where status is null
+    // 1. update status = '0' where status = '-1'
     // 2. split first and second author name from authorList
     // 3. set publishDate according _PY(year) and _PD(month, day)
+    // 4. update status = '-2' where danwei doesn't contain 'Beijing Inst Technol'
     public boolean initAll() {
         Paper params = new Paper();
         params.setStatus("-1");
         List<Paper> paperList = paperDao.selectListByStatus(params);
         for (Paper paper : paperList) {
-            // 1. update status = 0 where status is null
+            // 1. update status = 0 where status = '-1'
             paper.setStatus("0");
             // 2. split first and second author name from authorList
             if (paper.getAuthorList() == null) {
@@ -117,6 +119,10 @@ public class PaperService {
                 calendar.set(year, month, day);
                 paper.setPublishDate(calendar.getTime());
             }
+            // 4. update status = '-2' where danwei doesn't contain 'Beijing Inst Technol'
+            if (!paper.getDanwei().contains("Beijing Inst Technol")) {
+                paper.setStatus("-2");
+            }
         }
         if (paperList.size() == 0) return true;
         int count = paperDao.updateBatch(paperList);
@@ -134,17 +140,51 @@ public class PaperService {
         params.setStatus("0");
         List<Paper> paperList = paperDao.selectListByStatus(params);
         List<User> userList = userService.selectTeacherStudentList();
-        // 1. set pinyin
-        for (User user : userList){
-//            String pinyin =
-        }
         for (Paper paper : paperList) {
             String firstAuthorName = paper.getFirstAuthorName();
             String secondAuthorName = paper.getSecondAuthorName();
+            // first one
+            User lastMatchUser = null;
+            int count = 0;
             for (User user : userList) {
-
+                String nicknames = user.getNicknames();
+                if (nicknames.contains(firstAuthorName)) {
+                    count += 1;
+                    lastMatchUser = user;
+                }
+            }
+            if (lastMatchUser == null)
+                paper.setStatus1("2"); // 无匹配
+            else if (count == 1) {
+                paper.setStatus1("0"); // 唯一匹配
+                paper.setFirstAuthorId(lastMatchUser.getId());
+            } else
+                paper.setStatus1("1"); // 重名
+            // second one
+            lastMatchUser = null;
+            count = 0;
+            for (User user : userList) {
+                String nicknames = user.getNicknames();
+                if (nicknames.contains(secondAuthorName)) {
+                    count += 1;
+                    lastMatchUser = user;
+                }
+            }
+            if (lastMatchUser == null)
+                paper.setStatus2("2"); // 无匹配
+            else if (count == 1) {
+                paper.setStatus2("0"); // 唯一匹配
+                paper.setSecondAuthorId(lastMatchUser.getId());
+            } else
+                paper.setStatus2("1"); // 重名
+            // set paper match status
+            if (paper.getStatus1().equals("0") && paper.getStatus2().equals("0")) {
+                paper.setStatus("2"); // 成功
+            } else {
+                paper.setStatus("1"); // 出错
             }
         }
+        paperDao.updateBatch(paperList);
         return true;
     }
 

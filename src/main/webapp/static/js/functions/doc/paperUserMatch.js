@@ -12,8 +12,12 @@ app = new Vue({
                 label: '1. 未初始化'
             },
             {
+                value: '-2',
+                label: '2.1 被过滤'
+            },
+            {
                 value: '0',
-                label: '2. 未匹配'
+                label: '2.2 初始化完成'
             },
             {
                 value: '1',
@@ -42,7 +46,8 @@ app = new Vue({
             deleteByIds: '/api/doc/paper/deleteListByIds',
             getPaperList: '/api/doc/paper/selectListByPage',
             initPapers: '/api/doc/paper/initAll',
-            deleteByStatus: '/api/doc/paper/deleteByStatus'
+            deleteByStatus: '/api/doc/paper/deleteByStatus',
+            paperUserMatch: '/api/doc/paper/paperUserMatch',
         }
     },
     methods: {
@@ -99,7 +104,15 @@ app = new Vue({
         },
         // match user where status = '0'
         paperUserMatch: function () {
-            // TODO
+            let app = this;
+            window.parent.app.showConfirm(() => {
+                app.loading.table = true;
+                ajaxPost(app.urls.paperUserMatch, null, function (d) {
+                    app.loading.table = false;
+                    app.status = '1';
+                    app.getPaperList();
+                })
+            });
         },
         // complete papers where status in ('1', '2')
         completePapers: function () {
