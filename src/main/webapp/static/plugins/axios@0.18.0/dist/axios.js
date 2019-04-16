@@ -1216,7 +1216,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	
 	        if (utils.isString(domain)) {
-	          cookie.push('domain=' + domain);
+	          cookie.push('entity=' + domain);
 	        }
 	
 	        if (secure === true) {

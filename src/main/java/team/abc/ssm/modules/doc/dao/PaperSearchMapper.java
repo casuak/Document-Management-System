@@ -1,10 +1,8 @@
 package team.abc.ssm.modules.doc.dao;
 
 import org.apache.ibatis.annotations.Param;
-import team.abc.ssm.common.persistence.Page;
 import team.abc.ssm.modules.doc.entity.Paper;
-import team.abc.ssm.modules.organization.domain.CommonOrganize;
-import team.abc.ssm.modules.sys.entity.User;
+import team.abc.ssm.modules.organization.entity.CommonOrganize;
 
 import java.util.List;
 import java.util.Map;

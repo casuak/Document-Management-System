@@ -13,6 +13,7 @@ import team.abc.ssm.common.web.MsgType;
 import team.abc.ssm.modules.author.service.AuthorService;
 import team.abc.ssm.modules.doc.entity.Paper;
 import team.abc.ssm.modules.doc.service.PaperSearchService;
+import team.abc.ssm.modules.organization.service.CommonOrganizeService;
 import team.abc.ssm.modules.sys.entity.User;
 
 import javax.servlet.http.HttpServletRequest;
@@ -29,6 +30,9 @@ import java.util.Map;
 @Controller
 @RequestMapping(value = "api/doc/search")
 public class PaperSearchController {
+
+    @Autowired
+    private CommonOrganizeService orgService;
 
     @Autowired
     private AuthorService authorService;
@@ -54,10 +58,12 @@ public class PaperSearchController {
     public ModelAndView docInitial() {
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("functions/doc/docSearch");
-        List<Map<String, String>> paperType = paperSearchService.getPaperType();
 
-        System.out.println("paperType: "+paperType.toString());
+        List<Map<String, String>> paperType = paperSearchService.getPaperType();
+        List<Map<String,String>> orgList = orgService.getOrgListMap();
+
         modelAndView.addObject("paperType", JSONArray.fromObject(paperType));
+        modelAndView.addObject("orgList", JSONArray.fromObject(orgList));
         return modelAndView;
     }
 

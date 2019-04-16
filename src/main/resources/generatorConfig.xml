@@ -59,7 +59,7 @@
         targetProject:把自动生成的domian放在哪个工程里面
         targetPackage:哪个包下
 		-->
-		<javaModelGenerator targetPackage="team.abc.ssm.modules.organization.domain"
+		<javaModelGenerator targetPackage="team.abc.ssm.modules.organization.entity"
 							targetProject="src/main/java">
 			<!-- for MyBatis3/MyBatis3Simple
 			自动为每一个生成的类创建一个构造方法，
@@ -82,7 +82,7 @@
             targetPackage:把自动生成的mapper放在哪个工程里面
             targetProject:哪个包下
         -->
-		<sqlMapGenerator targetPackage="team.abc.ssm.modules.organization.mapper"
+		<sqlMapGenerator targetPackage="team.abc.ssm.modules.organization.dao"
 						 targetProject="src/main/java">
 			<!-- 在targetPackage的基础上，
 			根据数据库的schema再生成一层package，
@@ -93,7 +93,7 @@
 		<!--
            mapper接口生成策略
         -->
-		<javaClientGenerator targetPackage="team.abc.ssm.modules.organization.mapper"
+		<javaClientGenerator targetPackage="team.abc.ssm.modules.organization.dao"
 							 type="XMLMAPPER" targetProject="src/main/java">
 			<property name="enableSubPackages" value="true" />
 		</javaClientGenerator>

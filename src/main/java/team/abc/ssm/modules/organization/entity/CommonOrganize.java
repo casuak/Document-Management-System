@@ -1,4 +1,4 @@
-package team.abc.ssm.modules.organization.domain;
+package team.abc.ssm.modules.organization.entity;
 
 import lombok.ToString;
 

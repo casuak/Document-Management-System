@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="team.abc.ssm.modules.organization.mapper.CommonOrganizeMapper" >
-  <resultMap id="BaseResultMap" type="team.abc.ssm.modules.organization.domain.CommonOrganize" >
+<mapper namespace="team.abc.ssm.modules.organization.dao.CommonOrganizeMapper" >
+  <resultMap id="BaseResultMap" type="team.abc.ssm.modules.organization.entity.CommonOrganize" >
     <id column="id" property="id" jdbcType="VARCHAR" />
     <result column="org_code" property="orgCode" jdbcType="VARCHAR" />
     <result column="org_name" property="orgName" jdbcType="VARCHAR" />
@@ -18,7 +18,7 @@
     delete from common_organize
     where id = #{id,jdbcType=VARCHAR}
   </delete>
-  <insert id="insert" parameterType="team.abc.ssm.modules.organization.domain.CommonOrganize" >
+  <insert id="insert" parameterType="team.abc.ssm.modules.organization.entity.CommonOrganize" >
     insert into common_organize (id, org_code, org_name, 
       description, parent_id, remarks, 
       create_user_id, modify_user_id, create_date, 
@@ -28,7 +28,7 @@
       #{createUserId,jdbcType=VARCHAR}, #{modifyUserId,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}, 
       #{modifyDate,jdbcType=TIMESTAMP}, #{delFlag,jdbcType=BIT})
   </insert>
-  <update id="updateByPrimaryKey" parameterType="team.abc.ssm.modules.organization.domain.CommonOrganize" >
+  <update id="updateByPrimaryKey" parameterType="team.abc.ssm.modules.organization.entity.CommonOrganize" >
     update common_organize
     set org_code = #{orgCode,jdbcType=VARCHAR},
       org_name = #{orgName,jdbcType=VARCHAR},
@@ -52,5 +52,9 @@
     select id, org_code, org_name, description, parent_id, remarks, create_user_id, modify_user_id, 
     create_date, modify_date, del_flag
     from common_organize
+  </select>
+
+  <select id="getOrgListMap" resultType="java.util.Map">
+    select id ,org_name from common_organize `org` where del_flag != -1
   </select>
 </mapper>
