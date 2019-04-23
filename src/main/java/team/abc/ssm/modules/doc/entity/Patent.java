@@ -2,7 +2,7 @@ package team.abc.ssm.modules.doc.entity;
 
 import java.util.Date;
 
-public class DocPatent {
+public class Patent {
     private String id;
 
     private String patentName;
