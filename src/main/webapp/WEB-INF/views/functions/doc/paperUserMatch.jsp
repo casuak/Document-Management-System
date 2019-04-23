@@ -72,7 +72,7 @@
                 <i-button v-if="row.status1 !== '0' && row.status === '1'" type="success" size="small"
                           @click="openSearchUser(1)">手动匹配
                 </i-button>
-                <span v-if="row.status1 === '0'">
+                <span v-if="row.secondAuthorId != null && row.secondAuthorId !== ''">
                     {{ row.firstAuthorId }}
                     ({{ row.firstAuthor != null ? row.firstAuthor.userType : ''}})
                 </span>
@@ -80,13 +80,11 @@
         </el-table-column>
         <el-table-column label="第二匹配作者工号/学号" width="200" align="center" v-if="['1', '2', '3'].contains(status)">
             <template slot-scope="{row}">
-                <i-button v-if="row.status2 !== '0' && row.status === '1'" type="success" size="small"
-                          @click="openSearchUser(2)">手动匹配
-                </i-button>
-                <span v-if="row.status2 === '0'">
+                <span v-if="row.secondAuthorId != null && row.secondAuthorId !== ''">
                     {{ row.secondAuthorId }}
                     ({{ row.secondAuthor != null ? row.secondAuthor.userType : '' }})
                 </span>
+                <i-button v-else type="success" size="small" @click="openSearchUser(2)">手动匹配</i-button>
             </template>
         </el-table-column>
         <el-table-column label="ISSN" width="150" prop="ISSN" align="center"></el-table-column>
