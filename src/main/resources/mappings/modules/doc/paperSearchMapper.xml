@@ -26,18 +26,22 @@
     </resultMap>
 
     <select id="getAllAuthorIdentity" resultType="java.lang.String">
-        select name_cn from docmanager.sys_dict `dict` where dict.type_id = (
-          select id from docmanager.sys_dict_type `type` where type.name_cn = '作者身份'
+        select name_cn
+        from docmanager.sys_dict `dict`
+        where dict.type_id = (
+            select id from docmanager.sys_dict_type `type` where type.name_cn = '作者身份'
         )
     </select>
 
-    <select id="getAllOrganize" resultType="team.abc.ssm.modules.organization.domain.CommonOrganize">
-        select* from docmanager.common_organize `org` where org.del_flag != -1
+    <select id="getAllOrganize" resultType="team.abc.ssm.modules.organization.entity.CommonOrganize">
+        select*
+        from docmanager.common_organize `org`
+        where org.del_flag != -1
     </select>
 
     <select id="getPaperList" resultType="team.abc.ssm.modules.doc.entity.Paper">
         select *from docmanager.doc_paper
-        where  `del_flag` != -1
+        where `del_flag` != -1
         <if test="paperName != null and paperName != ''">
             and `paper_name` = #{paperName}
         </if>
@@ -54,7 +58,7 @@
             and id in (
             select paper_id from docmanager.doc_map_user_paper `map` where map.author_type_id = (
             select `id` from docmanager.sys_dict `dict` where dict.type_id = (
-            select `id` from docmanager.sys_dict_type `type` where  type.name_cn = '作者身份'
+            select `id` from docmanager.sys_dict_type `type` where type.name_cn = '作者身份'
             ) and dict.name_cn = '第一作者'
             )
             and user_id = (select `id` from Sys_User_Info where user_workID = #{firstAuthorWorkNum})
@@ -64,7 +68,7 @@
             and id in (
             select paper_id from docmanager.doc_map_user_paper `map` where map.author_type_id = (
             select `id` from docmanager.sys_dict `dict` where dict.type_id = (
-            select `id` from docmanager.sys_dict_type `type` where  type.name_cn = '作者身份'
+            select `id` from docmanager.sys_dict_type `type` where type.name_cn = '作者身份'
             ) and dict.name_cn = '第二作者'
             )
             and user_id = (select `id` from Sys_User_Info where user_workID = #{secondAuthorWorkNum})
@@ -74,7 +78,7 @@
             and id in (
             select paper_id from docmanager.doc_map_user_paper `map` where map.author_type_id = (
             select `id` from docmanager.sys_dict `dict` where dict.type_id = (
-            select `id` from docmanager.sys_dict_type `type` where  type.name_cn = '作者身份'
+            select `id` from docmanager.sys_dict_type `type` where type.name_cn = '作者身份'
             ) and dict.name_cn = '其他作者'
             )
             and user_id = (select `id` from Sys_User_Info where user_workID = #{otherAuthorWorkNum})
@@ -86,17 +90,25 @@
     </select>
 
     <select id="getPaperTypeMap" resultType="java.util.HashMap">
-        select name_en,id from docmanager.sys_dict where type_id = (
-          select id from docmanager.sys_dict_type where sys_dict_type.name_cn = '论文种类'
-        ) and del_flag != -1
+        select id, name_en
+        from docmanager.sys_dict
+        where type_id = (
+            select id from docmanager.sys_dict_type where sys_dict_type.name_cn = '论文种类'
+        )
+          and del_flag != -1
     </select>
 
     <select id="getPaperNum" resultType="java.lang.Integer">
-        select count(*) from docmanager.doc_paper where del_flag != -1
+        select count(*)
+        from docmanager.doc_paper
+        where del_flag != -1
     </select>
 
     <select id="getPaperById" resultType="team.abc.ssm.modules.doc.entity.Paper">
-        select * from docmanager.doc_paper where del_flag != -1 and id = #{0}
+        select *
+        from docmanager.doc_paper
+        where del_flag != -1
+          and id = #{0}
     </select>
 
     <select id="getPaperListByPage" resultMap="paperBean">
@@ -122,16 +134,47 @@
         </if>
         <if test="otherAuthorWorkNum != '' and secondAuthorWorkNum != null">
             and pp.id in (
-            select paper_id from doc_map_user_paper mmp where mmp.user_id = (
-            select id from sys_user where work_id = #{otherAuthorWorkNum}
-            ) and mmp.author_type_id = (
-            select id from `sys_dict` where type_id = (
-            select id FROM `sys_dict_type` where name_cn = '作者身份'
-            ) and name_cn = '其他作者'
+            select paper_id
+            from doc_map_user_paper mmp
+            where mmp.user_id = (
+            select id
+            from sys_user
+            where work_id = #{otherAuthorWorkNum}
+            )
+            and mmp.author_type_id = (
+            select id
+            from `sys_dict`
+            where type_id = (
+            select id
+            FROM `sys_dict_type`
+            where name_cn = '作者身份'
+            )
+            and name_cn = '其他作者'
             )
             )
         </if>
         limit #{pageIndex},#{pageSize}
+    </select>
+
+    <select id="getMyPaperAmount" resultType="java.lang.Integer">
+        select count(*)
+        from doc_map_user_paper
+        where user_id = #{0}
+          and del_flag != -1
+    </select>
+
+    <select id="getPaperList1" parameterType="team.abc.ssm.modules.author.entity.Author" resultMap="paperBean">
+        select *
+        from doc_paper
+        where id in (
+            select ids.*
+            from (
+                     select paper_id
+                     from doc_map_user_paper
+                     where user_id = #{id}
+                     limit #{myPaperPage.pageStart},#{myPaperPage.pageSize}
+                 ) as ids
+        )
     </select>
 
 </mapper>

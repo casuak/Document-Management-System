@@ -3,6 +3,8 @@ package team.abc.ssm.modules.doc.api;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.apache.ibatis.annotations.Param;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -10,9 +12,11 @@ import org.springframework.web.servlet.ModelAndView;
 import team.abc.ssm.common.persistence.Page;
 import team.abc.ssm.common.web.AjaxMessage;
 import team.abc.ssm.common.web.MsgType;
+import team.abc.ssm.modules.author.entity.Author;
 import team.abc.ssm.modules.author.service.AuthorService;
 import team.abc.ssm.modules.doc.entity.Paper;
 import team.abc.ssm.modules.doc.service.PaperSearchService;
+import team.abc.ssm.modules.organization.service.CommonOrganizeService;
 import team.abc.ssm.modules.sys.entity.User;
 
 import javax.servlet.http.HttpServletRequest;
@@ -30,54 +34,51 @@ import java.util.Map;
 @RequestMapping(value = "api/doc/search")
 public class PaperSearchController {
 
+    private static final Logger LOG = LoggerFactory.getLogger(PaperSearchController.class);
+
+    @Autowired
+    private CommonOrganizeService orgService;
+
     @Autowired
     private AuthorService authorService;
 
     @Autowired
     private PaperSearchService paperSearchService;
 
-    /*初始化作者查询页面*/
-    @RequestMapping(value = "authorInitial", method = RequestMethod.GET)
-    public ModelAndView authorInitial() {
-        List<User> users = authorService.getDefaultUserList();
-        System.out.println(users);
-
-        ModelAndView modelAndView = new ModelAndView();
-
-        modelAndView.addObject("users", users);
-        modelAndView.setViewName("functions/doc/authorSearch");
-        return modelAndView;
-    }
-
     /*初始化文献管理页面*/
     @RequestMapping(value = "docInitial", method = RequestMethod.GET)
     public ModelAndView docInitial() {
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("functions/doc/docSearch");
-        List<Map<String, String>> paperType = paperSearchService.getPaperType();
 
-        System.out.println("paperType: "+paperType.toString());
+        List<Map<String, String>> paperType = paperSearchService.getPaperType();
+        List<Map<String, String>> orgList = orgService.getOrgListMap();
+        List<Map<String, String>> subjectList = authorService.getSubListMap();
+
         modelAndView.addObject("paperType", JSONArray.fromObject(paperType));
+        modelAndView.addObject("orgList", JSONArray.fromObject(orgList));
+        modelAndView.addObject("subjectList", JSONArray.fromObject(subjectList));
+
         return modelAndView;
     }
 
     /*跳转文献详情页面*/
-    @RequestMapping(value = "docDetails",method = RequestMethod.GET)
-    public ModelAndView docDetails(){
+    @RequestMapping(value = "docDetails", method = RequestMethod.GET)
+    public ModelAndView docDetails() {
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("functions/doc/docSearch/docDetails");
         return modelAndView;
     }
 
     /*跳转论文详情页面*/
-    @RequestMapping(value = "paperDetails",method = RequestMethod.GET)
+    @RequestMapping(value = "paperDetails", method = RequestMethod.GET)
     public ModelAndView paperDetails(
             ModelAndView modelAndView,
-            @RequestParam(value = "id") String paperId){
+            @RequestParam(value = "id") String paperId) {
         Paper resPaper = paperSearchService.getPaperById(paperId);
         modelAndView.setViewName("functions/doc/docSearch/docDetails");
-        modelAndView.addObject("paperObj",resPaper);
-        modelAndView.addObject("isPaper",true);
+        modelAndView.addObject("paperObj", resPaper);
+        modelAndView.addObject("isPaper", true);
         return modelAndView;
     }
 
@@ -151,11 +152,11 @@ public class PaperSearchController {
     }
 
     /*按页返回paper项(不包含搜索参数)*/
-    @RequestMapping(value = "selectPaperListByPagePost",method = RequestMethod.POST)
+    @RequestMapping(value = "selectPaperListByPagePost", method = RequestMethod.POST)
     @ResponseBody
     public Object selectListByPagePost(
             @RequestBody Paper paper
-    ){
+    ) {
         /*参数解析*/
         String paperName = paper.getPaperName();
         String firstAuthorWorkNum = paper.getFirstAuthorName();
@@ -166,21 +167,21 @@ public class PaperSearchController {
         String docType = paper.getDocType();
         Page<Paper> page = paper.getPage();
 
-        List<Paper> paperList = paperSearchService.getPaperListByPage(paperName,firstAuthorWorkNum,secondAuthorWorkNum,otherAuthorWorkNum,ISSN,storeNum,docType,page);
+        List<Paper> paperList = paperSearchService.getPaperListByPage(paperName, firstAuthorWorkNum, secondAuthorWorkNum, otherAuthorWorkNum, ISSN, storeNum, docType, page);
 
         int paperAmount = paperSearchService.getPaperAmount();
 
-        HashMap<String,Object> resDataMap = new HashMap<>();
-        resDataMap.put("paperList",paperList);
-        resDataMap.put("paperAmount",paperAmount);
-        System.out.println("resDataMap: "+ resDataMap);
+        HashMap<String, Object> resDataMap = new HashMap<>();
+        resDataMap.put("paperList", paperList);
+        resDataMap.put("paperAmount", paperAmount);
+        System.out.println("resDataMap: " + resDataMap);
 
         AjaxMessage retMsg = new AjaxMessage();
-        return retMsg.Set(MsgType.SUCCESS,resDataMap);
+        return retMsg.Set(MsgType.SUCCESS, resDataMap);
     }
 
     /*查看论文统计详情*/
-    @RequestMapping(value = "selectPaperListByPageGet",method = RequestMethod.GET)
+    @RequestMapping(value = "selectPaperListByPageGet", method = RequestMethod.GET)
     @ResponseBody
     public Object selectPaperListByPageGet(
             @RequestParam(value = "paperName") String paperName,
@@ -192,47 +193,76 @@ public class PaperSearchController {
             @RequestParam(value = "paperType") String paperType,
             @RequestParam(value = "pageIndex") int pageIndex,
             @RequestParam(value = "pageSize") int pageSize
-    ){
-        System.out.println("ISSN"+ISSN);
+    ) {
+        System.out.println("ISSN" + ISSN);
         ModelAndView modelAndView = new ModelAndView();
-        Map<String,Object> commonParams = new HashMap<>();
-        Map<String,Object> paperParams = new HashMap<>();
+        Map<String, Object> commonParams = new HashMap<>();
+        Map<String, Object> paperParams = new HashMap<>();
 
-        paperParams.put("paperName",paperName);
-        paperParams.put("firstAuthorWorkNum",firstAuthorWorkNum);
-        paperParams.put("secondAuthorWorkNum",secondAuthorWorkNum);
-        paperParams.put("otherAuthorWorkNum",otherAuthorWorkNum);
-        paperParams.put("ISSN",ISSN);
-        paperParams.put("storeNum",storeNum);
-        paperParams.put("paperType",paperType);
+        paperParams.put("paperName", paperName);
+        paperParams.put("firstAuthorWorkNum", firstAuthorWorkNum);
+        paperParams.put("secondAuthorWorkNum", secondAuthorWorkNum);
+        paperParams.put("otherAuthorWorkNum", otherAuthorWorkNum);
+        paperParams.put("ISSN", ISSN);
+        paperParams.put("storeNum", storeNum);
+        paperParams.put("paperType", paperType);
 
         Page<Paper> tmpPage = new Page<>();
         tmpPage.setPageIndex(pageIndex);
         tmpPage.setPageSize(pageSize);
 
-        List<Paper> paperList = paperSearchService.getPaperListByPage(paperName,firstAuthorWorkNum,secondAuthorWorkNum,
-                otherAuthorWorkNum,ISSN,storeNum,paperType,tmpPage);
+        List<Paper> paperList = paperSearchService.getPaperListByPage(paperName, firstAuthorWorkNum, secondAuthorWorkNum,
+                otherAuthorWorkNum, ISSN, storeNum, paperType, tmpPage);
         int paperAmount = paperSearchService.getPaperAmount();
         List<Map<String, String>> paperTypeOption = paperSearchService.getPaperType();
 
         modelAndView.setViewName("functions/doc/docManage/paperList");
-        modelAndView.addObject("paperList",paperList);
-        modelAndView.addObject("paperAmount",paperAmount);
+        modelAndView.addObject("paperList", paperList);
+        modelAndView.addObject("paperAmount", paperAmount);
         modelAndView.addObject("paperType", JSONArray.fromObject(paperTypeOption));
-        modelAndView.addObject("paperParams",JSONObject.fromObject(paperParams));
+        modelAndView.addObject("paperParams", JSONObject.fromObject(paperParams));
 
         return modelAndView;
     }
 
     /*查看专利统计详情*/
-    @RequestMapping(value = "selectPatentListByPageGet",method = RequestMethod.GET)
-    public Object selectPatentListByPageGet(){
-        return  null;
+    @RequestMapping(value = "selectPatentListByPageGet", method = RequestMethod.GET)
+    public Object selectPatentListByPageGet() {
+        return null;
     }
 
     /*查看著作权统计详情*/
-    @RequestMapping(value = "selectCopyrightListByPageGet",method = RequestMethod.GET)
-    public Object selectCopyrightListByPageGet(){
-        return  null;
+    @RequestMapping(value = "selectCopyrightListByPageGet", method = RequestMethod.GET)
+    public Object selectCopyrightListByPageGet() {
+        return null;
+    }
+
+    
+    /**
+     * @param [paper]
+     * @return java.lang.Object
+     * @Description 在作者信息页面获取其下的所有论文
+     * @author zm
+     * @date 16:43 2019/4/23
+     */
+    @RequestMapping(value = "selectPaperListByPage2",method = RequestMethod.POST)
+    @ResponseBody
+    public Object selectPaperListByPage2(
+            @RequestBody Paper paper
+    ){
+        //去除paper中暂存的authorId
+        String authorId = paper.getAuthorList();
+        //获取当前的author
+        Author authorNow = authorService.getAuthor(authorId);
+        //设置当前作者的paperPage
+        authorNow.setMyPaperPage(paper.getPage());
+
+        List<Paper> paperList = paperSearchService.getMyPaperByPage(authorNow);
+
+        Page<Paper> paperResPage = new Page<>();
+        paperResPage.setResultList(paperList);
+        paperResPage.setTotal(paperSearchService.getMyPaperAmount(authorId));
+
+        return new AjaxMessage().Set(MsgType.SUCCESS, paperResPage);
     }
 }

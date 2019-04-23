@@ -233,7 +233,8 @@
 
             <div style="height: 10px"></div>
             <row>
-                <el-button type="danger" size="medium" @click="selectPaperListByPage()">论文统计</el-button>
+                <el-button type="primary" size="medium" @click="selectPaperListByPage()">搜索统计</el-button>
+                <el-button type="danger" size="medium" @click="">结果导出</el-button>
             </row>
         </el-header>
 

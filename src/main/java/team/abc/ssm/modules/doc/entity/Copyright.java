@@ -1,20 +1,11 @@
-package team.abc.ssm.modules.organization.domain;
-
-import lombok.ToString;
+package team.abc.ssm.modules.doc.entity;
 
 import java.util.Date;
 
-@ToString
-public class CommonOrganize {
+public class Copyright {
     private String id;
 
-    private String orgCode;
-
-    private String orgName;
-
-    private String description;
-
-    private String parentId;
+    private String copyrightName;
 
     private String remarks;
 
@@ -26,7 +17,7 @@ public class CommonOrganize {
 
     private Date modifyDate;
 
-    private Boolean delFlag;
+    private Byte delFlag;
 
     public String getId() {
         return id;
@@ -36,36 +27,12 @@ public class CommonOrganize {
         this.id = id == null ? null : id.trim();
     }
 
-    public String getOrgCode() {
-        return orgCode;
+    public String getCopyrightName() {
+        return copyrightName;
     }
 
-    public void setOrgCode(String orgCode) {
-        this.orgCode = orgCode == null ? null : orgCode.trim();
-    }
-
-    public String getOrgName() {
-        return orgName;
-    }
-
-    public void setOrgName(String orgName) {
-        this.orgName = orgName == null ? null : orgName.trim();
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description == null ? null : description.trim();
-    }
-
-    public String getParentId() {
-        return parentId;
-    }
-
-    public void setParentId(String parentId) {
-        this.parentId = parentId == null ? null : parentId.trim();
+    public void setCopyrightName(String copyrightName) {
+        this.copyrightName = copyrightName == null ? null : copyrightName.trim();
     }
 
     public String getRemarks() {
@@ -108,11 +75,11 @@ public class CommonOrganize {
         this.modifyDate = modifyDate;
     }
 
-    public Boolean getDelFlag() {
+    public Byte getDelFlag() {
         return delFlag;
     }
 
-    public void setDelFlag(Boolean delFlag) {
+    public void setDelFlag(Byte delFlag) {
         this.delFlag = delFlag;
     }
 }

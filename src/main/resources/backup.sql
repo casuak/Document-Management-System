@@ -2709,7 +2709,7 @@ INSERT INTO docmanager.doc_paper (id, author_list, first_author_name, second_aut
                                   del_flag)
 VALUES ('f5b9da957b2b474b873cc74acac48b5d', 'Zhao, JB; Jing, WC; Wang, JZ', 'Zhao, JB', ' Jing, WC', null, null, '0',
         null, null,
-        'An indirect optimization scheme for tuning a fractional order PI controller using extremum seeking',
+        'An indirect optimization scheme for tuning a fractional order PI api using extremum seeking',
         'WOS:000454382300013', 'Article', null, '0957-4158', null, 'u1', 'u1', '2019-03-26 13:58:55',
         '2019-03-26 13:58:55', 0);
 INSERT INTO docmanager.doc_paper (id, author_list, first_author_name, second_author_name, first_author_id,

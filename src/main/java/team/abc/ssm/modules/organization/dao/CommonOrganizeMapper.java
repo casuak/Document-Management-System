@@ -1,7 +1,9 @@
-package team.abc.ssm.modules.organization.mapper;
+package team.abc.ssm.modules.organization.dao;
 
 import java.util.List;
-import team.abc.ssm.modules.organization.domain.CommonOrganize;
+import java.util.Map;
+
+import team.abc.ssm.modules.organization.entity.CommonOrganize;
 
 public interface CommonOrganizeMapper {
     int deleteByPrimaryKey(String id);
@@ -13,4 +15,7 @@ public interface CommonOrganizeMapper {
     List<CommonOrganize> selectAll();
 
     int updateByPrimaryKey(CommonOrganize record);
+
+    /*获取所有的机构种类*/
+    public List<Map<String,String>> getOrgListMap();
 }

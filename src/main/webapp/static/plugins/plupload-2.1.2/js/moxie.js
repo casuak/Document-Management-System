@@ -843,7 +843,7 @@ define("moxie/core/utils/Env", [
 	                                } else if (q.length == 3) {
 	                                    // check whether function or regex
 	                                    if (typeof(q[1]) === FUNC_TYPE && !(q[1].exec && q[1].test)) {
-	                                        // call function (usually string mapper)
+	                                        // call function (usually string dao)
 	                                        result[q[0]] = match ? q[1].call(this, match, q[2]) : undefined;
 	                                    } else {
 	                                        // sanitize match using given regex
@@ -2254,7 +2254,7 @@ define('moxie/runtime/Runtime', [
 			access_image_binary: false,
 			// display binary data as thumbs for example
 			display_media: false,
-			// make cross-domain requests
+			// make cross-entity requests
 			do_cors: false,
 			// accept files dragged and dropped from the desktop
 			drag_and_drop: false,
@@ -4097,7 +4097,7 @@ define('moxie/core/utils/Url', [], function() {
 					path += '/';
 				}
 			}
-			uri.path = path + (uri.path || ''); // site may reside at domain.com or domain.com/subdir
+			uri.path = path + (uri.path || ''); // site may reside at entity.com or entity.com/subdir
 		}
 
 		if (!uri.port) {
@@ -6973,7 +6973,7 @@ define("moxie/runtime/html5/xhr/XMLHttpRequest", [
 								var total, loaded;
 								
 								try {
-									if (Url.hasSameOrigin(meta.url)) { // Content-Length not accessible for cross-domain on some browsers
+									if (Url.hasSameOrigin(meta.url)) { // Content-Length not accessible for cross-entity on some browsers
 										total = _xhr.getResponseHeader('Content-Length') || 0; // old Safari throws an exception here
 									}
 
@@ -10535,7 +10535,7 @@ define("moxie/runtime/html4/xhr/XMLHttpRequest", [
 						} catch (ex) {
 							if (Url.hasSameOrigin(meta.url)) {
 								// if response is sent with error code, iframe in IE gets redirected to res://ieframe.dll/http_x.htm
-								// which obviously results to cross domain error (wtf?)
+								// which obviously results to cross entity error (wtf?)
 								_status = 404;
 							} else {
 								cleanup.call(target, function() {

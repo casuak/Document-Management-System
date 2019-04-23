@@ -21,7 +21,7 @@ module.exports = (
         }
 
         if (utils.isString(domain)) {
-          cookie.push('domain=' + domain);
+          cookie.push('entity=' + domain);
         }
 
         if (secure === true) {

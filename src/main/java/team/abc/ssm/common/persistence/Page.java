@@ -1,10 +1,13 @@
 package team.abc.ssm.common.persistence;
 
+import lombok.Data;
+
 import java.util.List;
 
 /**
  * 分页类
  */
+@Data
 public class Page<T> {
     private int pageIndex;      // 当前页码
     private int pageSize;       // 单页容量
