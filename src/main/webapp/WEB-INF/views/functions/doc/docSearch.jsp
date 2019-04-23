@@ -1173,9 +1173,10 @@
 
     /*查看作者详情-打开新页面*/
     function viewAuthorDetail(row) {
+        console.log(row)
         let authorId = row.id;
         let tabTitle = row.realName+"-作者详情";
-        let link = "/author/getAuthorDetail?"+authorId;
+        let link = "/author/goAuthorDetail?authorId="+authorId;
         window.parent.app.addTab(tabTitle,link);
     }
 </script>

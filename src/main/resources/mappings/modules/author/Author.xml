@@ -108,5 +108,9 @@
         </if>
     </select>
 
+    <select id="selectByPrimaryKey" resultMap="authorBean">
+        select * from sys_user where id = #{0}
+    </select>
+
 
 </mapper>

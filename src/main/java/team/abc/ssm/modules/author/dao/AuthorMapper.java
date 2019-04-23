@@ -1,14 +1,11 @@
 package team.abc.ssm.modules.author.dao;
 
-import org.apache.ibatis.annotations.Param;
 import team.abc.ssm.modules.author.entity.Author;
-import team.abc.ssm.modules.sys.entity.User;
-import tk.mybatis.mapper.common.Mapper;
 
 import java.util.List;
 import java.util.Map;
 
-public interface AuthorMapper extends Mapper<Author> {
+public interface AuthorMapper {
 
     List<Author> getAuthorListByPage(Author author);
 
@@ -23,6 +20,8 @@ public interface AuthorMapper extends Mapper<Author> {
 
     /*获取作者数目*/
     int getAuthorCount(Author author);
+
+    Author selectByPrimaryKey(String authorId);
 
     /*获取专利数量*/
     //int getPatentAmount(String authorId);

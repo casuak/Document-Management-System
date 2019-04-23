@@ -43,6 +43,7 @@ public class AuthorService {
     }
 
     public Author getAuthor(String authorId) {
+        System.out.println("获取author");
         return authorMapper.selectByPrimaryKey(authorId);
     }
 }

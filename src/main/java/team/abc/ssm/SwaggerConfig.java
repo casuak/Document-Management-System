@@ -6,6 +6,8 @@
 //import org.springframework.context.annotation.Import;
 //import org.springframework.test.context.web.WebAppConfiguration;
 //import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+//import org.springframework.web.servlet.mvc.method.RequestMappingInfoHandlerMapping;
+//import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 //import springfox.bean.validators.configuration.BeanValidatorPluginsConfiguration;
 //import springfox.documentation.builders.ApiInfoBuilder;
 //import springfox.documentation.builders.PathSelectors;
@@ -22,8 +24,8 @@
 // */
 //@WebAppConfiguration
 //@EnableSwagger2
-//@EnableWebMvc
-////@ComponentScan(basePackages = "team.abc.ssm")
+////@EnableWebMvc
+//@ComponentScan(basePackages = "team.abc.ssm")
 //public class SwaggerConfig {
 //
 //    @Bean
@@ -31,9 +33,16 @@
 //        return new Docket(DocumentationType.SWAGGER_2)
 //                .select()
 //                .apis(RequestHandlerSelectors.any())
+//                .paths(PathSelectors.any())
 //                .build()
 //                .apiInfo(apiInfo());
 //    }
+//
+//    @Bean
+//    public RequestMappingInfoHandlerMapping requestMapping(){
+//        return new RequestMappingHandlerMapping();
+//    }
+//
 //    private ApiInfo apiInfo(){
 //        return new ApiInfoBuilder()
 //                .title("XXX 项目接口文档")

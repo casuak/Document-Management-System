@@ -3,6 +3,8 @@ package team.abc.ssm.modules.doc.api;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.apache.ibatis.annotations.Param;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -10,6 +12,7 @@ import org.springframework.web.servlet.ModelAndView;
 import team.abc.ssm.common.persistence.Page;
 import team.abc.ssm.common.web.AjaxMessage;
 import team.abc.ssm.common.web.MsgType;
+import team.abc.ssm.modules.author.entity.Author;
 import team.abc.ssm.modules.author.service.AuthorService;
 import team.abc.ssm.modules.doc.entity.Paper;
 import team.abc.ssm.modules.doc.service.PaperSearchService;
@@ -30,6 +33,8 @@ import java.util.Map;
 @Controller
 @RequestMapping(value = "api/doc/search")
 public class PaperSearchController {
+
+    private static final Logger LOG = LoggerFactory.getLogger(PaperSearchController.class);
 
     @Autowired
     private CommonOrganizeService orgService;
@@ -230,5 +235,34 @@ public class PaperSearchController {
     @RequestMapping(value = "selectCopyrightListByPageGet", method = RequestMethod.GET)
     public Object selectCopyrightListByPageGet() {
         return null;
+    }
+
+    
+    /**
+     * @param [paper]
+     * @return java.lang.Object
+     * @Description 在作者信息页面获取其下的所有论文
+     * @author zm
+     * @date 16:43 2019/4/23
+     */
+    @RequestMapping(value = "selectPaperListByPage2",method = RequestMethod.POST)
+    @ResponseBody
+    public Object selectPaperListByPage2(
+            @RequestBody Paper paper
+    ){
+        //去除paper中暂存的authorId
+        String authorId = paper.getAuthorList();
+        //获取当前的author
+        Author authorNow = authorService.getAuthor(authorId);
+        //设置当前作者的paperPage
+        authorNow.setMyPaperPage(paper.getPage());
+
+        List<Paper> paperList = paperSearchService.getMyPaperByPage(authorNow);
+
+        Page<Paper> paperResPage = new Page<>();
+        paperResPage.setResultList(paperList);
+        paperResPage.setTotal(paperSearchService.getMyPaperAmount(authorId));
+
+        return new AjaxMessage().Set(MsgType.SUCCESS, paperResPage);
     }
 }

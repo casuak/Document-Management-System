@@ -134,23 +134,23 @@
         </if>
         <if test="otherAuthorWorkNum != '' and secondAuthorWorkNum != null">
             and pp.id in (
-                select paper_id
-                from doc_map_user_paper mmp
-                where mmp.user_id = (
-                    select id
-                    from sys_user
-                    where work_id = #{otherAuthorWorkNum}
-                )
-                and mmp.author_type_id = (
-                    select id
-                    from `sys_dict`
-                    where type_id = (
-                        select id
-                        FROM `sys_dict_type`
-                        where name_cn = '作者身份'
-                    )
-                    and name_cn = '其他作者'
-                )
+            select paper_id
+            from doc_map_user_paper mmp
+            where mmp.user_id = (
+            select id
+            from sys_user
+            where work_id = #{otherAuthorWorkNum}
+            )
+            and mmp.author_type_id = (
+            select id
+            from `sys_dict`
+            where type_id = (
+            select id
+            FROM `sys_dict_type`
+            where name_cn = '作者身份'
+            )
+            and name_cn = '其他作者'
+            )
             )
         </if>
         limit #{pageIndex},#{pageSize}
@@ -163,14 +163,17 @@
           and del_flag != -1
     </select>
 
-    <select id="getPaperList1" resultMap="paperBean">
+    <select id="getPaperList1" parameterType="team.abc.ssm.modules.author.entity.Author" resultMap="paperBean">
         select *
         from doc_paper
         where id in (
-            select paper_id
-            from doc_map_user_paper
-            where user_id = #{id}
-            limit #{pageIndex},#{pageSize}
+            select ids.*
+            from (
+                     select paper_id
+                     from doc_map_user_paper
+                     where user_id = #{id}
+                     limit #{myPaperPage.pageStart},#{myPaperPage.pageSize}
+                 ) as ids
         )
     </select>
 

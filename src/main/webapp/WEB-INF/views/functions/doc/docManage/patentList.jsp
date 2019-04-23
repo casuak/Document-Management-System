@@ -10,7 +10,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>专利详情</title>
+    <title>专利统计详情</title>
     <%@include file="/WEB-INF/views/include/blankHead.jsp" %>
     <link rel="stylesheet" href="/static/css/tableTemplate.css"/>
     <style>
