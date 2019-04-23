@@ -153,7 +153,7 @@ public class PaperService {
             int count = 0;
             for (User user : userList) {
                 String nicknames = user.getNicknames();
-                if (nicknames == null) continue;
+                if (nicknames == null || nicknames.equals("")) continue;
                 if (nicknames.contains(firstAuthorName)) {
                     count += 1;
                     lastMatchUser = user;
@@ -171,10 +171,13 @@ public class PaperService {
             count = 0;
             for (User user : userList) {
                 String nicknames = user.getNicknames();
-                if (nicknames == null) continue;
-                if (nicknames.contains(secondAuthorName)) {
-                    count += 1;
-                    lastMatchUser = user;
+                try {
+                    if (nicknames.contains(secondAuthorName)) {
+                        count += 1;
+                        lastMatchUser = user;
+                    }
+                } catch (NullPointerException e) {
+                    //
                 }
             }
             if (lastMatchUser == null)

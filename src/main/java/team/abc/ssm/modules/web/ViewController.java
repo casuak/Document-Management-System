@@ -124,30 +124,9 @@ public class ViewController extends BaseController {
         return "functions/doc/paperUserMatch";
     }
 
-    // 论文用户匹配的5个标签页
-    @RequestMapping(value = "functions/doc/paperUserMatch/tab0", method = RequestMethod.GET)
-    public String doc_paperUserMatch_tab0() {
-        return "functions/doc/paperUserMatch/tab0";
-    }
-
-    @RequestMapping(value = "functions/doc/paperUserMatch/tab1", method = RequestMethod.GET)
-    public String doc_paperUserMatch_tab1() {
-        return "functions/doc/paperUserMatch/tab1";
-    }
-
-    @RequestMapping(value = "functions/doc/paperUserMatch/tab2", method = RequestMethod.GET)
-    public String doc_paperUserMatch_tab2() {
-        return "functions/doc/paperUserMatch/tab2";
-    }
-
-    @RequestMapping(value = "functions/doc/paperUserMatch/tab3", method = RequestMethod.GET)
-    public String doc_paperUserMatch_tab3() {
-        return "functions/doc/paperUserMatch/tab3";
-    }
-
-    @RequestMapping(value = "functions/doc/paperUserMatch/tab4", method = RequestMethod.GET)
-    public String doc_paperUserMatch_tab4() {
-        return "functions/doc/paperUserMatch/tab4";
+    @RequestMapping(value = "functions/doc/paperUserMatch/searchUser", method = RequestMethod.GET)
+    public String doc_paperUserMatch_searchUser() {
+        return "functions/doc/paperUserMatch/searchUser";
     }
 
     /*
