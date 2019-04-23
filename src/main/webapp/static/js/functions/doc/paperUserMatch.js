@@ -5,7 +5,7 @@ app = new Vue({
             fullScreen: false,
             table: false
         },
-        status: '-1',   // current status
+        status: '1',   // current status
         statusList: [
             {
                 value: '-1',

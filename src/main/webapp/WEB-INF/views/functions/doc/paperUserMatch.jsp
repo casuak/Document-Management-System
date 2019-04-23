@@ -67,8 +67,34 @@
         </el-table-column>
         <el-table-column label="第一作者名" width="150" prop="firstAuthorName" align="center"></el-table-column>
         <el-table-column label="第二作者名" width="150" prop="secondAuthorName" align="center"></el-table-column>
-        <el-table-column label="第一作者工号/学号" width="150" prop="firstAuthorId" align="center"></el-table-column>
-        <el-table-column label="第二作者工号/学号" width="150" prop="secondAuthorId" align="center"></el-table-column>
+        <el-table-column label="第一作者工号/学号" width="150" align="center">
+            <template slot-scope="{row}">
+                <el-row>
+                    <el-col :span="12">
+                        <span v-if="row.status1 === '0'">{{ row.firstAuthorId }}</span>
+                        <span v-if="row.status1 === '1'">重名</span>
+                        <span v-if="row.status1 === '2'">无匹配</span>
+                    </el-col>
+                    <el-col :span="12">
+                        <i-button v-if="row.status1 == '1' || row.status1 == '2'" type="success" size="small">手动匹配</i-button>
+                    </el-col>
+                </el-row>
+            </template>
+        </el-table-column>
+        <el-table-column label="第二作者工号/学号" width="150" align="center">
+            <template slot-scope="{row}">
+                <el-row>
+                    <el-col :span="12">
+                        <span v-if="row.status2 === '0'">{{ row.secondAuthorId }}</span>
+                        <span v-if="row.status2 === '1'">重名</span>
+                        <span v-if="row.status2 === '2'">无匹配</span>
+                    </el-col>
+                    <el-col :span="12">
+                        <i-button v-if="row.status2 == '1' || row.status2 == '2'" type="success" size="small">手动匹配</i-button>
+                    </el-col>
+                </el-row>
+            </template>
+        </el-table-column>
         <el-table-column label="ISSN" width="150" prop="ISSN" align="center"></el-table-column>
         <el-table-column label="入藏号" width="300" prop="storeNum" align="center"></el-table-column>
         <el-table-column label="论文种类" width="150" prop="docTypeValue" align="center"></el-table-column>
