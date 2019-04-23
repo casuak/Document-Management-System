@@ -1,15 +1,33 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="team.abc.ssm.modules.doc.dao.CopyrightMapper" >
-  <resultMap id="BaseResultMap" type="team.abc.ssm.modules.doc.entity.Copyright" >
-    <result column="id" property="id" jdbcType="VARCHAR" />
-    <result column="copyright_name" property="copyrightName" jdbcType="VARCHAR" />
-    <result column="remarks" property="remarks" jdbcType="VARCHAR" />
-    <result column="create_user_id" property="createUserId" jdbcType="VARCHAR" />
-    <result column="modify_user_id" property="modifyUserId" jdbcType="VARCHAR" />
-    <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
-    <result column="modify_date" property="modifyDate" jdbcType="TIMESTAMP" />
-    <result column="del_flag" property="delFlag" jdbcType="TINYINT" />
-  </resultMap>
+<mapper namespace="team.abc.ssm.modules.doc.dao.CopyrightMapper">
+    <resultMap id="CopyrightBean" type="team.abc.ssm.modules.doc.entity.Copyright">
+        <result column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="copyright_name" property="copyrightName" jdbcType="VARCHAR"/>
+        <result column="remarks" property="remarks" jdbcType="VARCHAR"/>
+        <result column="create_user_id" property="createUserId" jdbcType="VARCHAR"/>
+        <result column="modify_user_id" property="modifyUserId" jdbcType="VARCHAR"/>
+        <result column="create_date" property="createDate" jdbcType="TIMESTAMP"/>
+        <result column="modify_date" property="modifyDate" jdbcType="TIMESTAMP"/>
+        <result column="del_flag" property="delFlag" jdbcType="TINYINT"/>
+    </resultMap>
+    <select id="getMyCopyAmount" resultType="java.lang.Integer">
+        select count(*)
+        from doc_map_user_copyright
+        where user_id = #{0}
+          and del_flag != -1
+    </select>
+
+    <select id="getCopyList" resultMap="CopyrightBean">
+        select *
+        from doc_copyright
+        where id in (
+            select copyright_id
+            from doc_map_user_copyright
+            where user_id = #{id}
+              and del_flag != -1
+            limit #{pageIndex},#{pageSize}
+        )
+    </select>
 
 </mapper>

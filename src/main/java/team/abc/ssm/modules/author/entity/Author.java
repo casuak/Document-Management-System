@@ -15,6 +15,7 @@ import java.util.List;
  */
 @Data
 public class Author extends DataEntity<Author> {
+    private String id;
     private String userType;    // 用户类型：teacher, student, doctor
     private String sexId;       // 性别(存储的是字典表id)
     private String username;

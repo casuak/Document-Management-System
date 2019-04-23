@@ -42,4 +42,7 @@ public class AuthorService {
         return authorMapper.getSubListMap();
     }
 
+    public Author getAuthor(String authorId) {
+        return authorMapper.selectByPrimaryKey(authorId);
+    }
 }

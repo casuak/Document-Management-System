@@ -1,6 +1,7 @@
 package team.abc.ssm.modules.doc.dao;
 
 import org.apache.ibatis.annotations.Param;
+import team.abc.ssm.modules.author.entity.Author;
 import team.abc.ssm.modules.doc.entity.Paper;
 import team.abc.ssm.modules.organization.entity.CommonOrganize;
 
@@ -49,4 +50,10 @@ public interface PaperSearchMapper {
 
     /*根据Id返回paper*/
     Paper getPaperById(String paperId);
+
+    /*根据authorId返回有效paper数量*/
+    int getMyPaperAmount(String authorId);
+
+    /*根据author来返回Paper*/
+    List<Paper> getPaperList1(Author author);
 }

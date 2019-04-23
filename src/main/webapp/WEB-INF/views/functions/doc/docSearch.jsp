@@ -66,9 +66,11 @@
         .el-date-editor .el-range-separator {
             padding: 0 0;
         }
-        .el-date-editor--daterange{
+
+        .el-date-editor--daterange {
             width: 221.4px;
         }
+
         .has-gutter .cell {
             height: 45px;
             line-height: 45px;
@@ -171,7 +173,7 @@
                                     type="daterange"
                                     align="right"
                                     unlink-panels
-<%--                                    range-separator="至"--%>
+                            <%--                                    range-separator="至"--%>
                                     start-placeholder="开始日期"
                                     end-placeholder="结束日期"
                                     :picker-options="optionValue.pickerOptions">
@@ -396,7 +398,7 @@
                           :header-cell-style="{background:'rgb(0, 124, 196)',color:'#fff'}"
                           height="calc(100% - 58px)"
                           v-loading="table.authorTable.loading"
-<%--                          style="margin-top: 0;width: 100%;overflow-y: hidden;"--%>
+                <%--                          style="margin-top: 0;width: 100%;overflow-y: hidden;"--%>
                           class="scroll-bar"
                 <%--@selection-change="onSelectionChange_entity"--%>
                           stripe>
@@ -456,7 +458,7 @@
                             <el-button type="primary" plain
                                        size="mini"
                                        style="position:relative;bottom: 1px;"
-                                       @click="">
+                                       @click="viewAuthorDetail(scope.row)">
                                 <span>查看作者详情</span>
                             </el-button>
                         </template>
@@ -696,8 +698,7 @@
                 },
                 authorTable: {
                     loading: false,
-                    data: [
-                    ],
+                    data: [],
                     selectionList: [],
                     params: {
                         pageIndex: 1,
@@ -958,21 +959,21 @@
                 };
 
                 let author = {
-                    userType : this.optionView.commonSelect.userType,
-                    workId : this.optionView.commonSelect.workId,
-                    subjectId : this.optionView.commonSelect.subject,
-                    organizationId:this.optionView.commonSelect.organization,
+                    userType: this.optionView.commonSelect.userType,
+                    workId: this.optionView.commonSelect.workId,
+                    subjectId: this.optionView.commonSelect.subject,
+                    organizationId: this.optionView.commonSelect.organization,
                     page: app.table.authorTable.params,
                 };
 
-                ajaxPostJSON("/author/getAuthorListByPage",author,
-                function suc(res) {
-                    console.log(res);
-                    app.table.authorTable.data = res.data.resultList;
-                    app.table.authorTable.params.total = res.data.total;
+                ajaxPostJSON("/author/getAuthorListByPage", author,
+                    function suc(res) {
+                        console.log(res);
+                        app.table.authorTable.data = res.data.resultList;
+                        app.table.authorTable.params.total = res.data.total;
 
-                    app.table.authorTable.loading = false;
-                },null,false);
+                        app.table.authorTable.loading = false;
+                    }, null, false);
                 /*let params = JSON.stringify(authorSearchParams);
                 $.ajax({
                     url: "/author/getAuthorListByPage1",
@@ -1168,6 +1169,14 @@
     function test4() {
         /*输出时间段*/
         console.log(app.optionView.commonSelect.publishDate);
+    }
+
+    /*查看作者详情-打开新页面*/
+    function viewAuthorDetail(row) {
+        let authorId = row.id;
+        let tabTitle = row.realName+"-作者详情";
+        let link = "/author/getAuthorDetail?"+authorId;
+        window.parent.app.addTab(tabTitle,link);
     }
 </script>
 

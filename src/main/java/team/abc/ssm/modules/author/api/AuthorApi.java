@@ -5,17 +5,22 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
 import team.abc.ssm.common.persistence.Page;
 import team.abc.ssm.common.web.BaseApi;
 import team.abc.ssm.common.web.MsgType;
 import team.abc.ssm.modules.author.entity.Author;
 import team.abc.ssm.modules.author.service.AuthorService;
+import team.abc.ssm.modules.doc.entity.Copyright;
 import team.abc.ssm.modules.doc.entity.Paper;
+import team.abc.ssm.modules.doc.entity.Patent;
+import team.abc.ssm.modules.doc.service.CopyrightService;
+import team.abc.ssm.modules.doc.service.PaperSearchService;
+import team.abc.ssm.modules.doc.service.PaperService;
+import team.abc.ssm.modules.doc.service.PatentService;
 
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -24,7 +29,7 @@ import java.util.List;
  * @data 2019/4/2
  */
 @Controller
-@RequestMapping(value = "author")
+@RequestMapping(value = "/author")
 public class AuthorApi extends BaseApi {
 
     private static final Logger LOG = LoggerFactory.getLogger(AuthorApi.class);
@@ -32,8 +37,56 @@ public class AuthorApi extends BaseApi {
     @Autowired
     AuthorService authorService;
 
+    @Autowired
+    PaperSearchService paperSearchService;
+
+    @Autowired
+    PatentService patentService;
+
+    @Autowired
+    CopyrightService copyrightService;
+
     /**
      * @author zm
+     * @date 2019/4/23
+     * @param [authorId, model]
+     * @return java.lang.String
+     */
+    @RequestMapping(value = "getAuthorDetail",method = RequestMethod.GET)
+    public String getAuthorDetail(
+            @RequestParam("authorId") String authorId,
+            Model model
+    ){
+        Author authorNow = authorService.getAuthor(authorId);
+
+        Page<Paper> paperPage = new Page<>();
+        Page<Patent> patentPage = new Page<>();
+        Page<Copyright> copyrightPage = new Page<>();
+
+        /*获取集合*/
+        List<Paper> myPaperList = paperSearchService.getMyPaperByPage(authorNow);
+        List<Patent> myPatentList = patentService.getMyPatentByPage(authorNow);
+        List<Copyright> myCopyrightList = copyrightService.getMyCopyByPage(authorNow);
+
+        /*设置分页中的数据内容*/
+        paperPage.setResultList(myPaperList);
+        patentPage.setResultList(myPatentList);
+        copyrightPage.setResultList(myCopyrightList);
+
+        /*设置数目*/
+        paperPage.setTotal(paperSearchService.getMyPaperAmount(authorId));
+        patentPage.setTotal(patentService.getMyPatentAmount(authorId));
+        copyrightPage.setTotal(copyrightService.getMyCopyAmount(authorId));
+
+        model.addAttribute("paperPage",paperPage);
+        model.addAttribute("patentPage",patentPage);
+        model.addAttribute("copyrightPage",copyrightPage);
+
+        return "functions/author/authorInfo";
+    }
+
+    /**
+     * @author zm 按页查询作者
      * @date 2019/4/22
      * @param [author]
      * @return java.lang.Object

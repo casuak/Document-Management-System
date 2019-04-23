@@ -3,11 +3,12 @@ package team.abc.ssm.modules.author.dao;
 import org.apache.ibatis.annotations.Param;
 import team.abc.ssm.modules.author.entity.Author;
 import team.abc.ssm.modules.sys.entity.User;
+import tk.mybatis.mapper.common.Mapper;
 
 import java.util.List;
 import java.util.Map;
 
-public interface AuthorMapper {
+public interface AuthorMapper extends Mapper<Author> {
 
     List<Author> getAuthorListByPage(Author author);
 
