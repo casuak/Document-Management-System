@@ -12,7 +12,7 @@
 <head>
     <title>作者查询</title>
     <%@include file="/WEB-INF/views/include/blankHead.jsp" %>
-    <link rel="stylesheet" href="/static/css/tableTemplate.css"/>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/tableTemplate.css"/>
     <style>
         .textLeft {
             margin-left: 10px;

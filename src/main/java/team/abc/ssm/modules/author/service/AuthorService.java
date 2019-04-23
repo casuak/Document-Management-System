@@ -2,10 +2,13 @@ package team.abc.ssm.modules.author.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import team.abc.ssm.modules.author.mapper.AuthorMapper;
+import team.abc.ssm.modules.author.dao.AuthorMapper;
+import team.abc.ssm.modules.author.entity.Author;
 import team.abc.ssm.modules.sys.entity.User;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author zm
@@ -18,14 +21,25 @@ public class AuthorService {
     @Autowired
     private AuthorMapper authorMapper;
 
-    /*返回默认的作者list*/
-    public List<User> getDefaultUserList(){
-        return authorMapper.getDefaltAuthor();
+    public int getAuthorListCount(Author author) {
+        return authorMapper.getAuthorCount(author);
     }
 
-    /*根据条件返回作者list*/
-    public List<User> getUserList(String roleId,String orgId,String subId,String authorName){
-        String tmpName = '%'+authorName+'%';
-        return authorMapper.getAuthorList(roleId, orgId, subId, tmpName);
+    /**
+     * @author zm 条件查询返回相应的author，若空则返回空的arrayList
+     * @date 2019/4/22
+     * @param [author]
+     * @return java.util.List<team.abc.ssm.modules.author.entity.Author>
+     */
+    public List<Author> getAuthorList(Author author) {
+        List<Author> authors = authorMapper.getAuthorListByPage(author);
+        if(authors.size() == 0)
+            return new ArrayList<>();
+        return authors;
     }
+
+    public List<Map<String, String>> getSubListMap() {
+        return authorMapper.getSubListMap();
+    }
+
 }

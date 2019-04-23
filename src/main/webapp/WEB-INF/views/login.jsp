@@ -21,7 +21,7 @@
                           auto-complete="off"></el-input>
             </el-form-item>
             <%--<el-checkbox v-model="checked" class="rememberme" style="margin: 0 0 10px 125px;">记住密码--%>
-            </el-checkbox>
+           <%-- </el-checkbox>--%>
             <el-form-item style="width:100%;margin-top: 50px;">
                 <el-button type="primary" style="width:100%;" @click="login()" :loading="fullScreenLoading">登录
                 </el-button>

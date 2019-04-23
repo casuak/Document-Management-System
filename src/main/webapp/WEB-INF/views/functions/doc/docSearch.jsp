@@ -26,10 +26,10 @@
         }
 
         .tmp {
-            margin-top: 15px;
+            margin-top: 8px;
             background-color: rgb(237, 237, 238);
             border-radius: 4px;
-            padding: 7px 0;
+            padding: 5px 0;
             box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1)
         }
 
@@ -66,27 +66,29 @@
         .el-date-editor .el-range-separator {
             padding: 0 0;
         }
-
-        .has-gutter .cell{
+        .el-date-editor--daterange{
+            width: 221.4px;
+        }
+        .has-gutter .cell {
             height: 45px;
             line-height: 45px;
         }
     </style>
 </head>
 <body>
-<div id="app" v-cloak style="background: white;height: 100%;" v-loading="fullScreenLoading">
+<div id="app" v-cloak style="background: white;height: 100%;">
     <el-container style="height: 100%">
         <el-header height="auto">
-            <div style="margin-top: 10px;">
+            <div style="margin-top: 5px;">
                 <template>
                     <el-radio v-model="radio" border label="1">作者查询</el-radio>
                     <el-radio v-model="radio" border label="2">文献统计</el-radio>
                 </template>
             </div>
-            <div style="margin-top: 10px" class="tmp" v-show="radio == 2">
+            <div style="margin-top: 5px" class="tmp" v-show="radio == 2">
                 <template>
                     <el-checkbox :indeterminate="doc.isIndeterminate" v-model="doc.checkAll"
-                                 style="float: left;margin-left:10px;margin-right: 10px"
+                                 style="float: left;margin-left:10px;margin-right: 5px"
                                  @change="handleCheckAllChange">全选
                     </el-checkbox>
                     <el-checkbox-group v-model="doc.checkedDoc" @change="handleCheckedDocsChange">
@@ -105,12 +107,12 @@
                     <div class="commonInputSection" v-show="radio ==1">
                         <span class="inputSpanText">作者身份: </span>
                         <div class="commonInput">
-                            <el-select v-model="optionView.commonSelect.authorIdentity"
+                            <el-select v-model="optionView.commonSelect.userType"
                                        filterable
                                        clearable
                                        placeholder="选择作者身份">
                                 <el-option
-                                        v-for="item in optionValue.authorIdentityOption"
+                                        v-for="item in optionValue.userTypeOption"
                                         :key="item.value"
                                         :label="item.label"
                                         :value="item.value">
@@ -123,7 +125,7 @@
                         <div class="commonInput">
                             <el-input
                                     placeholder="输入作者工号"
-                                    v-model="optionView.commonSelect.authorWorkNum"
+                                    v-model="optionView.commonSelect.workId"
                                     clearable>
                             </el-input>
                         </div>
@@ -160,12 +162,29 @@
                             </el-select>
                         </div>
                     </div>
-                </row>
-                <row style="margin-top: 10px" v-show="radio ==2">
-                    <div class="commonInputSection" style="width: 438px;margin-left: 145px">
+                    <div class="commonInputSection" style="width: 320px;" v-show="radio ==2">
                         <span class="inputSpanText">出版时间: </span>
                         <div class="commonInput">
                             <el-date-picker
+                                    style="width: 250px;float: right;margin-top: 0"
+                                    v-model="optionView.commonSelect.publishDate"
+                                    type="daterange"
+                                    align="right"
+                                    unlink-panels
+<%--                                    range-separator="至"--%>
+                                    start-placeholder="开始日期"
+                                    end-placeholder="结束日期"
+                                    :picker-options="optionValue.pickerOptions">
+                            </el-date-picker>
+                        </div>
+                    </div>
+                </row>
+                <%--<row style="margin-top: 10px" v-show="radio ==2">
+                    <div class="commonInputSection" style="margin-left: 0">
+                        <span class="inputSpanText">出版时间: </span>
+                        <div class="commonInput">
+                            <el-date-picker
+                                    style="width: 250px"
                                     v-model="optionView.commonSelect.publishDate"
                                     type="daterange"
                                     align="right"
@@ -177,7 +196,7 @@
                             </el-date-picker>
                         </div>
                     </div>
-                </row>
+                </row>--%>
             </div>
 
             <div id="paperBox" class="tmp" v-show="radio == 2 && optionView.paper.show">
@@ -358,7 +377,8 @@
             <row>
                 <el-button
                         v-show="radio == 1"
-                        type="primary" size="medium" @click="">查询作者</el-button>
+                        type="primary" size="medium" @click="authorSearch">查询作者
+                </el-button>
                 <div v-show="radio ==2">
                     <el-button type="primary" size="medium" @click="statisticalSearch()">统计结果</el-button>
                     <el-button type="danger" size="medium" @click="">结果导出</el-button>
@@ -369,14 +389,14 @@
             <hr style="width: 100%;margin: 10px auto;"/>
         </el-header>
 
-        <el-main style="margin-top: -35px;height: 100%">
+        <el-main style="padding-top: 0;height: 100%">
             <%--作者查询列表--%>
-            <div v-show="radio == 1" style="height: 100%;overflow: hidden">
+            <div v-show="radio == 1" style="height: 100%;overflow: hidden;margin-top: 0">
                 <el-table :data="table.authorTable.data"
                           :header-cell-style="{background:'rgb(0, 124, 196)',color:'#fff'}"
-                          height="calc(100% - 50px)"
-                          v-loading="table.commonTable.loading"
-                          style="width: 100%;overflow-y: hidden;margin-top: 20px;"
+                          height="calc(100% - 58px)"
+                          v-loading="table.authorTable.loading"
+<%--                          style="margin-top: 0;width: 100%;overflow-y: hidden;"--%>
                           class="scroll-bar"
                 <%--@selection-change="onSelectionChange_entity"--%>
                           stripe>
@@ -390,25 +410,25 @@
                             width="80px">
                     </el-table-column>
                     <el-table-column
-                            prop="authorName"
+                            prop="realName"
                             header-align="center"
                             align="center"
                             label="作者姓名">
                     </el-table-column>
                     <el-table-column
-                            prop="authorWorkNum"
+                            prop="workId"
                             header-align="center"
                             align="center"
                             label="作者工号">
                     </el-table-column>
                     <el-table-column
-                            prop="subject"
+                            prop="subjectName"
                             header-align="center"
                             align="center"
                             label="所属学科">
                     </el-table-column>
                     <el-table-column
-                            prop="organization"
+                            prop="organizationName"
                             header-align="center"
                             align="center"
                             label="所属机构">
@@ -444,8 +464,8 @@
                 </el-table>
                 <%-- entity分页 --%>
                 <el-pagination style="text-align: center;margin: 8px auto;"
-                              <%-- @size-change="onPageSizeChange_entity"
-                               @current-change="onPageIndexChange_entity"--%>
+                               @size-change="authorPageSizeChange"
+                               @current-change="authorPageIndexChange"
                                :current-page="table.authorTable.params.pageIndex"
                                :page-sizes="table.authorTable.params.pageSizes"
                                :page-size="table.authorTable.params.pageSize"
@@ -460,7 +480,7 @@
                           :header-cell-style="{background:'rgb(79, 165, 254)',color:'#fff'}"
                           v-loading="table.commonTable.loading"
                           style="width: 100%;overflow-y: hidden;
-                          margin-top: 20px;"
+                          margin-top: 0;"
                           class="scroll-bar"
                           show-summary
                 <%--:summary-method="getSummaries"
@@ -547,8 +567,8 @@
             //条件输入(选择)框的候选项：
             optionValue: {
                 paperTypeOption: [],
-                orgOption:[],
-                authorIdentityOption: [
+                orgOption: [],
+                userTypeOption: [
                     {
                         label: "教师",
                         value: "teacher"
@@ -562,56 +582,7 @@
                         value: "postdoctoral"
                     }
                 ],
-                subjectOption: [
-                    {
-                        label: "哲学",
-                        value: "philosophy"
-                    },
-                    {
-                        label: "经济学",
-                        value: "economics"
-                    },
-                    {
-                        label: "法学",
-                        value: "law"
-                    },
-                    {
-                        label: "教育学",
-                        value: "education"
-                    },
-                    {
-                        label: "文学",
-                        value: "literature"
-                    },
-                    {
-                        label: "历史学",
-                        value: "history"
-                    },
-                    {
-                        label: "理学",
-                        value: "science"
-                    },
-                    {
-                        label: "工学",
-                        value: "engineering"
-                    },
-                    {
-                        label: "农学",
-                        value: "agronomy"
-                    },
-                    {
-                        label: "医学",
-                        value: "medicine"
-                    },
-                    {
-                        label: "军事学",
-                        value: "military"
-                    },
-                    {
-                        label: "管理学",
-                        value: "management"
-                    },
-                ],
+                subjectOption: [],
                 paperLevelOption: [
                     {
                         label: "第一级",
@@ -671,11 +642,11 @@
             optionView: {
                 commonSelect: {
                     show: true,
-                    authorIdentity: "",                             //作者工号
-                    authorWorkNum: "",
+                    userType: "",                             //作者工号
+                    workId: "",
                     publishDate: "",
                     subject: "",
-                    organization:""
+                    organization: ""
                 },
                 paper: {
                     show: false,
@@ -702,7 +673,7 @@
                     copyType: ""
                 }
             },
-            fullScreenLoading: false,
+            //fullScreenLoading: false,
             //表格
             table: {
                 paperTable: {
@@ -726,16 +697,6 @@
                 authorTable: {
                     loading: false,
                     data: [
-                        {
-                            authorName:"zm",
-                            authorIdentity:"学生",
-                            authorWorkNum:"112016xxxx",
-                            subject:"哲学",
-                            organization:"软件学院",
-                            paperAmount :100,
-                            patentAmount:10,
-                            copyrightAmount:30
-                        }
                     ],
                     selectionList: [],
                     params: {
@@ -777,7 +738,7 @@
                         pageSize: 10,
                         pageSizes: [5, 10, 20, 40],
                         searchKey: '',  // 搜索词
-                        total: 0,       // 总数
+                        total: 100,       // 总数
                     }
                 }
             },
@@ -859,26 +820,22 @@
                     }
                 );
             },
-            // 刷新entity table数据
-            refreshTable_paper: function () {
-                console.log("刷新entity table数据");
-                app.selectPaperListByPage();
-            },
+
             // 处理选中的行变化
-            onSelectionChange_paper: function (val) {
-                this.table.paperTable.selectionList = val;
+            onSelectionChange: function (val) {
+                this.table.authorTable.selectionList = val;
             },
             // 处理pageSize变化
-            onPageSizeChange_paper: function (newSize) {
+            authorPageSizeChange: function (newSize) {
                 console.log("处理pageSize变化");
-                app.table.paperTable.params.pageSize = newSize;
-                app.refreshTable_paper();
+                app.table.authorTable.params.pageSize = newSize;
+                app.authorSearch();
             },
             // 处理pageIndex变化
-            onPageIndexChange_paper: function (newIndex) {
+            authorPageIndexChange: function (newIndex) {
                 console.log("处理pageIndex变化");
-                app.table.paperTable.params.pageIndex = newIndex;
-                app.refreshTable_paper();
+                app.table.authorTable.params.pageIndex = newIndex;
+                app.authorSearch();
             },
 
             // 重置表单
@@ -894,9 +851,9 @@
 
                 let paramsData = {
                     commonParams: {
-                        authorIdentity: app.optionView.commonSelect.authorIdentity,
+                        userType: app.optionView.commonSelect.userType,
                         subject: app.optionView.commonSelect.subject,
-                        authorWorkNum: app.optionView.commonSelect.authorWorkNum,
+                        workId: app.optionView.commonSelect.workId,
                         pubDate: app.optionView.commonSelect.publishDate
                     },
                     paperParams: {
@@ -945,7 +902,7 @@
                 app.table.commonTable.loading = false;
             },
 
-            /*查看文献详情：*/
+            /*查看文献详情*/
             viewDocDetails(row) {
                 parent.addTab1("文献详情test1", "api/doc/search/docDetails");
                 // alert($('#default', window.parent.document).html());
@@ -983,6 +940,61 @@
                     }
                 });
                 return sums;
+            },
+
+            authorSearch: function () {
+
+                app.table.authorTable.loading = true;
+
+                /*筛选条件*/
+                let authorSearchParams = {
+                    identity: this.optionView.commonSelect.userType,   //作者身份
+                    workNum: this.optionView.commonSelect.workId,
+                    subject: this.optionView.commonSelect.subject,
+                    organization: this.optionView.commonSelect.organization,
+
+                    pageIndex: this.table.authorTable.params.pageIndex,
+                    pageSize: this.table.authorTable.params.pageSize
+                };
+
+                let author = {
+                    userType : this.optionView.commonSelect.userType,
+                    workId : this.optionView.commonSelect.workId,
+                    subjectId : this.optionView.commonSelect.subject,
+                    organizationId:this.optionView.commonSelect.organization,
+                    page: app.table.authorTable.params,
+                };
+
+                ajaxPostJSON("/author/getAuthorListByPage",author,
+                function suc(res) {
+                    console.log(res);
+                    app.table.authorTable.data = res.data.resultList;
+                    app.table.authorTable.params.total = res.data.total;
+
+                    app.table.authorTable.loading = false;
+                },null,false);
+                /*let params = JSON.stringify(authorSearchParams);
+                $.ajax({
+                    url: "/author/getAuthorListByPage1",
+                    type: "post",
+                    data: {jsonStr: params},
+                    success: function (res) {
+                        if (res.code === 'success') {
+                            /!*console.log("条件查询作者成功");
+                            console.log(res.data);
+                            console.log(res.data.length);*!/
+                            app.table.authorTable.data = res.data;
+                            app.table.authorTable.params.total = res.data.length;
+                            app.table.authorTable.loading = false;
+                            console.log(app.table.authorTable.params)
+                        } else {
+                            console.log("no ok");
+                        }
+                    },
+                    error: function () {
+                        console.log("/author/getAuthorListByPage失败")
+                    }
+                })*/
             }
         }
     });
@@ -1037,7 +1049,7 @@
         return arr.join('&');
     }
 
-    //初始化界面时候加载默认参数：
+    //3. 初始化界面时候加载默认参数：
     function initialize() {
         /*初始化paperType*/
         let tmp = ${paperType};
@@ -1050,21 +1062,33 @@
         }
         /*初始化学校机构*/
         let org = ${orgList};
-        for (let i = 0; i<org.length;i++){
+        for (let i = 0; i < org.length; i++) {
             let tmpOrg = {
-                value:org[i].id,
-                label:org[i].org_name
+                value: org[i].id,
+                label: org[i].org_name
             };
             app.optionValue.orgOption.push(tmpOrg);
+        }
+
+        /*初始化学科*/
+        let subject = ${subjectList};
+        for (let i = 0; i < subject.length; i++) {
+            let tmpSub = {
+                value: subject[i].id,
+                label: subject[i].subject_name
+            };
+            app.optionValue.subjectOption.push(tmpSub);
         }
     }
 
     window.onload = function () {
         // app.selectPaperListByPage();
         initialize();
+        /*更新一下作者表格数据*/
+        app.authorSearch();
     };
 
-    // 测试
+    /*测试*/
     function test() {
         let tmpData = {
             id: "tmpId",
@@ -1140,32 +1164,6 @@
             });
         });
     }
-
-    // function paperSearch() {
-    //     let data = {
-    //         paperName:app.optionView.paper.paperName,
-    //         firstAuthorName:app.optionView.paper.firstAuthorWorkNum,            //其实是FA工号
-    //         secondAuthorName:app.optionView.paper.secondAuthorWorkNum,          //其实是SA工号
-    //         authorList:app.optionView.paper.otherAuthorWorkNum,                 //其实是OA工号
-    //         ISSN:app.optionView.paper.ISSN,
-    //         storeNum:app.optionView.paper.storeNum,
-    //         docType:app.optionView.paper.paperType,
-    //         page: app.table.paperTable.params
-    //     };
-    //
-    //     console.log(data);
-    //     app.table.paperTable.loading = true;
-    //     ajaxPostJSON("/api/doc/search/selectListByPage", data,
-    //         function success(res) {
-    //             app.table.paperTable.loading = false;
-    //             console.log(res);
-    //             app.table.paperTable.data = res.data;
-    //             //app.table.entity.params.total = d.data.total;
-    //         },
-    //         function error(res) {
-    //             console.log("error: " + res);
-    //         });
-    // }
 
     function test4() {
         /*输出时间段*/

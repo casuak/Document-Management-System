@@ -166,6 +166,7 @@ public class ViewController extends BaseController {
 
         /*把json字符串转换为json对象*/
         JSONObject jsonObject = JSONObject.fromObject(jsonStr);
+
         /*解析json对象中的内容*/
         /*公共筛选项目*/
         JSONObject commonParams = jsonObject.getJSONObject("commonParams");

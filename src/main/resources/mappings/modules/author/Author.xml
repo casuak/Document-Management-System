@@ -1,45 +1,111 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="team.abc.ssm.modules.author.mapper.AuthorMapper">
+<mapper namespace="team.abc.ssm.modules.author.dao.AuthorMapper">
 
-    <resultMap id="userBean" type="team.abc.ssm.modules.sys.entity.User">
+    <resultMap id="authorBean" type="team.abc.ssm.modules.author.entity.Author">
         <id column="id" property="id"/>
         <result column="username" property="username"/>
         <result column="password" property="password"/>
+        <result column="user_type" property="userType"/>
         <result column="remarks" property="remarks"/>
         <result column="create_user_id" property="createUserId"/>
         <result column="modify_user_id" property="modifyUserId"/>
         <result column="create_date" property="createDate"/>
         <result column="modify_date" property="modifyDate"/>
         <result column="del_flag" property="delFlag"/>
-        <!-- 用户相关的角色列表 -->
-        <collection property="roleList" ofType="team.abc.ssm.modules.sys.entity.Role">
-            <id column="roleId" property="id"/>
-            <result column="roleName" property="name"/>
-            <result column="roleCode" property="code"/>
-        </collection>
+        <result column="work_id" property="workId"/>
+        <result column="real_name" property="realName"/>
+        <result column="nicknames" property="nicknames"/>
+        <association property="organizationName" column="id"
+                     select="getAuthorOrganizeName"/>
+        <association property="subjectName" column="id"
+                     select="getAuthorSubjectName"/>
+        <association property="paperAmount" column="id"
+                     select="getPaperAmount"/>
+        <!--<association property="patentAmount" column="id" select="team.team.abc.ssm.modules"/>
+        <association property="copyrightAmount" column="id" select="team.team.abc.ssm.modules"/>-->
     </resultMap>
 
-    <select id="getAuthorList" resultType="team.abc.ssm.modules.sys.entity.User">
-        select * from `sys_user` where `real_name` = #{authorName}
-        and del_flag != -1
-        and user_id in (
-          select user_id `roleUId` from `sys_map_user_role` where role_id = #{roleId}
-          and `roleUId` in (
-            select user_id `orgUId` from `common_map_user_organize` where org_id = #{orgId}
-            and `orgUId` in (
-              select user_id `subUId` from `common_map_user_subject` where subject_id = #{subId}
+    <select id="getAuthorListByPage" resultMap="authorBean">
+        select *
+        from sys_user
+        where del_flag != -1
+        <if test="workId != '' and workId != null">
+            and work_id = #{workId}
+        </if>
+        <if test="userType != null and userType != ''">
+            and user_type = #{userType}
+        </if>
+        <if test="subjectId != null and subjectId != ''">
+            and id in (
+            select user_id from common_map_user_subject
+            where subject_id = #{subjectId}
             )
-          )
+        </if>
+        <if test="organizationId != null and organizationId != ''">
+            and id in (
+            select user_id from common_map_user_organize
+            where org_id = #{organizationId}
+            )
+        </if>
+        limit #{page.pageStart},#{page.pageSize}
+    </select>
+
+    <select id="getSubListMap" resultType="java.util.Map">
+        select id, subject_name
+        from common_subject
+        where del_flag != -1
+    </select>
+
+    <select id="getPaperAmount" resultType="java.lang.Integer">
+        select count(*)
+        from doc_map_user_paper
+        where user_id = #{authorId} and del_flag != -1
+    </select>
+
+    <select id="getAuthorSubjectName" resultType="java.lang.String">
+        select subject_name
+        from common_subject
+        where id = (
+            select subject_id
+            from common_map_user_subject
+            where user_id = #{authorId}
+        )
+
+    </select>
+
+    <select id="getAuthorOrganizeName" resultType="java.lang.String">
+        select org_name
+        from common_organize
+        where id = (
+            select org_id
+            from common_map_user_organize
+            where user_id = #{authorId}
         )
     </select>
 
-    <select id="getDefaltAuthor" resultType="team.abc.ssm.modules.sys.entity.User">
-        select * from docmanager.sys_user `sUser` where sUser.id in (
-          select role.user_id from docmanager.sys_map_user_role `role` where role_id in (
-            select id from docmanager.sys_role where name = '学生' or name = '教师'
-          )
-        );
+    <select id="getAuthorCount" resultType="java.lang.Integer">
+        select count(*)
+        from sys_user
+        where del_flag != -1
+        <if test="workId != '' and workId != null">
+            and work_id = #{workId}
+        </if>
+        <if test="userType != null and userType != ''">
+            and user_type = #{userType}
+        </if>
+        <if test="subjectId != null and subjectId != ''">
+            and id in (
+            select user_id from common_map_user_subject
+            where subject_id = #{subjectId}
+            )
+        </if>
+        <if test="organizationId != null and organizationId != ''">
+            and id in (
+            select user_id from common_map_user_organize
+            where org_id = #{organizationId}
+            )
+        </if>
     </select>
 
 
