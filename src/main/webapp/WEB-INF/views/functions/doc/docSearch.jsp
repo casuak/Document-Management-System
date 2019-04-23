@@ -480,7 +480,7 @@
                           :header-cell-style="{background:'rgb(79, 165, 254)',color:'#fff'}"
                           v-loading="table.commonTable.loading"
                           style="width: 100%;overflow-y: hidden;
-                          margin-top: 0;"
+                          margin-top: 20px;"
                           class="scroll-bar"
                           show-summary
                 <%--:summary-method="getSummaries"

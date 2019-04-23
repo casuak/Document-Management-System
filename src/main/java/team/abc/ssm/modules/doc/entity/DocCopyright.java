@@ -2,7 +2,7 @@ package team.abc.ssm.modules.doc.entity;
 
 import java.util.Date;
 
-public class Copyright {
+public class DocCopyright {
     private String id;
 
     private String copyrightName;
