@@ -29,6 +29,9 @@ public class User extends DataEntity<User> {
     private Date birthday;
     private Date hireDate;
 
+    private String tutor; // 导师
+    private String danwei; // 所属单位
+
     private List<Role> roleList; // 相关角色列表
 
     public String getUsername() {
@@ -189,5 +192,21 @@ public class User extends DataEntity<User> {
 
     public void setPinyinName(String pinyinName) {
         this.pinyinName = pinyinName;
+    }
+
+    public String getDanwei() {
+        return danwei;
+    }
+
+    public void setDanwei(String danwei) {
+        this.danwei = danwei;
+    }
+
+    public String getTutor() {
+        return tutor;
+    }
+
+    public void setTutor(String tutor) {
+        this.tutor = tutor;
     }
 }

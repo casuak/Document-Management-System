@@ -27,6 +27,19 @@
         <result column="create_date" jdbcType="TIMESTAMP" property="createDate"/>
         <result column="modify_date" jdbcType="TIMESTAMP" property="modifyDate"/>
         <result column="del_flag" jdbcType="BOOLEAN" property="delFlag"/>
+        <result column="_PD" property="_PD"/>
+        <result column="_PY" property="_PY"/>
+        <result column="danwei" property="danwei"/>
+
+        <association property="firstAuthor" javaType="user">
+            <id column="first_author_id" property="id"/>
+            <result column="user_type_1" property="userType"/>
+        </association>
+
+        <association property="secondAuthor" javaType="user">
+            <id column="second_author_id" property="id"/>
+            <result column="user_type_2" property="userType"/>
+        </association>
     </resultMap>
     <sql id="Base_Column_List">
         <!--
@@ -682,9 +695,15 @@
     <select id="selectListByIds" parameterType="paper" resultMap="BaseResultMap">
         select
         a.*,
-        b.name_en as doc_type_value
+        a.`_PY` as `_PY`,
+        a.`_PD` as `_PD`,
+        b.name_en as doc_type_value,
+        c.user_type as user_type_1,
+        d.user_type as user_type_2
         from doc_paper a
         left join sys_dict b on b.id = a.doc_type
+        left join sys_user c on c.id = a.first_author_id
+        left join sys_user d on d.id = a.second_author_id
         where a.id in
         <foreach collection="list" open="(" separator="," close=")" item="item">
             #{item.id}
@@ -711,6 +730,25 @@
 
     <delete id="deleteListByIds" parameterType="paper">
         delete from doc_paper
+        <choose>
+            <when test="list != null and list.size() != 0">
+                <where>
+                    id in
+                    <foreach collection="list" open="(" close=")" item="item" separator=",">
+                        #{item.id}
+                    </foreach>
+                </where>
+            </when>
+            <otherwise>
+                <where>
+                    1 = 0
+                </where>
+            </otherwise>
+        </choose>
+    </delete>
+
+    <delete id="convertToSuccessByIds" parameterType="paper">
+        update doc_paper set status = '2'
         <choose>
             <when test="list != null and list.size() != 0">
                 <where>

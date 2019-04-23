@@ -36,3 +36,17 @@
     font-size: 11px;
     padding: 6px 8px;
 }
+
+.dialog-searchUser .el-dialog{
+    width: 900px;
+}
+
+.dialog-searchUser .el-dialog__body{
+    padding: 0;
+}
+
+/* 弹窗 */
+.el-dialog{
+    width: 654px;
+    margin-top: 30px !important;
+}

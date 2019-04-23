@@ -21,6 +21,12 @@ public interface UserDao {
     // 分页 + 搜索(模糊匹配用户名)获取用户列表（无角色信息）
     List<User> selectByPage(User user);
 
+    // 复杂分页搜索
+    List<User> selectListByPage(User user);
+
+    // 上面出去分页的筛选总数
+    int getCount(User user);
+
     // 根据ids获取用户列表（有角色信息）
     List<User> selectByIds(List<User> userList);
 

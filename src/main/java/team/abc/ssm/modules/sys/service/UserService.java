@@ -36,6 +36,14 @@ public class UserService {
         return user.getPage();
     }
 
+    // 复杂搜索
+    public Page<User> selectListByPage(User user){
+        Page<User> page = new Page<>();
+        page.setTotal(userDao.getCount(user));
+        page.setResultList(userDao.selectListByPage(user));
+        return page;
+    }
+
     public boolean isUsernameExist(User user) {
         return userDao.selectByUsername(user) != null;
     }

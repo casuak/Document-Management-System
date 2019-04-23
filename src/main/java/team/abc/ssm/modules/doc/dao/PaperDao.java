@@ -39,5 +39,7 @@ public interface PaperDao {
 
     int deleteListByIds(List<Paper> paperList);
 
+    int convertToSuccessByIds(List<Paper> paperList);
+
     int deleteByStatus(String status);
 }

@@ -5,6 +5,7 @@ app = new Vue({
             fullScreen: false,
             table: false
         },
+        targetAuthorIndex: 1, // 当前的选择(1 - 第一作者，2 - 第二作者)
         status: '1',   // current status
         statusList: [
             {
@@ -48,6 +49,11 @@ app = new Vue({
             initPapers: '/api/doc/paper/initAll',
             deleteByStatus: '/api/doc/paper/deleteByStatus',
             paperUserMatch: '/api/doc/paper/paperUserMatch',
+            convertToSuccessByIds: '/api/doc/paper/convertToSuccessByIds'
+        },
+        searchUserDialog: {
+            visible: false,
+            loading: false,
         }
     },
     methods: {
@@ -60,6 +66,21 @@ app = new Vue({
                     app.loading.table = false;
                     window.parent.app.showMessage('删除成功！', 'success');
                     app.getPaperList();
+                })
+            });
+        },
+        convertToSuccessByIds: function (ids) {
+            let app = this;
+            window.parent.app.showConfirm(function () {
+                let data = ids;
+                app.loading.table = true;
+                ajaxPostJSON(app.urls.convertToSuccessByIds, data, function (d) {
+                    app.loading.table = false;
+                    window.parent.app.showMessage('操作成功！', 'success');
+                    app.getPaperList();
+                }, function (d) {
+                    app.loading.table = false;
+                    window.parent.app.showMessage('操作失败！', 'error');
                 })
             });
         },
@@ -114,11 +135,17 @@ app = new Vue({
                 })
             });
         },
-        // complete papers where status in ('1', '2')
+        // complete papers where status = '2'
         completePapers: function () {
             let data = {
                 status: this.status
             };
+        },
+        // 打开选择用户对话框: targetAuthorIndex (1 - firstAuthor, 2 - secondAuthor)
+        openSearchUser: function (targetAuthorIndex) {
+            this.searchUserDialog.visible = true;
+            this.searchUserDialog.loading = true;
+            this.targetAuthorIndex = targetAuthorIndex;
         }
     },
     mounted: function () {

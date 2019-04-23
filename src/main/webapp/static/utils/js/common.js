@@ -104,6 +104,16 @@ Date.prototype.Format = function (fmt) {
     return fmt;
 };
 
+Array.prototype.contains = function (obj) {
+    let i = this.length;
+    while (i--) {
+        if (this[i] === obj) {
+            return true;
+        }
+    }
+    return false;
+};
+
 function copy(object) {
     return JSON.parse(JSON.stringify(object));
 }

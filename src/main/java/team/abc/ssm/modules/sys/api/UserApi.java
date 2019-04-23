@@ -60,6 +60,13 @@ public class UserApi extends BaseApi {
         return retMsg.Set(MsgType.SUCCESS, userService.getUsersByPage(user));
     }
 
+    // 复杂搜索
+    @RequestMapping(value = "selectListByPage", method = RequestMethod.POST)
+    @ResponseBody
+    public Object selectListByPage(@RequestBody User user){
+        return retMsg.Set(MsgType.SUCCESS, userService.selectListByPage(user));
+    }
+
     @RequestMapping(value = "checkUsername", method = RequestMethod.POST)
     @ResponseBody
     public Object checkUsername(@RequestBody User user) {

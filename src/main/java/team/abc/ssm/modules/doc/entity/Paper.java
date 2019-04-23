@@ -2,6 +2,7 @@ package team.abc.ssm.modules.doc.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import team.abc.ssm.common.persistence.DataEntity;
+import team.abc.ssm.modules.sys.entity.User;
 
 import java.util.Date;
 
@@ -30,6 +31,9 @@ public class Paper extends DataEntity<Paper> {
 	* 第二作者 from 用户表
 	*/
     private String secondAuthorId;
+
+    private User firstAuthor;
+    private User secondAuthor;
 
     /**
 	* 总体匹配状态:0:未匹配;1:匹配出错;2:匹配成功;3:匹配完成
@@ -236,5 +240,21 @@ public class Paper extends DataEntity<Paper> {
 
     public void setDanwei(String danwei) {
         this.danwei = danwei;
+    }
+
+    public User getFirstAuthor() {
+        return firstAuthor;
+    }
+
+    public void setFirstAuthor(User firstAuthor) {
+        this.firstAuthor = firstAuthor;
+    }
+
+    public User getSecondAuthor() {
+        return secondAuthor;
+    }
+
+    public void setSecondAuthor(User secondAuthor) {
+        this.secondAuthor = secondAuthor;
     }
 }

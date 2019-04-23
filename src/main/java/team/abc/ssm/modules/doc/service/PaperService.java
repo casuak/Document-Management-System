@@ -120,7 +120,7 @@ public class PaperService {
                 paper.setPublishDate(calendar.getTime());
             }
             // 4. update status = '-2' where danwei doesn't contain 'Beijing Inst Technol'
-            if (!paper.getDanwei().contains("Beijing Inst Technol")) {
+            if (paper.getDanwei() != null && !paper.getDanwei().contains("Beijing Inst Technol")) {
                 paper.setStatus("-2");
             }
         }
@@ -131,6 +131,11 @@ public class PaperService {
 
     public boolean deleteListByIds(List<Paper> paperList) {
         int count = paperDao.deleteListByIds(paperList);
+        return count == paperList.size();
+    }
+
+    public boolean convertToSuccessByIds(List<Paper> paperList) {
+        int count = paperDao.convertToSuccessByIds(paperList);
         return count == paperList.size();
     }
 
@@ -148,6 +153,7 @@ public class PaperService {
             int count = 0;
             for (User user : userList) {
                 String nicknames = user.getNicknames();
+                if (nicknames == null) continue;
                 if (nicknames.contains(firstAuthorName)) {
                     count += 1;
                     lastMatchUser = user;
@@ -165,6 +171,7 @@ public class PaperService {
             count = 0;
             for (User user : userList) {
                 String nicknames = user.getNicknames();
+                if (nicknames == null) continue;
                 if (nicknames.contains(secondAuthorName)) {
                     count += 1;
                     lastMatchUser = user;
@@ -183,6 +190,9 @@ public class PaperService {
             } else {
                 paper.setStatus("1"); // 出错
             }
+            // 优化处理
+            // 第一作者成功匹配老师
+            // 第二作者
         }
         paperDao.updateBatch(paperList);
         return true;

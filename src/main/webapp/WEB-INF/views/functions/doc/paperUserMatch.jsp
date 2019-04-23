@@ -24,7 +24,7 @@
             <el-button size="small" type="primary" @click="paperUserMatch()" v-if="status === '0'">
                 自动匹配
             </el-button>
-            <el-button size="small" type="primary" @click="completePapers()" v-if="status === '1' || status === '2'">
+            <el-button size="small" type="primary" @click="completePapers()" v-if="status === '2'">
                 全部完成
             </el-button>
         </span>
@@ -65,34 +65,28 @@
                 </el-Tooltip>
             </template>
         </el-table-column>
-        <el-table-column label="第一作者名" width="150" prop="firstAuthorName" align="center"></el-table-column>
-        <el-table-column label="第二作者名" width="150" prop="secondAuthorName" align="center"></el-table-column>
-        <el-table-column label="第一作者工号/学号" width="150" align="center">
+        <%--<el-table-column label="第一作者名" width="150" prop="firstAuthorName" align="center"></el-table-column>--%>
+        <%--<el-table-column label="第二作者名" width="150" prop="secondAuthorName" align="center"></el-table-column>--%>
+        <el-table-column label="第一匹配作者工号/学号" width="200" align="center" v-if="['1', '2', '3'].contains(status)">
             <template slot-scope="{row}">
-                <el-row>
-                    <el-col :span="12">
-                        <span v-if="row.status1 === '0'">{{ row.firstAuthorId }}</span>
-                        <span v-if="row.status1 === '1'">重名</span>
-                        <span v-if="row.status1 === '2'">无匹配</span>
-                    </el-col>
-                    <el-col :span="12">
-                        <i-button v-if="row.status1 == '1' || row.status1 == '2'" type="success" size="small">手动匹配</i-button>
-                    </el-col>
-                </el-row>
+                <i-button v-if="row.status1 !== '0' && row.status === '1'" type="success" size="small"
+                          @click="openSearchUser(1)">手动匹配
+                </i-button>
+                <span v-if="row.status1 === '0'">
+                    {{ row.firstAuthorId }}
+                    ({{ row.firstAuthor != null ? row.firstAuthor.userType : ''}})
+                </span>
             </template>
         </el-table-column>
-        <el-table-column label="第二作者工号/学号" width="150" align="center">
+        <el-table-column label="第二匹配作者工号/学号" width="200" align="center" v-if="['1', '2', '3'].contains(status)">
             <template slot-scope="{row}">
-                <el-row>
-                    <el-col :span="12">
-                        <span v-if="row.status2 === '0'">{{ row.secondAuthorId }}</span>
-                        <span v-if="row.status2 === '1'">重名</span>
-                        <span v-if="row.status2 === '2'">无匹配</span>
-                    </el-col>
-                    <el-col :span="12">
-                        <i-button v-if="row.status2 == '1' || row.status2 == '2'" type="success" size="small">手动匹配</i-button>
-                    </el-col>
-                </el-row>
+                <i-button v-if="row.status2 !== '0' && row.status === '1'" type="success" size="small"
+                          @click="openSearchUser(2)">手动匹配
+                </i-button>
+                <span v-if="row.status2 === '0'">
+                    {{ row.secondAuthorId }}
+                    ({{ row.secondAuthor != null ? row.secondAuthor.userType : '' }})
+                </span>
             </template>
         </el-table-column>
         <el-table-column label="ISSN" width="150" prop="ISSN" align="center"></el-table-column>
@@ -118,12 +112,12 @@
                 {{ row._PD === null ? '' : (new Date(row._PD)).Format("MM-dd") }}
             </template>
         </el-table-column>
-        <el-table-column label="操作" width="130" header-align="center" align="center" fixed="right">
+        <el-table-column label="操作" width="160" header-align="center" align="center" fixed="right">
             <template slot-scope="{row}">
                 <span style="position:relative;bottom: 1px;">
                     <el-button type="success" size="mini" style="margin-right: 0px;"
-                               @click="">
-                    <span>编辑</span>
+                               @click="convertToSuccessByIds([{id:row.id}])" :disabled="row.status !== '1'">
+                    <span>转入成功</span>
                 </el-button>
                 <el-button type="danger" size="mini" style=""
                            @click="deleteByIds([{id: row.id}])">
@@ -143,6 +137,15 @@
                    :total="page.total"
                    layout="total, sizes, prev, pager, next, jumper">
     </el-pagination>
+
+    <%-- 选择用户 --%>
+    <el-dialog title="手动选择作者" :visible.sync="searchUserDialog.visible" class="dialog-searchUser">
+        <div v-loading="searchUserDialog.loading" style="height: 450px;">
+            <iframe v-if="searchUserDialog.visible" src="/functions/doc/paperUserMatch/searchUser"
+                    style="width: 100%;height: 450px;overflow-y: auto;border: 0;"
+                    @load="searchUserDialog.loading=false;"></iframe>
+        </div>
+    </el-dialog>
 </div>
 <%@include file="/WEB-INF/views/include/blankScript.jsp" %>
 <script src="/static/js/functions/doc/paperUserMatch.js"></script>

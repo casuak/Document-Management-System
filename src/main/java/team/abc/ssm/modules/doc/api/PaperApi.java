@@ -48,6 +48,14 @@ public class PaperApi extends BaseApi {
         return retMsg.Set(MsgType.SUCCESS);
     }
 
+    // set status = '2' where id in idList
+    @RequestMapping(value = "convertToSuccessByIds", method = RequestMethod.POST)
+    @ResponseBody
+    public Object convertToSuccessByIds(@RequestBody List<Paper> paperList) {
+        paperService.convertToSuccessByIds(paperList);
+        return retMsg.Set(MsgType.SUCCESS);
+    }
+
     /**
      * step2
      */

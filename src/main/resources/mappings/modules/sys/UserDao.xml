@@ -30,32 +30,32 @@
 
     <!-- 通过用户名获取用户信息 -->
     <select id="selectByUsername" parameterType="team.abc.ssm.modules.sys.entity.User" resultMap="userBean">
-        select
-        a.*,
-        c.id as roleId,
-        c.name as roleName,
-        c.code as roleCode
+        select a.*,
+               c.id   as roleId,
+               c.name as roleName,
+               c.code as roleCode
         from sys_user a
-        left join sys_map_user_role b on a.id = b.user_id
-        left join sys_role c on b.role_id = c.id
+                 left join sys_map_user_role b on a.id = b.user_id
+                 left join sys_role c on b.role_id = c.id
         where a.username = #{username}
         limit 1
     </select>
 
     <!-- 获取所有用户列表 -->
     <select id="selectAll" resultMap="userBean">
-        select
-        a.*,
-        c.id as roleId,
-        c.name as roleName,
-        c.code as roleCode
+        select a.*,
+               c.id   as roleId,
+               c.name as roleName,
+               c.code as roleCode
         from sys_user a
-        left join sys_map_user_role b on a.id = b.user_id
-        left join sys_role c on b.role_id = c.id
+                 left join sys_map_user_role b on a.id = b.user_id
+                 left join sys_role c on b.role_id = c.id
     </select>
 
     <select id="selectTeacherStudentList" resultMap="userBean">
-        select a.* from sys_user a where a.user_type in ('student', 'teacher', 'doctor')
+        select a.*
+        from sys_user a
+        where a.user_type in ('student', 'teacher', 'doctor')
     </select>
 
     <!-- 分页 + 搜索(模糊匹配用户名)获取用户id列表 -->
@@ -65,10 +65,39 @@
         from sys_user a
         <where>
             <if test="page.searchKey != '' and page.searchKey != null">
-                and a.username like concat('%', #{page.searchKey}, '%')
+                a.username like concat('%', #{page.searchKey}, '%')
             </if>
         </where>
         limit #{page.pageStart}, #{page.pageSize}
+    </select>
+
+    <select id="selectListByPage" parameterType="user" resultMap="userBean">
+        select a.*
+        from sys_user a
+        <where>
+            <if test="page != null and page != '' and page.searchKey != '' and page.searchKey != null">
+                a.nicknames like concat('%', #{page.searchKey}, '%')
+            </if>
+            <if test="userType != null and userType != ''">
+                and a.user_type = #{userType}
+            </if>
+        </where>
+        <if test="page != null and page != ''">
+            limit #{page.pageStart}, #{page.pageSize}
+        </if>
+    </select>
+
+    <select id="getCount" parameterType="user" resultType="int">
+        select count(*)
+        from sys_user a
+        <where>
+            <if test="page != null and page != '' and page.searchKey != '' and page.searchKey != null">
+                a.nicknames like concat('%', #{page.searchKey}, '%')
+            </if>
+            <if test="userType != null and userType != ''">
+                and a.user_type = #{userType}
+            </if>
+        </where>
     </select>
 
     <!-- 根据ids获取用户列表（有角色信息） -->
@@ -102,15 +131,14 @@
     <!-- 添加一名新用户 -->
     <insert id="insert" parameterType="team.abc.ssm.modules.sys.entity.User">
         insert into sys_user (username,
-                                     `password`,
-                                     id,
-                                     remarks,
-                                     create_user_id,
-                                     modify_user_id,
-                                     create_date,
-                                     modify_date,
-                                     del_flag
-        )
+                              `password`,
+                              id,
+                              remarks,
+                              create_user_id,
+                              modify_user_id,
+                              create_date,
+                              modify_date,
+                              del_flag)
         values (#{username},
                 #{password},
                 #{id},
