@@ -29,7 +29,7 @@
         <result column="del_flag" jdbcType="BOOLEAN" property="delFlag"/>
         <result column="_PD" property="_PD"/>
         <result column="_PY" property="_PY"/>
-        <result column="danwei" property="danwei"/>
+        <result column="school" property="school"/>
 
         <association property="firstAuthor" javaType="user">
             <id column="first_author_id" property="id"/>

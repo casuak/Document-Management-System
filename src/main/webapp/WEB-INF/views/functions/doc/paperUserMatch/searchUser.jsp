@@ -20,13 +20,13 @@
             </el-select>
             <el-select size="small" clearable filterable placeholder="选择所属单位"
                        style="width: 150px;margin-right: 10px;" v-if="filterParams.userType === 'teacher'"
-                       v-model="filterParams.danwei" @change="refreshTable_entity()">
+                       v-model="filterParams.school" @change="refreshTable_entity()">
                 <el-option v-for="(item, index) in danweiList" :key="item.id"
                            :value="item.id" :label="item.name"></el-option>
             </el-select>
             <el-select size="small" clearable filterable placeholder="选择导师" style="width: 150px;"
                        v-if="['student', 'doctor'].contains(filterParams.userType)"
-                       v-model="filterParams.tutor" @change="refreshTable_entity()">
+                       v-model="filterParams.tutors" @change="refreshTable_entity()">
                 <el-option v-for="(item, index) in tutorList" :key="item.id"
                            :value="item.id" :label="item.realName"></el-option>
             </el-select>

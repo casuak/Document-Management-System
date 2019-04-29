@@ -29,8 +29,10 @@ public class User extends DataEntity<User> {
     private Date birthday;
     private Date hireDate;
 
-    private String tutor; // 导师
-    private String danwei; // 所属单位
+    private String tutors; // 导师
+    private String school; // 所属学院
+    private String major; // 学生专业（博士后一级学科）
+    private String tutor_work_id; // 学生导师工号（暂时只有学生有）
 
     private List<Role> roleList; // 相关角色列表
 
@@ -194,19 +196,35 @@ public class User extends DataEntity<User> {
         this.pinyinName = pinyinName;
     }
 
-    public String getDanwei() {
-        return danwei;
+    public String getSchool() {
+        return school;
     }
 
-    public void setDanwei(String danwei) {
-        this.danwei = danwei;
+    public void setSchool(String school) {
+        this.school = school;
     }
 
-    public String getTutor() {
-        return tutor;
+    public String getTutors() {
+        return tutors;
     }
 
-    public void setTutor(String tutor) {
-        this.tutor = tutor;
+    public void setTutors(String tutors) {
+        this.tutors = tutors;
+    }
+
+    public String getMajor() {
+        return major;
+    }
+
+    public void setMajor(String major) {
+        this.major = major;
+    }
+
+    public String getTutor_work_id() {
+        return tutor_work_id;
+    }
+
+    public void setTutor_work_id(String tutor_work_id) {
+        this.tutor_work_id = tutor_work_id;
     }
 }
