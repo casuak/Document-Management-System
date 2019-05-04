@@ -92,9 +92,9 @@
         <el-table-column label="论文种类" width="150" prop="docTypeValue" align="center"></el-table-column>
         <el-table-column label="单位名称" width="200" header-align="center" align="center">
             <template slot-scope="{row}">
-                <el-Tooltip open-delay="500" effect="dark" :content="row.school" placement="top">
+                <el-Tooltip open-delay="500" effect="dark" :content="row.danwei" placement="top">
                     <div style="overflow: hidden;text-overflow: ellipsis;white-space: nowrap;width: 95%;">
-                        {{ row.school }}
+                        {{ row.danwei }}
                     </div>
                 </el-Tooltip>
             </template>

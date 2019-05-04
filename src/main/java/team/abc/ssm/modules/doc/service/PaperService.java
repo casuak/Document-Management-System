@@ -10,6 +10,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import team.abc.ssm.common.utils.SpringContextHolder;
 import team.abc.ssm.modules.doc.dao.PaperDao;
 import team.abc.ssm.modules.doc.entity.Paper;
 import team.abc.ssm.modules.sys.entity.User;

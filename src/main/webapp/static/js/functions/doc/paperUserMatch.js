@@ -6,7 +6,7 @@ app = new Vue({
             table: false
         },
         targetAuthorIndex: 1, // 当前的选择(1 - 第一作者，2 - 第二作者)
-        status: '1',   // current status
+        status: '-1',   // current status
         statusList: [
             {
                 value: '-1',
