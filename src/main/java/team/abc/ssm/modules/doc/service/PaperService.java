@@ -12,6 +12,7 @@ import java.util.List;
 
 import team.abc.ssm.common.utils.SpringContextHolder;
 import team.abc.ssm.modules.doc.dao.PaperDao;
+import team.abc.ssm.modules.doc.entity.DanweiNicknames;
 import team.abc.ssm.modules.doc.entity.Paper;
 import team.abc.ssm.modules.sys.entity.User;
 import team.abc.ssm.modules.sys.service.UserService;
@@ -24,6 +25,9 @@ public class PaperService {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private DanweiNicknamesService danweiNicknamesService;
 
     public int deleteByPrimaryKey(String id) {
         return paperDao.deleteByPrimaryKey(id);
@@ -78,18 +82,41 @@ public class PaperService {
         return paperDao.selectSearchCount(paper);
     }
 
-    // 1. update status = '0' where status = '-1'
-    // 2. split first and second author name from authorList
-    // 3. set publishDate according _PY(year) and _PD(month, day)
-    // 4. update status = '-2' where danwei doesn't contain 'Beijing Inst Technol'
     public boolean initAll() {
         Paper params = new Paper();
         params.setStatus("-1");
         List<Paper> paperList = paperDao.selectListByStatus(params);
+        List<DanweiNicknames> danweiList = danweiNicknamesService.selectAllList();
+        for (DanweiNicknames danwei : danweiList) {
+            List<String> nicknameList = new ArrayList<>();
+            String nicknames = "";
+            nicknameList.add(danwei.getNickname1());
+            nicknameList.add(danwei.getNickname2());
+            nicknameList.add(danwei.getNickname3());
+            nicknameList.add(danwei.getNickname4());
+            nicknameList.add(danwei.getNickname5());
+            nicknameList.add(danwei.getNickname6());
+            nicknameList.add(danwei.getNickname7());
+            nicknameList.add(danwei.getNickname8());
+            nicknameList.add(danwei.getNickname9());
+            nicknameList.add(danwei.getNickname10());
+            nicknameList.add(danwei.getNickname11());
+            nicknameList.add(danwei.getNickname12());
+            for (int i = nicknameList.size() - 1; i >= 0; i--) {
+                if (nicknameList.get(i) == null || nicknameList.get(i).equals(""))
+                    nicknameList.remove(i);
+            }
+            for (String nickname : nicknameList) {
+                nicknames += nickname + ";";
+            }
+            String[] test = nicknames.split(";");
+            danwei.setNicknameList(nicknameList);
+            danwei.setNicknames(nicknames);
+        }
         for (Paper paper : paperList) {
-            // 1. update status = 0 where status = '-1'
+            // 更新状态信息为初始化成功
             paper.setStatus("0");
-            // 2. split first and second author name from authorList
+            // 1、从作者列表中提取第一、二作者
             if (paper.getAuthorList() == null) {
                 paper.setFirstAuthorName(null);
                 paper.setSecondAuthorId(null);
@@ -110,7 +137,7 @@ public class PaperService {
             }
             paper.setFirstAuthorName(firstAuthorName);
             paper.setSecondAuthorName(secondAuthorName);
-            // 3. set publishDate according _PY(year) and _PD(month, day)
+            // 2、将导入的PD（月/日）和PY（年）字段合并为单个出版日期
             if (paper.get_PY() != 0 && paper.get_PD() != null) {
                 int year = paper.get_PY();
                 Calendar calendar = Calendar.getInstance();
@@ -120,9 +147,25 @@ public class PaperService {
                 calendar.set(year, month, day);
                 paper.setPublishDate(calendar.getTime());
             }
-            // 4. update status = '-2' where danwei doesn't contain 'Beijing Inst Technol'
+            // 3、过滤署名单位中不包含“Beijing Inst Technol”的论文
             if (paper.getDanwei() != null && !paper.getDanwei().contains("Beijing Inst Technol")) {
                 paper.setStatus("-2");
+            }
+            // 4、提取署名单位中北京理工大学学院别名，并与单位别名表匹配，填充上中文单位名
+            if (paper.getStatus().equals("0")) {
+                String[] danweis = paper.getDanwei().split(",");
+                boolean flag = false;
+                for (String danwei : danweis) {
+                    danwei = danwei.trim();
+                    for (DanweiNicknames targetDanwei : danweiList) {
+                        if (targetDanwei.getNicknames().contains(danwei)) {
+                            paper.setDanweiCN(targetDanwei.getName());
+                            flag = true;
+                            break;
+                        }
+                    }
+                    if (flag) break;
+                }
             }
         }
         if (paperList.size() == 0) return true;
@@ -149,56 +192,66 @@ public class PaperService {
         for (Paper paper : paperList) {
             String firstAuthorName = paper.getFirstAuthorName();
             String secondAuthorName = paper.getSecondAuthorName();
-            // first one
-            User lastMatchUser = null;
-            int count = 0;
+            int first_matchCount = 0;
+            int second_matchCount = 0;
+            User first_lastMatch = null;
+            User second_lastMatch = null;
+            // 匹配第一作者
             for (User user : userList) {
-                String nicknames = user.getNicknames();
-                if (nicknames == null || nicknames.equals("")) continue;
-                if (nicknames.contains(firstAuthorName)) {
-                    count += 1;
-                    lastMatchUser = user;
+                if (user.getNicknames().contains(firstAuthorName)) {
+                    first_matchCount += 1;
+                    first_lastMatch = user;
                 }
             }
-            if (lastMatchUser == null)
-                paper.setStatus1("2"); // 无匹配
-            else if (count == 1) {
-                paper.setStatus1("0"); // 唯一匹配
-                paper.setFirstAuthorId(lastMatchUser.getId());
-            } else
-                paper.setStatus1("1"); // 重名
-            // second one
-            lastMatchUser = null;
-            count = 0;
-            for (User user : userList) {
-                String nicknames = user.getNicknames();
-                try {
-                    if (nicknames.contains(secondAuthorName)) {
-                        count += 1;
-                        lastMatchUser = user;
+            if (first_matchCount == 0) {
+                paper.setStatus("1"); // 整体出错
+                paper.setStatus1("2"); // 一作无匹配
+                paper.setStatus2("2"); // 二作无匹配
+                paper.setFirstAuthorId(null);
+                paper.setSecondAuthorId(null);
+            } else if (first_matchCount == 1) {
+                // 第一作者唯一匹配老师
+                if ("teacher".contains(first_lastMatch.getUserType())) {
+                    // 在学生中匹配第二作者
+                    for (User user : userList) {
+                        // 过滤老师
+                        if (user.getUserType().equals("teacher")) continue;
+                        if (user.getNicknames().contains(secondAuthorName)) {
+                            // 过滤学生中导师不是第一作者的
+                            if (!user.getTutor_work_id().equals(first_lastMatch.getWorkId()))
+                                continue;
+                            second_matchCount += 1;
+                            second_lastMatch = user;
+                        }
                     }
-                } catch (NullPointerException e) {
-                    //
+                    if (second_matchCount == 0) {
+                        paper.setStatus("1"); // 整体成功
+                        paper.setStatus1("0"); // 一作成功
+                        paper.setStatus2("2"); // 二作无匹配
+                        paper.setFirstAuthorId(first_lastMatch.getId());
+                        paper.setSecondAuthorId(null);
+                    } else if (second_matchCount == 1) {
+                        paper.setStatus2("2"); // 整体成功
+                        paper.setStatus1("0"); // 一作成功
+                        paper.setStatus2("2"); // 二作成功
+                        paper.setFirstAuthorId(first_lastMatch.getId());
+                        paper.setSecondAuthorId(second_lastMatch.getId());
+                    } else {
+                        paper.setStatus2("2"); // 整体出错
+                        paper.setStatus1("0"); // 一作成功
+                        paper.setStatus2("1"); // 二作重名
+                        paper.setFirstAuthorId(first_lastMatch.getId());
+                        paper.setSecondAuthorId(null);
+                    }
+                } else {
+                    // 第一作者唯一匹配学生
+                    String tutorId = first_lastMatch.getTutor_work_id();
                 }
-            }
-            if (lastMatchUser == null)
-                paper.setStatus2("2"); // 无匹配
-            else if (count == 1) {
-                paper.setStatus2("0"); // 唯一匹配
-                paper.setSecondAuthorId(lastMatchUser.getId());
-            } else
-                paper.setStatus2("1"); // 重名
-            // set paper match status
-            if (paper.getStatus1().equals("0") && paper.getStatus2().equals("0")) {
-                paper.setStatus("2"); // 成功
             } else {
-                paper.setStatus("1"); // 出错
+
             }
-            // 优化处理
-            // 第一作者成功匹配老师
-            // 第二作者
         }
-        paperDao.updateBatch(paperList);
+//        paperDao.updateBatch(paperList);
         return true;
     }
 

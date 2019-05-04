@@ -142,9 +142,33 @@ public class PinyinUtils {
 
     @Test
     public static void main(String args[]) {
-        String[] strings = convertNameToStrings("张三");
-        System.out.println(strings[0]);
-        System.out.println(strings[1]);
+        System.out.println(getPinyin2("孙建伟"));
+    }
+
+    /**
+     * 例：
+     * 输入: 张三
+     * 输出: zhang, san
+     * 输入: 张十三
+     * 输出: zhang, shisan
+     * 输入: Fred(首字母为英文时直接返回 name.toLowerCase() )
+     * 输出: fred
+     */
+    public static String getPinyin2(String name) {
+        if (name == null || name.equals(""))
+            return null;
+        String result = "";
+        // 首字母为英文说明名字为英文名
+        char c = name.charAt(0);
+        if ((c >= 65 && c <= 90) || (c >= 97 && c <= 122)) {
+            return name.toLowerCase();
+        }
+        for (int i = 0; i < name.length(); i++) {
+            String s = name.substring(i, i + 1);
+            result += getPingYin(s);
+            if (i == 0) result += ", ";
+        }
+        return result;
     }
 
     public static String[] convertNameToStrings(String inputString) {

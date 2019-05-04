@@ -36,6 +36,8 @@ public interface UserDao {
     // 更新用户信息
     int update(User user);
 
+    int updateList(List<User> userList);
+
     // 删除指定id的用户
     int deleteByIds(List<User> userList);
 }

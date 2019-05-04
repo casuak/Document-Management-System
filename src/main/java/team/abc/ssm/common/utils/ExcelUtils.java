@@ -1,5 +1,6 @@
 package team.abc.ssm.common.utils;
 
+import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -26,6 +27,7 @@ public class ExcelUtils {
         try {
             switch (fieldType) {
                 case "varchar":
+                    cell.setCellType(HSSFCell.CELL_TYPE_STRING);
                     val = cell.getStringCellValue();
                     break;
                 case "int":

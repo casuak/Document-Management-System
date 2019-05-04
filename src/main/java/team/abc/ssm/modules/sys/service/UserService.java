@@ -22,7 +22,7 @@ public class UserService {
         return userDao.selectAll();
     }
 
-    public List<User> selectTeacherStudentList(){
+    public List<User> selectTeacherStudentList() {
         return userDao.selectTeacherStudentList();
     }
 
@@ -37,7 +37,7 @@ public class UserService {
     }
 
     // 复杂搜索
-    public Page<User> selectListByPage(User user){
+    public Page<User> selectListByPage(User user) {
         Page<User> page = new Page<>();
         page.setTotal(userDao.getCount(user));
         page.setResultList(userDao.selectListByPage(user));
@@ -63,6 +63,11 @@ public class UserService {
     public boolean update(User user) {
         int count = userDao.update(user);
         return count == 1;
+    }
+
+    public boolean updateList(List<User> userList) {
+        int count = userDao.updateList(userList);
+        return count == userList.size();
     }
 
     public boolean deleteUserByIds(List<User> userList) {

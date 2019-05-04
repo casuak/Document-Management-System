@@ -20,6 +20,11 @@
         <result column="create_date" property="createDate"/>
         <result column="modify_date" property="modifyDate"/>
         <result column="del_flag" property="delFlag"/>
+        <!-- 导师 -->
+        <association property="tutor" javaType="user">
+            <id column="tutor_work_id" property="id"/>
+            <result column="tutor_real_name" property="realName"/>
+        </association>
         <!-- 用户相关的角色列表 -->
         <collection property="roleList" ofType="team.abc.ssm.modules.sys.entity.Role">
             <id column="roleId" property="id"/>
@@ -53,8 +58,10 @@
     </select>
 
     <select id="selectTeacherStudentList" resultMap="userBean">
-        select a.*
+        select a.*,
+               b.real_name as tutor_real_name
         from sys_user a
+        left join sys_user b on b.work_id = a.tutor_work_id
         where a.user_type in ('student', 'teacher', 'doctor')
     </select>
 
@@ -155,6 +162,19 @@
         update sys_user
         set `password` = #{password}
         where id = #{id}
+    </update>
+
+    <update id="updateList" parameterType="user">
+        update sys_user
+        set nicknames = case id
+        <foreach collection="list" item="item">
+            when #{item.id} then #{item.nicknames}
+        </foreach>
+        end
+        where id in
+        <foreach collection="list" item="item" open="(" separator="," close=")">
+            #{item.id}
+        </foreach>
     </update>
 
     <!-- 删除指定id的用户 -->

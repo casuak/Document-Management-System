@@ -99,6 +99,7 @@
                 </el-Tooltip>
             </template>
         </el-table-column>
+        <el-table-column label="单位名称（中文）" width="200" prop="danweiCN" align="center"></el-table-column>
         <el-table-column label="发布日期" width="150" prop="publishDate" align="center">
             <template slot-scope="{row}">
                 {{ row.publishDate === null ? '' : (new Date(row.publishDate)).Format("yyyy-MM-dd") }}

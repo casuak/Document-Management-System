@@ -77,6 +77,7 @@ public class Paper extends DataEntity<Paper> {
     private int _PY;
 
     private String danwei; // 单位名称
+    private String danweiCN; // 单位中文名（只包含学院名称）
 
     /**
 	* 所属期刊 from 期刊表
@@ -256,5 +257,13 @@ public class Paper extends DataEntity<Paper> {
 
     public void setSecondAuthor(User secondAuthor) {
         this.secondAuthor = secondAuthor;
+    }
+
+    public String getDanweiCN() {
+        return danweiCN;
+    }
+
+    public void setDanweiCN(String danweiCN) {
+        this.danweiCN = danweiCN;
     }
 }

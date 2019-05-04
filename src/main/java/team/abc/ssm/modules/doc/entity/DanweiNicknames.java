@@ -2,13 +2,20 @@ package team.abc.ssm.modules.doc.entity;
 
 import team.abc.ssm.common.persistence.DataEntity;
 
-import java.util.Date;
+import java.util.List;
 
+/**
+ * 导入的excel中存在单位列，存储了多个单位简称
+ */
 public class DanweiNicknames extends DataEntity<DanweiNicknames> {
     /**
 	* 中文名
 	*/
     private String name;
+
+    // 辅助
+    private List<String> nicknameList;
+    private String nicknames;
 
     private String nickname1;
 
@@ -33,6 +40,7 @@ public class DanweiNicknames extends DataEntity<DanweiNicknames> {
     private String nickname11;
 
     private String nickname12;
+
 
     public String getName() {
         return name;
@@ -136,5 +144,21 @@ public class DanweiNicknames extends DataEntity<DanweiNicknames> {
 
     public void setNickname12(String nickname12) {
         this.nickname12 = nickname12;
+    }
+
+    public List<String> getNicknameList() {
+        return nicknameList;
+    }
+
+    public void setNicknameList(List<String> nicknameList) {
+        this.nicknameList = nicknameList;
+    }
+
+    public String getNicknames() {
+        return nicknames;
+    }
+
+    public void setNicknames(String nicknames) {
+        this.nicknames = nicknames;
     }
 }

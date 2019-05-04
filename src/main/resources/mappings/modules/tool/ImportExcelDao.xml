@@ -10,7 +10,7 @@
                COLUMN_COMMENT as fieldComment,
                DATA_TYPE      as fieldType
         from INFORMATION_SCHEMA.Columns
-        where table_name = #{tableName}
+        where TABLE_SCHEMA = (select database()) and table_name = #{tableName}
     </select>
 
     <insert id="dynamicInsert" parameterType="dynamicInsertParam">

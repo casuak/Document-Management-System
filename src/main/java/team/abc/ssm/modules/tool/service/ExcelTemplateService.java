@@ -272,18 +272,25 @@ public class ExcelTemplateService {
             for (int i = 0; i < columnMapFieldList.size(); i++) {
                 ColumnMapField columnMapField = columnMapFieldList.get(i);
                 Object cellValue = null;
+                // 固定值
                 if (columnMapField.isFixed()) {
                     cellValue = columnMapField.getFixedContent();
-                } else if (columnMapField.isFk()) {
+                }
+                // 外键
+                else if (columnMapField.isFk()) {
                     Cell cell = excelRow.getCell(columnMapField.getColumnIndex());
                     String key = cell.getStringCellValue();
                     Object value = mappingList.get(i).get(key);
                     // 如果替换的value为空，则使用key填充
                     if (value == null) value = key + "!!!外键匹配为空";
                     cellValue = value;
-                } else if (columnMapField.getColumnIndex() != -1) {
-                    Cell cell = excelRow.getCell(columnMapField.getColumnIndex());
+                }
+                // 正常导入
+                else if (columnMapField.getColumnIndex() != -1) {
+                    int tmp = columnMapField.getColumnIndex();
+                    Cell cell = excelRow.getCell(tmp);
                     cellValue = ExcelUtils.getCellValueByFieldType(cell, columnMapField.getFieldType());
+                    int a = 1;
                 } else {
                     // 此时填入的为null
                 }
