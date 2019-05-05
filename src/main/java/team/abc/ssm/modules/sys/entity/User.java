@@ -32,7 +32,7 @@ public class User extends DataEntity<User> {
     private String tutors; // 导师
     private String school; // 所属学院
     private String major; // 学生专业（博士后一级学科）
-    private String tutor_work_id; // 学生导师工号（暂时只有学生有）
+    private String tutorWorkId; // 学生导师工号（只有学生有）
     private User tutor;
 
     private List<Role> roleList; // 相关角色列表
@@ -221,12 +221,12 @@ public class User extends DataEntity<User> {
         this.major = major;
     }
 
-    public String getTutor_work_id() {
-        return tutor_work_id;
+    public String getTutorWorkId() {
+        return tutorWorkId;
     }
 
-    public void setTutor_work_id(String tutor_work_id) {
-        this.tutor_work_id = tutor_work_id;
+    public void setTutorWorkId(String tutorWorkId) {
+        this.tutorWorkId = tutorWorkId;
     }
 
     public User getTutor() {

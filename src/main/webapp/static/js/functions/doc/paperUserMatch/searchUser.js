@@ -4,7 +4,8 @@ let app = new Vue({
         urls: {
             // api for entity
             selectEntityListByPage: '/api/sys/user/selectListByPage',
-            selectDanweiNicknamesAllList: '/api/doc/danweiNicknames/selectAllList'
+            selectDanweiNicknamesAllList: '/api/doc/danweiNicknames/selectAllList',
+            selectAuthor: '/api/doc/paper/selectAuthor'
         },
         fullScreenLoading: false,
         table: {
@@ -23,8 +24,7 @@ let app = new Vue({
         },
         filterParams: {
             userType: '', // 用户类型
-            danwei: '', // 所属单位
-            tutor: '', //
+            school: '', // 所属单位
         },
         userTypeList: [
             {
@@ -40,7 +40,6 @@ let app = new Vue({
                 label: '博士后'
             }
         ],
-        tutorList: [],
         danweiList: []
     },
     methods: {
@@ -77,6 +76,21 @@ let app = new Vue({
         resetForm: function (ref) {
             this.$refs[ref].resetFields();
         },
+        selectUser: function (workId) {
+            let data = {
+                paperId: pageParams.paperId,
+                authorIndex: pageParams.authorIndex,
+                authorWorkId: workId
+            };
+            let app = this;
+            app.fullScreenLoading = true;
+            ajaxPost(this.urls.selectAuthor, data, function (d) {
+                app.fullScreenLoading = false;
+                window.parent.parent.app.showMessage('选择成功！', 'success');
+                window.parent.app.getPaperList();
+                window.parent.app.searchUserDialog.visible = false;
+            });
+        }
     },
     mounted: function () {
         // get user list
@@ -87,15 +101,10 @@ let app = new Vue({
         ajaxPostJSON(this.urls.selectEntityListByPage, data, function (d) {
             app.table.entity.data = d.data.resultList;
             app.table.entity.params.total = d.data.total;
-            // get tutor(teacher) list
-            data = {userType: 'teacher'};
-            ajaxPostJSON(app.urls.selectEntityListByPage, data, function (d) {
-                app.tutorList = d.data.resultList;
+            // get school list
+            ajaxPostJSON(app.urls.selectDanweiNicknamesAllList, null, function (d) {
+                app.danweiList = d.data;
                 app.table.entity.loading = false;
-                // get danwei list
-                ajaxPostJSON(app.urls.selectDanweiNicknamesAllList, null, function (d) {
-                    app.danweiList = d.data;
-                });
             });
         });
     }

@@ -35,11 +35,13 @@
         <association property="firstAuthor" javaType="user">
             <id column="first_author_id" property="id"/>
             <result column="user_type_1" property="userType"/>
+            <result column="real_name_1" property="realName"/>
         </association>
 
         <association property="secondAuthor" javaType="user">
             <id column="second_author_id" property="id"/>
             <result column="user_type_2" property="userType"/>
+            <result column="real_name_2" property="realName"/>
         </association>
     </resultMap>
     <sql id="Base_Column_List">
@@ -705,15 +707,22 @@
         a.`_PD` as `_PD`,
         b.name_en as doc_type_value,
         c.user_type as user_type_1,
-        d.user_type as user_type_2
-        from doc_paper a
+        d.user_type as user_type_2,
+        c.real_name as real_name_1,
+        d.real_name as real_name_2
+        from
+        (select * from doc_paper
+        <where>
+            status = #{status}
+            <if test="page.searchKey != null and page.searchKey != ''">
+                and paper_name like concat('%', #{page.searchKey}, '%')
+            </if>
+        </where>
+        limit #{page.pageStart}, #{page.pageSize})
+        as a
         left join sys_dict b on b.id = a.doc_type
-        left join sys_user c on c.id = a.first_author_id
-        left join sys_user d on d.id = a.second_author_id
-        where a.id in
-        <foreach collection="list" open="(" separator="," close=")" item="item">
-            #{item.id}
-        </foreach>
+        left join sys_user c on c.work_id = a.first_author_id
+        left join sys_user d on d.work_id = a.second_author_id
     </select>
 
     <select id="selectSearchCount" parameterType="paper" resultType="int">
@@ -777,4 +786,17 @@
         from doc_paper
         where status = #{0}
     </delete>
+
+    <update id="selectAuthor">
+        update doc_paper set
+        <trim prefixOverrides="and">
+            <if test="authorIndex == 1">
+                first_author_id = #{authorWorkId}
+            </if>
+            <if test="authorIndex == 2">
+                and second_author_name = #{authorWorkId}
+            </if>
+        </trim>
+        where id = #{paperId}
+    </update>
 </mapper>

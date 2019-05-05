@@ -18,7 +18,7 @@ import java.util.List;
  * insertOrUpdate
  * deleteListByIds
  * update
- * selectListByPage
+ * selectIdList2
  */
 @Controller
 @RequestMapping("api/sys/dict")

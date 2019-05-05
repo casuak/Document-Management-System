@@ -31,7 +31,7 @@ public interface PaperDao {
 
     List<Paper> selectIdsByPage(Paper paper);
 
-    List<Paper> selectListByIds(List<Paper> list);
+    List<Paper> selectListByIds(Paper paper);
 
     int selectSearchCount(Paper paper);
 
@@ -42,4 +42,9 @@ public interface PaperDao {
     int convertToSuccessByIds(List<Paper> paperList);
 
     int deleteByStatus(String status);
+
+    int selectAuthor(
+            @Param("paperId") String paperId,
+            @Param("authorIndex") int authorIndex,
+            @Param("authorWorkId") String authorWorkId);
 }

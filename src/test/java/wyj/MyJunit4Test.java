@@ -34,9 +34,17 @@ public class MyJunit4Test {
         List<User> userList = userService.getAllUsers();
         for (User user : userList) {
             String nicknames = "";
-            nicknames += PinyinUtils.getPinyin2(user.getRealName()) + ";";
+            nicknames += PinyinUtils.getPinyin2(user.getRealName(), true) + ";";
+            nicknames += PinyinUtils.getPinyin2(user.getRealName(), false) + ";";
             user.setNicknames(nicknames);
         }
         userService.updateList(userList);
+    }
+
+    @Test
+    public void test(){
+        userDao = userService.userDao;
+        List<User> userList = userDao.selectAll();
+        return;
     }
 }

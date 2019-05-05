@@ -18,17 +18,11 @@
                 <el-option v-for="(item, index) in userTypeList" :key="item.value"
                            :value="item.value" :label="item.label"></el-option>
             </el-select>
-            <el-select size="small" clearable filterable placeholder="选择所属单位"
+            <el-select size="small" clearable filterable placeholder="选择学院"
                        style="width: 150px;margin-right: 10px;" v-if="filterParams.userType === 'teacher'"
                        v-model="filterParams.school" @change="refreshTable_entity()">
                 <el-option v-for="(item, index) in danweiList" :key="item.id"
                            :value="item.id" :label="item.name"></el-option>
-            </el-select>
-            <el-select size="small" clearable filterable placeholder="选择导师" style="width: 150px;"
-                       v-if="['student', 'doctor'].contains(filterParams.userType)"
-                       v-model="filterParams.tutors" @change="refreshTable_entity()">
-                <el-option v-for="(item, index) in tutorList" :key="item.id"
-                           :value="item.id" :label="item.realName"></el-option>
             </el-select>
         </span>
         <span style="float: right;margin-right: 10px;">
@@ -46,13 +40,37 @@
     <el-table :data="table.entity.data" height="calc(100% - 87px)" v-loading="table.entity.loading"
               style="width: 100%;overflow-y: hidden;margin-top: 10px;" class="scroll-bar"
               @selection-change="onSelectionChange_entity" stripe>
-        <el-table-column width="10"></el-table-column>
-        <el-table-column label="姓名" prop="realName"></el-table-column>
-        <el-table-column label="别名列表" prop="nicknames"></el-table-column>
+        <el-table-column width="10" fixed="left"></el-table-column>
+        <el-table-column label="姓名" prop="realName" width="100" fixed="left">
+            <template slot-scope="{row}">
+                <el-Tooltip open-delay="500" effect="dark" :content="row.realName" placement="top">
+                    <div style="overflow: hidden;text-overflow: ellipsis;white-space: nowrap;width: 95%;">
+                        {{ row.realName }}
+                    </div>
+                </el-Tooltip>
+            </template>
+        </el-table-column>
+        <el-table-column label="工号" prop="workId" width="150" fixed="left"></el-table-column>
+        <el-table-column label="别名列表" prop="nicknames" width="250">
+            <template slot-scope="{row}">
+                <el-Tooltip open-delay="500" effect="dark" :content="row.nicknames" placement="top">
+                    <div style="overflow: hidden;text-overflow: ellipsis;white-space: nowrap;width: 95%;">
+                        {{ row.nicknames }}
+                    </div>
+                </el-Tooltip>
+            </template>
+        </el-table-column>
+        <el-table-column label="身份" prop="userType"></el-table-column>
+        <el-table-column label="学院" prop="school"></el-table-column>
+        <el-table-column label="导师">
+            <template slot-scope="{ row }">
+                {{ row.tutor != null ? row.tutor.realName : '' }}
+            </template>
+        </el-table-column>
         <el-table-column label="操作" width="80" header-align="center" align="center">
-            <template slot-scope="scope">
+            <template slot-scope="{ row }">
                 <el-button type="warning" size="mini" style="position:relative;bottom: 1px;"
-                           @click="">
+                           @click="selectUser(row.workId)">
                     <span>选择</span>
                 </el-button>
             </template>
@@ -70,7 +88,13 @@
                    layout="total, sizes, prev, pager, next, jumper">
     </el-pagination>
 </div>
-<%@include file="/WEB-INF/views/include/blankScript.jsp" %>
+<%@include file="/WEB-INF/views/include/blankScript.jsp"%>
+<script>
+    // 接收页面初始化参数
+    let pageParams = {};
+    pageParams.paperId = ${paperId};
+    pageParams.authorIndex = ${authorIndex};
+</script>
 <script src="/static/js/functions/doc/paperUserMatch/searchUser.js"></script>
 </body>
 </html>

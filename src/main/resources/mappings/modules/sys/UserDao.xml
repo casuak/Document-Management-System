@@ -20,9 +20,12 @@
         <result column="create_date" property="createDate"/>
         <result column="modify_date" property="modifyDate"/>
         <result column="del_flag" property="delFlag"/>
-        <!-- 导师 -->
+
+
+        <result column="tutor_work_id" property="tutorWorkId"/>
+        <result column="school" property="school"/>
         <association property="tutor" javaType="user">
-            <id column="tutor_work_id" property="id"/>
+            <id column="tutor_work_id" property="workId"/>
             <result column="tutor_real_name" property="realName"/>
         </association>
         <!-- 用户相关的角色列表 -->
@@ -57,12 +60,13 @@
                  left join sys_role c on b.role_id = c.id
     </select>
 
-    <select id="selectTeacherStudentList" resultMap="userBean">
-        select a.*,
-               b.real_name as tutor_real_name
-        from sys_user a
-        left join sys_user b on b.work_id = a.tutor_work_id
-        where a.user_type in ('student', 'teacher', 'doctor')
+    <select id="selectAll2" resultType="user">
+        select work_id       as workId,
+               nicknames,
+               user_type     as userType,
+               tutor_work_id as tutorWorkId,
+               school
+        from sys_user
     </select>
 
     <!-- 分页 + 搜索(模糊匹配用户名)获取用户id列表 -->
@@ -78,27 +82,33 @@
         limit #{page.pageStart}, #{page.pageSize}
     </select>
 
-    <select id="selectListByPage" parameterType="user" resultMap="userBean">
-        select a.*
-        from sys_user a
+    <!-- 可选条件：分页、别名模糊搜索、用户类型筛选 -->
+    <select id="selectListByPage2" parameterType="user" resultMap="userBean">
+        select
+        a.*,
+        b.real_name as tutor_real_name
+        from
+        (select * from sys_user
         <where>
-            <if test="page != null and page != '' and page.searchKey != '' and page.searchKey != null">
-                a.nicknames like concat('%', #{page.searchKey}, '%')
+            <if test="page != null and page != '' and page.searchKey != null and page.searchKey != ''">
+                nicknames like concat('%', #{page.searchKey}, '%')
             </if>
             <if test="userType != null and userType != ''">
-                and a.user_type = #{userType}
+                and user_type = #{userType}
             </if>
         </where>
+        order by real_name, school
         <if test="page != null and page != ''">
             limit #{page.pageStart}, #{page.pageSize}
         </if>
+        ) as a
+        left join sys_user b on b.work_id = a.tutor_work_id
     </select>
-
-    <select id="getCount" parameterType="user" resultType="int">
-        select count(*)
-        from sys_user a
+    <!-- 与上面的方法配合使用 -->
+    <select id="selectSearchCount2" parameterType="user" resultType="int">
+        select count(*) from sys_user a
         <where>
-            <if test="page != null and page != '' and page.searchKey != '' and page.searchKey != null">
+            <if test="page != null and page != '' and page.searchKey != null and page.searchKey != ''">
                 a.nicknames like concat('%', #{page.searchKey}, '%')
             </if>
             <if test="userType != null and userType != ''">
@@ -171,10 +181,6 @@
             when #{item.id} then #{item.nicknames}
         </foreach>
         end
-        where id in
-        <foreach collection="list" item="item" open="(" separator="," close=")">
-            #{item.id}
-        </foreach>
     </update>
 
     <!-- 删除指定id的用户 -->

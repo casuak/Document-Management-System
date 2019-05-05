@@ -5,8 +5,7 @@ app = new Vue({
             fullScreen: false,
             table: false
         },
-        targetAuthorIndex: 1, // 当前的选择(1 - 第一作者，2 - 第二作者)
-        status: '-1',   // current status
+        status: '1',   // current status
         statusList: [
             {
                 value: '-1',
@@ -49,12 +48,15 @@ app = new Vue({
             initPapers: '/api/doc/paper/initAll',
             deleteByStatus: '/api/doc/paper/deleteByStatus',
             paperUserMatch: '/api/doc/paper/paperUserMatch',
-            convertToSuccessByIds: '/api/doc/paper/convertToSuccessByIds'
+            convertToSuccessByIds: '/api/doc/paper/convertToSuccessByIds',
+            searchUser: '/functions/doc/paperUserMatch/searchUser',
+            selectAuthor: '/api/doc/paper/selectAuthor'
         },
         searchUserDialog: {
             visible: false,
             loading: false,
-        }
+        },
+        searchUserUrl: ''
     },
     methods: {
         deleteByIds: function (ids) {
@@ -142,10 +144,27 @@ app = new Vue({
             };
         },
         // 打开选择用户对话框: targetAuthorIndex (1 - firstAuthor, 2 - secondAuthor)
-        openSearchUser: function (targetAuthorIndex) {
+        openSearchUser: function (paperId, authorIndex) {
+            this.searchUserUrl = this.urls.searchUser + "?paperId='" + paperId + "'&authorIndex=" + authorIndex;
             this.searchUserDialog.visible = true;
             this.searchUserDialog.loading = true;
-            this.targetAuthorIndex = targetAuthorIndex;
+        },
+        // 清空作者
+        clearAuthor: function (paper, authorIndex) {
+            let data = {
+                paperId: paper.id,
+                authorIndex: authorIndex,
+                authorWorkId: null
+            };
+            let app = this;
+            app.loading.table = true;
+            ajaxPost(this.urls.selectAuthor, data, function (d) {
+                app.loading.table = false;
+                if (authorIndex === 1)
+                    paper.firstAuthorId = null;
+                else
+                    paper.secondAuthorId = null;
+            })
         }
     },
     mounted: function () {

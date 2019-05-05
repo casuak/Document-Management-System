@@ -17,7 +17,7 @@ import java.util.List;
  * insertOrUpdate
  * deleteListByIds
  * update
- * selectListByPage
+ * selectIdList2
  * selectAllList
  */
 @Controller

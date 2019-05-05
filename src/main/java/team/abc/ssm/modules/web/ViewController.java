@@ -125,8 +125,13 @@ public class ViewController extends BaseController {
     }
 
     @RequestMapping(value = "functions/doc/paperUserMatch/searchUser", method = RequestMethod.GET)
-    public String doc_paperUserMatch_searchUser() {
-        return "functions/doc/paperUserMatch/searchUser";
+    public ModelAndView doc_paperUserMatch_searchUser(
+            @RequestParam("paperId") String paperId,
+            @RequestParam("authorIndex") int authorIndex) {
+        ModelAndView mv = new ModelAndView("functions/doc/paperUserMatch/searchUser");
+        mv.addObject("paperId", paperId);
+        mv.addObject("authorIndex", authorIndex);
+        return mv;
     }
 
     /*
@@ -135,11 +140,11 @@ public class ViewController extends BaseController {
      * @param
      * @return
      */
-    @RequestMapping(value = "doc/statisticalSearch",method = RequestMethod.POST)
+    @RequestMapping(value = "doc/statisticalSearch", method = RequestMethod.POST)
     @ResponseBody
     public Object statisticalSearch(
-           String jsonStr
-    ){
+            String jsonStr
+    ) {
         System.out.println(jsonStr);
 
         /*把json字符串转换为json对象*/
@@ -174,6 +179,6 @@ public class ViewController extends BaseController {
         int postdoctoralCopyAmount = 500;
 
         AjaxMessage retMsg = new AjaxMessage();
-        return retMsg.Set(MsgType.SUCCESS,null);
+        return retMsg.Set(MsgType.SUCCESS, null);
     }
 }

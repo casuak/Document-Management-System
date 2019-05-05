@@ -142,10 +142,11 @@ public class PinyinUtils {
 
     @Test
     public static void main(String args[]) {
-        System.out.println(getPinyin2("孙建伟"));
+        System.out.println(getPinyin2("MANSOOR SHAUKAT KHAN", true));
     }
 
     /**
+     * comma: 是否带逗号
      * 例：
      * 输入: 张三
      * 输出: zhang, san
@@ -154,7 +155,7 @@ public class PinyinUtils {
      * 输入: Fred(首字母为英文时直接返回 name.toLowerCase() )
      * 输出: fred
      */
-    public static String getPinyin2(String name) {
+    public static String getPinyin2(String name, boolean comma) {
         if (name == null || name.equals(""))
             return null;
         String result = "";
@@ -166,7 +167,11 @@ public class PinyinUtils {
         for (int i = 0; i < name.length(); i++) {
             String s = name.substring(i, i + 1);
             result += getPingYin(s);
-            if (i == 0) result += ", ";
+            if (i == 0) {
+                if (comma)
+                    result += ",";
+                result += " ";
+            }
         }
         return result;
     }

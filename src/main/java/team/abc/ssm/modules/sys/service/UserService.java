@@ -12,7 +12,7 @@ import java.util.List;
 public class UserService {
 
     @Autowired
-    private UserDao userDao;
+    public UserDao userDao;
 
     public User getUserByUsername(User user) {
         return userDao.selectByUsername(user);
@@ -22,8 +22,9 @@ public class UserService {
         return userDao.selectAll();
     }
 
-    public List<User> selectTeacherStudentList() {
-        return userDao.selectTeacherStudentList();
+    // 特殊需求(PaperService)
+    public List<User> getAllUsers2() {
+        return userDao.selectAll2();
     }
 
     public Page<User> getUsersByPage(User user) {
@@ -37,10 +38,10 @@ public class UserService {
     }
 
     // 复杂搜索
-    public Page<User> selectListByPage(User user) {
+    public Page<User> selectListByPage2(User user) {
         Page<User> page = new Page<>();
-        page.setTotal(userDao.getCount(user));
-        page.setResultList(userDao.selectListByPage(user));
+        page.setResultList(userDao.selectListByPage2(user));
+        page.setTotal(userDao.selectSearchCount2(user));
         return page;
     }
 

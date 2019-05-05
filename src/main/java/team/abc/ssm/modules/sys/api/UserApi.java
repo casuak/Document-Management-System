@@ -64,7 +64,7 @@ public class UserApi extends BaseApi {
     @RequestMapping(value = "selectListByPage", method = RequestMethod.POST)
     @ResponseBody
     public Object selectListByPage(@RequestBody User user){
-        return retMsg.Set(MsgType.SUCCESS, userService.selectListByPage(user));
+        return retMsg.Set(MsgType.SUCCESS, userService.selectListByPage2(user));
     }
 
     @RequestMapping(value = "checkUsername", method = RequestMethod.POST)

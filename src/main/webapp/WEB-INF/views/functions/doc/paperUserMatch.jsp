@@ -67,24 +67,26 @@
         </el-table-column>
         <%--<el-table-column label="第一作者名" width="150" prop="firstAuthorName" align="center"></el-table-column>--%>
         <%--<el-table-column label="第二作者名" width="150" prop="secondAuthorName" align="center"></el-table-column>--%>
-        <el-table-column label="第一匹配作者工号/学号" width="200" align="center" v-if="['1', '2', '3'].contains(status)">
+        <el-table-column label="第一匹配作者工号/学号" width="300" align="center" v-if="['1', '2', '3'].contains(status)">
             <template slot-scope="{row}">
-                <i-button v-if="row.status1 !== '0' && row.status === '1'" type="success" size="small"
-                          @click="openSearchUser(1)">手动匹配
-                </i-button>
-                <span v-if="row.secondAuthorId != null && row.secondAuthorId !== ''">
+                <span v-if="row.firstAuthorId != null && row.firstAuthorId !== ''">
                     {{ row.firstAuthorId }}
-                    ({{ row.firstAuthor != null ? row.firstAuthor.userType : ''}})
+                    {{ row.firstAuthor != null ? row.firstAuthor.realName : ''}}
+                    {{ row.firstAuthor != null ? row.firstAuthor.userType : ''}}
+                    <i-button type="warning" size="small" @click="clearAuthor(row, 1)">C</i-button>
                 </span>
+                <i-button v-else type="success" size="small" @click="openSearchUser(row.id, 1)">手动匹配</i-button>
             </template>
         </el-table-column>
-        <el-table-column label="第二匹配作者工号/学号" width="200" align="center" v-if="['1', '2', '3'].contains(status)">
+        <el-table-column label="第二匹配作者工号/学号" width="300" align="center" v-if="['1', '2', '3'].contains(status)">
             <template slot-scope="{row}">
                 <span v-if="row.secondAuthorId != null && row.secondAuthorId !== ''">
                     {{ row.secondAuthorId }}
-                    ({{ row.secondAuthor != null ? row.secondAuthor.userType : '' }})
+                    {{ row.secondAuthor != null ? row.secondAuthor.realName : '' }}
+                    {{ row.secondAuthor != null ? row.secondAuthor.userType : '' }}
+                    <i-button type="warning" size="small" @click="clearAuthor(row, 2)">C</i-button>
                 </span>
-                <i-button v-else type="success" size="small" @click="openSearchUser(2)">手动匹配</i-button>
+                <i-button v-else type="success" size="small" @click="openSearchUser(row.id, 2)">手动匹配</i-button>
             </template>
         </el-table-column>
         <el-table-column label="ISSN" width="150" prop="ISSN" align="center"></el-table-column>
@@ -140,7 +142,7 @@
     <%-- 选择用户 --%>
     <el-dialog title="手动选择作者" :visible.sync="searchUserDialog.visible" class="dialog-searchUser">
         <div v-loading="searchUserDialog.loading" style="height: 450px;">
-            <iframe v-if="searchUserDialog.visible" src="/functions/doc/paperUserMatch/searchUser"
+            <iframe v-if="searchUserDialog.visible" :src="searchUserUrl"
                     style="width: 100%;height: 450px;overflow-y: auto;border: 0;"
                     @load="searchUserDialog.loading=false;"></iframe>
         </div>

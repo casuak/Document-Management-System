@@ -12,7 +12,7 @@ import team.abc.ssm.modules.doc.service.PaperService;
 import java.util.List;
 
 /**
- * selectListByPage     page + searchKey + status
+ * selectIdList2     page + searchKey + status
  * initAll              init all paper whose status is null
  */
 @Controller
@@ -67,12 +67,25 @@ public class PaperApi extends BaseApi {
     }
 
     /**
-     * delete all papers' that was not initialized
+     * 删除某个状态下的所有论文
      */
     @RequestMapping(value = "deleteByStatus", method = RequestMethod.POST)
     @ResponseBody
-    public Object deleteByStatus(@RequestParam("status") String status){
+    public Object deleteByStatus(@RequestParam("status") String status) {
         paperService.deleteByStatus(status);
+        return retMsg.Set(MsgType.SUCCESS);
+    }
+
+    /**
+     * 手动选择论文的第一或第二作者
+     */
+    @RequestMapping(value = "selectAuthor", method = RequestMethod.POST)
+    @ResponseBody
+    public Object selectAuthor(
+            @RequestParam("paperId") String paperId,
+            @RequestParam("authorIndex") int authorIndex,
+            @RequestParam("authorWorkId") String authorWorkId) {
+        paperService.selectAuthor(paperId, authorIndex, authorWorkId);
         return retMsg.Set(MsgType.SUCCESS);
     }
 }

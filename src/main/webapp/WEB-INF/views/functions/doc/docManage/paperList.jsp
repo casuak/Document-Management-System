@@ -454,7 +454,7 @@
                         // insertEntity: '/api/doc/search/insert',
                         // deleteEntityListByIds: '/api/doc/search/deleteListByIds',
                         // updateEntity: '/api/doc/search/update',
-                        // selectPaperListByPage: '/api/doc/search/selectListByPage',
+                        // selectPaperListByPage: '/api/doc/search/selectIdList2',
                     },
                     data: [],
                     loading: false,
