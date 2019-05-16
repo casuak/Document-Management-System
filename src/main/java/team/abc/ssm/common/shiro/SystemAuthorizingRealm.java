@@ -38,7 +38,7 @@ public class SystemAuthorizingRealm extends AuthorizingRealm {
         return info;
     }
 
-    // 用户登陆验证
+        // 用户登陆验证
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken) throws AuthenticationException {
         // 获取客户端提供的用户名和密码

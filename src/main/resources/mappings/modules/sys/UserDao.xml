@@ -27,6 +27,7 @@
         <association property="tutor" javaType="user">
             <id column="tutor_work_id" property="workId"/>
             <result column="tutor_real_name" property="realName"/>
+            <result column="tutor_nicknames" property="nicknames"/>
         </association>
         <!-- 用户相关的角色列表 -->
         <collection property="roleList" ofType="team.abc.ssm.modules.sys.entity.Role">
@@ -65,7 +66,8 @@
                nicknames,
                user_type     as userType,
                tutor_work_id as tutorWorkId,
-               school
+               school,
+               hire_date as hireDate
         from sys_user
     </select>
 
@@ -86,7 +88,8 @@
     <select id="selectListByPage2" parameterType="user" resultMap="userBean">
         select
         a.*,
-        b.real_name as tutor_real_name
+        b.real_name as tutor_real_name,
+        b.nicknames as tutor_nicknames
         from
         (select * from sys_user
         <where>

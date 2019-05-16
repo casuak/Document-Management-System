@@ -4,9 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
+import java.util.*;
 
 import team.abc.ssm.modules.doc.dao.PaperDao;
 import team.abc.ssm.modules.doc.entity.DanweiNicknames;
@@ -376,6 +374,50 @@ public class PaperService {
                             }
                         }
                     }
+                    if (_matchList1.size() > 1) {
+                        matchList1.clear();
+                        matchList1.addAll(_matchList1);
+                        _matchList1.clear();
+                        // 导师过滤
+                        for (User student : matchList1) {
+                            boolean flag = false;
+                            String[] nicknames = student.getTutor().getNicknames().split(";");
+                            for (String nickname : nicknames) {
+                                if (paper.getAuthorList().contains(nickname)) {
+                                    flag = true;
+                                    break;
+                                }
+                            }
+                            if (flag)
+                                _matchList1.add(student);
+                        }
+                    }
+                    if (_matchList1.size() == 2) {
+                        // 此时的情况一般是同一个学生，分为博士和硕士两个身份
+                        // 年份过滤
+                        Collections.sort(_matchList1, new Comparator<User>() {
+
+                            @Override
+                            public int compare(User o1, User o2) {
+                                Date d1 = o1.getHireDate();
+                                Date d2 = o2.getHireDate();
+                                if (d1.after(d2)) {
+                                    return 1;
+                                } else if (d1.equals(d2)) {
+                                    return 0;
+                                } else {
+                                    return -1;
+                                }
+                            }
+                        });
+                        User s1 = _matchList1.get(0); // 研究生
+                        User s2 = _matchList1.get(1); // 博士
+                        if (paper.getPublishDate().after(s2.getHireDate())) {
+                            _matchList1.remove(0);
+                        } else {
+                            _matchList1.remove(1);
+                        }
+                    }
                     // 过滤后唯一
                     if (_matchList1.size() == 1) {
                         User firstAuthor = _matchList1.get(0);
@@ -419,6 +461,13 @@ public class PaperService {
                 }
                 // 混合
                 else {
+                    // 按学院过滤
+                    List<User> _matchlist1 = new ArrayList<>();
+                    for (User user : matchList1) {
+                        if (user.getSchool().equals(paper.getDanweiCN())) {
+
+                        }
+                    }
                     paper.setStatus("1"); // 整体出错
                     paper.setStatus1("2"); // 一作无匹配
                     paper.setStatus2("2"); // 二作无匹配
@@ -436,7 +485,7 @@ public class PaperService {
         return true;
     }
 
-    public boolean selectAuthor(String paperId, int authorIndex, String authorWorkId){
+    public boolean selectAuthor(String paperId, int authorIndex, String authorWorkId) {
         paperDao.selectAuthor(paperId, authorIndex, authorWorkId);
         return true;
     }
