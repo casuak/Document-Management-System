@@ -16,6 +16,6 @@ public interface CommonOrganizeMapper {
 
     int updateByPrimaryKey(CommonOrganize record);
 
-    /*获取所有的机构种类*/
-    public List<Map<String,String>> getOrgListMap();
+    /** 获取所有的机构种类*/
+    public List<String> getOrgList();
 }

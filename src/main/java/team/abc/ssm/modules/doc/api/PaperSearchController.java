@@ -52,10 +52,11 @@ public class PaperSearchController {
         modelAndView.setViewName("functions/doc/docSearch");
 
         List<Map<String, String>> paperType = paperSearchService.getPaperType();
-        List<Map<String, String>> orgList = orgService.getOrgListMap();
-        List<Map<String, String>> subjectList = authorService.getSubListMap();
+        List<String> orgList = orgService.getOrgList();
+        List<String> subjectList = authorService.getSubList();
 
         modelAndView.addObject("paperType", JSONArray.fromObject(paperType));
+
         modelAndView.addObject("orgList", JSONArray.fromObject(orgList));
         modelAndView.addObject("subjectList", JSONArray.fromObject(subjectList));
 
@@ -83,7 +84,7 @@ public class PaperSearchController {
     }
 
     /*根据条件返回相应的论文+专利+著作权的列表*/
-    @RequestMapping(value = "getDocList", method = RequestMethod.POST)
+    /*@RequestMapping(value = "getDocList", method = RequestMethod.POST)
     @ResponseBody
     public Object getDocList(
             HttpServletRequest request, HttpServletResponse response
@@ -120,36 +121,9 @@ public class PaperSearchController {
         //请求返回体：
         AjaxMessage retMsg = new AjaxMessage();
         return retMsg.Set(MsgType.SUCCESS, "hello");
-    }
+    }*/
 
-    //for zm to test
-    @RequestMapping(value = "test", method = RequestMethod.GET)
-    @ResponseBody
-    public Object test(@RequestParam(value = "id") String id,
-                       @RequestParam(value = "name") String name) {
 
-        System.out.println("ok");
-        Map<String, String> paperMap = new HashMap<>();
-        paperMap.put("name", "papername1");
-        paperMap.put("firstAuthor", "第一作者1");
-        paperMap.put("secondAuthor", "第二作者2");
-
-        Map<String, String> patentMap = new HashMap();
-        patentMap.put("name", "patentname1");
-        patentMap.put("patentType", "专利类型1");
-
-        Map<String, Map> resMap = new HashMap();
-
-        resMap.put("paper", paperMap);
-        resMap.put("patent", patentMap);
-
-        System.out.println(resMap);
-
-        AjaxMessage retMsg = new AjaxMessage();
-
-        return retMsg.Set(MsgType.SUCCESS, resMap);
-
-    }
 
     /*按页返回paper项(不包含搜索参数)*/
     @RequestMapping(value = "selectPaperListByPagePost", method = RequestMethod.POST)
@@ -250,17 +224,21 @@ public class PaperSearchController {
     public Object selectPaperListByPage2(
             @RequestBody Paper paper
     ){
-        //去除paper中暂存的authorId
+        //取出paper中暂存的authorId
         String authorId = paper.getAuthorList();
+
         //获取当前的author
         Author authorNow = authorService.getAuthor(authorId);
-        //设置当前作者的paperPage
+
+        //设置当前作者的论文Page
         authorNow.setMyPaperPage(paper.getPage());
 
         List<Paper> paperList = paperSearchService.getMyPaperByPage(authorNow);
 
         Page<Paper> paperResPage = new Page<>();
         paperResPage.setResultList(paperList);
+
+        LOG.debug("当前作者的论文"+paperList);
         paperResPage.setTotal(paperSearchService.getMyPaperAmount(authorId));
 
         return new AjaxMessage().Set(MsgType.SUCCESS, paperResPage);

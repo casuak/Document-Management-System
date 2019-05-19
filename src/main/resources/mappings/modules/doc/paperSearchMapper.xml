@@ -5,8 +5,6 @@
     <resultMap id="paperBean" type="team.abc.ssm.modules.doc.entity.Paper">
         <id column="id" jdbcType="VARCHAR" property="id"/>
         <result column="author_list" jdbcType="VARCHAR" property="authorList"/>
-        <result column="first_author_name" jdbcType="VARCHAR" property="firstAuthorName"/>
-        <result column="second_author_name" jdbcType="VARCHAR" property="secondAuthorName"/>
         <result column="first_author_id" jdbcType="VARCHAR" property="firstAuthorId"/>
         <result column="second_author_id" jdbcType="VARCHAR" property="secondAuthorId"/>
         <result column="status" jdbcType="VARCHAR" property="status"/>
@@ -17,12 +15,20 @@
         <result column="doc_type" jdbcType="VARCHAR" property="docType"/>
         <result column="publish_date" jdbcType="TIMESTAMP" property="publishDate"/>
         <result column="ISSN" jdbcType="VARCHAR" property="ISSN"/>
+        <result column="danwei_cn" jdbcType="VARCHAR" property="danweiCN"/>
+        <result column="danwei" jdbcType="VARCHAR" property="danwei"/>
         <result column="remarks" jdbcType="VARCHAR" property="remarks"/>
         <result column="create_user_id" jdbcType="VARCHAR" property="createUserId"/>
         <result column="modify_user_id" jdbcType="VARCHAR" property="modifyUserId"/>
         <result column="create_date" jdbcType="TIMESTAMP" property="createDate"/>
         <result column="modify_date" jdbcType="TIMESTAMP" property="modifyDate"/>
         <result column="del_flag" jdbcType="BOOLEAN" property="delFlag"/>
+        <association property="firstAuthorName" column="first_author_id"
+                     select="team.abc.ssm.modules.author.dao.AuthorMapper.getNameByWorkId"/>
+        <association property="secondAuthorName" column="second_author_id"
+                     select="team.abc.ssm.modules.author.dao.AuthorMapper.getNameByWorkId"/>
+        <association property="docTypeValue" column="doc_type"
+                     select="selectTypeValue"/>
     </resultMap>
 
     <select id="getAllAuthorIdentity" resultType="java.lang.String">
@@ -37,56 +43,6 @@
         select*
         from docmanager.common_organize `org`
         where org.del_flag != -1
-    </select>
-
-    <select id="getPaperList" resultType="team.abc.ssm.modules.doc.entity.Paper">
-        select *from docmanager.doc_paper
-        where `del_flag` != -1
-        <if test="paperName != null and paperName != ''">
-            and `paper_name` = #{paperName}
-        </if>
-        <if test="ISSN != null and ISSN != ''">
-            and `ISSN` = #{ISSN}
-        </if>
-        <if test="storeNum != null and storeNum != ''">
-            and `store_Num` = #{storeNum}
-        </if>
-        <if test="docType != null and docType != ''">
-            and `doc_type` = #{docType}
-        </if>
-        <if test="firstAuthorWorkNum != null and firstAuthorWorkNum != ''">
-            and id in (
-            select paper_id from docmanager.doc_map_user_paper `map` where map.author_type_id = (
-            select `id` from docmanager.sys_dict `dict` where dict.type_id = (
-            select `id` from docmanager.sys_dict_type `type` where type.name_cn = '作者身份'
-            ) and dict.name_cn = '第一作者'
-            )
-            and user_id = (select `id` from Sys_User_Info where user_workID = #{firstAuthorWorkNum})
-            )
-        </if>
-        <if test="secondAuthorWorkNum != null and secondAuthorWorkNum != ''">
-            and id in (
-            select paper_id from docmanager.doc_map_user_paper `map` where map.author_type_id = (
-            select `id` from docmanager.sys_dict `dict` where dict.type_id = (
-            select `id` from docmanager.sys_dict_type `type` where type.name_cn = '作者身份'
-            ) and dict.name_cn = '第二作者'
-            )
-            and user_id = (select `id` from Sys_User_Info where user_workID = #{secondAuthorWorkNum})
-            )
-        </if>
-        <if test="otherAuthorWorkNum != null and otherAuthorWorkNum != ''">
-            and id in (
-            select paper_id from docmanager.doc_map_user_paper `map` where map.author_type_id = (
-            select `id` from docmanager.sys_dict `dict` where dict.type_id = (
-            select `id` from docmanager.sys_dict_type `type` where type.name_cn = '作者身份'
-            ) and dict.name_cn = '其他作者'
-            )
-            and user_id = (select `id` from Sys_User_Info where user_workID = #{otherAuthorWorkNum})
-            )
-        </if>
-        <!--<if test="paperPageIndex !=0 and paperPageSize != 0">-->
-        <!--limit #{paperPageIndex} ,#{paperPageSize}-->
-        <!--</if>-->
     </select>
 
     <select id="getPaperTypeMap" resultType="java.util.HashMap">
@@ -158,23 +114,51 @@
 
     <select id="getMyPaperAmount" resultType="java.lang.Integer">
         select count(*)
-        from doc_map_user_paper
-        where user_id = #{0}
-          and del_flag != -1
+        from doc_paper
+        where first_author_id = #{0}
+           or second_author_id = #{0}
     </select>
 
-    <select id="getPaperList1" parameterType="team.abc.ssm.modules.author.entity.Author" resultMap="paperBean">
+    <select id="getPaperList" parameterType="team.abc.ssm.modules.author.entity.Author" resultMap="paperBean">
         select *
         from doc_paper
-        where id in (
-            select ids.*
-            from (
-                     select paper_id
-                     from doc_map_user_paper
-                     where user_id = #{id}
-                     limit #{myPaperPage.pageStart},#{myPaperPage.pageSize}
-                 ) as ids
-        )
+        where first_author_id = #{workId}
+           or second_author_id = #{workId}
     </select>
 
+    <select id="selectTypeValue" resultType="java.lang.String">
+        select name_en
+        from sys_dict
+        where id = #{0}
+    </select>
+
+    <select id="getDocStatisticsRes" resultType="java.lang.Integer">
+        select count(*)
+        from doc_paper paper
+        left join
+            sys_user sUser
+            on paper.first_author_id = sUser.id
+        where paper.del_flag != -1 and sUser.del_flag != -1
+        <if test="subject != null and subject != ''">
+            and sUser.major = #{subject}
+        </if>
+        <if test="organization != null and organization != ''">
+            and paper.danwei_cn = #{organization}
+        </if>
+        <if test="paperType != null and paperType != ''">
+            and paper.doc_type = #{paperType}
+        </if>
+        <if test="partition != null and partition != ''">
+            and paper.partition = #{partition}
+        </if>
+        <if test="startDate != null">
+            and paper.publish_date >= #{startDate}
+        </if>
+        <if test="endDate != null">
+            and paper.publish_date &lt;= #{endDate}
+        </if>
+        <if test="authorType != null and authorType != ''">
+            and sUser.user_type = #{authorType}
+        </if>
+    </select>
 </mapper>

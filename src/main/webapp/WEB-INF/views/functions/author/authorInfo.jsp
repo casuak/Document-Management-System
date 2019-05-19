@@ -12,10 +12,12 @@
 <head>
     <title>作者详情</title>
     <%@include file="/WEB-INF/views/include/blankHead.jsp" %>
-    <link rel="stylesheet" href="/static/css/tableTemplate.css"/>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/tableTemplate.css"/>
     <%--<link rel="stylesheet" href="/static/css/"/>--%>
     <style>
-
+        .el-tabs--border-card > .el-tabs__content {
+            padding: 0;
+        }
     </style>
 </head>
 <body>
@@ -25,52 +27,11 @@
              v-model="docSelected"
              type="border-card">
 
-        <%--author个人信息模块--%>
-        <el-tab-pane name="authorInfo" label="作者信息">
-           <div  id="authorInfo">
-               <h2>作者职位</h2>
-               <el-row>
-                   <el-col :span="8">
-                       <div style="width: 150px;height: 150px;padding: 10px 10px;background-color: #a9acb3">
-                           <img style="height: 100%;width: 100%" src="/static/images/lm.jpg" alt="null">
-                       </div>
-                   </el-col>
-                   <el-col :span="16">
-                       <p><span>姓名：</span></p>
-                       <p><span>所在学科：</span></p>
-                       <p><span>身份/职称：</span></p>
-                       <p><span>联系电话：</span></p>
-                       <p><span>联系邮箱：</span></p>
-                   </el-col>
-               </el-row>
-               <br>
-               <el-collapse v-model="activeNames" @change="handleCollapseChange">
-                   <el-collapse-item title="个人信息" name="1">
-                       <div>与现实生活一致：与现实生活的流程、逻辑保持一致，遵循用户习惯的语言和概念；</div>
-                       <div>在界面中一致：所有的元素和结构需保持一致，比如：设计样式、图标和文本、元素的位置等。</div>
-                   </el-collapse-item>
-                   <el-collapse-item title="科研方向" name="2">
-                       <div>控制反馈：通过界面样式和交互动效让用户可以清晰的感知自己的操作；</div>
-                       <div>页面反馈：操作后，通过页面元素的变化清晰地展现当前状态。</div>
-                   </el-collapse-item>
-                   <el-collapse-item title="代表性学术成果" name="3">
-                       <div>简化流程：设计简洁直观的操作流程；</div>
-                       <div>清晰明确：语言表达清晰且表意明确，让用户快速理解进而作出决策；</div>
-                       <div>帮助用户识别：界面简单直白，让用户快速识别而非回忆，减少用户记忆负担。</div>
-                   </el-collapse-item>
-                   <el-collapse-item title="备注" name="4">
-                       <div>用户决策：根据场景可给予用户操作建议或安全提示，但不能代替用户进行决策；</div>
-                       <div>结果可控：用户可以自由的进行操作，包括撤销、回退和终止当前操作等。</div>
-                   </el-collapse-item>
-               </el-collapse>
-           </div>
-        </el-tab-pane>
-
         <%--论文Tab--%>
         <el-tab-pane name="paper" label="论文">
-            <el-main>
+            <el-main style="padding: 10px 0;">
                 <%-- 顶栏 --%>
-                <div style="padding: 15px 20px 0 15px;">
+                <div style="margin-left: 10px">
                     <span class="button-group">
                         <el-button size="small" type="success" @click="dialog.insertPaper.visible=true">
                             <span>添加</span>
@@ -82,7 +43,8 @@
                     </span>
                     <span style="float: right;margin-right: 10px;">
                         <el-input size="small" placeholder="输入相关论文名称搜索论文" suffix-icon="el-icon-search"
-                                  style="width: 250px;margin-right: 10px;" v-model="table.paperTable.entity.params.searchKey"
+                                  style="width: 250px;margin-right: 10px;"
+                                  v-model="table.paperTable.entity.params.searchKey"
                                   @keyup.enter.native="table.paperTable.entity.params.pageIndex=1;refreshTable_paper()">
                         </el-input>
                         <el-button size="small" type="primary" style="position:relative;"
@@ -95,13 +57,15 @@
                 <el-table :data="table.paperTable.entity.data"
                           id="paperTable"
                           v-loading="table.paperTable.entity.loading"
-                          height="calc(100% - 150px)"
+                          height="calc(100% - 130px)"
                           style="width: 100%;overflow-y: hidden;margin-top: 20px;"
                           class="scroll-bar"
                           @selection-change="onSelectionChange_paper" stripe>
                     <el-table-column type="selection" width="40"></el-table-column>
                     <el-table-column
                             prop="paperName"
+                            width="200"
+                            show-overflow-tooltip
                             label="论文名">
                     </el-table-column>
                     <el-table-column
@@ -109,7 +73,11 @@
                             label="ISSN">
                     </el-table-column>
                     <el-table-column
-                            prop="docType"
+                            prop="danweiCN"
+                            label="单位">
+                    </el-table-column>
+                    <el-table-column
+                            prop="docTypeValue"
                             label="论文种类">
                     </el-table-column>
                     <el-table-column
@@ -121,15 +89,10 @@
                             label="第二作者">
                     </el-table-column>
                     <el-table-column
-                            prop="publishDate"
+                            prop="_PD"
                             label="出版日期">
                     </el-table-column>
 
-                    <%--<el-table-column label="创建时间">
-                        <template slot-scope="scope">
-                            {{ formatTimestamp(scope.row.createDate) }}
-                        </template>
-                    </el-table-column>--%>
                     <el-table-column label="操作" width="190" header-align="center" align="center">
                         <template slot-scope="scope">
                             <el-button type="warning" size="mini" style="position:relative;bottom: 1px;"
@@ -198,11 +161,7 @@
 
         <%--专利Tab--%>
         <el-tab-pane name="patent" label="专利">
-
-        </el-tab-pane>
-        <%--著作权Tab--%>
-        <el-tab-pane name="copyright" label="著作权">
-
+            <%--<el-button @click="dateTest">date</el-button>--%>
         </el-tab-pane>
     </el-tabs>
 </div>
@@ -220,19 +179,19 @@
             /*绑定当前的表格*/
             docSelected: "paper",
             urls: {
-                paper:{
+                paper: {
                     insertPaper: '',
                     deletePaperListByIds: '',
                     updatePaper: '',
                     selectPaperListByPage: '/api/doc/search/selectPaperListByPage2',
                 },
-                patent:{
+                patent: {
                     insertPaper: '',
                     deletePaperListByIds: '',
                     updatePaper: '',
                     selectPatentListByPage: '',
                 },
-                copyright:{
+                copyright: {
                     insertPaper: '',
                     deletePaperListByIds: '',
                     updatePaper: '',
@@ -241,7 +200,7 @@
             },
             fullScreenLoading: false,
             table: {
-                paperTable:{
+                paperTable: {
                     entity: {
                         data: [],
                         loading: false,
@@ -255,7 +214,7 @@
                         }
                     }
                 },
-                patentTable:{
+                patentTable: {
                     entity: {
                         data: [],
                         loading: false,
@@ -269,7 +228,7 @@
                         }
                     }
                 },
-                copyrightTable:{
+                copyrightTable: {
                     entity: {
                         data: [],
                         loading: false,
@@ -376,7 +335,7 @@
 
             selectPaperListByPage: function () {
                 let data = {
-                    authorList:"${author.id}",                        //借用authorList来暂存一下authorId
+                    authorList: "${author.id}",                        //借用authorList来暂存一下authorId
                     page: this.table.paperTable.entity.params
                 };
                 let app = this;
@@ -385,7 +344,14 @@
                     console.log("查询paper返回：");
                     console.log(d.data.resultList);
                     app.table.paperTable.entity.loading = false;
-                    app.table.paperTable.entity.data = d.data.resultList;
+                    /*处理日期*/
+                    
+                    let resList = d.data.resultList;
+                    for (let i = 0; i < resList.length; i++) {
+                        tmpDate = resList[i]._PD;
+                        resList[i]._PD = dateFormat(tmpDate);
+                    }
+                    app.table.paperTable.entity.data = resList;
                     app.table.paperTable.entity.params.total = d.data.total;
                 });
             },
@@ -419,37 +385,56 @@
                 this.$refs[ref].resetFields();
             },
         },
+        /*加载的时候就执行一次*/
         mounted: function () {
             this.refreshTable_paper();
         }
     });
 
-    function test() {
-        console.log(app.docSelected);
-    }
-
     /*获取app高度*/
-    function getAppHeight(){
+    function getAppHeight() {
         return document.getElementById("app").clientHeight;
     }
 
-    function setMainHeight(){
+    function setMainHeight() {
         let mains = document.getElementsByClassName("el-main");
         let appHeight = getAppHeight();
         for (let i = 0; i < mains.length; i++) {
             console.log(getAppHeight());
             mains[0].style.height = appHeight + "px";
         }
+    }
 
-        document.getElementById("authorInfo").style.height= appHeight + 'px';
+    function add0(m) {
+        return m < 10 ? '0' + m : m
+    }
+
+    function dateFormat(shijianchuo) {
+        //shijianchuo是整数，否则要parseInt转换
+        let time = new Date(shijianchuo);
+        let y = time.getFullYear();
+        let m = time.getMonth() + 1;
+        let d = time.getDate() + 1;
+        let h = time.getHours() + 1;
+        let mm = time.getMinutes() + 1;
+        let s = time.getSeconds() + 1;
+        //return y + '-' + add0(m) + '-' + add0(d) + ' ' + add0(h) + ':' + add0(mm) + ':' + add0(s);
+        return y + '-' + add0(m) + '-' + add0(d) ;
     }
 
     window.onload = function () {
-       setMainHeight();
+        setMainHeight();
     };
 
     window.onresize = function () {
         setMainHeight();
+    };
+
+
+    function dateTest() {
+        let dateTime = new Date().getTime();
+        let date = dateFormat(dateTime);
+        console.log(date);
     }
 </script>
 </body>

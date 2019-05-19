@@ -20,15 +20,22 @@ import java.util.List;
 @Data
 public class Author extends DataEntity<Author> {
     private String id;
-    private String userType;    // 用户类型：teacher, student, doctor
-    private String sexId;       // 性别(存储的是字典表id)
+    /** 用户类型：teacher, student, doctor*/
+    private String userType;
+    /** 性别(存储的是字典表id)*/
+    private String sexId;
     private String username;
     private String password;
-    private String workId;      // 工号或学号
-    private String realName;    // 真名(中文)
-    private String nicknames;   // 别名列表(以分号做分割)(拼音,匹配时使用)
-    private String pinyinName;  // 真名的拼音(非数据库)
-    private String idNumber;    // 身份证号
+    /** 工号或学号*/
+    private String workId;
+    /** 真名(中文)*/
+    private String realName;
+    /** 别名列表(以分号做分割)(拼音,匹配时使用)*/
+    private String nicknames;
+    /** 真名的拼音(非数据库)*/
+    private String pinyinName;
+    /** 身份证号*/
+    private String idNumber;
     private String duty;
     private String title;
     private String mobile;
@@ -39,9 +46,10 @@ public class Author extends DataEntity<Author> {
     private String birthplace;
     private Date birthday;
     private Date hireDate;
-    private List<Role> roleList; // 相关角色列表
+    /** 相关角色列表*/
+    private List<Role> roleList;
 
-    /*new add*/
+    /** new add*/
     private String subjectId;
     private String subjectName;
     private String organizationId;
@@ -53,5 +61,8 @@ public class Author extends DataEntity<Author> {
     private Page<Paper> myPaperPage;
     private Page<Patent> myPatentPage;
     private Page<Copyright> myCopyrightPage;
+
+    private String school;
+    private String major;
 
 }

@@ -1,5 +1,6 @@
 package team.abc.ssm.modules.author.api;
 
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,9 +21,11 @@ import team.abc.ssm.modules.doc.service.CopyrightService;
 import team.abc.ssm.modules.doc.service.PaperSearchService;
 import team.abc.ssm.modules.doc.service.PaperService;
 import team.abc.ssm.modules.doc.service.PatentService;
+import team.abc.ssm.modules.organization.service.CommonOrganizeService;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author zm
@@ -36,16 +39,45 @@ public class AuthorApi extends BaseApi {
     private static final Logger LOG = LoggerFactory.getLogger(AuthorApi.class);
 
     @Autowired
-    AuthorService authorService;
+    private AuthorService authorService;
 
     @Autowired
-    PaperSearchService paperSearchService;
+    private PaperSearchService paperSearchService;
 
     @Autowired
-    PatentService patentService;
+    private PatentService patentService;
 
     @Autowired
-    CopyrightService copyrightService;
+    private CopyrightService copyrightService;
+
+    @Autowired
+    private CommonOrganizeService orgService;
+
+    /**
+     * @param []
+     * @return org.springframework.web.servlet.ModelAndView
+     * @Description 跳转到作者查询页面
+     * @author zm
+     * @date 18:10 2019/5/8
+     */
+    @RequestMapping(value = "goAuthorSearch",method = RequestMethod.GET)
+    public ModelAndView goAuthorSearch (){
+        ModelAndView modelAndView = new ModelAndView();
+
+        modelAndView.setViewName("functions/author/authorSearch");
+
+        List<Map<String, String>> paperType = paperSearchService.getPaperType();
+
+        List<String> orgList = orgService.getOrgList();
+
+        List<String> subjectList = authorService.getSubList();
+
+        modelAndView.addObject("paperType", JSONArray.fromObject(paperType));
+        modelAndView.addObject("orgList", JSONArray.fromObject(orgList));
+        modelAndView.addObject("subjectList", JSONArray.fromObject(subjectList));
+
+        return modelAndView;
+    }
 
     /**
      * @param [authorId, modelAndView]
@@ -56,7 +88,7 @@ public class AuthorApi extends BaseApi {
      */
     @RequestMapping(value = "goAuthorDetail", method = RequestMethod.GET)
     public ModelAndView goAuthorDetail(
-            @RequestParam("authorId") String authorId,
+                    @RequestParam("authorId") String authorId,
             ModelAndView modelAndView
     ) {
         modelAndView.setViewName("functions/author/authorInfo");
@@ -122,6 +154,7 @@ public class AuthorApi extends BaseApi {
     ) {
         Page<Author> data = new Page<>();
         List<Author> authorList = authorService.getAuthorList(author);
+
         data.setResultList(authorList);
         LOG.info("查询的作者信息：" + authorList);
 
@@ -131,36 +164,5 @@ public class AuthorApi extends BaseApi {
         LOG.info("查询的作者个数：" + authorNum);
         return retMsg.Set(MsgType.SUCCESS, data, "getAuthorListByPage-ok");
 
-    }
-
-    /*old*/
-    @RequestMapping(value = "/getAuthorListByPage1", method = RequestMethod.POST)
-    @ResponseBody
-    public Object getAuthorListByPage1(String jsonStr) {
-
-        JSONObject paramsJsonObject = JSONObject.fromObject(jsonStr);
-
-        Author tmpAuthor = new Author();
-        tmpAuthor.setUserType(paramsJsonObject.getString("identity"));
-        tmpAuthor.setWorkId(paramsJsonObject.getString("workNum"));
-        tmpAuthor.setSubjectId(paramsJsonObject.getString("subject"));              //传过来的是subject的id
-        tmpAuthor.setOrganizationId(paramsJsonObject.getString("organization"));    //传过来的是org的ID
-
-        Page<Author> authorPage = new Page<>();
-
-        authorPage.setPageIndex(paramsJsonObject.getInt("pageIndex"));
-        authorPage.setPageSize(paramsJsonObject.getInt("pageSize"));
-
-        /*添加分页数据*/
-        tmpAuthor.setPage(authorPage);
-        System.out.println(tmpAuthor.toString());
-        System.out.println(tmpAuthor.getPage());
-
-        List<Author> authorList = authorService.getAuthorList(tmpAuthor);
-//
-//        System.out.println("作者列表：");
-//        System.out.println(authorList);
-        LOG.info("作者列表：" + authorList);
-        return retMsg.Set(MsgType.SUCCESS, authorList);
     }
 }

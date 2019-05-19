@@ -32,6 +32,7 @@ public class LoginController extends BaseController {
             subject.getSession().setAttribute("user", userService.getUserByUsername(user));
             return retMsg.Set(MsgType.SUCCESS);
         } catch (AuthenticationException e) {
+            e.printStackTrace();
             return retMsg.Set(MsgType.ERROR);
         }
     }

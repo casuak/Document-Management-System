@@ -13,9 +13,11 @@ import org.springframework.web.servlet.ModelAndView;
 import team.abc.ssm.common.web.AjaxMessage;
 import team.abc.ssm.common.web.BaseController;
 import team.abc.ssm.common.web.MsgType;
+import team.abc.ssm.modules.doc.entity.Statistics;
 import team.abc.ssm.modules.doc.service.PaperSearchService;
 
 import java.util.Date;
+import java.util.Map;
 
 @Controller
 public class ViewController extends BaseController {
@@ -144,51 +146,40 @@ public class ViewController extends BaseController {
         return mv;
     }
 
-    /*
+    /**
+     * 统计查询
+     *
      * @author zm
      * @date 2019/4/16
-     * @param
-     * @return
      */
     @RequestMapping(value = "doc/statisticalSearch", method = RequestMethod.POST)
     @ResponseBody
     public Object statisticalSearch(
-            String jsonStr
+            @RequestParam("subject") String subject,
+            @RequestParam("organization") String organization,
+            @RequestParam("startDate") Date startDate,
+            @RequestParam("endDate") Date endDate,
+            @RequestParam("paperType") String paperType,
+            @RequestParam("partition") String partition,
+            @RequestParam("impactFactor") Integer impactFactor
+
     ) {
-        System.out.println(jsonStr);
+        System.out.println(organization);
+        System.out.println(startDate);
+        System.out.println(endDate);
+        System.out.println(paperType);
+        System.out.println(partition);
+        System.out.println(impactFactor);
 
-        /*把json字符串转换为json对象*/
-        JSONObject jsonObject = JSONObject.fromObject(jsonStr);
-
-        /*解析json对象中的内容*/
-        /*公共筛选项目*/
-        JSONObject commonParams = jsonObject.getJSONObject("commonParams");
-        /*paper筛选项*/
-        JSONObject paperParams = jsonObject.getJSONObject("paperParams");
-        /*patent筛选项*/
-        JSONObject patentParams = jsonObject.getJSONObject("patentParams");
-        /*copyright筛选项*/
-        JSONObject copyrightParams = jsonObject.getJSONObject("copyrightParams");
+        // 暂时没有影响因子
+        try {
+            Map<String,Statistics> stasticResMap = paperSearchService.getStatisticRes(subject,organization, startDate, endDate, paperType, partition);
 
 
-        /*查询返回统计结果*/
-
-        int paperAmount = paperSearchService.getPaperAmount();
-        int teacherPaperAmount = paperSearchService.getTeacherPaperAmount();
-        int studentPaperAmount = paperSearchService.getStudentPaperAmount();
-        int postdoctoralPaperAmount = paperSearchService.getPostdoctoralPaperAmount();
-
-        int patentAmount = 1890;
-        int studentPatentAmount = 1000;
-        int teacherPatentAmount = 800;
-        int postdoctoralPatentAmount = 90;
-
-        int copyAmount = 2160;
-        int studentCopyAmount = 1100;
-        int teacherCopyAmount = 560;
-        int postdoctoralCopyAmount = 500;
-
-        AjaxMessage retMsg = new AjaxMessage();
-        return retMsg.Set(MsgType.SUCCESS, null);
+            return new AjaxMessage().Set(MsgType.SUCCESS, stasticResMap,"获取统计结果成功");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return new AjaxMessage().Set(MsgType.ERROR, null);
     }
 }
