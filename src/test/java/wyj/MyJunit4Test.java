@@ -36,8 +36,11 @@ public class MyJunit4Test {
             String nicknames = "";
             nicknames += PinyinUtils.getPinyin2(user.getRealName(), true) + ";";
             nicknames += PinyinUtils.getPinyin2(user.getRealName(), false) + ";";
-
             user.setNicknames(nicknames);
+            String tutorNicknames = "";
+            tutorNicknames += PinyinUtils.getPinyin2(user.getTutorName(), true) + ";";
+            tutorNicknames += PinyinUtils.getPinyin2(user.getTutorName(), false) + ";";
+            user.setTutorNicknames(tutorNicknames);
         }
         userService.updateList(userList);
     }

@@ -15,6 +15,8 @@ import team.abc.ssm.common.web.BaseController;
 import team.abc.ssm.common.web.MsgType;
 import team.abc.ssm.modules.doc.service.PaperSearchService;
 
+import java.util.Date;
+
 @Controller
 public class ViewController extends BaseController {
 
@@ -127,10 +129,18 @@ public class ViewController extends BaseController {
     @RequestMapping(value = "functions/doc/paperUserMatch/searchUser", method = RequestMethod.GET)
     public ModelAndView doc_paperUserMatch_searchUser(
             @RequestParam("paperId") String paperId,
-            @RequestParam("authorIndex") int authorIndex) {
+            @RequestParam("authorIndex") int authorIndex,
+            @RequestParam("searchKey") String searchKey,
+            @RequestParam("school") String school,
+            @RequestParam("publishDate") Long publishDate,
+            @RequestParam("workId") String workId) {
         ModelAndView mv = new ModelAndView("functions/doc/paperUserMatch/searchUser");
         mv.addObject("paperId", paperId);
         mv.addObject("authorIndex", authorIndex);
+        mv.addObject("searchKey", searchKey);
+        mv.addObject("school", school);
+        mv.addObject("publishDate", publishDate);
+        mv.addObject("workId", workId);
         return mv;
     }
 

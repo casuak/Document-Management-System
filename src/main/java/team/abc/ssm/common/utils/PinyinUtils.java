@@ -142,7 +142,7 @@ public class PinyinUtils {
 
     @Test
     public static void main(String args[]) {
-        System.out.println(getPinyin2("MANSOOR SHAUKAT KHAN", true));
+        System.out.println(getPinyin2("MANSOOR SHAUKAT KHAN", false));
     }
 
     /**
@@ -161,11 +161,22 @@ public class PinyinUtils {
         String result = "";
         // 首字母为英文说明名字为英文名
         char c = name.charAt(0);
+        boolean isEn = false;
         if ((c >= 65 && c <= 90) || (c >= 97 && c <= 122)) {
-            return name.toLowerCase();
+            name = name.toLowerCase();
+            isEn = true;
         }
+        boolean hasAddComma = false;
         for (int i = 0; i < name.length(); i++) {
             String s = name.substring(i, i + 1);
+            if (isEn) {
+                if (comma && !hasAddComma && s.equals(" ")){
+                    result += ",";
+                    hasAddComma = true;
+                }
+                result += s;
+                continue;
+            }
             result += getPingYin(s);
             if (i == 0) {
                 if (comma)

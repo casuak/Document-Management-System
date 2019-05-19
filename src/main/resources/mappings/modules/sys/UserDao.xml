@@ -21,9 +21,16 @@
         <result column="modify_date" property="modifyDate"/>
         <result column="del_flag" property="delFlag"/>
 
-
         <result column="tutor_work_id" property="tutorWorkId"/>
+        <result column="tutor_type" property="tutorType"/>
+        <result column="tutor_name" property="tutorName"/>
+        <result column="tutor_nicknames" property="tutorNicknames"/>
+
         <result column="school" property="school"/>
+        <result column="major" property="major"/>
+        <result column="student_train_level" property="studentTrainLevel"/>
+        <result column="student_degree_type" property="studentDegreeType"/>
+
         <association property="tutor" javaType="user">
             <id column="tutor_work_id" property="workId"/>
             <result column="tutor_real_name" property="realName"/>
@@ -62,12 +69,15 @@
     </select>
 
     <select id="selectAll2" resultType="user">
-        select work_id       as workId,
+        select work_id             as workId,
                nicknames,
-               user_type     as userType,
-               tutor_work_id as tutorWorkId,
+               user_type           as userType,
+               tutor_work_id       as tutorWorkId,
                school,
-               hire_date as hireDate
+               hire_date           as hireDate,
+               student_train_level as studentTrainLevel,
+               real_name           as realName,
+               tutor_nicknames     as tutorNicknames
         from sys_user
     </select>
 
@@ -99,6 +109,12 @@
             <if test="userType != null and userType != ''">
                 and user_type = #{userType}
             </if>
+            <if test="school != null and school != ''">
+                and school = #{school}
+            </if>
+            <if test="workId != null and workId != ''">
+                and work_id = #{workId}
+            </if>
         </where>
         order by real_name, school
         <if test="page != null and page != ''">
@@ -112,10 +128,16 @@
         select count(*) from sys_user a
         <where>
             <if test="page != null and page != '' and page.searchKey != null and page.searchKey != ''">
-                a.nicknames like concat('%', #{page.searchKey}, '%')
+                nicknames like concat('%', #{page.searchKey}, '%')
             </if>
             <if test="userType != null and userType != ''">
-                and a.user_type = #{userType}
+                and user_type = #{userType}
+            </if>
+            <if test="school != null and school != ''">
+                and school = #{school}
+            </if>
+            <if test="workId != null and workId != ''">
+                and work_id = #{workId}
             </if>
         </where>
     </select>
@@ -179,11 +201,18 @@
 
     <update id="updateList" parameterType="user">
         update sys_user
-        set nicknames = case id
-        <foreach collection="list" item="item">
-            when #{item.id} then #{item.nicknames}
-        </foreach>
-        end
+        <trim prefix="set" suffixOverrides=",">
+            <trim prefix="nicknames = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    when id = #{item.id} then #{item.nicknames}
+                </foreach>
+            </trim>
+            <trim prefix="tutor_nicknames = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    when id = #{item.id} then #{item.tutorNicknames}
+                </foreach>
+            </trim>
+        </trim>
     </update>
 
     <!-- 删除指定id的用户 -->

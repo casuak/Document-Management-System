@@ -144,8 +144,10 @@ app = new Vue({
             };
         },
         // 打开选择用户对话框: targetAuthorIndex (1 - firstAuthor, 2 - secondAuthor)
-        openSearchUser: function (paperId, authorIndex) {
-            this.searchUserUrl = this.urls.searchUser + "?paperId='" + paperId + "'&authorIndex=" + authorIndex;
+        openSearchUser: function (row, authorIndex, authorName, workId) {
+            this.searchUserUrl = this.urls.searchUser + "?paperId=" + row.id +
+                "&authorIndex=" + authorIndex + '&searchKey=' + authorName + ';'
+                + '&school=' + (row.danweiCN ? row.danweiCN : '') + '&publishDate=' + row.publishDate + '&workId=' + workId;
             this.searchUserDialog.visible = true;
             this.searchUserDialog.loading = true;
         },

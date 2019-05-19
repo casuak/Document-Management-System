@@ -794,7 +794,7 @@
                 first_author_id = #{authorWorkId}
             </if>
             <if test="authorIndex == 2">
-                and second_author_name = #{authorWorkId}
+                and second_author_id = #{authorWorkId}
             </if>
         </trim>
         where id = #{paperId}

@@ -28,14 +28,26 @@ public class User extends DataEntity<User> {
     private String birthplace;
     private Date birthday;
     private Date hireDate;
-
-    private String tutors; // 导师
     private String school; // 所属学院
     private String major; // 学生专业（博士后一级学科）
+    private String tutors; // 导师们（博士生用到）
     private String tutorWorkId; // 学生导师工号（只有学生有）
-    private User tutor;
+    private String tutorType; // 导师类别（硕士生导师、博士生导师、博士和硕士导师）
+    private String tutorName; // 导师姓名
+    private String tutorNicknames; // 导师别名列表
+    private String studentTrainLevel; // 学生培养层次（博士、硕士）
+    private String studentDegreeType; // 学生学位类型（学术型、专业学位）
 
+    private User tutor; // 学生导师的详细信息
     private List<Role> roleList; // 相关角色列表
+
+    public String getTutorNicknames() {
+        return tutorNicknames;
+    }
+
+    public void setTutorNicknames(String tutorNicknames) {
+        this.tutorNicknames = tutorNicknames;
+    }
 
     public String getUsername() {
         return username;
@@ -205,14 +217,6 @@ public class User extends DataEntity<User> {
         this.school = school;
     }
 
-    public String getTutors() {
-        return tutors;
-    }
-
-    public void setTutors(String tutors) {
-        this.tutors = tutors;
-    }
-
     public String getMajor() {
         return major;
     }
@@ -235,5 +239,45 @@ public class User extends DataEntity<User> {
 
     public void setTutor(User tutor) {
         this.tutor = tutor;
+    }
+
+    public String getTutors() {
+        return tutors;
+    }
+
+    public void setTutors(String tutors) {
+        this.tutors = tutors;
+    }
+
+    public String getTutorType() {
+        return tutorType;
+    }
+
+    public void setTutorType(String tutorType) {
+        this.tutorType = tutorType;
+    }
+
+    public String getStudentTrainLevel() {
+        return studentTrainLevel;
+    }
+
+    public void setStudentTrainLevel(String studentTrainLevel) {
+        this.studentTrainLevel = studentTrainLevel;
+    }
+
+    public String getStudentDegreeType() {
+        return studentDegreeType;
+    }
+
+    public void setStudentDegreeType(String studentDegreeType) {
+        this.studentDegreeType = studentDegreeType;
+    }
+
+    public String getTutorName() {
+        return tutorName;
+    }
+
+    public void setTutorName(String tutorName) {
+        this.tutorName = tutorName;
     }
 }

@@ -47,7 +47,7 @@
               style="width: 100%;overflow-y: hidden;margin-top: 10px;" class="scroll-bar"
               @selection-change="selectionList=$event" stripe>
         <el-table-column type="selection" width="40" fixed="left"></el-table-column>
-        <el-table-column label="论文名" width="300" fixed="left">
+        <el-table-column label="论文名" width="100" fixed="left">
             <template slot-scope="{row}">
                 <el-Tooltip open-delay="500" effect="dark" :content="row.paperName" placement="top">
                     <div style="overflow: hidden;text-overflow: ellipsis;white-space: nowrap;width: 95%;">
@@ -56,7 +56,7 @@
                 </el-Tooltip>
             </template>
         </el-table-column>
-        <el-table-column label="作者列表" width="200">
+        <el-table-column label="作者列表" width="200" fixed="left">
             <template slot-scope="{row}">
                 <el-Tooltip open-delay="500" effect="dark" :content="row.authorList" placement="top">
                     <div style="overflow: hidden;text-overflow: ellipsis;white-space: nowrap;width: 95%;">
@@ -65,33 +65,50 @@
                 </el-Tooltip>
             </template>
         </el-table-column>
-        <%--<el-table-column label="第一作者名" width="150" prop="firstAuthorName" align="center"></el-table-column>--%>
-        <%--<el-table-column label="第二作者名" width="150" prop="secondAuthorName" align="center"></el-table-column>--%>
-        <el-table-column label="第一匹配作者工号/学号" width="300" align="center" v-if="['1', '2', '3'].contains(status)">
+        <el-table-column label="单位名称（中文）" width="150" prop="danweiCN" fixed="left"></el-table-column>
+        <el-table-column label="第一匹配作者" width="300" align="center"
+                         v-if="['1', '2', '3'].contains(status)">
             <template slot-scope="{row}">
-                <span v-if="row.firstAuthorId != null && row.firstAuthorId !== ''">
-                    {{ row.firstAuthorId }}
-                    {{ row.firstAuthor != null ? row.firstAuthor.realName : ''}}
-                    {{ row.firstAuthor != null ? row.firstAuthor.userType : ''}}
-                    <i-button type="warning" size="small" @click="clearAuthor(row, 1)">C</i-button>
+                <span v-if="row.firstAuthorId != null && row.firstAuthorId !== ''"
+                      style="display: flex;align-items: center;justify-content: space-between"
+                      @click="openSearchUser(row, 1, row.firstAuthorName, row.firstAuthorId)">
+                    <div>{{ row.firstAuthorId }}</div>
+                    <el-Tooltip open-delay="500" effect="dark" :content="row.firstAuthor.realName" placement="top">
+                        <div style="display: inline-block;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;width: 100px;">
+                            {{ row.firstAuthor != null ? row.firstAuthor.realName : ''}}
+                        </div>
+                    </el-Tooltip>
+                    <div>{{ row.firstAuthor != null ? row.firstAuthor.userType : ''}}</div>
+                    <i-button style="height: 25px;position:relative;left: 4px;"
+                              type="warning" size="small" @click="clearAuthor(row, 1)">C</i-button>
                 </span>
-                <i-button v-else type="success" size="small" @click="openSearchUser(row.id, 1)">手动匹配</i-button>
+                <i-button v-else type="success" size="small"
+                          @click="openSearchUser(row, 1, row.firstAuthorName, '')">手动匹配</i-button>
             </template>
         </el-table-column>
-        <el-table-column label="第二匹配作者工号/学号" width="300" align="center" v-if="['1', '2', '3'].contains(status)">
+        <el-table-column label="第二匹配作者" width="300" align="center"
+                         v-if="['1', '2', '3'].contains(status)">
             <template slot-scope="{row}">
-                <span v-if="row.secondAuthorId != null && row.secondAuthorId !== ''">
-                    {{ row.secondAuthorId }}
-                    {{ row.secondAuthor != null ? row.secondAuthor.realName : '' }}
-                    {{ row.secondAuthor != null ? row.secondAuthor.userType : '' }}
-                    <i-button type="warning" size="small" @click="clearAuthor(row, 2)">C</i-button>
+                <span v-if="row.secondAuthorId != null && row.secondAuthorId !== ''"
+                      style="display: flex;align-items: center;justify-content: space-between"
+                      @click="openSearchUser(row, 2, row.secondAuthorName, row.secondAuthorId)">
+                    <div>{{ row.secondAuthorId }}</div>
+                    <el-Tooltip open-delay="500" effect="dark" :content="row.secondAuthor.realName" placement="top">
+                        <div style="display: inline-block;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;width: 100px;">
+                            {{ row.secondAuthor != null ? row.secondAuthor.realName : '' }}
+                        </div>
+                    </el-Tooltip>
+                    <div>{{ row.secondAuthor != null ? row.secondAuthor.userType : '' }}</div>
+                    <i-button style="height: 25px;position:relative;left: 4px;"
+                              type="warning" size="small" @click="clearAuthor(row, 2)">C</i-button>
                 </span>
-                <i-button v-else type="success" size="small" @click="openSearchUser(row.id, 2)">手动匹配</i-button>
+                <i-button v-else type="success" size="small"
+                          @click="openSearchUser(row, 2, row.secondAuthorName, '')">手动匹配</i-button>
             </template>
         </el-table-column>
-        <el-table-column label="ISSN" width="150" prop="ISSN" align="center"></el-table-column>
-        <el-table-column label="入藏号" width="300" prop="storeNum" align="center"></el-table-column>
-        <el-table-column label="论文种类" width="150" prop="docTypeValue" align="center"></el-table-column>
+        <%--<el-table-column label="ISSN" width="150" prop="ISSN" align="center"></el-table-column>--%>
+        <%--<el-table-column label="入藏号" width="300" prop="storeNum" align="center"></el-table-column>--%>
+        <%--<el-table-column label="论文种类" width="150" prop="docTypeValue" align="center"></el-table-column>--%>
         <el-table-column label="单位名称" width="200" header-align="center" align="center">
             <template slot-scope="{row}">
                 <el-Tooltip open-delay="500" effect="dark" :content="row.danwei" placement="top">
@@ -101,7 +118,6 @@
                 </el-Tooltip>
             </template>
         </el-table-column>
-        <el-table-column label="单位名称（中文）" width="200" prop="danweiCN" align="center"></el-table-column>
         <el-table-column label="发布日期" width="150" prop="publishDate" align="center">
             <template slot-scope="{row}">
                 {{ row.publishDate === null ? '' : (new Date(row.publishDate)).Format("yyyy-MM-dd") }}

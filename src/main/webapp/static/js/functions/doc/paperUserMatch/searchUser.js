@@ -1,6 +1,9 @@
 let app = new Vue({
     el: '#app',
     data: {
+        paperInfo: {
+            publishDate: 0
+        },
         urls: {
             // api for entity
             selectEntityListByPage: '/api/sys/user/selectListByPage',
@@ -25,6 +28,7 @@ let app = new Vue({
         filterParams: {
             userType: '', // 用户类型
             school: '', // 所属单位
+            workId: '', // 工号/学号
         },
         userTypeList: [
             {
@@ -93,19 +97,16 @@ let app = new Vue({
         }
     },
     mounted: function () {
-        // get user list
-        let data = this.filterParams;
-        data.page = this.table.entity.params;
+        this.table.entity.params.searchKey = pageParams.searchKey;
+        this.filterParams.school = pageParams.school;
+        this.filterParams.workId = pageParams.workId;
+        this.paperInfo.publishDate = pageParams.publishDate;
         let app = this;
         app.table.entity.loading = true;
-        ajaxPostJSON(this.urls.selectEntityListByPage, data, function (d) {
-            app.table.entity.data = d.data.resultList;
-            app.table.entity.params.total = d.data.total;
-            // get school list
-            ajaxPostJSON(app.urls.selectDanweiNicknamesAllList, null, function (d) {
-                app.danweiList = d.data;
-                app.table.entity.loading = false;
-            });
+        ajaxPostJSON(app.urls.selectDanweiNicknamesAllList, null, function (d) {
+            app.danweiList = d.data;
+            app.table.entity.loading = false;
+            app.selectEntityListByPage();
         });
     }
 });
