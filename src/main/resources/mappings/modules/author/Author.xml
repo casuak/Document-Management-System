@@ -16,15 +16,23 @@
         <result column="work_id" property="workId"/>
         <result column="real_name" property="realName"/>
         <result column="nicknames" property="nicknames"/>
+        <result column="school" property="school"/>
+        <result column="major" property="major"/>
         <association property="organizationName" column="id"
                      select="getAuthorOrganizeName"/>
         <association property="subjectName" column="id"
                      select="getAuthorSubjectName"/>
-        <association property="paperAmount" column="id"
+        <association property="paperAmount" column="work_id"
                      select="getPaperAmount"/>
-        <!--<association property="patentAmount" column="id" select="team.team.abc.ssm.modules"/>
-        <association property="copyrightAmount" column="id" select="team.team.abc.ssm.modules"/>-->
     </resultMap>
+
+    <insert id="batchInsert">
+        insert into sys_dict
+        values
+        <foreach collection="list" item="item" separator=",">
+            (#{item.typeId},null,#{item.nameCn},null,0,'1fe2816057944cb5b6c6f31688ccb278',null,'u1','u1',null,null,0)
+        </foreach>
+    </insert>
 
     <select id="getAuthorListByPage" resultMap="authorBean">
         select *
@@ -36,31 +44,23 @@
         <if test="userType != null and userType != ''">
             and user_type = #{userType}
         </if>
-        <if test="subjectId != null and subjectId != ''">
-            and id in (
-            select user_id from common_map_user_subject
-            where subject_id = #{subjectId}
-            )
+        <if test="organizationName != null and organizationName != ''">
+            and school = #{organizationName}
         </if>
-        <if test="organizationId != null and organizationId != ''">
-            and id in (
-            select user_id from common_map_user_organize
-            where org_id = #{organizationId}
-            )
+        <if test="subjectName != null and subjectName != ''">
+            and major = #{subjectName}
         </if>
         limit #{page.pageStart},#{page.pageSize}
     </select>
 
-    <select id="getSubListMap" resultType="java.util.Map">
-        select id, subject_name
-        from common_subject
-        where del_flag != -1
-    </select>
-
     <select id="getPaperAmount" resultType="java.lang.Integer">
         select count(*)
-        from doc_map_user_paper
-        where user_id = #{authorId} and del_flag != -1
+        from (select *
+              from doc_paper
+              where first_author_id = #{workId}
+                 or second_author_id = #{workId}
+             ) a
+        where del_flag != -1
     </select>
 
     <select id="getAuthorSubjectName" resultType="java.lang.String">
@@ -94,23 +94,25 @@
         <if test="userType != null and userType != ''">
             and user_type = #{userType}
         </if>
-        <if test="subjectId != null and subjectId != ''">
-            and id in (
-            select user_id from common_map_user_subject
-            where subject_id = #{subjectId}
-            )
+        <if test="subjectName != null and subjectName != ''">
+            and major = #{subjectName}
         </if>
-        <if test="organizationId != null and organizationId != ''">
-            and id in (
-            select user_id from common_map_user_organize
-            where org_id = #{organizationId}
-            )
+        <if test="organizationName != null and organizationName != ''">
+            and school = #{organizationName}
         </if>
     </select>
 
     <select id="selectByPrimaryKey" resultMap="authorBean">
-        select * from sys_user where id = #{0}
+        select *
+        from sys_user
+        where id = #{0}
     </select>
 
-
+    <select id="getFirstSub" resultType="java.lang.String">
+        select DISTINCT major
+        from sys_user
+    </select>
+    <select id="getNameByWorkId" resultType="java.lang.String">
+        select real_name from sys_user where work_id = #{0}
+    </select>
 </mapper>

@@ -31,4 +31,8 @@
         )
     </select>
 
+    <select id="getPatentStatisticsRes" resultType="team.abc.ssm.modules.doc.entity.Statistics">
+
+    </select>
+
 </mapper>

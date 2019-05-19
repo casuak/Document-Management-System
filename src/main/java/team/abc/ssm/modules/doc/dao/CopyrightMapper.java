@@ -10,6 +10,6 @@ public interface CopyrightMapper extends Mapper<Copyright> {
 
     int getMyCopyAmount(String authorId);
 
-    /*根据author的Id和page限制返回Copyright集合*/
+    /** 根据author的Id和page限制返回Copyright集合*/
     List<Copyright> getCopyList(Author author);
 }

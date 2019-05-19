@@ -18,8 +18,9 @@ public class CommonOrganizeService {
     @Autowired
     private CommonOrganizeMapper orgMapper;
 
-    /*获取orglistmap候选项*/
-    public List<Map<String,String>> getOrgListMap(){
-        return orgMapper.getOrgListMap();
+    /** 获取orglistmap候选项*/
+    public List<String> getOrgList(){
+
+        return orgMapper.getOrgList();
     }
 }

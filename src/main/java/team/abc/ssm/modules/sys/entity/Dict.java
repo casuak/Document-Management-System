@@ -1,7 +1,9 @@
 package team.abc.ssm.modules.sys.entity;
 
+import lombok.Data;
 import team.abc.ssm.common.persistence.DataEntity;
 
+@Data
 public class Dict extends DataEntity<Dict> {
 
     private String typeId;

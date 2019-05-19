@@ -59,4 +59,13 @@ public class AuthorTest {
         //List<Copyright> myCopyrightList = copyrightService.getMyCopyByPage(authorNow);
 
     }
+
+    @Test
+    public void batchInsert(){
+        try{
+            authorService.batchInsertDict();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
 }
