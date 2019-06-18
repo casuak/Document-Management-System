@@ -153,20 +153,22 @@ app = new Vue({
         },
         // 清空作者
         clearAuthor: function (paper, authorIndex) {
-            let data = {
-                paperId: paper.id,
-                authorIndex: authorIndex,
-                authorWorkId: null
-            };
             let app = this;
-            app.loading.table = true;
-            ajaxPost(this.urls.selectAuthor, data, function (d) {
-                app.loading.table = false;
-                if (authorIndex === 1)
-                    paper.firstAuthorId = null;
-                else
-                    paper.secondAuthorId = null;
-            })
+            window.parent.app.showConfirm(function () {
+                let data = {
+                    paperId: paper.id,
+                    authorIndex: authorIndex,
+                    authorWorkId: null
+                };
+                app.loading.table = true;
+                ajaxPost(this.urls.selectAuthor, data, function (d) {
+                    app.loading.table = false;
+                    if (authorIndex === 1)
+                        paper.firstAuthorId = null;
+                    else
+                        paper.secondAuthorId = null;
+                })
+            });
         }
     },
     mounted: function () {

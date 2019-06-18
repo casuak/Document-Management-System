@@ -70,9 +70,8 @@
                          v-if="['1', '2', '3'].contains(status)">
             <template slot-scope="{row}">
                 <span v-if="row.firstAuthorId != null && row.firstAuthorId !== ''"
-                      style="display: flex;align-items: center;justify-content: space-between"
-                      @click="openSearchUser(row, 1, row.firstAuthorName, row.firstAuthorId)">
-                    <div>{{ row.firstAuthorId }}</div>
+                      style="display: flex;align-items: center;justify-content: space-between">
+                    <div @click="openSearchUser(row, 1, row.firstAuthorName, row.firstAuthorId)">{{ row.firstAuthorId }}</div>
                     <el-Tooltip open-delay="500" effect="dark" :content="row.firstAuthor.realName" placement="top">
                         <div style="display: inline-block;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;width: 100px;">
                             {{ row.firstAuthor != null ? row.firstAuthor.realName : ''}}
@@ -90,9 +89,8 @@
                          v-if="['1', '2', '3'].contains(status)">
             <template slot-scope="{row}">
                 <span v-if="row.secondAuthorId != null && row.secondAuthorId !== ''"
-                      style="display: flex;align-items: center;justify-content: space-between"
-                      @click="openSearchUser(row, 2, row.secondAuthorName, row.secondAuthorId)">
-                    <div>{{ row.secondAuthorId }}</div>
+                      style="display: flex;align-items: center;justify-content: space-between">
+                    <div @click="openSearchUser(row, 2, row.secondAuthorName, row.secondAuthorId)">{{ row.secondAuthorId }}</div>
                     <el-Tooltip open-delay="500" effect="dark" :content="row.secondAuthor.realName" placement="top">
                         <div style="display: inline-block;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;width: 100px;">
                             {{ row.secondAuthor != null ? row.secondAuthor.realName : '' }}
