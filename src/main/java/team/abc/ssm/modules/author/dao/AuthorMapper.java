@@ -8,8 +8,6 @@ import java.util.List;
 
 public interface AuthorMapper {
 
-    List<Author> getAuthorsByRealname(@Param("realName") String realName);
-
     List<Author> getAuthorListByPage(Author author);
 
     String getAuthorSubjectName(String authorId);
