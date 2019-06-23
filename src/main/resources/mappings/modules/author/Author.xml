@@ -115,4 +115,8 @@
     <select id="getNameByWorkId" resultType="java.lang.String">
         select real_name from sys_user where work_id = #{0}
     </select>
+
+    <select id="getAuthorsByRealname" resultMap="authorBean">
+        select * from sys_user where real_name = #{realName}
+    </select>
 </mapper>

@@ -5,9 +5,10 @@ import team.abc.ssm.modules.author.entity.Author;
 import team.abc.ssm.modules.sys.entity.Dict;
 
 import java.util.List;
-import java.util.Map;
 
 public interface AuthorMapper {
+
+    List<Author> getAuthorsByRealname(@Param("realName") String realName);
 
     List<Author> getAuthorListByPage(Author author);
 
