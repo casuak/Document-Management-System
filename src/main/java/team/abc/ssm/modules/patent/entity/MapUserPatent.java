@@ -1,6 +1,8 @@
 package team.abc.ssm.modules.patent.entity;
 
 import java.util.Date;
+import java.util.UUID;
+
 import lombok.Data;
 
 @Data
@@ -51,4 +53,22 @@ public class MapUserPatent {
      * 是否被删除
      */
     private Boolean delFlag;
+
+    public MapUserPatent() {
+        this.id = UUID.randomUUID().toString();
+    }
+
+    public MapUserPatent(String userId, String patentId, Integer authorType, String remarks, String createUserId,
+                         String modifyUserId, Date createDate, Date modifyDate, Boolean delFlag) {
+        this.id = UUID.randomUUID().toString();
+        this.userId = userId;
+        this.patentId = patentId;
+        this.authorType = authorType;
+        this.remarks = remarks;
+        this.createUserId = createUserId;
+        this.modifyUserId = modifyUserId;
+        this.createDate = createDate;
+        this.modifyDate = modifyDate;
+        this.delFlag = delFlag;
+    }
 }
