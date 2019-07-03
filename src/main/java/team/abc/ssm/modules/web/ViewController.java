@@ -147,6 +147,18 @@ public class ViewController extends BaseController {
     }
 
     /**
+     * @author zm
+     * @date 2019/7/3 8:47
+     * @params []
+     * @return: java.lang.String
+     * @Description //跳转到：专利用户匹配
+     **/
+    @RequestMapping(value = "functions/patent/patentUserMatch",method = RequestMethod.GET)
+    public String patentUserMatch(){
+        return "functions/patent/patentUserMatch";
+    }
+
+    /**
      * 统计查询
      *
      * @author zm

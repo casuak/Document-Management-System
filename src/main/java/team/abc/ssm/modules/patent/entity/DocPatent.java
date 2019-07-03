@@ -1,10 +1,20 @@
 package team.abc.ssm.modules.patent.entity;
 
 import java.util.Date;
+import java.util.List;
+
 import lombok.Data;
+import team.abc.ssm.common.persistence.DataEntity;
+import team.abc.ssm.common.web.FirstAuMatchType;
+import team.abc.ssm.common.web.PatentMatchType;
+import team.abc.ssm.common.web.SecondAuMatchType;
+import team.abc.ssm.modules.author.entity.SysUser;
+import team.abc.ssm.modules.doc.entity.Paper;
+
+import javax.persistence.Transient;
 
 @Data
-public class DocPatent {
+public class DocPatent extends DataEntity<DocPatent> {
     private String id;
 
     /**
@@ -65,7 +75,7 @@ public class DocPatent {
     /**
      * 第一作者type
      * */
-    private String firstAuthorType;
+    //private String firstAuthorType;
 
     /**
     * 第二作者名字
@@ -80,7 +90,7 @@ public class DocPatent {
     /**
      * 第二作者type
      * */
-    private String secondAuthorType;
+    //private String secondAuthorType;
 
     /**
     * 专利备注
@@ -124,6 +134,76 @@ public class DocPatent {
 
     /**
     * 是否被删除
+    * 基类 DataEntity 已经覆盖该字段
+    * DataEntity已经有本字段
+     * private Boolean delFlag
     */
-    private Byte delFlag;
+
+
+    /**
+     * 保存根据firstAuthorName查询出的第一作者(列表)
+     **/
+    @Transient
+    private List<SysUser> firstAuthorList;
+
+    /**
+     * 保存根据secondAuthorName查询出的第二作者(列表)
+     **/
+    @Transient
+    private List<SysUser> secondAuthorList;
+
+    /**
+     * 保存专利的第一作者
+     **/
+    @Transient
+    private SysUser firstAuthor;
+
+    /**
+     * 保存专利的第二作者
+     **/
+    @Transient
+    private SysUser secondAuthor;
+
+    /**
+     * @author zm
+     * @date 2019/6/28 15:49
+     * @params [status, status1, status2]
+     * @return: void
+     * @Description //设置专利的3个状态
+     **/
+    public void setStatuses(PatentMatchType status,FirstAuMatchType status1,SecondAuMatchType status2){
+        if (status != null){
+            this.status = status.toString();
+        }
+        if(status1 != null){
+            this.status1 = status1.toString();
+        }
+        if(status2 != null){
+            this.status2 = status2.toString();
+        }
+    }
+
+    public void setStatus(String status){
+        this.status = status;
+    }
+
+    public void setStatus(PatentMatchType patentMatchType) {
+        this.status = patentMatchType.toString();
+    }
+
+    public void setStatus1(String status1) {
+        this.status1 = status1;
+    }
+
+    public void setStatus1(FirstAuMatchType firstAuMatchType){
+        this.status1 = firstAuMatchType.toString();
+    }
+
+    public void setStatus2(String status2) {
+        this.status2 = status2;
+    }
+
+    public void setStatus2(SecondAuMatchType secondAuMatchType){
+        this.status2 = secondAuMatchType.toString();
+    }
 }

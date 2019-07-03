@@ -25,7 +25,7 @@
     <result column="status" jdbcType="VARCHAR" property="status" />
     <result column="status_1" jdbcType="VARCHAR" property="status1" />
     <result column="status_2" jdbcType="VARCHAR" property="status2" />
-    <result column="del_flag" jdbcType="TINYINT" property="delFlag" />
+    <result column="del_flag" jdbcType="BOOLEAN" property="delFlag" />
     <result column="first_author_type" jdbcType="VARCHAR" property="firstAuthorType"/>
     <result column="first_author_name" jdbcType="VARCHAR" property="firstAuthorName"/>
     <result column="second_author_type" jdbcType="VARCHAR" property="secondAuthorType"/>
@@ -67,7 +67,7 @@
       #{firstAuthorId,jdbcType=VARCHAR}, #{secondAuthorId,jdbcType=VARCHAR}, #{remarks,jdbcType=VARCHAR}, 
       #{createUserId,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}, #{modifyUserId,jdbcType=VARCHAR}, 
       #{modifyDate,jdbcType=TIMESTAMP}, #{status,jdbcType=VARCHAR}, #{status1,jdbcType=VARCHAR}, 
-      #{status2,jdbcType=VARCHAR}, #{delFlag,jdbcType=TINYINT})
+      #{status2,jdbcType=VARCHAR}, #{delFlag,jdbcType=BOOLEAN})
   </insert>
   <insert id="insertSelective" parameterType="team.abc.ssm.modules.patent.entity.DocPatent">
     <!--@mbg.generated-->
@@ -205,7 +205,7 @@
         #{status2,jdbcType=VARCHAR},
       </if>
       <if test="delFlag != null">
-        #{delFlag,jdbcType=TINYINT},
+        #{delFlag,jdbcType=BOOLEAN},
       </if>
     </trim>
   </insert>
@@ -274,7 +274,7 @@
         status_2 = #{status2,jdbcType=VARCHAR},
       </if>
       <if test="delFlag != null">
-        del_flag = #{delFlag,jdbcType=TINYINT},
+        del_flag = #{delFlag,jdbcType=BOOLEAN},
       </if>
     </set>
     where id = #{id,jdbcType=VARCHAR}
@@ -302,7 +302,7 @@
       `status` = #{status,jdbcType=VARCHAR},
       status_1 = #{status1,jdbcType=VARCHAR},
       status_2 = #{status2,jdbcType=VARCHAR},
-      del_flag = #{delFlag,jdbcType=TINYINT}
+      del_flag = #{delFlag,jdbcType=BOOLEAN}
     where id = #{id,jdbcType=VARCHAR}
   </update>
 

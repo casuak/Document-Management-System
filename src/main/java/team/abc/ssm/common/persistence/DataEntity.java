@@ -3,6 +3,7 @@ package team.abc.ssm.common.persistence;
 import team.abc.ssm.common.utils.IdGen;
 import team.abc.ssm.common.utils.UserUtils;
 
+import javax.persistence.Transient;
 import java.util.Date;
 
 /**
@@ -19,6 +20,7 @@ public class DataEntity<T> {
     private Date modifyDate;        // 最后修改日期
     private boolean delFlag;        // 是否被删除
 
+    @Transient
     private Page<T> page; // 分页对象
 
     public DataEntity() {
