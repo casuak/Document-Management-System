@@ -12,6 +12,8 @@ public interface DocPatentMapper {
 
     int deleteByPrimaryKey(String id);
 
+    int deleteByStatus(@Param("status")String status);
+
     int insert(DocPatent record);
 
     int insertSelective(DocPatent record);
@@ -26,4 +28,10 @@ public interface DocPatentMapper {
     List<DocPatent> selectListByPage(DocPatent patent);
 
     int selectSearchCount(DocPatent patent);
+
+    int setPatentAuthor(@Param("patentId") String patentId,
+                        @Param("authorIndex") int authorIndex,
+                        @Param("authorId") String authorId);
+
+    int convertToSuccessByIds(List<DocPatent> patentList);
 }

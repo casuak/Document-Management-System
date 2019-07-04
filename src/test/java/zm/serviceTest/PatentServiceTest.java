@@ -118,7 +118,7 @@ public class PatentServiceTest {
             //情况22
             //String patentId = "01f2a65ca6814a6ba94772799132ae38";
 
-            String patentId = "002f1ea2baa94268b38246751dc98dbb";
+            String patentId = "e92d9294327b4790b8823783e810167a";
 
             DocPatent tmpPatent = patentMapper.selectByPrimaryKey(patentId);
             patentService.authorMatch(tmpPatent);

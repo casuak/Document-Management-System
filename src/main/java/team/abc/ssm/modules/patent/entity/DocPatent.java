@@ -9,7 +9,6 @@ import team.abc.ssm.common.web.FirstAuMatchType;
 import team.abc.ssm.common.web.PatentMatchType;
 import team.abc.ssm.common.web.SecondAuMatchType;
 import team.abc.ssm.modules.author.entity.SysUser;
-import team.abc.ssm.modules.doc.entity.Paper;
 
 import javax.persistence.Transient;
 
@@ -75,7 +74,7 @@ public class DocPatent extends DataEntity<DocPatent> {
     /**
      * 第一作者type
      * */
-    //private String firstAuthorType;
+    private String firstAuthorType;
 
     /**
     * 第二作者名字
@@ -90,7 +89,7 @@ public class DocPatent extends DataEntity<DocPatent> {
     /**
      * 第二作者type
      * */
-    //private String secondAuthorType;
+    private String secondAuthorType;
 
     /**
     * 专利备注
@@ -181,29 +180,5 @@ public class DocPatent extends DataEntity<DocPatent> {
         if(status2 != null){
             this.status2 = status2.toString();
         }
-    }
-
-    public void setStatus(String status){
-        this.status = status;
-    }
-
-    public void setStatus(PatentMatchType patentMatchType) {
-        this.status = patentMatchType.toString();
-    }
-
-    public void setStatus1(String status1) {
-        this.status1 = status1;
-    }
-
-    public void setStatus1(FirstAuMatchType firstAuMatchType){
-        this.status1 = firstAuMatchType.toString();
-    }
-
-    public void setStatus2(String status2) {
-        this.status2 = status2;
-    }
-
-    public void setStatus2(SecondAuMatchType secondAuMatchType){
-        this.status2 = secondAuMatchType.toString();
     }
 }

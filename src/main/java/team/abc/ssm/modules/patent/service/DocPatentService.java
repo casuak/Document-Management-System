@@ -34,9 +34,6 @@ public class DocPatentService {
     @Autowired
     private SysUserMapper sysUserMapper;
 
-    @Autowired
-    private MapUserPatentMapper mapUserPatentMapper;
-
     public int deleteByPrimaryKey(String id) {
         return docPatentMapper.deleteByPrimaryKey(id);
     }
@@ -67,7 +64,19 @@ public class DocPatentService {
     }
 
     public List<DocPatent> selectListByPage(DocPatent patent) {
-        return docPatentMapper.selectListByPage(patent);
+        List<DocPatent> patentList = docPatentMapper.selectListByPage(patent);
+        System.out.println("service_selectByPage");
+        for (DocPatent tmpPatent : patentList) {
+            if (tmpPatent.getFirstAuthorId() != null && !tmpPatent.getFirstAuthorId().equals("")) {
+                tmpPatent.setFirstAuthor(sysUserMapper.selectByPrimaryKey(tmpPatent.getFirstAuthorId()));
+            }
+
+            if (tmpPatent.getSecondAuthorId() != null && !tmpPatent.getSecondAuthorId().equals("")) {
+                tmpPatent.setSecondAuthor(sysUserMapper.selectByPrimaryKey(tmpPatent.getSecondAuthorId()));
+            }
+        }
+        System.out.println(patentList);
+        return patentList;
     }
 
     public int selectSearchCount(DocPatent patent) {
@@ -148,7 +157,7 @@ public class DocPatentService {
             }
             //如果专利权人中没有属于北理的
             if (!rightPersonFlag) {
-                tmpPatent.setStatus(PatentMatchType.FILTRATED);
+                tmpPatent.setStatus(PatentMatchType.FILTRATED.toString());
                 tmpPatent.setModifyUserId(userNow.getId());
                 tmpPatent.setModifyDate(dateNow);
                 docPatentMapper.updateByPrimaryKeySelective(tmpPatent);
@@ -156,7 +165,7 @@ public class DocPatentService {
             }
             if (tmpPatent.getAuthorList() == null) {
                 //3.1如果authorList为空
-                tmpPatent.setStatus(PatentMatchType.AUTHOR_MISSED);
+                tmpPatent.setStatus(PatentMatchType.AUTHOR_MISSED.toString());
                 tmpPatent.setModifyUserId(userNow.getId());
                 tmpPatent.setModifyDate(dateNow);
                 docPatentMapper.updateByPrimaryKeySelective(tmpPatent);
@@ -166,18 +175,18 @@ public class DocPatentService {
                 //4分割出第一发明人和第二发明人姓名，设置第一发明人和第二发明人状态
                 if (authorArray.length == 1) {
                     //发明人个数 =1，只有一个作者
-                    tmpPatent.setStatus2(SecondAuMatchType.ONLY_FIRST_AUTHOR);
+                    tmpPatent.setStatus2(SecondAuMatchType.ONLY_FIRST_AUTHOR.toString());
                 } else {
                     //发明人个数 >1
                     tmpPatent.setSecondAuthorName(authorArray[1]);
-                    tmpPatent.setStatus2(SecondAuMatchType.UNMATCHED);
+                    tmpPatent.setStatus2(SecondAuMatchType.UNMATCHED.toString());
                 }
                 tmpPatent.setFirstAuthorName(authorArray[0]);
-                tmpPatent.setStatus1(FirstAuMatchType.UNMATCHED);
+                tmpPatent.setStatus1(FirstAuMatchType.UNMATCHED.toString());
                 //5.设置每个专利的institute项
                 tmpPatent.setInstitute(getInstitute(authorArray));
                 //6.设置当前tmpPatent为未匹配状态
-                tmpPatent.setStatus(PatentMatchType.UNMATCHED);
+                tmpPatent.setStatus(PatentMatchType.UNMATCHED.toString());
                 //7.更新修改人和日期信息
                 tmpPatent.setModifyDate(dateNow);
                 tmpPatent.setModifyUserId(userNow.getId());
@@ -253,11 +262,12 @@ public class DocPatentService {
                             int tutorCount = 0;
                             List<String> secondAuthorIds = new ArrayList<>();
 
-                            for (SysUser tmpSecondAuthor :
-                                    docPatent.getSecondAuthorList()) {
-                                if (tmpSecondAuthor.getTutorWorkId().equals(docPatent.getFirstAuthor().getWorkId())) {
-                                    tutorCount++;
-                                    secondAuthorIds.add(tmpSecondAuthor.getId());
+                            for (SysUser tmpSecondAuthor : docPatent.getSecondAuthorList()) {
+                                if (tmpSecondAuthor.getTutorWorkId() != null) {
+                                    if (tmpSecondAuthor.getTutorWorkId().equals(docPatent.getFirstAuthor().getWorkId())) {
+                                        tutorCount++;
+                                        secondAuthorIds.add(tmpSecondAuthor.getId());
+                                    }
                                 }
                             }
                             if (tutorCount == 0) {
@@ -484,7 +494,7 @@ public class DocPatentService {
      * @author zm
      * @date 2019/7/3 10:15
      * @params []
-     * @return: java.util.Map<java.lang.String,java.lang.Integer>
+     * @return: java.util.Map<java.lang.String, java.lang.Integer>
      * @Description //对所有已初始化(未匹配)的专利进行专利用户匹配
      **/
     public Map<String, Integer> patentUserMatch() {
@@ -534,6 +544,34 @@ public class DocPatentService {
                 count++;
             }
         }
+        return count == patentList.size();
+    }
+
+    /**
+     * @author zm
+     * @date 2019/7/3 14:58
+     * @params [status]
+     * @return: boolean
+     * @Description //根据status删除patents
+     **/
+    public boolean deleteByStatus(String status) {
+        docPatentMapper.deleteByStatus(status);
+        return true;
+    }
+
+    /**
+     * @author zm
+     * @date 2019/7/3 14:58
+     * @params [patentId, authorIndex, authorId]
+     * @return: int
+     * @Description //设置专利的第一/第二作者
+     **/
+    public int setPatentAuthor(String patentId, int authorIndex, String authorId) {
+        return docPatentMapper.setPatentAuthor(patentId, authorIndex, authorId);
+    }
+
+    public boolean convertToSuccessByIds(List<DocPatent> patentList) {
+        int count = docPatentMapper.convertToSuccessByIds(patentList);
         return count == patentList.size();
     }
 }

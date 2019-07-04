@@ -5,13 +5,12 @@
   Time: 8:43
   To change this template use File | Settings | File Templates.
 --%>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <%@ include file="/WEB-INF/views/include/taglib.jsp" %>
 <html>
 <head>
     <title>ssm</title>
     <%@include file="/WEB-INF/views/include/blankHead.jsp" %>
-    <%--<link rel="stylesheet" href="/static/css/functions/patent/patentUserMatch.css"/--%>
     <style>
         /* table左边的checkbox */
         .el-checkbox {
@@ -21,13 +20,13 @@
 
         /* 设置table行高 */
         .el-table th > .cell {
-            height: 40px;
+            /*height: 40px;*/
             line-height: 40px;
         }
 
         /* 设置table行高 */
         .el-table__row .cell {
-            height: 44px;
+            /*height: 44px;*/
             line-height: 44px;
         }
 
@@ -76,36 +75,190 @@
     <%-- 顶栏 --%>
     <div style="padding: 15px 20px 6px 15px;">
         <span class="button-group">
-            <el-button size="small" type="danger" @click="deleteByIds(selectionList)">
+            <el-button size="small" type="danger" @click="deletePatentByIds(selectionList)">
                 批量删除
             </el-button>
-            <el-button size="small" type="warning" @click="deleteByStatus()">
+            <el-button size="small" type="warning" @click="deletePatentByStatus()">
                 全部删除
             </el-button>
-            <el-button size="small" type="primary" @click="initPapers()" v-if="status === '-1'">
+            <el-button size="small" type="primary" @click="initAllPatent()" v-if="status === '-1'">
                 初始化
             </el-button>
-            <el-button size="small" type="primary" @click="paperUserMatch()" v-if="status === '0'">
+            <el-button size="small" type="primary" @click="patentUserMatch()" v-if="status === '0'">
                 自动匹配
             </el-button>
-            <el-button size="small" type="primary" @click="completePapers()" v-if="status === '2'">
+            <el-button size="small" type="primary" @click="completePatent()" v-if="status === '2'">
                 全部完成
             </el-button>
         </span>
         <span style="float: right;margin-right: 10px;">
-            <el-select v-model="status" size="small" style="margin-right: 10px;" @change="getPaperList()">
-                <el-option v-for="status in statusList" :label="status.label"
-                           :value="status.value" :key="status.value"></el-option>
+            <el-select v-model="status" size="small" style="margin-right: 10px;" @change="getPatentList()">
+                <el-option v-for="status in statusList"
+                           :label="status.label"
+                           :value="status.value"
+                           :key="status.value"></el-option>
             </el-select>
-            <el-input size="small" placeholder="请输入论文名搜索相关论文" suffix-icon="el-icon-search"
+            <el-input size="small" placeholder="请输入专利名搜索相关专利" suffix-icon="el-icon-search"
                       style="width: 250px;margin-right: 10px;" v-model="page.searchKey"
-                      @keyup.enter.native="getPaperList()">
+                      @keyup.enter.native="getPatentList()">
             </el-input>
-            <el-button size="small" type="primary" @click="getPaperList()">
+            <el-button size="small" type="primary" @click="getPatentList()">
                 搜索
             </el-button>
         </span>
     </div>
+    <%-- 表格 --%>
+    <el-table :data="patentList" height="calc(100% - 116px)" v-loading="loading.table"
+              style="width: 100%;overflow-y: hidden;margin-top: 10px;" class="scroll-bar"
+              @selection-change="selectionList=$event" stripe>
+        <el-table-column type="selection" width="40" fixed="left"></el-table-column>
+        <el-table-column label="专利名" width="336" fixed="left" align="center" v-if="['-3','-2','-1'].contains(status)">
+            <template slot-scope="{row}">
+                <el-Tooltip open-delay="500" effect="dark" :content="row.patentName" placement="top">
+                    <div style="overflow: hidden;text-overflow: ellipsis;white-space: nowrap;width: 95%;">
+                        {{ row.patentName }}
+                    </div>
+                </el-Tooltip>
+            </template>
+        </el-table-column>
+        <el-table-column label="专利名" width="155" fixed="left" align="center" v-else>
+            <template slot-scope="{row}">
+                <el-Tooltip open-delay="500" effect="dark" :content="row.patentName" placement="top">
+                    <div style="overflow: hidden;text-overflow: ellipsis;white-space: nowrap;width: 95%;">
+                        {{ row.patentName }}
+                    </div>
+                </el-Tooltip>
+            </template>
+        </el-table-column>
+        <el-table-column label="作者列表" width="200" fixed="left" align="center">
+            <template slot-scope="{row}">
+                <el-Tooltip open-delay="500" effect="dark" :content="row.authorList" placement="top">
+                    <div style="overflow: hidden;text-overflow: ellipsis;white-space: nowrap;width: 95%;">
+                        {{ row.authorList }}
+                    </div>
+                </el-Tooltip>
+            </template>
+        </el-table-column>
+        <el-table-column label="所属学院" width="150" prop="institute" fixed="left" align="center"
+                         v-if="!['-1', '-2', '-3'].contains(status)">
+        </el-table-column>
+        <el-table-column label="第一发明人" width="300" align="center"
+                         v-if="['0','1', '2', '3', '4'].contains(status)">
+            <template slot-scope="{row}">
+                <%--如果有patent的firstAuthorId信息(证明当前已经匹配到这个人)--%>
+                <span v-if="row.firstAuthorId != null && row.firstAuthorId !== ''"
+                      style="display: flex;align-items: center;justify-content: space-between">
+                    <%--作者id--%>
+                    <div @click="openSearchUser(row, 1, row.firstAuthorName, row.firstAuthorId)">
+                        {{ row.firstAuthor.workId }}
+                    </div>
+                    <%--第一作者名--%>
+                    <el-Tooltip open-delay="500" effect="dark" :content="row.firstAuthorName" placement="top">
+                        <div style="display: inline-block;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;width: 100px;">
+                            {{ row.firstAuthorName != null ? row.firstAuthorName : ''}}
+                        </div>
+                    </el-Tooltip>
+                    <%--第一作者类别--%>
+                    <div>
+                        {{ row.firstAuthorType != null ? row.firstAuthorType : ''}}
+                    </div>
+                    <%--清除用户--%>
+                    <i-button style="height: 25px;position:relative;left: 4px;"
+                              type="warning" size="small" @click="clearAuthor(row, 1)">X</i-button>
+                </span>
+                <i-button v-else type="success" size="small"
+                          @click="openSearchUser(row, 1, row.firstAuthorName, '')">手动匹配
+                </i-button>
+            </template>
+        </el-table-column>
+        <el-table-column label="第二发明人" width="300" align="center"
+                         v-if="['0','1', '2', '3', '4'].contains(status)">
+            <template slot-scope="{row}">
+                <span v-if="row.secondAuthorId != null && row.secondAuthorId !== ''"
+                      style="display: flex;align-items: center;justify-content: space-between">
+                    <div @click="openSearchUser(row, 2, row.secondAuthorName, row.secondAuthorId)">
+                        {{ row.secondAuthor.workId }}
+                    </div>
+                    <el-Tooltip open-delay="500" effect="dark" :content="row.secondAuthorName" placement="top">
+                        <div style="display: inline-block;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;width: 100px;">
+                            {{ row.secondAuthorName != null ? row.secondAuthorName : '' }}
+                        </div>
+                    </el-Tooltip>
+                    <div>{{ row.secondAuthorType != null ? row.secondAuthorType : '' }}</div>
+                    <i-button style="height: 25px;position:relative;left: 4px;"
+                              type="warning" size="small" @click="clearAuthor(row, 2)">X</i-button>
+                </span>
+                <i-button v-else type="success" size="small"
+                          @click="openSearchUser(row, 2, row.secondAuthorName, '')">手动匹配
+                </i-button>
+            </template>
+        </el-table-column>
+        <el-table-column label="专利号" width="170" prop="patentNumber" align="center">
+            <template slot-scope="{row}">
+                {{ row.patentNumber}}
+            </template>
+        </el-table-column>
+        <el-table-column label="专利类别" width="100" prop="patentType" align="center">
+            <template slot-scope="{row}">
+                {{ row.patentType}}
+            </template>
+        </el-table-column>
+        <el-table-column label="专利权人" width="150" prop="patentRightPerson" align="center">
+            <template slot-scope="{row}">
+                <el-Tooltip open-delay="500" effect="dark" :content="row.patentRightPerson" placement="top">
+                    <div style="overflow: hidden;text-overflow: ellipsis;white-space: nowrap;">
+                        {{ row.patentRightPerson}}
+                    </div>
+                </el-Tooltip>
+            </template>
+        </el-table-column>
+        <el-table-column label="授权公告日" width="150" prop="patentAuthorizationDate" align="center"
+                         v-if="['-1', '-2', '-3'].contains(status)">
+            <template slot-scope="{row}">
+                {{ row.patentAuthorizationDateString }}
+            </template>
+        </el-table-column>
+        <el-table-column label="授权公告日" width="150" prop="patentAuthorizationDate" align="center" v-else>
+            <template slot-scope="{row}">
+                {{ row.patentAuthorizationDate === null ? '' : (new
+                Date(row.patentAuthorizationDate)).Format("yyyy-MM-dd") }}
+            </template>
+        </el-table-column>
+        <el-table-column label="操作" width="160" header-align="center" align="center" fixed="right">
+            <template slot-scope="{row}">
+                <span style="position:relative;bottom: 1px;">
+                    <el-button type="success" size="mini"
+                               style="margin-right: 0;"
+                               @click="convertToSuccessByIds([{id:row.id}])"
+                               :disabled="!['0','1','3'].contains(status)">
+                        <span>转入成功</span>
+                    </el-button>
+                    <el-button type="danger" size="mini" style=""
+                               @click="deleteByIds([{id: row.id}])">
+                        <span>删除</span>
+                    </el-button>
+                </span>
+            </template>
+        </el-table-column>
+    </el-table>
+    <%-- 分页 --%>
+    <el-pagination style="text-align: center;margin: 9px auto;"
+                   @size-change="page.pageSize=$event;getPatentList()"
+                   @current-change="page.pageIndex=$event;getPatentList()"
+                   :current-page="page.pageIndex"
+                   :page-sizes="page.pageSizes"
+                   :page-size="page.pageSize"
+                   :total="page.total"
+                   layout="total, sizes, prev, pager, next, jumper">
+    </el-pagination>
+    <%-- 选择用户 --%>
+    <%--<el-dialog title="人工匹配发明人" :visible.sync="searchUserDialog.visible" class="dialog-searchUser">
+        <div v-loading="searchUserDialog.loading" style="height: 450px;">
+            <iframe v-if="searchUserDialog.visible" src="searchUserUrl"
+                    style="width: 100%;height: 450px;overflow-y: auto;border: 0;"
+                    @load="searchUserDialog.loading=false;"></iframe>
+        </div>
+    </el-dialog>--%>
 </div>
 <%@include file="/WEB-INF/views/include/blankScript.jsp" %>
 <script type="text/javascript">
@@ -116,15 +269,15 @@
                 fullScreen: false,
                 table: false
             },
-            status: '1',   // current status
+            status: '-1',   // 当前的状态
             statusList: [
                 {
                     value: '-1',
-                    label: '1. 未初始化'
+                    label: '1.  未初始化'
                 },
                 {
                     value: '-3',
-                    label: '2.1 作者信息缺失'
+                    label: '2.1 缺少发明人信息'
                 },
                 {
                     value: '-2',
@@ -132,7 +285,7 @@
                 },
                 {
                     value: '0',
-                    label: '2.2 初始化完成(未匹配)'
+                    label: '2.3 初始化完成(暂未匹配)'
                 },
                 {
                     value: '1',
@@ -148,11 +301,11 @@
                 },
                 {
                     value: '4',
-                    label: '4. 匹配完成'
+                    label: '4.  匹配完成'
                 }
             ],
             patentList: [],
-            selectionList: [],  // the selected patentList
+            selectionList: [],  // 已选中的专利列表
             page: {
                 pageIndex: 1,
                 pageSize: 10,
@@ -161,22 +314,14 @@
                 total: 0,       // 总数
             },
             urls: {
-                // api for entity
-                deletePatentByIds: '/api/patent/deleteListByIds',
                 getPatentList: '/api/patent/selectListByPage',
-                initPatent: '/api/patent/initAllPatent',
-                deleteByStatus: '/api/patent/deleteByStatus',
+                deletePatentByIds: '/api/patent/deleteListByIds',
+                initAllPatent: '/api/patent/initAllPatent',
+                deletePatentByStatus: '/api/patent/deletePatentByStatus',
                 patentUserMatch: '/api/patent/patentUserMatch',
-                searchUser: '/functions/doc/paperUserMatch/searchUser',
-                selectAuthor: '/api/patent/selectAuthor'
-                /*deleteByIds: '/api/doc/paper/deleteListByIds',
-                getPaperList: '/api/doc/paper/selectListByPage',
-                initPapers: '/api/doc/paper/initAll',
-                deleteByStatus: '/api/doc/paper/deleteByStatus',
-                paperUserMatch: '/api/doc/paper/paperUserMatch',
-                convertToSuccessByIds: '/api/doc/paper/convertToSuccessByIds',
-                searchUser: '/functions/doc/paperUserMatch/searchUser',
-                selectAuthor: '/api/doc/paper/selectAuthor'*/
+                convertToSuccessByIds: '/api/patent/convertToSuccessByIds',
+                searchUser: '/api/patent/searchUser',
+                setPatentAuthor: '/api/patent/setPatentAuthor'
             },
             searchUserDialog: {
                 visible: false,
@@ -184,125 +329,126 @@
             },
             searchUserUrl: ''
         },
-        methods: {
-            deletePatentByIds: function (ids) {
-                let app = this;
-                window.parent.app.showConfirm(function () {
-                    let data = ids;
-                    app.loading.table = true;
-                    ajaxPostJSON(app.urls.deleteByIds, data, function (d) {
-                        app.loading.table = false;
-                        window.parent.app.showMessage('删除成功！', 'success');
-                        app.getPaperList();
-                    })
-                });
-            },
-            convertToSuccessByIds: function (ids) {
-                let app = this;
-                window.parent.app.showConfirm(function () {
-                    let data = ids;
-                    app.loading.table = true;
-                    ajaxPostJSON(app.urls.convertToSuccessByIds, data, function (d) {
-                        app.loading.table = false;
-                        window.parent.app.showMessage('操作成功！', 'success');
-                        app.getPaperList();
-                    }, function (d) {
-                        app.loading.table = false;
-                        window.parent.app.showMessage('操作失败！', 'error');
-                    })
-                });
-            },
-            deleteByStatus: function () {
-                let app = this;
-                window.parent.app.showConfirm(function () {
-                    app.loading.table = true;
-                    let data = {
-                        status: app.status
-                    };
-                    ajaxPost(app.urls.deleteByStatus, data, function (d) {
-                        app.loading.table = false;
-                        app.getPaperList();
-                        window.parent.app.showMessage("删除成功");
-                    })
-                });
-            },
-            getPaperList: function () {
-                let data = {
-                    page: this.page,
-                    status: this.status
-                };
-                let app = this;
-                app.loading.table = true;
-                ajaxPostJSON(this.urls.getPaperList, data, function (d) {
-                    app.loading.table = false;
-                    app.paperList = d.data.resultList;
-                    app.page.total = d.data.total;
-                })
-            },
-            // init papers where status = '-1'
-            initPapers: function () {
-                let app = this;
-                window.parent.app.showConfirm(() = > {
-                    app.loading.table = true;
-                ajaxPost(app.urls.initPapers, null, function (d) {
-                    app.loading.table = false;
-                    app.status = '0';
-                    app.getPaperList();
-                })
-            })
-                ;
-            },
-            // match user where status = '0'
-            paperUserMatch: function () {
-                let app = this;
-                window.parent.app.showConfirm(() = > {
-                    app.loading.table = true;
-                ajaxPost(app.urls.paperUserMatch, null, function (d) {
-                    app.loading.table = false;
-                    app.status = '1';
-                    app.getPaperList();
-                })
-            })
-                ;
-            },
-            // complete papers where status = '2'
-            completePapers: function () {
-                let data = {
-                    status: this.status
-                };
-            },
-            // 打开选择用户对话框: targetAuthorIndex (1 - firstAuthor, 2 - secondAuthor)
-            openSearchUser: function (row, authorIndex, authorName, workId) {
-                this.searchUserUrl = this.urls.searchUser + "?paperId=" + row.id +
-                    "&authorIndex=" + authorIndex + '&searchKey=' + authorName + ';'
-                    + '&school=' + (row.danweiCN ? row.danweiCN : '') + '&publishDate=' + row.publishDate + '&workId=' + workId;
-                this.searchUserDialog.visible = true;
-                this.searchUserDialog.loading = true;
-            },
-            // 清空作者
-            clearAuthor: function (paper, authorIndex) {
-                let app = this;
-                window.parent.app.showConfirm(function () {
-                    let data = {
-                        paperId: paper.id,
-                        authorIndex: authorIndex,
-                        authorWorkId: null
-                    };
-                    app.loading.table = true;
-                    ajaxPost(this.urls.selectAuthor, data, function (d) {
-                        app.loading.table = false;
-                        if (authorIndex === 1)
-                            paper.firstAuthorId = null;
-                        else
-                            paper.secondAuthorId = null;
-                    })
-                });
-            }
-        },
-        mounted: function () {
-            this.getPaperList();
-        }
+        methods: {}
     });
+
+    //获取专利列表
+    function getPatentList() {
+        let data = {
+            page: app.page,
+            status: app.status
+        };
+        app.loading.table = true;
+        ajaxPostJSON(app.urls.getPatentList, data, function (d) {
+            app.loading.table = false;
+            app.patentList = d.data.resultList;
+            app.page.total = d.data.total;
+        });
+    }
+
+    // 初始化专利状态是-1的
+    function initAllPatent() {
+        window.parent.app.showConfirm(() => {
+            app.loading.table = true;
+            ajaxPost(app.urls.initAllPatent, null, function (d) {
+                app.loading.table = false;
+                app.status = '0';
+                getPatentList();
+            }, null)
+        });
+    }
+
+    //专利用户匹配所有status是0的
+    function patentUserMatch() {
+        window.parent.app.showConfirm(() => {
+            app.loading.table = true;
+            ajaxPost(app.urls.patentUserMatch, null, function (d) {
+                app.loading.table = false;
+                app.status = '2';
+                getPatentList();
+            })
+        });
+    }
+
+    //根据ids删除专利
+    function deletePatentByIds(ids) {
+        if (app.selectionList.length === 0){
+            window.parent.app.showMessage('请先选择需要删除的专利！', 'warning');
+            return;
+        }
+        window.parent.app.showConfirm(function () {
+            let data = ids;
+            app.loading.table = true;
+            ajaxPostJSON(app.urls.deletePatentByIds, data, function (d) {
+                app.loading.table = false;
+                window.parent.app.showMessage('删除成功！', 'success');
+                getPatentList();
+            })
+        });
+    }
+
+    //根据status删除专利
+    function deletePatentByStatus() {
+        window.parent.app.showConfirm(function () {
+            app.loading.table = true;
+            let data = {
+                status: app.status
+            };
+            ajaxPost(app.urls.deletePatentByStatus, data, function (d) {
+                app.loading.table = false;
+                getPatentList();
+                window.parent.app.showMessage("删除成功");
+            })
+        });
+    }
+
+    //转入成功(仅仅对于status是0，1，3的生效)
+    function convertToSuccessByIds(ids) {
+        window.parent.app.showConfirm(function () {
+            let data = ids;
+            app.loading.table = true;
+            ajaxPostJSON(app.urls.convertToSuccessByIds, data, function (d) {
+                app.loading.table = false;
+                window.parent.app.showMessage('操作成功！', 'success');
+                getPatentList();
+            }, function (d) {
+                app.loading.table = false;
+                window.parent.app.showMessage('操作失败！', 'error');
+            })
+        });
+    }
+
+    // 打开选择用户对话框: targetAuthorIndex (1 - firstAuthor, 2 - secondAuthor)
+    function openSearchUser(row, authorIndex, authorName, workId) {
+        this.searchUserUrl = this.urls.searchUser + "?patentId=" + row.id +
+            "&authorIndex=" + authorIndex + '&searchKey=' + authorName +
+            '&school=' + (row.institute ? row.institute : '') + '&publishDate=' + row.publishDate + '&workId=' + workId;
+        this.searchUserDialog.visible = true;
+        this.searchUserDialog.loading = true;
+    }
+
+    // 清空第一或第二作者
+    function clearAuthor(patent, authorIndex) {
+        window.parent.app.showConfirm(function () {
+            let data = {
+                patentId: patent.id,
+                authorIndex: authorIndex,
+                authorWorkId: null
+            };
+            app.loading.table = true;
+            ajaxPost(this.urls.setPatentAuthor, data, function (d) {
+                app.loading.table = false;
+                if (authorIndex === 1)
+                    patent.firstAuthorId = null;
+                else
+                    patent.secondAuthorId = null;
+            })
+        });
+    }
+
+    window.onload = function () {
+        getPatentList();
+    }
 </script>
 </body>
 </html>
