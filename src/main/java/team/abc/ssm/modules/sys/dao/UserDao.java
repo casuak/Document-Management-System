@@ -40,4 +40,22 @@ public interface UserDao {
 
     // 删除指定id的用户
     int deleteByIds(List<User> userList);
+
+    /**
+     * @author zm
+     * @date 2019/7/5 14:08
+     * @params [user]
+     * @return: java.util.List<team.abc.ssm.modules.sys.entity.User>
+     * @Description //专利用户匹配用：搜索匹配用户
+     **/
+    List<User> selectUserListByPage(User user);
+    
+    /**
+     * @author zm
+     * @date 2019/7/5 14:10
+     * @params [user]
+     * @return: int
+     * @Description //专利用户匹配用：搜索匹配用户总数
+     **/
+    int selectUserSearchCount(User user);
 }

@@ -3,7 +3,6 @@ package team.abc.ssm.modules.patent.api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
 import team.abc.ssm.common.persistence.Page;
 import team.abc.ssm.common.web.AjaxMessage;
 import team.abc.ssm.common.web.BaseApi;
@@ -26,13 +25,11 @@ public class DocPatentApi extends BaseApi {
     @RequestMapping(value = "selectListByPage", method = RequestMethod.POST)
     @ResponseBody
     public Object selectListByPage(@RequestBody DocPatent patent) {
-        System.out.println("----DocPatent----selectListByPage----start----");
         Page<DocPatent> data = new Page<>();
         data.setResultList(patentService.selectListByPage(patent));
         data.setTotal(patentService.selectSearchCount(patent));
         System.out.println(data.getResultList());
         System.out.println(data.getTotal());
-        System.out.println("----DocPatent----selectListByPage----end----");
         return new AjaxMessage().Set(MsgType.SUCCESS, data);
     }
 
@@ -41,25 +38,6 @@ public class DocPatentApi extends BaseApi {
     public Object deleteListByIds(@RequestBody List<DocPatent> patentList) {
         patentService.deleteListByIds(patentList);
         return retMsg.Set(MsgType.SUCCESS);
-    }
-
-    @RequestMapping(value = "searchUser", method = RequestMethod.GET)
-    public ModelAndView patentUserSearch(
-            @RequestParam("patentId") String patentId,
-            @RequestParam("authorIndex") int authorIndex,
-            @RequestParam("searchKey") String searchKey,
-            @RequestParam("institute") String institute,
-            @RequestParam("authorizationDate") Long authorizationDate,
-            @RequestParam("workId") String workId)
-    {
-        ModelAndView mv = new ModelAndView("functions/patent/searchUser");
-        mv.addObject("patentId", patentId);
-        mv.addObject("authorIndex", authorIndex);
-        mv.addObject("searchKey", searchKey);
-        mv.addObject("institute", institute);
-        mv.addObject("authorizationDate", authorizationDate);
-        mv.addObject("workId", workId);
-        return mv;
     }
 
     /**
@@ -85,7 +63,7 @@ public class DocPatentApi extends BaseApi {
      **/
     @RequestMapping(value = "setPatentAuthor", method = RequestMethod.POST)
     @ResponseBody
-    public Object selectAuthor(
+    public Object setPatentAuthor(
             @RequestParam("patentId") String patentId,
             @RequestParam("authorIndex") int authorIndex,
             @RequestParam("authorId") String authorId) {
@@ -142,6 +120,22 @@ public class DocPatentApi extends BaseApi {
     @ResponseBody
     public Object convertToSuccessByIds(@RequestBody List<DocPatent> patentList) {
         patentService.convertToSuccessByIds(patentList);
+        return retMsg.Set(MsgType.SUCCESS);
+    }
+
+    /**
+     * @author zm
+     * @date 2019/7/5 9:31
+     * @params [patentList]
+     * @return: java.lang.Object
+     * @Description //根据传来的专利list，把专利状态设置成4(匹配完成)
+     **/
+    @RequestMapping(value = "convertToCompleteByIds",method = RequestMethod.POST)
+    @ResponseBody
+    public Object convertToCompleteByIds(@RequestBody List<DocPatent> patentList){
+        System.out.println("----convertToCompleteByIds----");
+        System.out.println(patentList);
+        patentService.convertToCompleteByIds(patentList);
         return retMsg.Set(MsgType.SUCCESS);
     }
 }

@@ -1,4 +1,7 @@
 package team.abc.ssm.modules.patent.dao;
+
+import java.util.Date;
+
 import org.apache.ibatis.annotations.Param;
 
 import team.abc.ssm.modules.patent.entity.DocPatent;
@@ -8,11 +11,11 @@ import java.util.List;
 
 public interface DocPatentMapper {
 
-    List<DocPatent> selectAllByStatus(@Param("status")String status);
+    List<DocPatent> selectAllByStatus(@Param("status") String status);
 
     int deleteByPrimaryKey(String id);
 
-    int deleteByStatus(@Param("status")String status);
+    int deleteByStatus(@Param("status") String status);
 
     int insert(DocPatent record);
 
@@ -24,14 +27,19 @@ public interface DocPatentMapper {
 
     int updateByPrimaryKey(DocPatent record);
 
-    /** 按页查询(会有patentName模糊匹配)*/
+    /**
+     * 按页查询(会有patentName模糊匹配)
+     */
     List<DocPatent> selectListByPage(DocPatent patent);
 
     int selectSearchCount(DocPatent patent);
 
-    int setPatentAuthor(@Param("patentId") String patentId,
-                        @Param("authorIndex") int authorIndex,
-                        @Param("authorId") String authorId);
+    int setPatentAuthor(
+            @Param("patentId") String patentId,
+            @Param("authorIndex") int authorIndex,
+            @Param("authorId") String authorId);
 
     int convertToSuccessByIds(List<DocPatent> patentList);
+
+    int convertToCompleteByIds(List<DocPatent> patentList);
 }

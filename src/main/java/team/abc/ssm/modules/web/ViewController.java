@@ -146,6 +146,25 @@ public class ViewController extends BaseController {
         return mv;
     }
 
+    @RequestMapping(value = "functions/patent/searchUser", method = RequestMethod.GET)
+    public ModelAndView patentUserSearch(
+            @RequestParam("patentId") String patentId,
+            @RequestParam("authorIndex") int authorIndex,
+            @RequestParam("searchKey") String searchKey,
+            @RequestParam("institute") String institute,
+            @RequestParam("authorizationDate") String authorizationDate,
+            @RequestParam("workId") String workId) {
+        System.out.println("lalalalal   ");
+        ModelAndView mv = new ModelAndView("functions/patent/searchUser");
+        mv.addObject("patentId", patentId);
+        mv.addObject("authorIndex", authorIndex);
+        mv.addObject("searchKey", searchKey);
+        mv.addObject("institute", institute);
+        mv.addObject("authorizationDate", authorizationDate);
+        mv.addObject("workId", workId);
+        return mv;
+    }
+
     /**
      * @author zm
      * @date 2019/7/3 8:47

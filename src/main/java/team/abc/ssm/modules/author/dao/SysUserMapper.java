@@ -24,4 +24,6 @@ public interface SysUserMapper {
     List<SysUser> selectByRealNameAndSchool(@Param("realName")String realName,@Param("school")String school);
 
     SysUser selectByWorkId(@Param("workId")String workId);
+
+    List<SysUser> selectListByPage(SysUser sysUser);
 }

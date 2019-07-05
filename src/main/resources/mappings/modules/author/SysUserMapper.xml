@@ -452,4 +452,5 @@
         from sys_user
         where real_name=#{realName,jdbcType=VARCHAR} and school=#{school,jdbcType=VARCHAR}
     </select>
+    <select id="selectListByPage" resultMap="BaseResultMap"></select>
 </mapper>

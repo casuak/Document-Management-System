@@ -365,12 +365,32 @@
                 and second_author_id = #{authorId,jdbcType=VARCHAR} ,
             </if>
         </trim>
-        <where>id = #{patentId,jdbcType=VARCHAR} </where>
+        <where>id = #{patentId,jdbcType=VARCHAR}</where>
     </update>
 
     <update id="convertToSuccessByIds" parameterType="team.abc.ssm.modules.patent.entity.DocPatent">
         update doc_patent
         set status = '2'
+        <choose>
+            <when test="list != null and list.size() != 0">
+                <where>
+                    id in
+                    <foreach collection="list" open="(" close=")" item="item" separator=",">
+                        #{item.id}
+                    </foreach>
+                </where>
+            </when>
+            <otherwise>
+                <where>
+                    1 = 0
+                </where>
+            </otherwise>
+        </choose>
+    </update>
+
+    <update id="convertToCompleteByIds" parameterType="team.abc.ssm.modules.patent.entity.DocPatent">
+        update doc_patent
+        set status = '4'
         <choose>
             <when test="list != null and list.size() != 0">
                 <where>

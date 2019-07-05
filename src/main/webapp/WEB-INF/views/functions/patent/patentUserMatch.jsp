@@ -7,6 +7,7 @@
 --%>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ include file="/WEB-INF/views/include/taglib.jsp" %>
+<!DOCTYPE html>
 <html>
 <head>
     <title>ssm</title>
@@ -20,13 +21,13 @@
 
         /* 设置table行高 */
         .el-table th > .cell {
-            /*height: 40px;*/
+            height: 40px;
             line-height: 40px;
         }
 
         /* 设置table行高 */
         .el-table__row .cell {
-            /*height: 44px;*/
+            height: 44px;
             line-height: 44px;
         }
 
@@ -87,7 +88,7 @@
             <el-button size="small" type="primary" @click="patentUserMatch()" v-if="status === '0'">
                 自动匹配
             </el-button>
-            <el-button size="small" type="primary" @click="completePatent()" v-if="status === '2'">
+            <el-button size="small" type="primary" @click="completePatent(patentList)" v-if="status === '2'">
                 全部完成
             </el-button>
         </span>
@@ -112,7 +113,7 @@
               style="width: 100%;overflow-y: hidden;margin-top: 10px;" class="scroll-bar"
               @selection-change="selectionList=$event" stripe>
         <el-table-column type="selection" width="40" fixed="left"></el-table-column>
-        <el-table-column label="专利名" width="336" fixed="left" align="center" v-if="['-3','-2','-1'].contains(status)">
+        <el-table-column label="专利名" width="346" fixed="left" align="center" v-if="['-3','-2','-1'].contains(status)">
             <template slot-scope="{row}">
                 <el-Tooltip open-delay="500" effect="dark" :content="row.patentName" placement="top">
                     <div style="overflow: hidden;text-overflow: ellipsis;white-space: nowrap;width: 95%;">
@@ -121,7 +122,7 @@
                 </el-Tooltip>
             </template>
         </el-table-column>
-        <el-table-column label="专利名" width="155" fixed="left" align="center" v-else>
+        <el-table-column label="专利名" width="100" fixed="left" align="center" v-else>
             <template slot-scope="{row}">
                 <el-Tooltip open-delay="500" effect="dark" :content="row.patentName" placement="top">
                     <div style="overflow: hidden;text-overflow: ellipsis;white-space: nowrap;width: 95%;">
@@ -130,7 +131,7 @@
                 </el-Tooltip>
             </template>
         </el-table-column>
-        <el-table-column label="作者列表" width="200" fixed="left" align="center">
+        <el-table-column label="作者列表" width="190" fixed="left" align="center">
             <template slot-scope="{row}">
                 <el-Tooltip open-delay="500" effect="dark" :content="row.authorList" placement="top">
                     <div style="overflow: hidden;text-overflow: ellipsis;white-space: nowrap;width: 95%;">
@@ -142,54 +143,54 @@
         <el-table-column label="所属学院" width="150" prop="institute" fixed="left" align="center"
                          v-if="!['-1', '-2', '-3'].contains(status)">
         </el-table-column>
-        <el-table-column label="第一发明人" width="300" align="center"
+        <el-table-column label="第一发明人" width="332" align="center"
                          v-if="['0','1', '2', '3', '4'].contains(status)">
             <template slot-scope="{row}">
                 <%--如果有patent的firstAuthorId信息(证明当前已经匹配到这个人)--%>
                 <span v-if="row.firstAuthorId != null && row.firstAuthorId !== ''"
                       style="display: flex;align-items: center;justify-content: space-between">
                     <%--作者id--%>
-                    <div @click="openSearchUser(row, 1, row.firstAuthorName, row.firstAuthorId)">
+                    <div @click="openSearchUser(row, 1, row.firstAuthor.realName, row.firstAuthor.workId)">
                         {{ row.firstAuthor.workId }}
                     </div>
                     <%--第一作者名--%>
-                    <el-Tooltip open-delay="500" effect="dark" :content="row.firstAuthorName" placement="top">
+                    <el-Tooltip open-delay="500" effect="dark" :content="row.firstAuthor.realName" placement="top">
                         <div style="display: inline-block;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;width: 100px;">
-                            {{ row.firstAuthorName != null ? row.firstAuthorName : ''}}
+                            {{ row.firstAuthor.realName != null ? row.firstAuthor.realName : ''}}
                         </div>
                     </el-Tooltip>
                     <%--第一作者类别--%>
-                    <div>
-                        {{ row.firstAuthorType != null ? row.firstAuthorType : ''}}
+                    <div style="width: 65px;">
+                        {{ row.firstAuthor.userType != null ? row.firstAuthor.userType : ''}}
                     </div>
                     <%--清除用户--%>
                     <i-button style="height: 25px;position:relative;left: 4px;"
                               type="warning" size="small" @click="clearAuthor(row, 1)">X</i-button>
                 </span>
                 <i-button v-else type="success" size="small"
-                          @click="openSearchUser(row, 1, row.firstAuthorName, '')">手动匹配
+                          @click="openSearchUser(row, 1, row.firstAuthor.realName, '')">手动匹配
                 </i-button>
             </template>
         </el-table-column>
-        <el-table-column label="第二发明人" width="300" align="center"
+        <el-table-column label="第二发明人" width="332" align="center"
                          v-if="['0','1', '2', '3', '4'].contains(status)">
             <template slot-scope="{row}">
-                <span v-if="row.secondAuthorId != null && row.secondAuthorId !== ''"
+                <span v-if="row.secondAuthorId !== null && row.secondAuthorId !== ''"
                       style="display: flex;align-items: center;justify-content: space-between">
-                    <div @click="openSearchUser(row, 2, row.secondAuthorName, row.secondAuthorId)">
+                    <div @click="openSearchUser(row, 2, row.secondAuthor.realName, row.secondAuthor.workId)">
                         {{ row.secondAuthor.workId }}
                     </div>
-                    <el-Tooltip open-delay="500" effect="dark" :content="row.secondAuthorName" placement="top">
+                    <el-Tooltip open-delay="500" effect="dark" :content="row.secondAuthor.realName" placement="top">
                         <div style="display: inline-block;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;width: 100px;">
-                            {{ row.secondAuthorName != null ? row.secondAuthorName : '' }}
+                            {{ row.secondAuthor.realName != null ? row.secondAuthor.realName : '' }}
                         </div>
                     </el-Tooltip>
-                    <div>{{ row.secondAuthorType != null ? row.secondAuthorType : '' }}</div>
+                    <div>{{ row.secondAuthor.userType != null ? row.secondAuthor.userType : '' }}</div>
                     <i-button style="height: 25px;position:relative;left: 4px;"
                               type="warning" size="small" @click="clearAuthor(row, 2)">X</i-button>
                 </span>
                 <i-button v-else type="success" size="small"
-                          @click="openSearchUser(row, 2, row.secondAuthorName, '')">手动匹配
+                          @click="openSearchUser(row, 2, row.secondAuthor.realName, '')">手动匹配
                 </i-button>
             </template>
         </el-table-column>
@@ -229,12 +230,19 @@
                 <span style="position:relative;bottom: 1px;">
                     <el-button type="success" size="mini"
                                style="margin-right: 0;"
+                               @click="completePatent([{id:row.id}])"
+                               v-if="status === '2'">
+                        <span>转入完成</span>
+                    </el-button>
+                    <el-button type="success" size="mini"
+                               style="margin-right: 0;"
                                @click="convertToSuccessByIds([{id:row.id}])"
-                               :disabled="!['0','1','3'].contains(status)">
+                               :disabled="!['0','1','3'].contains(status)"
+                               v-else>
                         <span>转入成功</span>
                     </el-button>
                     <el-button type="danger" size="mini" style=""
-                               @click="deleteByIds([{id: row.id}])">
+                               @click="deletePatentByIds([{id: row.id}])">
                         <span>删除</span>
                     </el-button>
                 </span>
@@ -252,13 +260,13 @@
                    layout="total, sizes, prev, pager, next, jumper">
     </el-pagination>
     <%-- 选择用户 --%>
-    <%--<el-dialog title="人工匹配发明人" :visible.sync="searchUserDialog.visible" class="dialog-searchUser">
+    <el-dialog title="人工匹配发明人" :visible.sync="searchUserDialog.visible" class="dialog-searchUser">
         <div v-loading="searchUserDialog.loading" style="height: 450px;">
-            <iframe v-if="searchUserDialog.visible" src="searchUserUrl"
+            <iframe v-if="searchUserDialog.visible" :src="searchUserUrl"
                     style="width: 100%;height: 450px;overflow-y: auto;border: 0;"
                     @load="searchUserDialog.loading=false;"></iframe>
         </div>
-    </el-dialog>--%>
+    </el-dialog>
 </div>
 <%@include file="/WEB-INF/views/include/blankScript.jsp" %>
 <script type="text/javascript">
@@ -320,7 +328,8 @@
                 deletePatentByStatus: '/api/patent/deletePatentByStatus',
                 patentUserMatch: '/api/patent/patentUserMatch',
                 convertToSuccessByIds: '/api/patent/convertToSuccessByIds',
-                searchUser: '/api/patent/searchUser',
+                convertToCompleteByIds: '/api/patent/convertToCompleteByIds',
+                patentUserSearch: '/functions/patent/searchUser',
                 setPatentAuthor: '/api/patent/setPatentAuthor'
             },
             searchUserDialog: {
@@ -372,7 +381,7 @@
 
     //根据ids删除专利
     function deletePatentByIds(ids) {
-        if (app.selectionList.length === 0){
+        if (ids.length === 0) {
             window.parent.app.showMessage('请先选择需要删除的专利！', 'warning');
             return;
         }
@@ -420,11 +429,15 @@
 
     // 打开选择用户对话框: targetAuthorIndex (1 - firstAuthor, 2 - secondAuthor)
     function openSearchUser(row, authorIndex, authorName, workId) {
-        this.searchUserUrl = this.urls.searchUser + "?patentId=" + row.id +
-            "&authorIndex=" + authorIndex + '&searchKey=' + authorName +
-            '&school=' + (row.institute ? row.institute : '') + '&publishDate=' + row.publishDate + '&workId=' + workId;
-        this.searchUserDialog.visible = true;
-        this.searchUserDialog.loading = true;
+        console.log(row);
+        app.searchUserUrl = app.urls.patentUserSearch
+            + "?patentId=" + row.id + "&authorIndex=" + authorIndex
+            + '&searchKey=' + authorName + '&institute=' + (row.institute ? row.institute : '')
+            + '&authorizationDate=' + (row.patentAuthorizationDateString ? row.patentAuthorizationDateString : '')
+            + '&workId=' + workId;
+        console.log(app.searchUserUrl);
+        app.searchUserDialog.visible = true;
+        app.searchUserDialog.loading = true;
     }
 
     // 清空第一或第二作者
@@ -442,6 +455,23 @@
                     patent.firstAuthorId = null;
                 else
                     patent.secondAuthorId = null;
+            })
+        });
+    }
+
+    //根据ids把专利设置成完成状态
+    function completePatent(ids) {
+        console.log(ids);
+        window.parent.app.showConfirm(function () {
+            let data = ids;
+            app.loading.table = true;
+            ajaxPostJSON(app.urls.convertToCompleteByIds, data, function (d) {
+                app.loading.table = false;
+                window.parent.app.showMessage('操作成功！', 'success');
+                getPatentList();
+            }, function (d) {
+                app.loading.table = false;
+                window.parent.app.showMessage('操作失败！', 'error');
             })
         });
     }
