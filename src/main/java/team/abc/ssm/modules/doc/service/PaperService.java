@@ -181,6 +181,10 @@ public class PaperService {
         return count == paperList.size();
     }
 
+    public void completeAll(){
+        paperDao.completeAll();
+    }
+
     private void setPaperDanweiCn(Paper paper, User user) {
         if (paper.getDanweiCN() == null || paper.getDanweiCN().equals("")) {
             paper.setDanweiCN(user.getSchool());

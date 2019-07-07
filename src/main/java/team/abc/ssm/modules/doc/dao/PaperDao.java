@@ -47,4 +47,6 @@ public interface PaperDao {
             @Param("paperId") String paperId,
             @Param("authorIndex") int authorIndex,
             @Param("authorWorkId") String authorWorkId);
+
+    int completeAll();
 }

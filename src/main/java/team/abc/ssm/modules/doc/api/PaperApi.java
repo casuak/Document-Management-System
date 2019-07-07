@@ -56,6 +56,14 @@ public class PaperApi extends BaseApi {
         return retMsg.Set(MsgType.SUCCESS);
     }
 
+    // 将所有匹配成功状态的论文转入完成状态
+    @RequestMapping(value = "completeAll", method = RequestMethod.POST)
+    @ResponseBody
+    public Object completeAll(){
+        paperService.completeAll();
+        return retMsg.Set(MsgType.SUCCESS);
+    }
+
     /**
      * step2
      */

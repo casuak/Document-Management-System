@@ -78,11 +78,13 @@
                         </div>
                     </el-Tooltip>
                     <div>{{ row.firstAuthor != null ? row.firstAuthor.userType : ''}}</div>
-                    <i-button style="height: 25px;position:relative;left: 4px;"
+                    <i-button style="height: 25px;position:relative;left: 4px;" v-if="row.status !== '3'"
                               type="warning" size="small" @click="clearAuthor(row, 1)">C</i-button>
                 </span>
-                <i-button v-else type="success" size="small"
-                          @click="openSearchUser(row, 1, row.firstAuthorName, '')">手动匹配</i-button>
+                <span v-else>
+                    <i-button v-if="row.status !== '3'" type="success" size="small"
+                              @click="openSearchUser(row, 1, row.firstAuthorName, '')">手动匹配</i-button>
+                </span>
             </template>
         </el-table-column>
         <el-table-column label="第二匹配作者" width="300" align="center"
@@ -97,11 +99,13 @@
                         </div>
                     </el-Tooltip>
                     <div>{{ row.secondAuthor != null ? row.secondAuthor.userType : '' }}</div>
-                    <i-button style="height: 25px;position:relative;left: 4px;"
+                    <i-button style="height: 25px;position:relative;left: 4px;" v-if="row.status !== '3'"
                               type="warning" size="small" @click="clearAuthor(row, 2)">C</i-button>
                 </span>
-                <i-button v-else type="success" size="small"
-                          @click="openSearchUser(row, 2, row.secondAuthorName, '')">手动匹配</i-button>
+                <span v-else>
+                    <i-button v-if="row.status !== '3'" type="success" size="small"
+                              @click="openSearchUser(row, 2, row.secondAuthorName, '')">手动匹配</i-button>
+                </span>
             </template>
         </el-table-column>
         <%--<el-table-column label="ISSN" width="150" prop="ISSN" align="center"></el-table-column>--%>

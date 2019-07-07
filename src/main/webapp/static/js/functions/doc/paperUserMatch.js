@@ -50,7 +50,8 @@ app = new Vue({
             paperUserMatch: '/api/doc/paper/paperUserMatch',
             convertToSuccessByIds: '/api/doc/paper/convertToSuccessByIds',
             searchUser: '/functions/doc/paperUserMatch/searchUser',
-            selectAuthor: '/api/doc/paper/selectAuthor'
+            selectAuthor: '/api/doc/paper/selectAuthor',
+            completeAll: '/api/doc/paper/completeAll'
         },
         searchUserDialog: {
             visible: false,
@@ -139,9 +140,15 @@ app = new Vue({
         },
         // complete papers where status = '2'
         completePapers: function () {
-            let data = {
-                status: this.status
-            };
+            let app = this;
+            window.parent.app.showConfirm(() => {
+                app.loading.table = true;
+                ajaxPost(app.urls.completeAll, null, function (d) {
+                    app.loading.table = false;
+                    app.status = '3';
+                    app.getPaperList();
+                })
+            });
         },
         // 打开选择用户对话框: targetAuthorIndex (1 - firstAuthor, 2 - secondAuthor)
         openSearchUser: function (row, authorIndex, authorName, workId) {

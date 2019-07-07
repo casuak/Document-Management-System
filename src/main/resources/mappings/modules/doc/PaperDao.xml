@@ -799,4 +799,12 @@
         </trim>
         where id = #{paperId}
     </update>
+
+    <update id="completeAll">
+        update doc_paper set
+        <trim prefixOverrides="and">
+            status = '3'
+        </trim>
+        where status = '2'
+    </update>
 </mapper>
