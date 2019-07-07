@@ -81,4 +81,17 @@ public class UserApi extends BaseApi {
     public Object getCurrentUser() {
         return retMsg.Set(MsgType.SUCCESS, UserUtils.getCurrentUser());
     }
+
+    /**
+     * @author zm
+     * @date 2019/7/5 14:16
+     * @params [user]
+     * @return: java.lang.Object
+     * @Description //复杂搜索：专利匹配搜索用户时使用
+     **/
+    @RequestMapping(value = "selectUserListByPage", method = RequestMethod.POST)
+    @ResponseBody
+    public Object selectUserListByPage(@RequestBody User user){
+        return retMsg.Set(MsgType.SUCCESS, userService.selectUserListByPage(user));
+    }
 }

@@ -223,4 +223,51 @@
             #{item.id}
         </foreach>
     </delete>
+
+    <select id="selectUserListByPage" parameterType="user" resultMap="userBean">
+        select
+        a.*,
+        b.real_name as tutor_name,
+        b.nicknames as tutor_nicknames
+        from
+        (select * from sys_user
+        <where>
+            <if test="page != null and page != '' and page.searchKey != null and page.searchKey != ''">
+                real_name like concat('%', #{page.searchKey}, '%')
+            </if>
+            <if test="userType != null and userType != ''">
+                and user_type = #{userType}
+            </if>
+            <if test="school != null and school != ''">
+                and school = #{school}
+            </if>
+            <if test="workId != null and workId != ''">
+                and work_id = #{workId}
+            </if>
+        </where>
+        order by real_name, school
+        <if test="page != null and page != ''">
+            limit #{page.pageStart}, #{page.pageSize}
+        </if>
+        ) as a
+        left join sys_user b on b.work_id = a.tutor_work_id
+    </select>
+    <!-- 与上面的方法配合使用 -->
+    <select id="selectUserSearchCount" parameterType="user" resultType="int">
+        select count(*) from sys_user a
+        <where>
+            <if test="page != null and page != '' and page.searchKey != null and page.searchKey != ''">
+                real_name like concat('%', #{page.searchKey}, '%')
+            </if>
+            <if test="userType != null and userType != ''">
+                and user_type = #{userType}
+            </if>
+            <if test="school != null and school != ''">
+                and school = #{school}
+            </if>
+            <if test="workId != null and workId != ''">
+                and work_id = #{workId}
+            </if>
+        </where>
+    </select>
 </mapper>

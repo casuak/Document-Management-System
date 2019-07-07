@@ -75,4 +75,19 @@ public class UserService {
         int count = userDao.deleteByIds(userList);
         return count == userList.size();
     }
+
+
+    /**
+     * @author zm
+     * @date 2019/7/5 14:14
+     * @params [user]
+     * @return: team.abc.ssm.common.persistence.Page<team.abc.ssm.modules.sys.entity.User>
+     * @Description //复杂搜索：专利匹配页用_用户搜索
+     **/
+    public Page<User> selectUserListByPage(User user) {
+        Page<User> page = new Page<>();
+        page.setResultList(userDao.selectUserListByPage(user));
+        page.setTotal(userDao.selectUserSearchCount(user));
+        return page;
+    }
 }
