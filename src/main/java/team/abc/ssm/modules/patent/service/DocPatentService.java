@@ -1,6 +1,5 @@
 package team.abc.ssm.modules.patent.service;
 
-import io.swagger.models.auth.In;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,11 +13,9 @@ import team.abc.ssm.common.web.SecondAuMatchType;
 import team.abc.ssm.modules.author.dao.SysUserMapper;
 import team.abc.ssm.modules.author.entity.SysUser;
 import team.abc.ssm.modules.patent.dao.DocPatentMapper;
-import team.abc.ssm.modules.patent.dao.MapUserPatentMapper;
 import team.abc.ssm.modules.patent.entity.DocPatent;
 import team.abc.ssm.modules.sys.entity.User;
 
-import java.beans.Transient;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;

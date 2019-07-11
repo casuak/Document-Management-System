@@ -33,10 +33,7 @@
                 <%-- 顶栏 --%>
                 <div style="margin-left: 10px">
                     <span class="button-group">
-                        <el-button size="small" type="success" @click="dialog.insertPaper.visible=true">
-                            <span>添加</span>
-                        </el-button>
-                        <el-button size="small" type="danger" @click="deletePaperListByIds(table.entity.selectionList)"
+                        <el-button size="small" type="danger" @click="deletePaperListByIds(table.paperTable.entity.selectionList)"
                                    style="margin-left: 10px;">
                             <span>批量删除</span>
                         </el-button>
@@ -56,11 +53,13 @@
                 <%-- entity表格 --%>
                 <el-table :data="table.paperTable.entity.data"
                           id="paperTable"
+                          ref="multipleTable"
                           v-loading="table.paperTable.entity.loading"
                           height="calc(100% - 130px)"
                           style="width: 100%;overflow-y: hidden;margin-top: 20px;"
                           class="scroll-bar"
-                          @selection-change="onSelectionChange_paper" stripe>
+                          @selection-change="handleSelectionChange"
+                          stripe>
                     <el-table-column type="selection" width="40"></el-table-column>
                     <el-table-column
                             prop="paperName"
@@ -95,10 +94,6 @@
 
                     <el-table-column label="操作" width="190" header-align="center" align="center">
                         <template slot-scope="scope">
-                            <el-button type="warning" size="mini" style="position:relative;bottom: 1px;"
-                                       @click="openDialog_updatePaper(scope.row)">
-                                <span>编辑</span>
-                            </el-button>
                             <el-button type="danger" size="mini" style="position:relative;bottom: 1px;margin-left: 6px;"
                                        @click="deletePaperListByIds([{id: scope.row.id}])">
                                 <span>删除</span>
@@ -117,51 +112,13 @@
                                :total="table.paperTable.entity.params.total"
                                layout="total, sizes, prev, pager, next, jumper">
                 </el-pagination>
-                <%-- entity添加窗口 --%>
-                <el-dialog title="添加" :visible.sync="dialog.insertPaper.visible"
-                           @closed="resetForm('form_insertPaper')">
-                    <el-form label-position="left" label-width="80px" style="padding: 0 100px;"
-                             :model="dialog.insertPaper.formData" :rules="dialog.insertPaper.rules"
-                             ref="form_insertPaper" v-loading="dialog.insertPaper.loading" status-icon>
-                        <el-form-item label="角色名" prop="name">
-                            <el-input v-model="dialog.insertPaper.formData.name"></el-input>
-                        </el-form-item>
-                        <el-form-item label="角色代码" prop="code">
-                            <el-input v-model="dialog.insertPaper.formData.code"></el-input>
-                        </el-form-item>
-                    </el-form>
-                    <div slot="footer" class="dialog-footer">
-                        <el-button size="medium" @click="dialog.insertPaper.visible=false">取 消</el-button>
-                        <el-button size="medium" type="primary" @click="insertPaper()" style="margin-left: 10px;">提 交
-                        </el-button>
-                    </div>
-                </el-dialog>
-                <%-- entity编辑窗口 --%>
-                <el-dialog title="编辑" :visible.sync="dialog.updatePaper.visible"
-                           @closed="resetForm('form_updatePaper')">
-                    <el-form label-position="left" label-width="80px"
-                             style="padding: 0 100px;overflow-y: scroll;"
-                             :model="dialog.updatePaper.formData" :rules="dialog.updatePaper.rules"
-                             ref="form_updatePaper" v-loading="dialog.updatePaper.loading" status-icon size="medium">
-                        <el-form-item label="角色名" prop="name">
-                            <el-input v-model="dialog.updatePaper.formData.name"></el-input>
-                        </el-form-item>
-                        <el-form-item label="角色代码" prop="code">
-                            <el-input v-model="dialog.updatePaper.formData.code"></el-input>
-                        </el-form-item>
-                    </el-form>
-                    <div slot="footer" class="dialog-footer">
-                        <el-button size="medium" @click="dialog.updatePaper.visible=false">取 消</el-button>
-                        <el-button size="medium" type="primary" @click="updatePaper()" style="margin-left: 10px;">提 交
-                        </el-button>
-                    </div>
-                </el-dialog>
+
             </el-main>
         </el-tab-pane>
 
         <%--专利Tab--%>
         <el-tab-pane name="patent" label="专利">
-            <%--<el-button @click="dateTest">date</el-button>--%>
+
         </el-tab-pane>
     </el-tabs>
 </div>
@@ -181,7 +138,7 @@
             urls: {
                 paper: {
                     insertPaper: '',
-                    deletePaperListByIds: '',
+                    deletePaperListByIds: '/api/doc/paper/deleteListByIds',
                     updatePaper: '',
                     selectPaperListByPage: '/api/doc/search/selectPaperListByPage2',
                 },
@@ -345,7 +302,7 @@
                     console.log(d.data.resultList);
                     app.table.paperTable.entity.loading = false;
                     /*处理日期*/
-                    
+
                     let resList = d.data.resultList;
                     for (let i = 0; i < resList.length; i++) {
                         tmpDate = resList[i]._PD;
@@ -365,10 +322,7 @@
                 this.dialog.updatePaper.visible = true;
                 this.dialog.updatePaper.formData = copy(row);
             },
-            // 处理选中的行变化
-            onSelectionChange_paper: function (val) {
-                this.table.entity.selectionList = val;
-            },
+
             // 处理paper的pageSize变化
             onPageSizeChange_paper: function (newSize) {
                 this.table.paperTable.entity.params.pageSize = newSize;
@@ -384,6 +338,21 @@
             resetForm: function (ref) {
                 this.$refs[ref].resetFields();
             },
+
+            //表格选择框
+            toggleSelection(rows) {
+                if (rows) {
+                    rows.forEach(row => {
+                        this.$refs.multipleTable.toggleRowSelection(row);
+                    });
+                } else {
+                    this.$refs.multipleTable.clearSelection();
+                }
+            },
+            handleSelectionChange(val) {
+
+                this.table.paperTable.entity.selectionList = val;
+            }
         },
         /*加载的时候就执行一次*/
         mounted: function () {
