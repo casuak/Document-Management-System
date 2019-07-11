@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import team.abc.ssm.modules.author.service.AuthorService;
 import team.abc.ssm.modules.doc.service.PaperSearchService;
+import team.abc.ssm.modules.doc.service.PatentService;
 import team.abc.ssm.modules.organization.service.CommonOrganizeService;
 
 import java.util.List;
@@ -24,6 +25,8 @@ public class DocCountApi {
 
     @Autowired
     private PaperSearchService paperSearchService;
+    @Autowired
+    private PatentService patentService;
 
     @Autowired
     private CommonOrganizeService orgService;
@@ -38,11 +41,12 @@ public class DocCountApi {
         modelAndView.setViewName("functions/doc/docCount");
 
         List<Map<String, String>> paperType = paperSearchService.getPaperType();
+        List<Map<String, String>> patentType = patentService.getPatentType();
         List<String> orgList = orgService.getOrgList();
         List<String> subjectList = authorService.getSubList();
 
         modelAndView.addObject("paperType", JSONArray.fromObject(paperType));
-
+        modelAndView.addObject("patentType", JSONArray.fromObject(patentType));
         modelAndView.addObject("orgList", JSONArray.fromObject(orgList));
         modelAndView.addObject("subjectList", JSONArray.fromObject(subjectList));
 

@@ -8,6 +8,7 @@ import tk.mybatis.mapper.common.Mapper;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 public interface PatentMapper extends Mapper<Patent> {
 
@@ -36,4 +37,7 @@ public interface PatentMapper extends Mapper<Patent> {
             @Param("endDate") Date endDate,
             @Param("paperType") String paperType,
             @Param("partition") String partition);
+
+    /**获取所有的论文种类*/
+    public List<Map<String,String>> getPatentTypeMap();
 }

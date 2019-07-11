@@ -99,13 +99,19 @@ public class PaperSearchService {
         return paperSearchMapper.getMyPaperAmount(authorId);
     }
 
+    public int getMyPaperCount(Author author){
+        return paperSearchMapper.getMyPaperCount(author);
+    }
+
     public Map<String,Statistics> getStatisticRes(String subject,String organization, Date startDate, Date endDate, String paperType,
-                                      String partition) {
+                                                  String partition,String patentType) {
         Map<String,Statistics> resMap = new HashMap<>();
 
         Statistics paperStatistics = new Statistics();
         Statistics patentStatistics = new Statistics();
         paperStatistics.setType("论文");
+        paperStatistics.setTotalDocNum(paperSearchMapper.getDocStatisticsRes(subject,organization,startDate,endDate,
+                paperType,partition,""));
         paperStatistics.setStudentDocNum(paperSearchMapper.getDocStatisticsRes(subject,organization,startDate,endDate,
                 paperType,partition,"student"));
         paperStatistics.setTeacherDocNum(paperSearchMapper.getDocStatisticsRes(subject,organization,startDate,endDate,
@@ -116,9 +122,18 @@ public class PaperSearchService {
         System.out.println("-------------------");
         System.out.println(paperStatistics);
 
-        /*patentStatistics.setType("专利");*/
+        patentStatistics.setType("专利");
+        patentStatistics.setTotalDocNum(paperSearchMapper.getPatentStatisticsRes(subject,organization,
+                patentType,""));
+        patentStatistics.setStudentDocNum(paperSearchMapper.getPatentStatisticsRes(subject,organization,
+                patentType,"student"));
+        patentStatistics.setTeacherDocNum(paperSearchMapper.getPatentStatisticsRes(subject,organization,
+                patentType,"teacher"));
+        patentStatistics.setPostdoctoralDocNum(paperSearchMapper.getPatentStatisticsRes(subject,organization,
+                patentType,"postdoctoral"));
 
         resMap.put("paper",paperStatistics);
+        resMap.put("patent",patentStatistics);
         return resMap;
     }
 }

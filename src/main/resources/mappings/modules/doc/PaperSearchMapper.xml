@@ -83,24 +83,24 @@
             and pp.doc_Type = #{docType}
         </if>
         <if test="firstAuthorWorkNum != '' and firstAuthorWorkNum != null">
-            and pp.first_author_id = (select id from `sys_user` where work_id = #{firstAuthorWorkNum})
+            and pp.first_author_id in (select id from `sys_user` where work_id = #{firstAuthorWorkNum})
         </if>
         <if test="secondAuthorWorkNum != '' and secondAuthorWorkNum != null">
-            and pp.second_author_id = (select id from `sys_user` where work_id = #{secondAuthorWorkNum})
+            and pp.second_author_id in (select id from `sys_user` where work_id = #{secondAuthorWorkNum})
         </if>
         <if test="otherAuthorWorkNum != '' and secondAuthorWorkNum != null">
             and pp.id in (
             select paper_id
             from doc_map_user_paper mmp
-            where mmp.user_id = (
+            where mmp.user_id in (
             select id
             from sys_user
             where work_id = #{otherAuthorWorkNum}
             )
-            and mmp.author_type_id = (
+            and mmp.author_type_id in (
             select id
             from `sys_dict`
-            where type_id = (
+            where type_id in (
             select id
             FROM `sys_dict_type`
             where name_cn = '作者身份'
@@ -122,8 +122,33 @@
     <select id="getPaperList" parameterType="team.abc.ssm.modules.author.entity.Author" resultMap="paperBean">
         select *
         from doc_paper
-        where first_author_id = #{workId}
-           or second_author_id = #{workId}
+        <where>
+            (first_author_id = #{workId}
+            or second_author_id = #{workId})
+            <if test="page!=null">
+                <if test="page.searchKey != null and page.searchKey != ''">
+                    and paper_name like concat('%', #{page.searchKey}, '%')
+                </if>
+            </if>
+        </where>
+
+        <if test="page!=null">
+            limit #{page.pageStart}, #{page.pageSize}
+        </if>
+    </select>
+    <select id="getMyPaperCount"  parameterType="team.abc.ssm.modules.author.entity.Author" resultType="int">
+        select count(*)
+        from doc_paper
+        <where>
+            (first_author_id = #{workId}
+            or second_author_id = #{workId})
+            <if test="page!=null">
+                <if test="page.searchKey != null and page.searchKey != ''">
+                    and paper_name like concat('%', #{page.searchKey}, '%')
+                </if>
+            </if>
+        </where>
+
     </select>
 
     <select id="selectTypeValue" resultType="java.lang.String">
@@ -134,31 +159,63 @@
 
     <select id="getDocStatisticsRes" resultType="java.lang.Integer">
         select count(*)
-        from doc_paper paper
-        left join
-            sys_user sUser
-            on paper.first_author_id = sUser.id
-        where paper.del_flag != -1 and sUser.del_flag != -1
-        <if test="subject != null and subject != ''">
-            and sUser.major = #{subject}
-        </if>
+        from
+        (select * from doc_paper
+        where del_flag != -1
         <if test="organization != null and organization != ''">
-            and paper.danwei_cn = #{organization}
+            and danwei_cn = #{organization}
         </if>
         <if test="paperType != null and paperType != ''">
-            and paper.doc_type = #{paperType}
+            and doc_type = #{paperType}
         </if>
         <if test="partition != null and partition != ''">
-            and paper.partition = #{partition}
+            and partition = #{partition}
         </if>
         <if test="startDate != null">
-            and paper.publish_date >= #{startDate}
+            and publish_date &gt;= #{startDate}
         </if>
         <if test="endDate != null">
-            and paper.publish_date &lt;= #{endDate}
+            and publish_date &lt;= #{endDate}
+        </if>
+        )paper
+        join
+        ( select * from sys_user
+        where del_flag!=1
+        <if test="subject != null and subject != ''">
+            and major = #{subject}
+        </if>
+
+        <if test="authorType != null and authorType != ''">
+            and user_type = #{authorType}
+        </if>
+        ) sUser
+        on (paper.first_author_id = sUser.work_id or paper.second_author_id = sUser.work_id)
+
+    </select>
+    <select id="getPatentStatisticsRes" resultType="int">
+        select count(*)
+        from
+        (select * from doc_patent
+        where del_flag != -1
+        <if test="organization != null and organization != ''">
+            and institute = #{organization}
+        </if>
+        <if test="patentType != null and patentType != ''">
+            and patent_type = #{patentType}
+        </if>
+        )patent
+        join
+        (select * from sys_user
+        where del_flag != 1
+        <if test="subject != null and subject != ''">
+            and major = #{subject}
         </if>
         <if test="authorType != null and authorType != ''">
-            and sUser.user_type = #{authorType}
+            and user_type = #{authorType}
         </if>
+        ) sUser
+        on (patent.first_author_id = sUser.work_id or patent.second_author_id=sUser.work_id)
+
     </select>
+
 </mapper>

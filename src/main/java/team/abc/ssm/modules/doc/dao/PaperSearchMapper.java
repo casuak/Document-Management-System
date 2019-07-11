@@ -46,6 +46,8 @@ public interface PaperSearchMapper {
     /**根据author来返回Paper*/
     List<Paper> getPaperList(Author author);
 
+    int getMyPaperCount(Author author);
+
     String selectTypeValue(String typeId);
 
 
@@ -71,4 +73,11 @@ public interface PaperSearchMapper {
             @Param("paperType") String paperType,
             @Param("partition") String partition,
             @Param("authorType") String authorType);
+
+    public int getPatentStatisticsRes(
+            @Param("subject") String subject,
+            @Param("organization") String organization,
+            @Param("patentType") String patentType,
+            @Param("authorType") String authorType
+    );
 }

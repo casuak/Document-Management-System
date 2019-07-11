@@ -192,7 +192,8 @@ public class ViewController extends BaseController {
             @RequestParam("endDate") Date endDate,
             @RequestParam("paperType") String paperType,
             @RequestParam("partition") String partition,
-            @RequestParam("impactFactor") Integer impactFactor
+            @RequestParam("impactFactor") Integer impactFactor,
+            @RequestParam("patentType")String patentType
 
     ) {
         System.out.println(organization);
@@ -201,11 +202,11 @@ public class ViewController extends BaseController {
         System.out.println(paperType);
         System.out.println(partition);
         System.out.println(impactFactor);
+        System.out.println(patentType);
 
         // 暂时没有影响因子
         try {
-            Map<String,Statistics> stasticResMap = paperSearchService.getStatisticRes(subject,organization, startDate, endDate, paperType, partition);
-
+            Map<String,Statistics> stasticResMap = paperSearchService.getStatisticRes(subject,organization, startDate, endDate, paperType, partition,patentType);
 
             return new AjaxMessage().Set(MsgType.SUCCESS, stasticResMap,"获取统计结果成功");
         } catch (Exception e) {

@@ -150,7 +150,7 @@
                 <span v-if="row.firstAuthorId != null && row.firstAuthorId !== ''"
                       style="display: flex;align-items: center;justify-content: space-between">
                     <%--作者id--%>
-                    <div @click="openSearchUser(row, 1, row.firstAuthor.realName, row.firstAuthor.workId)">
+                    <div @click="openSearchUser(row, 1, row.firstAuthor.workId)">
                         {{ row.firstAuthor.workId }}
                     </div>
                     <%--第一作者名--%>
@@ -168,7 +168,7 @@
                               type="warning" size="small" @click="clearAuthor(row, 1)">X</i-button>
                 </span>
                 <i-button v-else type="success" size="small"
-                          @click="openSearchUser(row, 1, row.firstAuthor.realName, '')">手动匹配
+                          @click="openSearchUser(row, 1, '')">手动匹配
                 </i-button>
             </template>
         </el-table-column>
@@ -177,7 +177,7 @@
             <template slot-scope="{row}">
                 <span v-if="row.secondAuthorId !== null && row.secondAuthorId !== ''"
                       style="display: flex;align-items: center;justify-content: space-between">
-                    <div @click="openSearchUser(row, 2, row.secondAuthor.realName, row.secondAuthor.workId)">
+                    <div @click="openSearchUser(row, 2, row.secondAuthor.workId)">
                         {{ row.secondAuthor.workId }}
                     </div>
                     <el-Tooltip open-delay="500" effect="dark" :content="row.secondAuthor.realName" placement="top">
@@ -190,7 +190,7 @@
                               type="warning" size="small" @click="clearAuthor(row, 2)">X</i-button>
                 </span>
                 <i-button v-else type="success" size="small"
-                          @click="openSearchUser(row, 2, row.secondAuthor.realName, '')">手动匹配
+                          @click="openSearchUser(row, 2, '')">手动匹配
                 </i-button>
             </template>
         </el-table-column>
@@ -428,8 +428,21 @@
     }
 
     // 打开选择用户对话框: targetAuthorIndex (1 - firstAuthor, 2 - secondAuthor)
-    function openSearchUser(row, authorIndex, authorName, workId) {
-        console.log(row);
+    function openSearchUser(row, authorIndex, workId) {
+        let authorName = '';
+        if (authorIndex === 1) {
+            if (row.firstAuthor){
+                authorName = row.firstAuthor.realName;
+            }else{
+                authorName = row.firstAuthorName;
+            }
+        } else {
+            if (row.secondAuthor){
+                authorName = row.secondAuthor.realName;
+            }else{
+                authorName = row.secondAuthorName;
+            }
+        }
         app.searchUserUrl = app.urls.patentUserSearch
             + "?patentId=" + row.id + "&authorIndex=" + authorIndex
             + '&searchKey=' + authorName + '&institute=' + (row.institute ? row.institute : '')
@@ -446,10 +459,10 @@
             let data = {
                 patentId: patent.id,
                 authorIndex: authorIndex,
-                authorWorkId: null
+                authorId: null
             };
             app.loading.table = true;
-            ajaxPost(this.urls.setPatentAuthor, data, function (d) {
+            ajaxPost(app.urls.setPatentAuthor, data, function (d) {
                 app.loading.table = false;
                 if (authorIndex === 1)
                     patent.firstAuthorId = null;

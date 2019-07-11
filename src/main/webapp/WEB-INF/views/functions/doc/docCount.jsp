@@ -143,8 +143,7 @@
                                     unlink-panels
                             <%--                                    range-separator="至"--%>
                                     start-placeholder="开始日期"
-                                    end-placeholder="结束日期"
-                                    :picker-options="optionValue.pickerOptions">
+                                    end-placeholder="结束日期">
                             </el-date-picker>
                         </div>
                     </div>
@@ -207,25 +206,19 @@
                         <el-tag type="warning">专利筛选项</el-tag>
                     </span>
                     <div class="commonInputSection">
-                        <span class="inputSpanText">专利申请号: </span>
+                        <span class="inputSpanText">专利类型: </span>
                         <div class="commonInput">
-                            <el-input
-                                    placeholder="输入专利申请号"
-                                    v-model="optionView.commonSelect.applicationNum"
-                                    clearable>
-                            </el-input>
+                            <el-select v-model="optionView.patent.patentType" clearable placeholder="选择专利种类">
+                                <el-option
+                                        v-for="item in optionValue.patentTypeOption"
+                                        :key="item.value"
+                                        :label="item.label"
+                                        :value="item.value">
+                                </el-option>
+                            </el-select>
                         </div>
                     </div>
-                    <div class="commonInputSection">
-                        <span class="inputSpanText">专利公开号: </span>
-                        <div class="commonInput">
-                            <el-input
-                                    placeholder="输入专利公开号"
-                                    v-model="optionView.commonSelect.publicNum"
-                                    clearable>
-                            </el-input>
-                        </div>
-                    </div>
+
                 </row>
             </div>
 
@@ -273,70 +266,70 @@
         <el-main style="padding-top: 0;height: 100%">
             <%--文献统计列表--%>
             <div v-show="radio == 2">
-                <el-table :data="table.commonTable.data"
-                          :header-cell-style="{background:'rgb(79, 165, 254)',color:'#fff'}"
-                          v-loading="table.commonTable.loading"
-                          style="width: 100%;overflow-y: hidden;
-                          margin-top: 20px;"
-                          class="scroll-bar"
-                          show-summary
-                <%--:summary-method="getSummaries"
-                @selection-change="onSelectionChange_entity"--%>
-                          stripe>
-                    <el-table-column
-                            type="index"
-                            label="序号"
-                            header-align="center"
-                            align="center"
-                            width="80px">
-                    </el-table-column>
-                    <el-table-column
-                            prop="docType"
-                            header-align="center"
-                            align="center"
-                            label="文献类型">
-                    </el-table-column>
-                    <el-table-column
-                            prop="totalDocAmount"
-                            header-align="center"
-                            align="center"
-                            label="文献总数目">
-                    </el-table-column>
+                <template>
+                    <el-table :data="table.commonTable.data"
+                              :header-cell-style="{background:'rgb(79, 165, 254)',color:'#fff'}"
+                              v-loading="table.commonTable.loading"
+                              style="width: 100%;overflow-y: hidden;margin-top: 20px;"
+                              class="scroll-bar"
+                              show-summary
+                              stripe>
+                        <el-table-column
+                                type="index"
+                                label="序号"
+                                header-align="center"
+                                align="center"
+                                width="80px">
+                        </el-table-column>
+                        <el-table-column
+                                prop="type"
+                                header-align="center"
+                                align="center"
+                                label="文献类型">
+                        </el-table-column>
+                        <el-table-column
+                                prop="totalDocNum"
+                                header-align="center"
+                                align="center"
+                                label="文献总数目">
+                        </el-table-column>
 
-                    <el-table-column label="文献分类"
-                                     align="center"
-                                     header-align="center">
-                        <el-table-column
-                                prop="teacherDocAmount"
-                                header-align="center"
-                                align="center"
-                                label="教师文献数目">
+                        <el-table-column label="文献分类"
+                                         align="center"
+                                         header-align="center">
+                            <el-table-column
+                                    prop="teacherDocNum"
+                                    header-align="center"
+                                    align="center"
+                                    label="教师文献数目">
+                            </el-table-column>
+                            <el-table-column
+                                    prop="studentDocNum"
+                                    header-align="center"
+                                    align="center"
+                                    label="学生文献数目">
+                            </el-table-column>
+                            <el-table-column
+                                    prop="postdoctoralDocNum"
+                                    header-align="center"
+                                    align="center"
+                                    label="博士后文献数目">
+                            </el-table-column>
                         </el-table-column>
-                        <el-table-column
-                                prop="studentDocAmount"
-                                header-align="center"
-                                align="center"
-                                label="学生文献数目">
-                        </el-table-column>
-                        <el-table-column
-                                prop="postdoctoralDocAmount"
-                                header-align="center"
-                                align="center"
-                                label="博士后文献数目">
-                        </el-table-column>
-                    </el-table-column>
 
-                    <el-table-column label="操作" width="190px" header-align="center" align="center">
-                        <template slot-scope="scope">
-                            <el-button type="primary" plain
-                                       size="mini"
-                                       style="position:relative;bottom: 1px;"
-                                       @click="viewStatistics(scope.row)">
-                                <span>查看统计详情</span>
-                            </el-button>
-                        </template>
-                    </el-table-column>
-                </el-table>
+                        <el-table-column label="操作" width="190px" header-align="center" align="center">
+                            <template slot-scope="scope">
+                                <el-button type="primary" plain
+                                           size="mini"
+                                           style="position:relative;bottom: 1px;"
+                                           @click="viewStatistics(scope.row)">
+                                    <span>查看统计详情</span>
+                                </el-button>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                </template>
+
             </div>
         </el-main>
     </el-container>
@@ -381,6 +374,7 @@
                     }
                 ],
                 paperTypeOption: [],
+                patentTypeOption: [],
                 orgOption: [],
                 userTypeOption: [
                     {
@@ -396,34 +390,7 @@
                         value: "postdoctoral"
                     }
                 ],
-                subjectOption: [],
-                pickerOptions: {
-                    shortcuts: [{
-                        text: '最近一周',
-                        onClick(picker) {
-                            const end = new Date();
-                            const start = new Date();
-                            start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
-                            picker.$emit('pick', [start, end]);
-                        }
-                    }, {
-                        text: '最近一个月',
-                        onClick(picker) {
-                            const end = new Date();
-                            const start = new Date();
-                            start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
-                            picker.$emit('pick', [start, end]);
-                        }
-                    }, {
-                        text: '最近三个月',
-                        onClick(picker) {
-                            const end = new Date();
-                            const start = new Date();
-                            start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
-                            picker.$emit('pick', [start, end]);
-                        }
-                    }]
-                }
+                subjectOption: []
             },
 
             //条件输入(选择)框(V-model绑定的值)：
@@ -455,8 +422,8 @@
                 patent: {
                     show: false,
                     applicationNum: "",
-                    publicNum: "",
-                    countryCode: ""
+                    countryCode: "",
+                    patentType:""
                 },
                 copyright: {
                     show: false,
@@ -468,22 +435,7 @@
             //表格
             table: {
                 commonTable: {
-                    data: [
-                        {
-                            docType: "论文",
-                            totalDocAmount: 300,
-                            teacherDocAmount: 100,
-                            studentDocAmount: 100,
-                            postdoctoralDocAmount: 100
-                        },
-                        {
-                            docType: "专利",
-                            totalDocAmount: 300,
-                            teacherDocAmount: 100,
-                            studentDocAmount: 100,
-                            postdoctoralDocAmount: 100
-                        }
-                    ],
+                    data: [],
                     loading: false,
                     selectionList: [],
                     params: {
@@ -514,7 +466,7 @@
 
             /*查看文献统计详情*/
             viewStatistics: function (row) {
-                if (row.docType === "论文") {
+                if (row.type === "论文") {
                     let data = {
                         paperName: app.optionView.paper.paperName,
                         firstAuthorName: app.optionView.paper.firstAuthorWorkNum,            //其实是FA工号
@@ -523,92 +475,54 @@
                         storeNum: app.optionView.paper.storeNum,
                         paperType: app.optionView.paper.paperType,
                         ISSN: app.optionView.paper.ISSN,
-                        pageIndex: app.table.paperTable.params.pageIndex,
-                        pageSize: app.table.paperTable.params.pageSize
+                        pageIndex: app.table.commonTable.params.pageIndex,
+                        pageSize: app.table.commonTable.params.pageSize
                     };
                     let getParam = formatParams(data);
                     let getLink = "/api/doc/search/selectPaperListByPageGet?" + getParam;
                     console.log(getLink);
                     window.parent.app.addTab("论文", getLink);
-                } else if (row.docType === "专利") {
+                } else if (row.type === "专利") {
                     alert("专利统计详情页面");
                 } else {
                     alert("著作权统计详情页面");
                 }
             },
 
-            /*paper_table函数*/
-            insertPaper: function () {
-
-            },
-            deletePaperListByIds: function () {
-
-            },
-            updatePaper: function () {
-
-            },
-            selectPaperListByPage: function () {
-                //formatParams
-                let data = {
-                    paperName: app.optionView.paper.paperName,
-                    firstAuthorName: app.optionView.paper.firstAuthorWorkNum,            //其实是FA工号
-                    secondAuthorName: app.optionView.paper.secondAuthorWorkNum,          //其实是SA工号
-                    authorList: app.optionView.paper.otherAuthorWorkNum,                 //其实是OA工号
-                    storeNum: app.optionView.paper.storeNum,
-                    docType: app.optionView.paper.paperType,
-                    ISSN: app.optionView.paper.ISSN,
-                    page: app.table.paperTable.params
-                };
-                console.log("post: " + data);
-                app.table.paperTable.loading = true;
-                ajaxPostJSON("/api/doc/search/selectPaperListByPagePost", data,
-                    function success(res) {
-                        app.table.paperTable.loading = false;
-                        console.log("post请求成功" + res);
-                        app.table.paperTable.data = res.data.paperList;
-                        app.table.paperTable.params.total = res.data.paperAmount;
-                    },
-                    function error(res) {
-                        console.log("post请求失败: " + res);
-                    }
-                );
-            },
-
-            // 重置表单
-            // resetForm: function (ref) {
-            //     this.$refs[ref].resetFields();
-            // },
-
             /*统计搜索*/
             statisticalSearch: function () {
                 let params = {
-                    subject: app.optionView.commonSelect.subject,
-                    organization: app.optionView.commonSelect.organization,
-                    startDate:app.optionView.commonSelect.publishDate[0],
-                    endDate:app.optionView.commonSelect.publishDate[1],
-                    paperType: app.optionView.paper.paperType,
-                    partition: app.optionView.paper.partition,
-                    impactFactor: app.optionView.paper.impactFactor
+                    subject: this.optionView.commonSelect.subject,
+                    organization: this.optionView.commonSelect.organization,
+                    startDate:this.optionView.commonSelect.publishDate[0],
+                    endDate:this.optionView.commonSelect.publishDate[1],
+                    paperType: this.optionView.paper.paperType,
+                    partition: this.optionView.paper.partition,
+                    impactFactor: this.optionView.paper.impactFactor,
+                    patentType:this.optionView.patent.patentType
                 };
 
-                if(params.startDate == null){
-
-                }
+                console.log("统计条件");
                 console.log(params);
 
-                app.table.commonTable.loading = true;
+                this.table.commonTable.loading = true;
 
                 ajaxPost(
                     "/doc/statisticalSearch",
                     params,
                     function success(res) {
-                        console.log(res);
+                        console.log("统计结果查询");
+                        console.log(res.data);
+                        app.table.commonTable.data=[];
+                        app.table.commonTable.data.push(res.data.paper);
+                        app.table.commonTable.data.push(res.data.patent);
+                        app.table.commonTable.loading = false;
                     },
                     function error(res) {
                         console.log(res);
+                        app.table.commonTable.loading = false;
                     }
                 );
-                app.table.commonTable.loading = false;
             },
 
             /*查看文献详情*/
@@ -650,6 +564,10 @@
                 });
                 return sums;
             }
+        },
+        /*加载的时候就执行一次*/
+        mounted: function () {
+            this.statisticalSearch();
         }
     });
 
@@ -711,6 +629,17 @@
             };
             app.optionValue.paperTypeOption.push(tmpItem);
         }
+
+        /*初始化patentType*/
+        let tmp1 = ${patentType};
+        for (let i = 0; i < tmp.length; i++) {
+            let tmpItem = {
+                value: tmp[i].id,
+                label: tmp[i].name_en
+            };
+            app.optionValue.patentTypeOption.push(tmpItem);
+        }
+
         /*初始化学校机构*/
         let org = ${orgList};
         for (let i = 0; i < org.length; i++) {
@@ -745,16 +674,8 @@
         console.log(app.optionView.commonSelect.publishDate);
     }
 
-    /*查看作者详情-打开新页面*/
-    function viewAuthorDetail(row) {
-        console.log(row)
-        let authorId = row.id;
-        let tabTitle = row.realName + "-作者详情";
-        let link = "/author/goAuthorDetail?authorId=" + authorId;
-        window.parent.app.addTab(tabTitle, link);
-    }
+
 </script>
 
-<%--<script src="/static/js/functions/doc/docSearch.js"></script>--%>
 </body>
 </html>

@@ -166,13 +166,13 @@ public class PaperSearchController {
             @RequestParam(value = "storeNum") String storeNum,
             @RequestParam(value = "paperType") String paperType,
             @RequestParam(value = "pageIndex") int pageIndex,
-            @RequestParam(value = "pageSize") int pageSize
+            @RequestParam(value = "pageSize") int pageSize,
+            ModelAndView modelAndView
     ) {
         System.out.println("ISSN" + ISSN);
-        ModelAndView modelAndView = new ModelAndView();
         Map<String, Object> commonParams = new HashMap<>();
         Map<String, Object> paperParams = new HashMap<>();
-
+        System.out.println("论文统计详情页面————————————————");
         paperParams.put("paperName", paperName);
         paperParams.put("firstAuthorWorkNum", firstAuthorWorkNum);
         paperParams.put("secondAuthorWorkNum", secondAuthorWorkNum);
@@ -191,7 +191,7 @@ public class PaperSearchController {
         List<Map<String, String>> paperTypeOption = paperSearchService.getPaperType();
 
         modelAndView.setViewName("functions/doc/docManage/paperList");
-        modelAndView.addObject("paperList", paperList);
+        modelAndView.addObject("paperList", JSONArray.fromObject(paperList));
         modelAndView.addObject("paperAmount", paperAmount);
         modelAndView.addObject("paperType", JSONArray.fromObject(paperTypeOption));
         modelAndView.addObject("paperParams", JSONObject.fromObject(paperParams));
@@ -211,9 +211,9 @@ public class PaperSearchController {
         return null;
     }
 
-    
+
     /**
-     * @param [paper]
+     * @param
      * @return java.lang.Object
      * @Description 在作者信息页面获取其下的所有论文
      * @author zm
@@ -230,16 +230,20 @@ public class PaperSearchController {
         //获取当前的author
         Author authorNow = authorService.getAuthor(authorId);
 
+        //3120160547
+        Page page=paper.getPage();
+        int pageStart=(page.getPageIndex()-1)*page.getPageSize();
+        page.setPageStart(pageStart);
         //设置当前作者的论文Page
-        authorNow.setMyPaperPage(paper.getPage());
-
+        authorNow.setPage(page);
+        LOG.debug("当前page"+authorNow.getPage());
         List<Paper> paperList = paperSearchService.getMyPaperByPage(authorNow);
 
         Page<Paper> paperResPage = new Page<>();
         paperResPage.setResultList(paperList);
 
         LOG.debug("当前作者的论文"+paperList);
-        paperResPage.setTotal(paperSearchService.getMyPaperAmount(authorId));
+        paperResPage.setTotal(paperSearchService.getMyPaperCount(authorNow));
 
         return new AjaxMessage().Set(MsgType.SUCCESS, paperResPage);
     }

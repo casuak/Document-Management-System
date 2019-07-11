@@ -179,7 +179,7 @@
 
                     </div>
                     <%--paper-其他作者--%>
-                    <div class="commonInputSection">
+                    <%--<div class="commonInputSection">
                         <span class="inputSpanText">其他作者: </span>
                         <div class="commonInput">
                             <el-input
@@ -188,7 +188,7 @@
                                     clearable>
                             </el-input>
                         </div>
-                    </div>
+                    </div>--%>
                 </row>
 
                 <row style="margin-top: 10px">
