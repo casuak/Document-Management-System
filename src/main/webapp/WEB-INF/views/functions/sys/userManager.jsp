@@ -20,6 +20,11 @@
             </el-button>
         </span>
         <span style="float: right;margin-right: 10px;">
+            <el-select v-model="table.params.userType" size="small" style="margin-right: 10px;"
+                       @change="getUserList()" clearable placeholder="请选择用户类型">
+                <el-option v-for="userType in options.userType" :label="userType.label"
+                           :value="userType.value" :key="userType.value"></el-option>
+            </el-select>
             <el-input size="small" placeholder="请输入用户名搜索相关用户" suffix-icon="el-icon-search"
                       style="width: 250px;margin-right: 10px;" v-model="table.params.searchKey"
                       @keyup.enter.native="table.params.pageIndex=1;getUserList()">
@@ -35,6 +40,13 @@
               style="width: 100%;overflow-y: hidden;margin-top: 20px;" class="scroll-bar"
               @selection-change="handleSelectionChange" stripe>
         <el-table-column type="selection" width="40"></el-table-column>
+        <el-table-column label="姓名" width="150" prop="realName"></el-table-column>
+        <el-table-column label="学号/工号" width="200" prop="workId"></el-table-column>
+        <el-table-column label="用户类型" width="150" align="center">
+            <template slot-scope="scope">
+                {{ translateUserType(scope.row.userType) }}
+            </template>
+        </el-table-column>
         <el-table-column label="用户名" prop="username" width="200"></el-table-column>
         <el-table-column label="密码" prop="password" width="200"></el-table-column>
         <el-table-column label="创建时间">

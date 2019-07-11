@@ -20,6 +20,7 @@ let app = new Vue({
                 pageSizes: [5, 10, 20, 40],
                 searchKey: '',  // 搜索词
                 total: 2,       // 总数
+                userType: ''
             }
         },
         dialog: {
@@ -59,6 +60,26 @@ let app = new Vue({
             }
         },
         roleTree: [],
+        options: {
+            userType: [
+                {
+                    label: '学生',
+                    value: 'student'
+                },
+                {
+                    label: '老师',
+                    value: 'teacher'
+                },
+                {
+                    label: '博士后',
+                    value: 'doctor'
+                },
+                {
+                    label: '其他',
+                    value: 'other'
+                }
+            ]
+        }
     },
     methods: {
         // 处理选中的行变化
@@ -78,7 +99,8 @@ let app = new Vue({
         // 刷新table的数据
         getUserList: function () {
             let data = {
-                page: this.table.params
+                page: this.table.params,
+                userType: this.table.params.userType
             };
             let app = this;
             this.table.loading = true;
@@ -196,6 +218,18 @@ let app = new Vue({
                     return false;
                 }
             });
+        },
+        // 翻译
+        translateUserType: function (en) {
+            let cn = '';
+            if (en === 'teacher') {
+                cn = '老师';
+            } else if (en === 'student') {
+                cn = '学生';
+            } else if (en === 'doctor') {
+                cn = '博士后';
+            }
+            return cn;
         }
     },
     mounted: function () {

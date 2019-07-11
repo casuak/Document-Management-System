@@ -90,6 +90,14 @@
             <if test="page.searchKey != '' and page.searchKey != null">
                 a.username like concat('%', #{page.searchKey}, '%')
             </if>
+            <if test="userType != null and userType != ''">
+                <if test="userType == 'other'">
+                    and (a.user_type is null or a.user_type = '')
+                </if>
+                <if test="userType != 'other'">
+                    and a.user_type = #{userType}
+                </if>
+            </if>
         </where>
         limit #{page.pageStart}, #{page.pageSize}
     </select>
@@ -166,6 +174,14 @@
         <where>
             <if test="page.searchKey != '' and page.searchKey != null">
                 and a.username like concat('%', #{page.searchKey}, '%')
+            </if>
+            <if test="userType != null and userType != ''">
+                <if test="userType == 'other'">
+                    and (a.user_type is null or a.user_type = '')
+                </if>
+                <if test="userType != 'other'">
+                    and a.user_type = #{userType}
+                </if>
             </if>
         </where>
     </select>
