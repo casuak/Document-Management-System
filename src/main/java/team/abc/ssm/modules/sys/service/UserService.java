@@ -6,6 +6,7 @@ import team.abc.ssm.common.persistence.Page;
 import team.abc.ssm.modules.sys.dao.UserDao;
 import team.abc.ssm.modules.sys.entity.User;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -31,9 +32,12 @@ public class UserService {
         // 先获取分页的users
         List<User> userList = userDao.selectByPage(user);
         // 再查询具体内容
-        userDao.selectByIds(userList);
-        user.getPage().setResultList(userDao.selectByIds(userList));
-        user.getPage().setTotal(userDao.selectSearchCount(user));
+        int total = userDao.selectSearchCount(user);
+        user.getPage().setTotal(total);
+        if (total != 0)
+            user.getPage().setResultList(userDao.selectByIds(userList));
+        else
+            user.getPage().setResultList(new ArrayList<>());
         return user.getPage();
     }
 
