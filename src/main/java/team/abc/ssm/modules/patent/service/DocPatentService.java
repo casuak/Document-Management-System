@@ -141,6 +141,16 @@ public class DocPatentService {
         for (DocPatent tmpPatent : patentList) {
             rightPersonFlag = false;
 
+            //0.看数据库中是有重复的专利
+            if(docPatentMapper.selectByStatusAndPatentNumberAndDelFlag(MATCH_FINISHED.toString(),
+                    tmpPatent.getPatentNumber(),false) != 0){
+                tmpPatent.setStatus(IMPORT_REPEAT.toString());
+                tmpPatent.setModifyUserId(userNow.getId());
+                tmpPatent.setModifyDate(dateNow);
+                docPatentMapper.updateByPrimaryKeySelective(tmpPatent);
+                continue;
+            }
+
             //1.授权日期string -> datetime
             tmpPatent.setPatentAuthorizationDate(sdf.parse(tmpPatent.getPatentAuthorizationDateString()));
             //2.过滤掉专利权人不是北理的

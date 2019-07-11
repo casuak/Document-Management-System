@@ -69,6 +69,10 @@
             width: 654px;
             margin-top: 30px !important;
         }
+        /*下拉框最大高度*/
+        .el-select-dropdown__wrap{
+            max-height: 334px;
+        }
     </style>
 </head>
 <body>
@@ -284,16 +288,20 @@
                     label: '1.  未初始化'
                 },
                 {
+                    value: '-4',
+                    label: '2.1 重复专利导入'
+                },
+                {
                     value: '-3',
-                    label: '2.1 缺少发明人信息'
+                    label: '2.2 缺少发明人信息'
                 },
                 {
                     value: '-2',
-                    label: '2.2 专利权人不是北理被过滤'
+                    label: '2.3 专利权人不是北理被过滤'
                 },
                 {
                     value: '0',
-                    label: '2.3 初始化完成(暂未匹配)'
+                    label: '2.4 初始化完成(暂未匹配)'
                 },
                 {
                     value: '1',
