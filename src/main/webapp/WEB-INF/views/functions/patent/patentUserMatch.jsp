@@ -69,8 +69,9 @@
             width: 654px;
             margin-top: 30px !important;
         }
+
         /*下拉框最大高度*/
-        .el-select-dropdown__wrap{
+        .el-select-dropdown__wrap {
             max-height: 334px;
         }
     </style>
@@ -145,7 +146,7 @@
             </template>
         </el-table-column>
         <el-table-column label="所属学院" width="150" prop="institute" fixed="left" align="center"
-                         v-if="!['-1', '-2', '-3'].contains(status)">
+                         v-if="!['0', '-1', '-2', '-3'].contains(status)">
         </el-table-column>
         <el-table-column label="第一发明人" width="332" align="center"
                          v-if="['0','1', '2', '3', '4'].contains(status)">
@@ -286,10 +287,6 @@
                 {
                     value: '-1',
                     label: '1.  未初始化'
-                },
-                {
-                    value: '-4',
-                    label: '2.1 重复专利导入'
                 },
                 {
                     value: '-3',
@@ -439,22 +436,22 @@
     function openSearchUser(row, authorIndex, workId) {
         let authorName = '';
         if (authorIndex === 1) {
-            if (row.firstAuthor){
+            if (row.firstAuthor) {
                 authorName = row.firstAuthor.realName;
-            }else{
+            } else {
                 authorName = row.firstAuthorName;
             }
         } else {
-            if (row.secondAuthor){
+            if (row.secondAuthor) {
                 authorName = row.secondAuthor.realName;
-            }else{
+            } else {
                 authorName = row.secondAuthorName;
             }
         }
         app.searchUserUrl = app.urls.patentUserSearch
             + "?patentId=" + row.id + "&authorIndex=" + authorIndex
             + '&searchKey=' + authorName + '&institute=' + (row.institute ? row.institute : '')
-            + '&authorizationDate=' + (row.patentAuthorizationDateString ? row.patentAuthorizationDateString : '')
+            + '&authorizationDate=' + (row.patentAuthorizationDate ? row.patentAuthorizationDate : '')
             + '&workId=' + workId;
         console.log(app.searchUserUrl);
         app.searchUserDialog.visible = true;

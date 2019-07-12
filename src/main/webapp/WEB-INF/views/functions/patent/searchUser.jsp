@@ -96,7 +96,7 @@
                            :value="item.name" :label="item.name"></el-option>
             </el-select>
             <span>
-                论文发布时间：{{ new Date(paperInfo.publishDate).Format('yyyy-MM-dd') }}
+                授权公告日：{{ new Date(patentInfo.publishDate).Format('yyyy-MM-dd') }}
             </span>
         </span>
         <span style="float: right;margin-right: 10px;">
@@ -142,12 +142,12 @@
         <el-table-column label="学院" prop="school" width="120" align="center"></el-table-column>
         <el-table-column label="导师" width="70" prop="tutorName" align="center"></el-table-column>
         <el-table-column label="导师工号" width="100" prop="tutorWorkId" align="center"></el-table-column>
-        <el-table-column label="学生层次" prop="studentTrainLevel" align="center" width="80"></el-table-column>
         <el-table-column label="入学/入职时间" align="center" width="110">
             <template slot-scope="{row}">
                 {{ row.hireDate === null ? '' : (new Date(row.hireDate)).Format("yyyy-MM-dd") }}
             </template>
         </el-table-column>
+        <el-table-column label="学生层次" prop="studentTrainLevel" align="center" width="80"></el-table-column>
         <%--<el-table-column></el-table-column>--%>
         <el-table-column label="操作" fixed="right" width="80" header-align="center" align="center">
             <template slot-scope="{ row }">
@@ -184,7 +184,7 @@
     var app = new Vue({
         el: '#app',
         data: {
-            paperInfo: {
+            patentInfo: {
                 publishDate: ''
             },
             urls: {
@@ -283,7 +283,9 @@
             this.table.entity.params.searchKey = pageParams.searchKey;
             this.filterParams.school = pageParams.school;
             this.filterParams.workId = pageParams.workId;
-            this.paperInfo.publishDate = pageParams.publishDate;
+            this.patentInfo.publishDate = pageParams.publishDate;
+            console.log("-----")
+            console.log(pageParams.publishDatep);
             let app = this;
             app.table.entity.loading = true;
             ajaxPostJSON(app.urls.selectDanweiNicknamesAllList, null, function (d) {
