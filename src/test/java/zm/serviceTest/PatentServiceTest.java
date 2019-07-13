@@ -97,7 +97,7 @@ public class PatentServiceTest {
     public void authorMatchTest(){
         authenticate();
         try{
-            String patentId = "07ea6e92079449a597696af5006c0d49";
+            String patentId = "d21fa3a2f1c5484c9604bcd4203ba49c";
             DocPatent tmpPatent = patentMapper.selectByPrimaryKey(patentId);
 
             patentService.authorMatch(tmpPatent);

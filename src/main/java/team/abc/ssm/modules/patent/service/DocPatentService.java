@@ -343,15 +343,15 @@ public class DocPatentService {
                         }
                     }
                     if (tutorCount == 0) {
-                        //2.2.2.2.1
+                        //2.2.2.2.1 这样专利仅有一作
                         docPatent.setStatuses(
-                                PatentMatchType.JUDGE_NEEDED,
+                                PatentMatchType.MATCH_SUCCESS,
                                 FirstAuMatchType.MATCH_SUCCESS,
-                                SecondAuMatchType.JUDGE_NEEDED);
+                                SecondAuMatchType.NO_MATCHED);
                     } else if (tutorCount == 1) {
                         //2.2.2.2.2
                         docPatent.setStatuses(
-                                MATCH_SUCCESS,
+                                PatentMatchType.MATCH_SUCCESS,
                                 FirstAuMatchType.MATCH_SUCCESS,
                                 SecondAuMatchType.MATCH_SUCCESS);
                         docPatent.setSecondAuthor(sysUserMapper.selectByWorkId(
@@ -402,7 +402,8 @@ public class DocPatentService {
                 if (docPatent.getFirstAuthorList().size() == 0) {
                     //利用学院的信息筛选之后的第一作者数量是0
                     docPatent.setStatuses(JUDGE_NEEDED, FirstAuMatchType.UNMATCHED, SecondAuMatchType.UNMATCHED);
-                    //docPatent.setInstitute(tmpInstitute);
+                    //设置学院信息以供判断
+                    docPatent.setInstitute(tmpInstitute);
                 } else if (docPatent.getFirstAuthorList().size() == 1) {
                     //利用学院的信息筛选之后的第一作者数量是1
                     docPatent = firstAuthorUnique(docPatent);
@@ -701,5 +702,13 @@ public class DocPatentService {
     public boolean convertToCompleteByIds(List<DocPatent> patentList) {
         int count = docPatentMapper.convertToCompleteByIds(patentList);
         return count == patentList.size();
+    }
+
+    public boolean changeInstitute(String patentId, String institute) {
+        DocPatent theDocPatent = docPatentMapper.selectByPrimaryKey(patentId);
+        theDocPatent.setInstitute(institute);
+        theDocPatent.setModifyUserId(UserUtils.getCurrentUser().getId());
+        theDocPatent.setModifyDate(new Date());
+        return docPatentMapper.updateByPrimaryKeySelective(theDocPatent) == 1;
     }
 }

@@ -146,7 +146,21 @@
             </template>
         </el-table-column>
         <el-table-column label="所属学院" width="150" prop="institute" fixed="left" align="center"
-                         v-if="!['0', '-1', '-2', '-3'].contains(status)">
+                         v-if="['2', '4'].contains(status)">
+        </el-table-column>
+        <el-table-column label="所属学院" width="150" fixed="left" align="center"
+                         v-else-if="['1', '3'].contains(status)">
+            <template slot-scope="{row}">
+                <template v-if="row.institute != null&&row.institute != ''">
+                    <span style="color: #2D8CF0;font-family: 'PingFang SC'"
+                          @click="openInstituteSelect(row)">
+                        {{row.institute}}
+                    </span>
+                </template>
+                <i-button v-else type="primary" size="small"
+                          @click="openInstituteSelect(row)">选择学院
+                </i-button>
+            </template>
         </el-table-column>
         <el-table-column label="第一发明人" width="332" align="center"
                          v-if="['0','1', '2', '3', '4'].contains(status)">
@@ -265,12 +279,32 @@
                    layout="total, sizes, prev, pager, next, jumper">
     </el-pagination>
     <%-- 选择用户 --%>
-    <el-dialog title="人工匹配发明人" :visible.sync="searchUserDialog.visible" class="dialog-searchUser">
+    <el-dialog title="手动匹配发明人" :visible.sync="searchUserDialog.visible" class="dialog-searchUser">
         <div v-loading="searchUserDialog.loading" style="height: 450px;">
             <iframe v-if="searchUserDialog.visible" :src="searchUserUrl"
                     style="width: 100%;height: 450px;overflow-y: auto;border: 0;"
                     @load="searchUserDialog.loading=false;"></iframe>
         </div>
+    </el-dialog>
+    <%--选择学院--%>
+    <el-dialog title="选择专利所属学院"
+               width="250px" center
+               :before-close="cancelInstituteSelect"
+               :visible.sync="searchInstituteDialog.visible">
+        <div v-loading="searchInstituteDialog.loading">
+            <el-select v-model="searchInstituteDialog.selectedInstitute"
+                       filterable clearable
+                       placeholder="请选择专利的学院">
+                <el-option v-for="(item, index) in searchInstituteDialog.instituteList"
+                           :key="item.id"
+                           :value="item.name"
+                           :label="item.name"></el-option>
+            </el-select>
+        </div>
+        <span slot="footer" class="dialog-footer">
+                <el-button size="small" @click="cancelInstituteSelect">取 消</el-button>
+                <el-button size="small" type="primary" @click="ensureInstituteSelect">确 定</el-button>
+        </span>
     </el-dialog>
 </div>
 <%@include file="/WEB-INF/views/include/blankScript.jsp" %>
@@ -335,11 +369,20 @@
                 convertToSuccessByIds: '/api/patent/convertToSuccessByIds',
                 convertToCompleteByIds: '/api/patent/convertToCompleteByIds',
                 patentUserSearch: '/functions/patent/searchUser',
-                setPatentAuthor: '/api/patent/setPatentAuthor'
+                setPatentAuthor: '/api/patent/setPatentAuthor',
+                selectDanweiNicknamesAllList: '/api/doc/danweiNicknames/selectAllList',
+                changeInstitute:'/api/patent/changeInstitute'
             },
             searchUserDialog: {
                 visible: false,
                 loading: false,
+            },
+            searchInstituteDialog: {
+                visible: false,
+                loading: false,
+                patentNow:{},
+                instituteList: [],
+                selectedInstitute: '',
             },
             searchUserUrl: ''
         },
@@ -458,6 +501,17 @@
         app.searchUserDialog.loading = true;
     }
 
+    //打开选择学院对话框
+    function openInstituteSelect(row) {
+        app.searchInstituteDialog.visible = true;
+        app.searchInstituteDialog.loading = true;
+        app.searchInstituteDialog.patentNow = row;
+        ajaxPostJSON(app.urls.selectDanweiNicknamesAllList, null, function (d) {
+            app.searchInstituteDialog.instituteList = d.data;
+            app.searchInstituteDialog.loading = false;
+        });
+    }
+
     // 清空第一或第二作者
     function clearAuthor(patent, authorIndex) {
         window.parent.app.showConfirm(function () {
@@ -492,6 +546,28 @@
                 window.parent.app.showMessage('操作失败！', 'error');
             })
         });
+    }
+
+    //取消选择学院
+    function cancelInstituteSelect(){
+        app.searchInstituteDialog.visible = false;
+        app.searchInstituteDialog.patentNow = {};
+        app.searchInstituteDialog.selectedInstitute = '';
+    }
+
+    //确定选择学院
+    function ensureInstituteSelect(){
+        let data = {
+            patentId: app.searchInstituteDialog.patentNow.id,
+            institute: app.searchInstituteDialog.selectedInstitute
+        };
+        console.log(data);
+        ajaxPost(app.urls.changeInstitute,data,function (res) {
+            console.log(res.message);
+            cancelInstituteSelect();
+            window.parent.app.showMessage('操作成功', 'success');
+            getPatentList();
+        })
     }
 
     window.onload = function () {
