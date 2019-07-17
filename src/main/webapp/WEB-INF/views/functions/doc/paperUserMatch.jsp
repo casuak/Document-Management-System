@@ -35,9 +35,9 @@
             </el-select>
             <el-input size="small" placeholder="请输入论文名搜索相关论文" suffix-icon="el-icon-search"
                       style="width: 250px;margin-right: 10px;" v-model="page.searchKey"
-                      @keyup.enter.native="getPaperList()">
+                      @keyup.enter.native="page.pageIndex=1;getPaperList();">
             </el-input>
-            <el-button size="small" type="primary" @click="getPaperList()">
+            <el-button size="small" type="primary" @click="page.pageIndex=1;getPaperList();">
                 搜索
             </el-button>
         </span>

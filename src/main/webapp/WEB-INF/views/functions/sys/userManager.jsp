@@ -18,6 +18,9 @@
             <el-button size="small" type="danger" @click="deleteUser(table.selectionList)" style="margin-left: 10px;">
                 <span>批量删除</span>
             </el-button>
+            <el-button size="small" type="warning" @click="initUser()" style="margin-left: 10px;">
+                <span>初始化</span>
+            </el-button>
         </span>
         <span style="float: right;margin-right: 10px;">
             <el-select v-model="table.params.userType" size="small" style="margin-right: 10px;"
@@ -40,18 +43,23 @@
               style="width: 100%;overflow-y: hidden;margin-top: 20px;" class="scroll-bar"
               @selection-change="handleSelectionChange" stripe>
         <el-table-column type="selection" width="40"></el-table-column>
-        <el-table-column label="姓名" width="150" prop="realName"></el-table-column>
-        <el-table-column label="学号/工号" width="200" prop="workId"></el-table-column>
-        <el-table-column label="用户类型" width="150" align="center">
+        <el-table-column label="姓名" width="100" prop="realName"></el-table-column>
+        <el-table-column label="学号/工号" width="100" prop="workId"></el-table-column>
+        <el-table-column label="用户类型" width="100" align="center">
             <template slot-scope="scope">
                 {{ translateUserType(scope.row.userType) }}
             </template>
         </el-table-column>
-        <el-table-column label="用户名" prop="username" width="200"></el-table-column>
-        <el-table-column label="密码" prop="password" width="200"></el-table-column>
+        <el-table-column label="用户名" prop="username" width="100"></el-table-column>
+        <el-table-column label="密码" prop="password" width="150"></el-table-column>
         <el-table-column label="创建时间">
             <template slot-scope="scope">
                 {{ formatTimestamp(scope.row.createDate) }}
+            </template>
+        </el-table-column>
+        <el-table-column label="状态">
+            <template slot-scope="scope">
+                {{  translateStatus(scope.row.status) }}
             </template>
         </el-table-column>
         <el-table-column label="操作" width="190" header-align="center" align="center">

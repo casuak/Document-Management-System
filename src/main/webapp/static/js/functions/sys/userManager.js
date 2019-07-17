@@ -7,7 +7,8 @@ let app = new Vue({
             updateUser: '/api/sys/user/update',
             deleteUserList: '/api/sys/user/deleteList',
             getAllRoleList: '/api/sys/role/selectAllList',
-            updateUserRole: '/api/sys/map/userRole/update'
+            updateUserRole: '/api/sys/map/userRole/update',
+            initUser: '/api/sys/user/initUser'
         },
         fullScreenLoading: false,
         table: {
@@ -228,6 +229,30 @@ let app = new Vue({
                 cn = '学生';
             } else if (en === 'doctor') {
                 cn = '博士后';
+            }
+            return cn;
+        },
+        initUser: function () {
+            let app = this;
+            window.parent.app.showConfirm(() => {
+                app.fullScreenLoading = true;
+                ajaxPost(app.urls.initUser, null, function (d) {
+                    app.fullScreenLoading = false;
+                })
+            });
+        },
+        translateStatus: function(status){
+            let cn = '';
+            switch (status) {
+                case '0':
+                    cn = '未初始化';
+                    break;
+                case '1':
+                    cn = '初始化完成';
+                    break;
+                default:
+                    cn = 'error';
+                    break;
             }
             return cn;
         }

@@ -1,8 +1,10 @@
 package team.abc.ssm.modules.sys.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import team.abc.ssm.common.persistence.Page;
+import team.abc.ssm.common.utils.PinyinUtils;
 import team.abc.ssm.modules.sys.dao.UserDao;
 import team.abc.ssm.modules.sys.entity.User;
 
@@ -10,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@Slf4j
 public class UserService {
 
     @Autowired
@@ -69,6 +72,50 @@ public class UserService {
         int count = userDao.update(user);
         return count == 1;
     }
+
+    /**
+     * 初始化导入的用户
+     */
+    public void initUser() {
+        List<User> userList = userDao.selectByStatus("0");
+        setUsersNicknamesAndTutorNicknames(userList);
+
+        for (User user : userList) {
+            user.setStatus("1");
+        }
+        int updateCount = (int) Math.ceil(userList.size() / 1000f);
+        for (int i = 0; i < updateCount; i++) {
+            int start = i * 1000;
+            int end = start + 1000;
+            if (end > userList.size())
+                end = userList.size();
+            userDao.updateList(userList.subList(start, end));
+            float progress = (i + 1f) / updateCount * 100f;
+            log.info("当前进度：" + progress + "%");
+        }
+//        updateList(userList);
+    }
+
+    /**
+     * 设置用户的nickname和导师的nickname（如果有的话）
+     */
+    private void setUsersNicknamesAndTutorNicknames(List<User> userList) {
+        // 对所有用户添加nickname
+        for (User user : userList) {
+            String nicknames = "";
+            nicknames += PinyinUtils.getPinyin2(user.getRealName(), true) + ";";
+            nicknames += PinyinUtils.getPinyin2(user.getRealName(), false) + ";";
+            user.setNicknames(nicknames);
+            String tutorNicknames = "";
+            String tutorName = user.getTutorName();
+            if (tutorName != null && !tutorName.equals("")) {
+                tutorNicknames += PinyinUtils.getPinyin2(user.getTutorName(), true) + ";";
+                tutorNicknames += PinyinUtils.getPinyin2(user.getTutorName(), false) + ";";
+                user.setTutorNicknames(tutorNicknames);
+            }
+        }
+    }
+
 
     public boolean updateList(List<User> userList) {
         int count = userDao.updateList(userList);

@@ -30,6 +30,7 @@
         <result column="major" property="major"/>
         <result column="student_train_level" property="studentTrainLevel"/>
         <result column="student_degree_type" property="studentDegreeType"/>
+        <result column="status" property="status"/>
 
         <association property="tutor" javaType="user">
             <id column="tutor_work_id" property="workId"/>
@@ -66,6 +67,13 @@
         from sys_user a
                  left join sys_map_user_role b on a.id = b.user_id
                  left join sys_role c on b.role_id = c.id
+    </select>
+
+    <!-- 获取指定状态的所有用户 -->
+    <select id="selectByStatus" resultMap="userBean">
+        select a.*
+        from sys_user a
+        where a.status = #{status}
     </select>
 
     <select id="selectAll2" resultType="user">
@@ -215,7 +223,7 @@
         where id = #{id}
     </update>
 
-    <update id="updateList" parameterType="user">
+    <update id="updateList" parameterType="java.util.List">
         update sys_user
         <trim prefix="set" suffixOverrides=",">
             <trim prefix="nicknames = case" suffix="end,">
@@ -228,7 +236,16 @@
                     when id = #{item.id} then #{item.tutorNicknames}
                 </foreach>
             </trim>
+            <trim prefix="status = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    when id = #{item.id} then #{item.status}
+                </foreach>
+            </trim>
         </trim>
+        where id in
+        <foreach close=")" collection="list" item="item" open="(" separator=", ">
+            #{item.id}
+        </foreach>
     </update>
 
     <!-- 删除指定id的用户 -->

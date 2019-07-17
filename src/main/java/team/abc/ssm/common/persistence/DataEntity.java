@@ -3,6 +3,9 @@ package team.abc.ssm.common.persistence;
 import team.abc.ssm.common.utils.IdGen;
 import team.abc.ssm.common.utils.UserUtils;
 
+import javax.persistence.Column;
+import javax.persistence.Id;
+import javax.persistence.MappedSuperclass;
 import javax.persistence.Transient;
 import java.util.Date;
 
@@ -10,14 +13,23 @@ import java.util.Date;
  * 所有表格的对应实体类的基类
  * 提供了基础的通用属性
  */
+@MappedSuperclass
 public class DataEntity<T> {
 
+    @Id
+    @Column(name = "id")
     private String id;
+    @Column(name = "remarks")
     private String remarks;         // 备注
+    @Column(name = "create_user_id")
     private String createUserId;    // 创建者id
+    @Column(name = "modify_user_id")
     private String modifyUserId;    // 最后修改者id
+    @Column(name = "create_date")
     private Date createDate;        // 创建日期
+    @Column(name = "modify_date")
     private Date modifyDate;        // 最后修改日期
+    @Column(name = "del_flag")
     private boolean delFlag;        // 是否被删除
 
     @Transient

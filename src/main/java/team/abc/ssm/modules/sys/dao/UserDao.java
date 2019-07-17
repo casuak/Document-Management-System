@@ -16,6 +16,8 @@ public interface UserDao {
     // 获取所有用户列表
     List<User> selectAll();
 
+    List<User> selectByStatus(String status);
+
     // 获取所有用户(论文用户匹配中使用到)
     List<User> selectAll2();
 
@@ -36,6 +38,7 @@ public interface UserDao {
     // 更新用户信息
     int update(User user);
 
+    // 批量更新用户信息
     int updateList(List<User> userList);
 
     // 删除指定id的用户
