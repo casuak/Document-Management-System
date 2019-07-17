@@ -215,6 +215,9 @@ public class DocPatentService {
         //2.2 此时唯一确定第一作者
         docPatent.setFirstAuthor(docPatent.getFirstAuthorList().get(0));
         docPatent.setFirstAuthorId(docPatent.getFirstAuthor().getId());
+        /*------ 7.17 new add start------*/
+        docPatent.setFirstAuthorWorkId(docPatent.getFirstAuthor().getWorkId());
+        /*------ 7.17 new add finish------*/
         docPatent.setInstitute(docPatent.getFirstAuthor().getSchool());
         //判断有无第二作者
         if (docPatent.getStatus2().equals(SecondAuMatchType.ONLY_FIRST_AUTHOR.toString())) {
@@ -245,6 +248,9 @@ public class DocPatentService {
                                     FirstAuMatchType.MATCH_SUCCESS,
                                     SecondAuMatchType.MATCH_SUCCESS);
                             docPatent.setSecondAuthorId(docPatent.getSecondAuthorList().get(0).getId());
+                            /*------ 7.17 new add start------*/
+                            docPatent.setSecondAuthorWorkId(docPatent.getSecondAuthorList().get(0).getWorkId());
+                            /*------ 7.17 new add finish------*/
                         } else {
                             //2.2.2.1.3 有导师workId但是不匹配
                             docPatent.setStatuses(
@@ -284,6 +290,9 @@ public class DocPatentService {
                                 FirstAuMatchType.MATCH_SUCCESS,
                                 SecondAuMatchType.MATCH_SUCCESS);
                         docPatent.setSecondAuthorId(secondAuthorStudents.get(0).getId());
+                        /*------ 7.17 new add start------*/
+                        docPatent.setSecondAuthorWorkId(secondAuthorStudents.get(0).getWorkId());
+                        /*------ 7.17 new add finish------*/
                     } else {
                         //2.2.2.1.7 第二作者有多个的导师都是第一作者
                         if (secondAuthorStudents.size() == 2){
@@ -306,9 +315,15 @@ public class DocPatentService {
                             if (patentAuthorizationDate.after(master.getHireDate())){
                                 //专利授权日在博士入职后——属于博士
                                 docPatent.setSecondAuthorId(doctor.getId());
+                                /*------ 7.17 new add start------*/
+                                docPatent.setSecondAuthorWorkId(doctor.getWorkId());
+                                /*------ 7.17 new add finish------*/
                             }else{
                                 //专利授权日在博士入职前——属于硕士
                                 docPatent.setSecondAuthorId(master.getId());
+                                /*------ 7.17 new add start------*/
+                                docPatent.setSecondAuthorWorkId(master.getWorkId());
+                                /*------ 7.17 new add finish------*/
                             }
                             docPatent.setStatuses(
                                     MATCH_SUCCESS,
@@ -343,7 +358,7 @@ public class DocPatentService {
                         }
                     }
                     if (tutorCount == 0) {
-                        //2.2.2.2.1 这样专利仅有一作
+                        //2.2.2.2.1 一作导师不在其余发明人中，这样专利仅有一作
                         docPatent.setStatuses(
                                 PatentMatchType.MATCH_SUCCESS,
                                 FirstAuMatchType.MATCH_SUCCESS,
@@ -357,6 +372,9 @@ public class DocPatentService {
                         docPatent.setSecondAuthor(sysUserMapper.selectByWorkId(
                                 docPatent.getFirstAuthor().getTutorWorkId()));
                         docPatent.setSecondAuthorId(docPatent.getSecondAuthor().getId());
+                        /*------ 7.17 new add start------*/
+                        docPatent.setSecondAuthorWorkId(docPatent.getSecondAuthor().getWorkId());
+                        /*------ 7.17 new add finish------*/
                     } else {
                         //2.2.2.2.3
                         docPatent.setStatuses(
@@ -444,6 +462,9 @@ public class DocPatentService {
                                         SecondAuMatchType.UNMATCHED);
                             } else if (studentList.size() == 1) {
                                 docPatent.setSecondAuthorId(studentList.get(0).getId());
+                                /*------ 7.17 new add start------*/
+                                docPatent.setSecondAuthorWorkId(studentList.get(0).getWorkId());
+                                /*------ 7.17 new add finish------*/
                                 if (studentList.get(0).getTutorWorkId() == null) {
                                     //2.3.2.1.2.1
                                     docPatent.setStatuses(
@@ -459,6 +480,9 @@ public class DocPatentService {
                                                 FirstAuMatchType.MATCH_SUCCESS,
                                                 SecondAuMatchType.MATCH_SUCCESS);
                                         docPatent.setFirstAuthorId(tmpTutor.getId());
+                                        /*------ 7.17 new add start------*/
+                                        docPatent.setFirstAuthorWorkId(tmpTutor.getWorkId());
+                                        /*------ 7.17 new add finish------*/
                                         docPatent.setInstitute(tmpTutor.getSchool());
                                     } else {
                                         //2.3.2.1.2.3
@@ -498,9 +522,15 @@ public class DocPatentService {
 
                                     docPatent.setSecondAuthor(resStudentList.get(0));
                                     docPatent.setSecondAuthorId(resStudentList.get(0).getId());
+                                    /*------ 7.17 new add start------*/
+                                    docPatent.setSecondAuthorWorkId(resStudentList.get(0).getWorkId());
+                                    /*------ 7.17 new add finish------*/
                                     docPatent.setFirstAuthor(sysUserMapper.selectByWorkId(
                                             resStudentList.get(0).getTutorWorkId()));
                                     docPatent.setFirstAuthorId(docPatent.getFirstAuthor().getId());
+                                    /*------ 7.17 new add start------*/
+                                    docPatent.setFirstAuthorWorkId(docPatent.getFirstAuthor().getWorkId());
+                                    /*------ 7.17 new add finish------*/
                                     docPatent.setInstitute(docPatent.getFirstAuthor().getSchool());
                                 } else {
                                     //2.3.2.1.3.3
@@ -555,8 +585,14 @@ public class DocPatentService {
                                         SecondAuMatchType.MATCH_SUCCESS);
                                 docPatent.setFirstAuthor(resTeacherList.get(0).getMyStudents().get(0));
                                 docPatent.setFirstAuthorId(docPatent.getFirstAuthor().getId());
+                                /*------ 7.17 new add start------*/
+                                docPatent.setFirstAuthorWorkId(docPatent.getFirstAuthor().getWorkId());
+                                /*------ 7.17 new add finish------*/
                                 docPatent.setSecondAuthor(resTeacherList.get(0));
                                 docPatent.setSecondAuthorId(resTeacherList.get(0).getId());
+                                /*------ 7.17 new add start------*/
+                                docPatent.setSecondAuthorWorkId(resTeacherList.get(0).getWorkId());
+                                /*------ 7.17 new add finish------*/
                                 docPatent.setInstitute(docPatent.getFirstAuthor().getSchool());
                             } else {
                                 //2.3.2.2.3
@@ -576,12 +612,21 @@ public class DocPatentService {
                                         }
                                         if (docPatent.getPatentAuthorizationDate().after(doctor.getHireDate())){
                                             docPatent.setFirstAuthorId(doctor.getId());
+                                            /*------ 7.17 new add start------*/
+                                            docPatent.setFirstAuthorWorkId(doctor.getWorkId());
+                                            /*------ 7.17 new add finish------*/
                                             docPatent.setInstitute(doctor.getSchool());
                                         }else{
                                             docPatent.setFirstAuthorId(master.getId());
+                                            /*------ 7.17 new add start------*/
+                                            docPatent.setFirstAuthorWorkId(master.getWorkId());
+                                            /*------ 7.17 new add finish------*/
                                             docPatent.setInstitute(master.getSchool());
                                         }
                                         docPatent.setSecondAuthorId(resTeacherList.get(0).getId());
+                                        /*------ 7.17 new add start------*/
+                                        docPatent.setSecondAuthorWorkId(resTeacherList.get(0).getWorkId());
+                                        /*------ 7.17 new add finish------*/
                                         docPatent.setStatuses(
                                                 MATCH_SUCCESS,
                                                 FirstAuMatchType.MATCH_SUCCESS,

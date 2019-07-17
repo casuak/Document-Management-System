@@ -30,6 +30,8 @@
         <result column="first_author_name" jdbcType="VARCHAR" property="firstAuthorName"/>
         <result column="second_author_type" jdbcType="VARCHAR" property="secondAuthorType"/>
         <result column="second_author_name" jdbcType="VARCHAR" property="secondAuthorName"/>
+        <result column="first_author_work_id" jdbcType="VARCHAR" property="firstAuthorWorkId"/>
+        <result column="second_author_work_id" jdbcType="VARCHAR" property="secondAuthorWorkId"/>
     </resultMap>
     <sql id="Base_Column_List">
         <!--@mbg.generated-->
@@ -250,6 +252,12 @@
             <if test="secondAuthorId != null">
                 second_author_id = #{secondAuthorId,jdbcType=VARCHAR},
             </if>
+            <if test="firstAuthorWorkId != null ">
+                first_author_work_id = #{firstAuthor.workId,jdbcType=VARCHAR},
+            </if>
+            <if test="secondAuthorWorkId != null ">
+                second_author_work_id = #{secondAuthorWorkId,jdbcType=VARCHAR},
+            </if>
             <if test="remarks != null">
                 remarks = #{remarks,jdbcType=VARCHAR},
             </if>
@@ -295,6 +303,8 @@
         second_author_name = #{secondAuthorName,jdbcType=VARCHAR},
         first_author_id = #{firstAuthorId,jdbcType=VARCHAR},
         second_author_id = #{secondAuthorId,jdbcType=VARCHAR},
+        first_author_work_id = #{firstAuthor.workId,jdbcType=VARCHAR},
+        second_author_work_id = #{secondAuthor.workId,jdbcType=VARCHAR},
         remarks = #{remarks,jdbcType=VARCHAR},
         create_user_id = #{createUserId,jdbcType=VARCHAR},
         create_date = #{createDate,jdbcType=TIMESTAMP},
@@ -414,5 +424,27 @@
         from doc_patent
         where `status`=#{status,jdbcType=VARCHAR} and patent_number=#{patentNumber,jdbcType=VARCHAR} and
         del_flag=#{delFlag,jdbcType=BOOLEAN}
+    </select>
+    <select id="selectStudentPatent" parameterType="team.abc.ssm.modules.author.entity.Author" resultType="int">
+        select count(*)
+        from doc_patent
+        where first_author_work_id = #{workId,jdbcType=VARCHAR}
+        or (
+           second_author_work_id = #{workId,jdbcType=VARCHAR}
+           and first_author_work_id = (
+            #{tutorWorkId,jdbcType=VARCHAR}
+           )
+        )
+    </select>
+    <select id="selectTeacherPatent" parameterType="team.abc.ssm.modules.author.entity.Author" resultType="int">
+        select count(*)
+        from doc_patent a
+        where first_author_work_id = #{workId,jdbcType=VARCHAR}
+        or #{workId,jdbcType=VARCHAR}  =(
+            select b.tutor_work_id
+            from sys_user b
+            where b.user_type = 'student'
+            and b.work_id = a.first_author_work_id
+        )
     </select>
 </mapper>

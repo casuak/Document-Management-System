@@ -807,4 +807,32 @@
         </trim>
         where status = '2'
     </update>
+    <select id="countByFirstAuthorIdAndStatus" resultType="int">
+        select count(*)
+        from docmanager.doc_paper
+        where first_author_id = #{firstAuthorId,jdbcType=VARCHAR}
+        and status = '2'
+    </select>
+    <select id="selectStudentPaper" parameterType="team.abc.ssm.modules.author.entity.Author" resultType="int">
+        select count(*)
+        from doc_paper
+        where first_author_id = #{workId,jdbcType=VARCHAR}
+        or (
+           second_author_id = #{workId,jdbcType=VARCHAR}
+           and first_author_id = (
+            #{tutorWorkId,jdbcType=VARCHAR}
+           )
+        )
+    </select>
+    <select id="selectTeacherPaper" parameterType="team.abc.ssm.modules.author.entity.Author" resultType="int">
+        select count(*)
+        from doc_paper a
+        where first_author_id = #{workId,jdbcType=VARCHAR}
+        or #{workId,jdbcType=VARCHAR}  =(
+            select b.tutor_work_id
+            from sys_user b
+            where b.user_type = 'student'
+            and b.work_id = a.first_author_id
+        )
+    </select>
 </mapper>

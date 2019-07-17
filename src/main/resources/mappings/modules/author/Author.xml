@@ -18,12 +18,14 @@
         <result column="nicknames" property="nicknames"/>
         <result column="school" property="school"/>
         <result column="major" property="major"/>
-        <association property="organizationName" column="id"
-                     select="getAuthorOrganizeName"/>
-        <association property="subjectName" column="id"
-                     select="getAuthorSubjectName"/>
-        <association property="paperAmount" column="work_id"
+        <result column="tutor_work_id" property="tutorWorkId"/>
+        <result column="tutor_real_name" property="tutorRealName"/>
+        <result column="school" property="organizationName"/>
+        <result column="major" property="subjectName"/>
+       <!-- <association property="paperAmount" column="work_id"
                      select="getPaperAmount"/>
+        <association property="patentAmount" column="work_id"
+                     select="getPatentAmount"/>-->
     </resultMap>
 
     <insert id="batchInsert">
@@ -35,20 +37,23 @@
     </insert>
 
     <select id="getAuthorListByPage" resultMap="authorBean">
-        select *
-        from sys_user
-        where del_flag != -1
+        select
+        a.*,
+        b.real_name as tutor_real_name
+        from sys_user a
+        left join docmanager.sys_user b on a.tutor_work_id = b.work_id
+        where a.del_flag != 1
         <if test="workId != '' and workId != null">
-            and work_id = #{workId}
+            and a.work_id = #{workId}
         </if>
         <if test="userType != null and userType != ''">
-            and user_type = #{userType}
+            and a.user_type = #{userType}
         </if>
         <if test="organizationName != null and organizationName != ''">
-            and school = #{organizationName}
+            and a.school = #{organizationName}
         </if>
         <if test="subjectName != null and subjectName != ''">
-            and major = #{subjectName}
+            and a.major = #{subjectName}
         </if>
         limit #{page.pageStart},#{page.pageSize}
     </select>
@@ -60,7 +65,17 @@
               where first_author_id = #{workId}
                  or second_author_id = #{workId}
              ) a
-        where del_flag != -1
+        where del_flag != 1
+    </select>
+
+    <select id="getPatentAmount" resultType="java.lang.Integer">
+        select count(*)
+        from (select *
+              from docmanager.doc_patent
+              where first_author_id = #{workId}
+                 or second_author_id = #{workId}
+             ) a
+        where del_flag != 1
     </select>
 
     <select id="getAuthorSubjectName" resultType="java.lang.String">
@@ -109,8 +124,13 @@
     </select>
 
     <select id="getFirstSub" resultType="java.lang.String">
-        select DISTINCT major
-        from sys_user
+        select distinct name_cn
+        from sys_dict
+        where type_id = (
+            select id
+            from sys_dict_type `type`
+            where type.name_cn = '一级学科'
+        )
     </select>
     <select id="getNameByWorkId" resultType="java.lang.String">
         select real_name from sys_user where work_id = #{0}

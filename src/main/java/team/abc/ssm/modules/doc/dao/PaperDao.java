@@ -2,6 +2,7 @@ package team.abc.ssm.modules.doc.dao;
 
 import java.util.List;
 import org.apache.ibatis.annotations.Param;
+import team.abc.ssm.modules.author.entity.Author;
 import team.abc.ssm.modules.doc.entity.Paper;
 
 public interface PaperDao {
@@ -49,4 +50,14 @@ public interface PaperDao {
             @Param("authorWorkId") String authorWorkId);
 
     int completeAll();
+
+    int countByFirstAuthorIdAndStatus(
+            @Param("firstAuthorId") String firstAuthorId,
+            @Param("status") String status);
+
+    int selectStudentPaper(
+            Author author);
+
+    int selectTeacherPaper(
+            Author author);
 }

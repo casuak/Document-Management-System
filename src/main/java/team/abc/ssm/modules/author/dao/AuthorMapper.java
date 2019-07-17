@@ -17,6 +17,9 @@ public interface AuthorMapper {
     /** 获取作者论文数*/
     int getPaperAmount(String authorId);
 
+    /** 获取作者专利数*/
+    int getPatentAmount(String authorId);
+
     /** 获取作者数目*/
     int getAuthorCount(Author author);
 

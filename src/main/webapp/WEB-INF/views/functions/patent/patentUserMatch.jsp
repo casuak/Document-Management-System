@@ -146,18 +146,18 @@
             </template>
         </el-table-column>
         <el-table-column label="所属学院" width="150" prop="institute" fixed="left" align="center"
-                         v-if="['2', '4'].contains(status)">
+                         v-if="['2', '4'].contains(status)" key="key1">
         </el-table-column>
         <el-table-column label="所属学院" width="150" fixed="left" align="center"
-                         v-else-if="['1', '3'].contains(status)">
+                         v-if="['1', '3'].contains(status)" key="key2">
             <template slot-scope="{row}">
-                <template v-if="row.institute != null&&row.institute != ''">
+                <template v-if="row.institute != null&&row.institute != ''" key="key3">
                     <span style="color: #2D8CF0;font-family: 'PingFang SC'"
                           @click="openInstituteSelect(row)">
                         {{row.institute}}
                     </span>
                 </template>
-                <i-button v-else type="primary" size="small"
+                <i-button v-else type="primary" size="small" key="key4"
                           @click="openInstituteSelect(row)">选择学院
                 </i-button>
             </template>
@@ -247,7 +247,7 @@
         <el-table-column label="操作" width="160" header-align="center" align="center" fixed="right">
             <template slot-scope="{row}">
                 <span style="position:relative;bottom: 1px;">
-                    <el-button type="success" size="mini"
+                    <el-button type="primary" size="mini"
                                style="margin-right: 0;"
                                @click="completePatent([{id:row.id}])"
                                v-if="status === '2'">

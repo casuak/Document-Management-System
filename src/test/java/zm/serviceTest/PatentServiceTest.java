@@ -13,15 +13,20 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import team.abc.ssm.modules.author.dao.AuthorMapper;
 import team.abc.ssm.modules.author.dao.SysUserMapper;
 import team.abc.ssm.modules.author.entity.SysUser;
 import team.abc.ssm.modules.patent.dao.DocPatentMapper;
 import team.abc.ssm.modules.patent.entity.DocPatent;
 import team.abc.ssm.modules.patent.service.DocPatentService;
+import team.abc.ssm.modules.sys.dao.DictDao;
+import team.abc.ssm.modules.sys.entity.Dict;
 import zm.interfaceTest.AuthorTest;
 
 import java.text.ParseException;
+import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * @ClassName PatentServiceTest
@@ -42,6 +47,12 @@ public class PatentServiceTest {
 
     @Autowired
     private SysUserMapper sysUserMapper;
+
+    @Autowired
+    private AuthorMapper authorMapper;
+
+    @Autowired
+    private DictDao dictDao;
 
     @Autowired
     private DocPatentMapper patentMapper;
@@ -97,7 +108,7 @@ public class PatentServiceTest {
     public void authorMatchTest(){
         authenticate();
         try{
-            String patentId = "d21fa3a2f1c5484c9604bcd4203ba49c";
+            String patentId = "105b77dd59fe49dcb0a4ccbb70847c27";
             DocPatent tmpPatent = patentMapper.selectByPrimaryKey(patentId);
 
             patentService.authorMatch(tmpPatent);
@@ -106,6 +117,31 @@ public class PatentServiceTest {
             System.out.println(tmpPatent);
         }catch (Exception e){
             e.printStackTrace();
+        }
+    }
+
+
+    @Test
+    public void insertFirstSubject(){
+        List<String> subjectList = authorMapper.getFirstSub();
+        for (int i = 0; i < subjectList.size(); i++) {
+            if ("".equals(subjectList.get(i)) || subjectList.get(i) == null){
+            }else{
+                Date dateNow = new Date();
+                Dict tmpDict = new Dict();
+                tmpDict.setId(UUID.randomUUID().toString());
+                tmpDict.setNameCn(subjectList.get(i));
+                tmpDict.setTypeId("a1808a4adb4543e4b908d4280ee8ba30");
+                tmpDict.setSort(0);
+                tmpDict.setCreateUserId("u1");
+                tmpDict.setModifyUserId("u1");
+                tmpDict.setCreateDate(dateNow);
+                tmpDict.setModifyDate(dateNow);
+                tmpDict.setModifyDate(dateNow);
+                tmpDict.setDelFlag(false);
+
+                dictDao.insert(tmpDict);
+            }
         }
     }
 }
