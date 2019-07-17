@@ -181,7 +181,7 @@ public class PaperService {
         return count == paperList.size();
     }
 
-    public void completeAll(){
+    public void completeAll() {
         paperDao.completeAll();
     }
 
@@ -197,18 +197,33 @@ public class PaperService {
         Paper params = new Paper();
         params.setStatus("0");
         List<Paper> paperList = paperDao.selectListByStatus(params);
-        List<User> _userList = userService.getAllUsers2();
+        List<User> allList = userService.getAllUsers2();
         List<User> userList = new ArrayList<>();
         List<User> studentList = new ArrayList<>();
         List<User> teacherList = new ArrayList<>();
-        // 过滤用户
-        for (User user : _userList) {
-            if ("teacher;student;".contains(user.getUserType()))
-                userList.add(user);
-            if ("teacher".equals(user.getUserType()))
-                teacherList.add(user);
-            if ("student".equals(user.getUserType()))
+        // 初始化三个列表
+        for (User user : allList) {
+            if (user == null) continue;
+            if (user.getUserType() == null) continue;
+            if (user.getWorkId() == null) continue;
+            if ("teacher".equals(user.getUserType())) {
+                // 目前老师数据存在重复，所以需要去重
+                boolean repeat = false;
+                for (User teacher : teacherList) {
+                    if (teacher.getWorkId().equals(user.getWorkId())) {
+                        repeat = true;
+                        break;
+                    }
+                }
+                if (!repeat) {
+                    teacherList.add(user);
+                    userList.add(user);
+                }
+            }
+            if ("student".equals(user.getUserType())) {
                 studentList.add(user);
+                userList.add(user);
+            }
         }
         // 学生导师赋值
         for (User student : studentList) {
@@ -229,12 +244,21 @@ public class PaperService {
             String firstAuthorName = ";";
             String secondAuthorName = ";";
             String authorList = ";";
-            if (paper.getFirstAuthorName() != null)
-                firstAuthorName = paper.getFirstAuthorName().toLowerCase() + ";";
+            String[] authors = new String[0];
+            if (paper.getFirstAuthorName() == null || paper.getFirstAuthorName().equals("")) {
+                paper.setStatus("1");
+                continue;
+            }
+            firstAuthorName = paper.getFirstAuthorName().toLowerCase() + ";";
             if (paper.getSecondAuthorName() != null)
                 secondAuthorName = paper.getSecondAuthorName().toLowerCase() + ";";
-            if (paper.getAuthorList() != null)
+            if (paper.getAuthorList() != null) {
                 authorList = paper.getAuthorList().toLowerCase() + ";";
+                authors = authorList.split(";");
+                for (int i = 0; i < authors.length; i++) {
+                    authors[i] = authors[i].trim();
+                }
+            }
             // -----------------------论文数据预处理end-------------------------------
             // -----------------------正式匹配start-------------------------------
             List<User> matchList1 = new ArrayList<>(); // 第一作者匹配列表
@@ -308,20 +332,57 @@ public class PaperService {
                     }
                 }
             } else { // 重复
-                int studentCount = 0;
-                int teacherCount = 0;
+                // 直接去除其中的老师，然后看学生的导师是否能和论文的其余作者匹配上
+                List<User> studentList2 = new ArrayList<>();
                 for (User user : matchList1) {
-                    if ("student".equals(user.getUserType()))
-                        studentCount += 1;
-                    else
-                        teacherCount += 1;
+                    if (user.getUserType().equals("student")) {
+                        studentList2.add(user);
+                    }
                 }
-                if (teacherCount == 0) { // 全是学生
-                    if (studentCount == 2) {
-                        User firstAuthor = getRightStudent(matchList1.get(0), matchList1.get(1), paper.getPublishDate());
-                        if (firstAuthor == null) {
-                            paper.setStatus("1");
+                User firstAuthor = null;
+                if (studentList2.size() == 0) {
+                    paper.setStatus("1");
+                } else if (studentList2.size() == 2) {
+                    firstAuthor = getRightStudent(matchList1.get(0), matchList1.get(1), paper.getPublishDate());
+                    if (firstAuthor != null) {
+                        if (testSecondAuthorAsTutor(firstAuthor.getTutorNicknames(), authorList)) {
+                            paper.setStatus("2"); /***************************/
+                            paper.setFirstAuthorId(firstAuthor.getWorkId());
+                            paper.setSecondAuthorId(firstAuthor.getTutorWorkId());
+                            setPaperDanweiCn(paper, firstAuthor);
                         } else {
+                            paper.setStatus("2"); /***************************/
+                            paper.setFirstAuthorId(firstAuthor.getWorkId());
+                            setPaperDanweiCn(paper, firstAuthor);
+                        }
+                    }
+                }
+                // 重复学生数量大于1，且不满足前面的情况，通过学生导师缩小范围
+                if (studentList2.size() > 0 && firstAuthor == null) {
+                    List<User> matchList3 = new ArrayList<>();
+                    for (User student : studentList2) {
+                        String tutorNicknames = student.getTutorNicknames();
+                        if (tutorNicknames == null || tutorNicknames.equals("")) continue;
+                        for (int k = 0; k < authors.length; k++) {
+                            if (k == 0) continue;
+                            if (tutorNicknames.contains(authors[k])) {
+                                matchList3.add(student);
+                                firstAuthor = student;
+                                break;
+                            }
+                        }
+                    }
+                    if (matchList3.size() == 0) {
+                        paper.setStatus("1");
+                    }
+                    if (matchList3.size() == 1) {
+                        paper.setStatus("2"); /***************************/
+                        paper.setFirstAuthorId(firstAuthor.getWorkId());
+                        paper.setSecondAuthorId(firstAuthor.getTutorWorkId());
+                        setPaperDanweiCn(paper, firstAuthor);
+                    } else if (matchList3.size() == 2) {
+                        firstAuthor = getRightStudent(matchList3.get(0), matchList3.get(1), paper.getPublishDate());
+                        if (firstAuthor != null) {
                             if (testSecondAuthorAsTutor(firstAuthor.getTutorNicknames(), authorList)) {
                                 paper.setStatus("2"); /***************************/
                                 paper.setFirstAuthorId(firstAuthor.getWorkId());
@@ -332,12 +393,12 @@ public class PaperService {
                                 paper.setFirstAuthorId(firstAuthor.getWorkId());
                                 setPaperDanweiCn(paper, firstAuthor);
                             }
+                        } else {
+                            paper.setStatus("1");
                         }
                     } else {
                         paper.setStatus("1");
                     }
-                } else {
-                    paper.setStatus("1");
                 }
             }
             // -----------------------正式匹配end-------------------------------
@@ -418,276 +479,7 @@ public class PaperService {
                             teacherCount += 1;
                     }
                     if (teacherCount == 0) { // 全是学生
-                        if (studentCount == 2) {
-                            User secondAuthor = getRightStudent(matchList2.get(0), matchList2.get(1), paper.getPublishDate());
-                            User s1 = matchList2.get(0);
-                            User s2 = matchList2.get(1);
-                            if (secondAuthor == null) {
-                                paper.setStatus("1");
-                            } else {
-                                if (testFirstAuthorAsTutor(s1.getTutorNicknames(), authorList)) {
-                                    paper.setStatus("2"); /***************************/
-                                    paper.setFirstAuthorId(s1.getTutorWorkId());
-                                    paper.setSecondAuthorId(s1.getWorkId());
-                                    setPaperDanweiCn(paper, secondAuthor);
-                                } else if (testFirstAuthorAsTutor(s2.getTutorNicknames(), authorList)) {
-                                    paper.setStatus("2"); /***************************/
-                                    paper.setFirstAuthorId(s2.getTutorWorkId());
-                                    paper.setSecondAuthorId(s2.getWorkId());
-                                    setPaperDanweiCn(paper, secondAuthor);
-                                } else {
-                                    paper.setStatus("1"); /***************************/
-//                                    paper.setSecondAuthorId(secondAuthor.getWorkId());
-                                }
-                            }
-                        } else {
-                            paper.setStatus("1");
-                        }
-                    } else {
                         paper.setStatus("1");
-                    }
-                }
-            }
-            //---------------------------优化匹配错误的情况end------------------------------
-        }
-        // -----------------------------匹配部分end----------------------------------
-        paperDao.updateBatch(paperList);
-        return true;
-    }
-
-    public boolean paperUserMatch2() {
-        // -----------------------------取值部分start----------------------------------
-        Paper params = new Paper();
-        params.setStatus("0");
-        List<Paper> paperList = paperDao.selectListByStatus(params);
-        List<User> _userList = userService.getAllUsers2();
-        List<User> userList = new ArrayList<>();
-        List<User> studentList = new ArrayList<>();
-        List<User> teacherList = new ArrayList<>();
-        // 过滤用户
-        for (User user : _userList) {
-            if ("teacher;student;".contains(user.getUserType()))
-                userList.add(user);
-            if ("teacher".equals(user.getUserType()))
-                teacherList.add(user);
-            if ("student".equals(user.getUserType()))
-                studentList.add(user);
-        }
-        // 学生导师赋值
-        for (User student : studentList) {
-            String tutorWorkId = student.getTutorWorkId();
-            if (tutorWorkId != null) {
-                for (User teacher : teacherList) {
-                    if (tutorWorkId.equals(teacher.getWorkId())) {
-                        student.setTutor(teacher);
-                        break;
-                    }
-                }
-            }
-        }
-        // -----------------------------取值部分end----------------------------------
-        // -----------------------------匹配部分start----------------------------------
-        for (Paper paper : paperList) {
-            // -----------------------论文数据预处理start-------------------------------
-            String firstAuthorName = ";";
-            String secondAuthorName = ";";
-            String authorList = ";";
-            if (paper.getFirstAuthorName() != null)
-                firstAuthorName = paper.getFirstAuthorName().toLowerCase() + ";";
-            if (paper.getSecondAuthorName() != null)
-                secondAuthorName = paper.getSecondAuthorName().toLowerCase() + ";";
-            if (paper.getAuthorList() != null)
-                authorList = paper.getAuthorList().toLowerCase() + ";";
-            // -----------------------论文数据预处理end-------------------------------
-            // -----------------------正式匹配start-------------------------------
-            List<User> matchList1 = new ArrayList<>(); // 第一作者匹配列表
-            List<User> matchList2 = new ArrayList<>(); // 第二作者匹配列表
-            for (User user : userList) { // 匹配一作
-                boolean flag = true;
-                if (flag && user.getRealName().equals("SULTAN MANZOOR") && paper.getPaperName().contains("Cost and energy analysis of a grid-tie solar")) {
-                    int a = 1;
-                }
-                if (paper.getDanweiCN() != null && !paper.getDanweiCN().equals("")) // 学院一致
-                    if (!paper.getDanweiCN().equals(user.getSchool()))
-                        flag = false;
-                if (flag && !user.getNicknames().contains(firstAuthorName)) // 别名匹配
-                    flag = false;
-                if (flag) matchList1.add(user);
-            }
-            if (matchList1.size() == 0) { // 无匹配
-                paper.setStatus("1"); /***************************/
-            } else if (matchList1.size() == 1) { // 唯一
-                User firstAuthor = matchList1.get(0);
-                if ("student".equals(firstAuthor.getUserType())) {
-                    if (testSecondAuthorAsTutor(firstAuthor.getTutorNicknames(), authorList)) {
-                        paper.setStatus("2"); /***************************/
-                        paper.setFirstAuthorId(firstAuthor.getWorkId());
-                        paper.setSecondAuthorId(firstAuthor.getTutorWorkId());
-                    } else {
-                        paper.setStatus("2"); /***************************/
-                        paper.setFirstAuthorId(firstAuthor.getWorkId());
-                    }
-                } else if ("teacher".equals(firstAuthor.getUserType())) {
-                    for (User student : studentList) { // 在学生中匹配二作
-                        boolean flag = true;
-                        if (paper.getDanweiCN() != null && !paper.getDanweiCN().equals("")) // 学院一致
-                            if (!paper.getDanweiCN().equals(student.getSchool()))
-                                flag = false;
-                        if (flag && !student.getNicknames().contains(secondAuthorName)) // 别名匹配
-                            flag = false;
-                        if (flag && !student.getTutorWorkId().equals(firstAuthor.getWorkId())) // 导师匹配
-                            flag = false;
-                        if (flag) matchList2.add(student);
-                    }
-                    if (matchList2.size() == 0) { // 学生无匹配
-                        paper.setStatus("2"); /***************************/
-                        paper.setFirstAuthorId(firstAuthor.getWorkId());
-                    } else if (matchList2.size() == 1) {
-                        paper.setStatus("2"); /***************************/
-                        paper.setFirstAuthorId(firstAuthor.getWorkId());
-                        paper.setSecondAuthorId(matchList2.get(0).getWorkId());
-                    } else if (matchList2.size() == 2) {
-                        User secondAuthor = getRightStudent(matchList2.get(0), matchList2.get(1), paper.getPublishDate());
-                        if (secondAuthor == null) {
-                            paper.setStatus("1");
-                        } else {
-                            if (testFirstAuthorAsTutor(secondAuthor.getTutorNicknames(), authorList)) {
-                                paper.setStatus("2"); /***************************/
-                                paper.setSecondAuthorId(secondAuthor.getWorkId());
-                                paper.setFirstAuthorId(firstAuthor.getWorkId());
-                            } else {
-                                paper.setStatus("2"); /***************************/
-                                paper.setFirstAuthorId(firstAuthor.getWorkId());
-                            }
-                        }
-                    } else {
-                        paper.setStatus("1"); /************二作不确定***************/
-                        paper.setFirstAuthorId(firstAuthor.getWorkId());
-                    }
-                }
-            } else { // 重复
-                int studentCount = 0;
-                int teacherCount = 0;
-                for (User user : matchList1) {
-                    if ("student".equals(user.getUserType()))
-                        studentCount += 1;
-                    else
-                        teacherCount += 1;
-                }
-                if (teacherCount == 0) { // 全是学生
-                    if (studentCount == 2) {
-                        User firstAuthor = getRightStudent(matchList1.get(0), matchList1.get(1), paper.getPublishDate());
-                        if (firstAuthor == null) {
-                            paper.setStatus("1");
-                        } else {
-                            if (testSecondAuthorAsTutor(firstAuthor.getTutorNicknames(), authorList)) {
-                                paper.setStatus("2"); /***************************/
-                                paper.setFirstAuthorId(firstAuthor.getWorkId());
-                                paper.setSecondAuthorId(firstAuthor.getTutorWorkId());
-                            } else {
-                                paper.setStatus("2"); /***************************/
-                                paper.setFirstAuthorId(firstAuthor.getWorkId());
-                            }
-                        }
-                    } else {
-                        paper.setStatus("1");
-                    }
-                } else {
-                    paper.setStatus("1");
-                }
-            }
-            // -----------------------正式匹配end-------------------------------
-            //--------------*********优化匹配错误的情况start**********-------------------
-            if (paper.getFirstAuthorId() == null && paper.getSecondAuthorId() == null) {
-                matchList1.clear();
-                matchList2.clear();
-                for (User user : userList) { // 匹配二作
-                    boolean flag = true;
-                    if (paper.getDanweiCN() != null && !paper.getDanweiCN().equals("")) // 学院一致
-                        if (!paper.getDanweiCN().equals(user.getSchool()))
-                            flag = false;
-                    if (flag && !user.getNicknames().contains(secondAuthorName)) // 别名匹配
-                        flag = false;
-                    if (flag) matchList2.add(user);
-                }
-                if (matchList2.size() == 0) ;
-                else if (matchList2.size() == 1) {
-                    User secondAuthor = matchList2.get(0);
-                    if ("student".equals(secondAuthor.getUserType())) {
-                        if (testFirstAuthorAsTutor(secondAuthor.getTutorNicknames(), authorList)) {
-                            paper.setStatus("2"); /***************************/
-                            paper.setFirstAuthorId(secondAuthor.getTutorWorkId());
-                            paper.setSecondAuthorId(secondAuthor.getWorkId());
-                        } else {
-                            paper.setStatus("2"); /***************************/
-                            paper.setSecondAuthorId(secondAuthor.getWorkId());
-                        }
-                    } else if ("teacher".equals(secondAuthor.getUserType())) {
-                        for (User student : studentList) { // 在学生中匹配一作
-                            boolean flag = true;
-                            if (paper.getDanweiCN() != null && !paper.getDanweiCN().equals("")) // 学院一致
-                                if (!paper.getDanweiCN().equals(student.getSchool()))
-                                    flag = false;
-                            if (flag && !student.getNicknames().contains(firstAuthorName)) // 别名匹配
-                                flag = false;
-                            if (student.getTutorWorkId() == null ||
-                                    !student.getTutorWorkId().equals(secondAuthor.getWorkId())) // 导师匹配
-                                flag = false;
-                            if (flag) matchList1.add(student);
-                        }
-                        if (matchList1.size() == 0) { // 学生无匹配
-                            paper.setStatus("2"); /***************************/
-                            paper.setSecondAuthorId(secondAuthor.getWorkId());
-                        } else if (matchList1.size() == 1) {
-                            paper.setStatus("2"); /***************************/
-                            paper.setSecondAuthorId(secondAuthor.getWorkId());
-                            paper.setFirstAuthorId(matchList1.get(0).getWorkId());
-                        } else if (matchList1.size() == 2) {
-                            User firstAuthor = getRightStudent(matchList1.get(0), matchList1.get(1), paper.getPublishDate());
-                            if (firstAuthor == null) {
-                                paper.setStatus("1");
-                            } else {
-                                if (testSecondAuthorAsTutor(firstAuthor.getTutorNicknames(), authorList)) {
-                                    paper.setStatus("2"); /***************************/
-                                    paper.setFirstAuthorId(firstAuthor.getWorkId());
-                                    paper.setSecondAuthorId(secondAuthor.getWorkId());
-                                } else {
-                                    paper.setStatus("2"); /***************************/
-                                    paper.setSecondAuthorId(secondAuthor.getWorkId());
-                                }
-                            }
-                        } else {
-                            paper.setStatus("1"); /************一作不确定***************/
-                            paper.setSecondAuthorId(secondAuthor.getWorkId());
-                        }
-                    }
-                } else { // 重复
-                    int studentCount = 0;
-                    int teacherCount = 0;
-                    for (User user : matchList2) {
-                        if ("student".equals(user.getUserType()))
-                            studentCount += 1;
-                        else
-                            teacherCount += 1;
-                    }
-                    if (teacherCount == 0) { // 全是学生
-                        if (studentCount == 2) {
-                            User secondAuthor = getRightStudent(matchList2.get(0), matchList2.get(1), paper.getPublishDate());
-                            if (secondAuthor == null) {
-                                paper.setStatus("1");
-                            } else {
-                                if (testFirstAuthorAsTutor(secondAuthor.getTutorNicknames(), authorList)) {
-                                    paper.setStatus("2"); /***************************/
-                                    paper.setSecondAuthorId(secondAuthor.getWorkId());
-                                    paper.setFirstAuthorId(secondAuthor.getTutorWorkId());
-                                } else {
-                                    paper.setStatus("2"); /***************************/
-                                    paper.setSecondAuthorId(secondAuthor.getWorkId());
-                                }
-                            }
-                        } else {
-                            paper.setStatus("1");
-                        }
                     } else {
                         paper.setStatus("1");
                     }
@@ -718,11 +510,11 @@ public class PaperService {
 
     private boolean testFirstAuthorAsTutor(String nicknames, String authorList) {
         String[] _authors = authorList.split(";");
-        String authors = "";
-        for (int i = 0; i < _authors.length; i++) {
-            if (i == 1) continue;
-            authors += _authors[i].trim() + ";";
-        }
+        String authors = _authors[0] + ";";
+//        for (int i = 0; i < _authors.length; i++) {
+//            if (i == 1) continue;
+//            authors += _authors[i].trim() + ";";
+//        }
         String[] tutorNicknames = nicknames.split(";");
         for (String nickname : tutorNicknames) {
             if (authors.contains(nickname)) {
@@ -737,6 +529,7 @@ public class PaperService {
         // 首先判断两人是否为同一人
         if (!s1.getRealName().equals(s2.getRealName()))
             return null;
+        if (s1.getHireDate() == null) return null;
         if (s1.getHireDate().after(s2.getHireDate())) {
             User tmp = s1;
             s1 = s2;

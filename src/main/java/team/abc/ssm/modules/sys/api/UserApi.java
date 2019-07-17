@@ -54,6 +54,13 @@ public class UserApi extends BaseApi {
         return retMsg.Set(MsgType.ERROR);
     }
 
+    @RequestMapping(value = "initUser", method = RequestMethod.POST)
+    @ResponseBody
+    public Object initUser(){
+        userService.initUser();
+        return retMsg.Set(MsgType.SUCCESS);
+    }
+
     @RequestMapping(value = "getList", method = RequestMethod.POST)
     @ResponseBody
     public Object getList(@RequestBody User user) {
