@@ -5,6 +5,8 @@ import java.util.List;
 
 import lombok.Data;
 
+import javax.persistence.Transient;
+
 @Data
 public class SysUser implements Cloneable {
     private String id;
@@ -164,8 +166,10 @@ public class SysUser implements Cloneable {
      */
     private String studentDegreeType;
 
+    @Transient
     private List<SysUser> myStudents;
 
+    @Transient
     private List<SysUser> myTeachers;
 
     @Override

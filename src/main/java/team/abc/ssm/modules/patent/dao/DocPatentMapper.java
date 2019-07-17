@@ -42,4 +42,6 @@ public interface DocPatentMapper {
     int convertToSuccessByIds(List<DocPatent> patentList);
 
     int convertToCompleteByIds(List<DocPatent> patentList);
+
+    int selectByStatusAndPatentNumberAndDelFlag(@Param("status")String status,@Param("patentNumber")String patentNumber,@Param("delFlag")Boolean delFlag);
 }

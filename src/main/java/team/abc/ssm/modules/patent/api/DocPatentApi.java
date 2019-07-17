@@ -133,9 +133,17 @@ public class DocPatentApi extends BaseApi {
     @RequestMapping(value = "convertToCompleteByIds",method = RequestMethod.POST)
     @ResponseBody
     public Object convertToCompleteByIds(@RequestBody List<DocPatent> patentList){
-        System.out.println("----convertToCompleteByIds----");
         System.out.println(patentList);
         patentService.convertToCompleteByIds(patentList);
+        return retMsg.Set(MsgType.SUCCESS);
+    }
+
+    @RequestMapping(value = "changeInstitute", method = RequestMethod.POST)
+    @ResponseBody
+    public Object changeInstitute(
+            @RequestParam("patentId") String patentId,
+            @RequestParam("institute") String institute){
+        patentService.changeInstitute(patentId,institute);
         return retMsg.Set(MsgType.SUCCESS);
     }
 }

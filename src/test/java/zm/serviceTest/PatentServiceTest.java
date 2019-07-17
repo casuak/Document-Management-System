@@ -97,30 +97,9 @@ public class PatentServiceTest {
     public void authorMatchTest(){
         authenticate();
         try{
-            //情况2
-            //String patentId = "002f1ea2baa94268b38246751dc98dbb";
-
-            //情况3
-            //String patentId = "002f1ea2baa94268b38246751dc98dbb";
-
-            //情况4
-            //String patentId = "024b772b9b12411da8ad09d1a7192659";
-
-            //情况5
-            //String patentId = "0208256e9e0f430aaa4f37f520e79a4d";
-
-            //情况6
-            //String patentId = "01cd46db785544acb50c4c9daa8cc46a";
-
-            //情况10
-            //String patentId = "01c7d7fd42524b9c8fc67daddef555d1";
-
-            //情况22
-            //String patentId = "01f2a65ca6814a6ba94772799132ae38";
-
-            String patentId = "baddc9d5e1c94389aa2bae50404b2517";
-
+            String patentId = "d21fa3a2f1c5484c9604bcd4203ba49c";
             DocPatent tmpPatent = patentMapper.selectByPrimaryKey(patentId);
+
             patentService.authorMatch(tmpPatent);
             tmpPatent = patentMapper.selectByPrimaryKey(patentId);
 
