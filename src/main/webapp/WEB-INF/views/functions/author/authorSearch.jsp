@@ -71,11 +71,11 @@
             width: 221.4px;
         }
 
-       /* .has-gutter .cell {
-            height: 45px;
-            line-height: 45px;
-        }*/
-        .el-table__row .cell{
+        /* .has-gutter .cell {
+             height: 45px;
+             line-height: 45px;
+         }*/
+        .el-table__row .cell {
             height: 42px;
             line-height: 42px;
         }
@@ -165,6 +165,7 @@
                           height="calc(100% - 35px)"
                           v-loading="table.authorTable.loading"
                           class="scroll-bar"
+                          :default-sort = "{prop: 'paperAmount', order: 'descending'}"
                 <%--                          style="margin-top: 0;width: 100%;overflow-y: hidden;"--%>
                 <%--@selection-change="onSelectionChange_entity"--%>
                           stripe>
@@ -184,22 +185,63 @@
                             label="作者姓名">
                     </el-table-column>
                     <el-table-column
-                            prop="userType"
-                            header-align="center"
-                            align="center"
-                            label="作者身份">
-                    </el-table-column>
-                    <el-table-column
-                            prop=""
-                            header-align="center"
-                            align="center"
-                            label="指导老师">
-                    </el-table-column>
-                    <el-table-column
                             prop="workId"
                             header-align="center"
                             align="center"
                             label="作者工号">
+                    </el-table-column>
+                    <el-table-column
+                            prop="userType"
+                            header-align="center"
+                            align="center"
+                            label="作者身份">
+                        <template slot-scope="{row}">
+                            <template v-if="row.userType == 'student'">
+                                学生
+                            </template>
+                            <template v-else-if="row.userType == 'teacher'">
+                                导师
+                            </template>
+                            <template v-else>
+                                博士后
+                            </template>
+                        </template>
+                    </el-table-column>
+                    <el-table-column
+                            header-align="center"
+                            align="center"
+                            label="导师姓名">
+                        <template slot-scope="{row}">
+                            <template v-if="row.userType == 'teacher'" key="key1">
+                                <el-button type="danger" size="mini">已是导师</el-button>
+                            </template>
+                            <template v-else key="key2">
+                                <template v-if="row.tutorRealName == '' || row.tutorRealName == null" key="key3">
+                                    <el-button type="primary" size="mini">暂无导师</el-button>
+                                </template>
+                                <template v-else key="key4">
+                                    {{row.tutorRealName}}
+                                </template>
+                            </template>
+                        </template>
+                    </el-table-column>
+                    <el-table-column
+                            header-align="center"
+                            align="center"
+                            label="导师工号">
+                        <template slot-scope="{row}">
+                            <template v-if="row.userType == 'teacher'" key="key5">
+                                <el-button type="danger" size="mini">已是导师</el-button>
+                            </template>
+                            <template v-else key="key6">
+                                <template v-if="row.tutorRealName == '' || row.tutorRealName == null" key="key7">
+                                    <el-button type="primary" size="mini">暂无导师</el-button>
+                                </template>
+                                <template v-else key="key8">
+                                    {{row.tutorWorkId}}
+                                </template>
+                            </template>
+                        </template>
                     </el-table-column>
                     <el-table-column
                             prop="major"
@@ -229,12 +271,12 @@
                             sortable
                             label="专利数量">
                     </el-table-column>
-                   <%-- <el-table-column
-                            prop="copyrightAmount"
-                            header-align="center"
-                            align="center"
-                            label="著作权数量">
-                    </el-table-column>--%>
+                    <%-- <el-table-column
+                             prop="copyrightAmount"
+                             header-align="center"
+                             align="center"
+                             label="著作权数量">
+                     </el-table-column>--%>
                     <el-table-column label="操作" width="190px" header-align="center" align="center">
                         <template slot-scope="scope">
                             <el-button type="primary" plain
@@ -392,12 +434,7 @@
             //表格
             table: {
                 paperTable: {
-                    urls: {
-                        // insertEntity: '/api/doc/search/insert',
-                        // deleteEntityListByIds: '/api/doc/search/deleteListByIds',
-                        // updateEntity: '/api/doc/search/update',
-                        // selectPaperListByPage: '/api/doc/search/selectListByPage',
-                    },
+                    urls: {},
                     data: [],
                     loading: false,
                     selectionList: [],
@@ -658,13 +695,13 @@
         }
     });
 
-    function searchClick(){
-        app.table.authorTable.params =  {
+    function searchClick() {
+        app.table.authorTable.params = {
             pageIndex: 1,
-                pageSize: 10,
-                pageSizes: [5, 10, 20, 40],
-                searchKey: '',
-                total: 100,
+            pageSize: 10,
+            pageSizes: [5, 10, 20, 40],
+            searchKey: '',
+            total: 100,
         };
         authorSearch();
     }

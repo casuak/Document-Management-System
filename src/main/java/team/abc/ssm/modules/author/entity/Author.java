@@ -65,4 +65,6 @@ public class Author extends DataEntity<Author> {
     private String school;
     private String major;
 
+    private String tutorWorkId;
+    private String tutorRealName;
 }

@@ -72,6 +72,11 @@ public class DocPatent extends DataEntity<DocPatent> {
     private String firstAuthorId;
 
     /**
+     * 第一作者工号
+     */
+    private String firstAuthorWorkId;
+
+    /**
      * 第一作者type
      * */
     private String firstAuthorType;
@@ -85,6 +90,11 @@ public class DocPatent extends DataEntity<DocPatent> {
     * 第二作者id
     */
     private String secondAuthorId;
+
+    /**
+     * 第二作者工号
+     */
+    private String secondAuthorWorkId;
 
     /**
      * 第二作者type

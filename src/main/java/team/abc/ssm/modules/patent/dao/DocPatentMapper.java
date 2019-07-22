@@ -4,6 +4,7 @@ import java.util.Date;
 
 import org.apache.ibatis.annotations.Param;
 
+import team.abc.ssm.modules.author.entity.Author;
 import team.abc.ssm.modules.patent.entity.DocPatent;
 import team.abc.ssm.modules.sys.entity.User;
 
@@ -44,4 +45,8 @@ public interface DocPatentMapper {
     int convertToCompleteByIds(List<DocPatent> patentList);
 
     int selectByStatusAndPatentNumberAndDelFlag(@Param("status")String status,@Param("patentNumber")String patentNumber,@Param("delFlag")Boolean delFlag);
+
+    int selectStudentPatent(Author tmpAuthor);
+
+    int selectTeacherPatent(Author tmpAuthor);
 }
