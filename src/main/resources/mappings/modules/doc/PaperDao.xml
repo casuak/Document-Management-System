@@ -743,6 +743,10 @@
         </where>
     </select>
 
+    <select id="selectAll" resultMap="BaseResultMap">
+        select * from doc_paper
+    </select>
+
     <delete id="deleteListByIds" parameterType="paper">
         delete from doc_paper
         <choose>

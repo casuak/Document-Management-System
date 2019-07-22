@@ -78,9 +78,15 @@ public class PaperService {
     }
 
     public boolean initAll() {
-        Paper params = new Paper();
-        params.setStatus("-1");
-        List<Paper> paperList = paperDao.selectListByStatus(params);
+        List<Paper> allList = paperDao.selectAll();
+        List<Paper> initList = new ArrayList<>();
+        List<Paper> otherList = new ArrayList<>();
+        for (Paper paper : allList) {
+            if (paper.getStatus().equals("-1"))
+                initList.add(paper);
+            else
+                otherList.add(paper);
+        }
         List<DanweiNicknames> danweiList = danweiNicknamesService.selectAllList();
         for (DanweiNicknames danwei : danweiList) {
             List<String> nicknameList = new ArrayList<>();
@@ -108,9 +114,27 @@ public class PaperService {
             danwei.setNicknameList(nicknameList);
             danwei.setNicknames(nicknames);
         }
-        for (Paper paper : paperList) {
+
+        List<Paper> updateList = new ArrayList<>();
+        for (Paper paper : initList) {
             // 更新状态信息为初始化成功
             paper.setStatus("0");
+            // 0、筛选重复论文项（论文的入仓号不重复）
+            int count = 0;
+            for (Paper repeat : allList) {
+                try {
+                    if (repeat.getStoreNum().equals(paper.getStoreNum())) {
+                        count++;
+                    }
+                } catch (NullPointerException e) {
+                    // Who care
+                }
+                if (count > 1) break;
+            }
+            if (count == 1)
+                updateList.add(paper);
+            else
+                continue;
             // 1、从作者列表中提取第一、二作者
             if (paper.getAuthorList() == null) {
                 paper.setFirstAuthorName(null);
@@ -166,9 +190,9 @@ public class PaperService {
                 }
             }
         }
-        if (paperList.size() == 0) return true;
-        int count = paperDao.updateBatch(paperList);
-        return count == paperList.size();
+        if (updateList.size() == 0) return true;
+        int count = paperDao.updateBatch(updateList);
+        return count == updateList.size();
     }
 
     public boolean deleteListByIds(List<Paper> paperList) {

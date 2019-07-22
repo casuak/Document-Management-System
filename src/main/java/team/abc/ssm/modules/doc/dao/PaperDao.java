@@ -37,6 +37,8 @@ public interface PaperDao {
 
     List<Paper> selectListByStatus(Paper paper);
 
+    List<Paper> selectAll();
+
     int deleteListByIds(List<Paper> paperList);
 
     int convertToSuccessByIds(List<Paper> paperList);
