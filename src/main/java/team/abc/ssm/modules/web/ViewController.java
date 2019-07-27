@@ -146,6 +146,11 @@ public class ViewController extends BaseController {
         return mv;
     }
 
+    @RequestMapping(value = "functions/doc/journalManager", method = RequestMethod.GET)
+    public String doc_journalManager(){
+        return "functions/doc/journalManager";
+    }
+
     @RequestMapping(value = "functions/patent/searchUser", method = RequestMethod.GET)
     public ModelAndView patentUserSearch(
             @RequestParam("patentId") String patentId,
