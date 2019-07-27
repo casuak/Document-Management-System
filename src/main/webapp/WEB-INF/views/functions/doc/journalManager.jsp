@@ -33,28 +33,31 @@
     </div>
     <%-- entity表格 --%>
     <el-table :data="table.data" height="calc(100% - 116px)" v-loading="table.loading"
-                  style="width: 100%;overflow-y: hidden;margin-top: 15px;" class="scroll-bar"
-                  @selection-change="onSelectionChange" stripe>
-            <el-table-column type="selection" width="40"></el-table-column>
-            <el-table-column label="创建时间">
-                <template slot-scope="scope">
-                    {{ formatTimestamp(scope.row.createDate) }}
-                </template>
-            </el-table-column>
-            <el-table-column label="操作" width="190" header-align="center" align="center">
-                <template slot-scope="scope">
-                    <el-button type="warning" size="mini" style="position:relative;bottom: 1px;"
-                               @click="openDialog_updateEntity(scope.row)">
-                        <span>编辑</span>
-                    </el-button>
-                    <el-button type="danger" size="mini" style="position:relative;bottom: 1px;margin-left: 6px;"
-                               @click="deleteEntityListByIds([{id: scope.row.id}])">
-                        <span>删除</span>
-                    </el-button>
-                </template>
-            </el-table-column>
-            <el-table-column width="50"></el-table-column>
-        </el-table>
+              style="width: 100%;overflow-y: hidden;margin-top: 15px;" class="scroll-bar"
+              @selection-change="onSelectionChange" stripe>
+        <el-table-column type="selection" width="40"></el-table-column>
+        <el-table-column label="期刊名" width="300" prop="journalTitle"></el-table-column>
+        <el-table-column label="分区" width="100" prop="journalDivision" align="center"></el-table-column>
+        <el-table-column label="年份" width="100" prop="journalYear" align="center">
+            <template slot-scope="scope">
+                {{ formatYear(scope.row.createDate) }}
+            </template>
+        </el-table-column>
+        <el-table-column></el-table-column>
+        <el-table-column label="操作" width="190" header-align="center" align="center">
+            <template slot-scope="scope">
+                <el-button type="warning" size="mini" style="position:relative;bottom: 1px;"
+                           @click="openDialog_updateEntity(scope.row)">
+                    <span>编辑</span>
+                </el-button>
+                <el-button type="danger" size="mini" style="position:relative;bottom: 1px;margin-left: 6px;"
+                           @click="deleteEntityListByIds([{id: scope.row.id}])">
+                    <span>删除</span>
+                </el-button>
+            </template>
+        </el-table-column>
+        <el-table-column width="50"></el-table-column>
+    </el-table>
     <%-- 分页 --%>
     <el-pagination style="text-align: center;margin: 8px auto;"
                    @size-change="onPageSizeChange"

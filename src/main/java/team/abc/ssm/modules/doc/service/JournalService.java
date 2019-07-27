@@ -6,8 +6,6 @@ import team.abc.ssm.common.persistence.Page;
 import team.abc.ssm.modules.doc.dao.JournalDao;
 import team.abc.ssm.modules.doc.entity.Journal;
 
-import java.util.List;
-
 @Service
 public class JournalService {
 
@@ -15,6 +13,9 @@ public class JournalService {
     private JournalDao journalDao;
 
     public Page<Journal> list(Journal journal){
-        return null;
+        Page<Journal> page = new Page<>();
+        page.setResultList(journalDao.list(journal));
+        page.setTotal(journalDao.listCount(journal));
+        return page;
     }
 }

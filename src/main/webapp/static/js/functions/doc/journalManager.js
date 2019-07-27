@@ -27,7 +27,8 @@ app = new Vue({
             let data = {
                 page: app.table.params
             };
-            ajaxPost(this.urls.getJournalList, data, function (d) {
+            console.log(data);
+            ajaxPostJSON(this.urls.getJournalList, data, function (d) {
                 console.log(d);
                 app.table.loading = false;
                 app.table.data = d.data.resultList;
@@ -57,6 +58,11 @@ app = new Vue({
         resetForm: function (ref) {
             this.$refs[ref].resetFields();
         },
+        // 格式化时间为年份
+        formatYear: function(timestamp){
+            let date = new Date(timestamp);
+            return date.Format("yyyy");
+        }
     },
     mounted: function(){
         this.refreshTable();
