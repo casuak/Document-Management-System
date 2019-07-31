@@ -12,6 +12,8 @@ import team.abc.ssm.common.web.MsgType;
 import team.abc.ssm.modules.doc.entity.Journal;
 import team.abc.ssm.modules.doc.service.JournalService;
 
+import java.util.List;
+
 
 @Controller
 @RequestMapping("api/doc/journal")
@@ -25,5 +27,12 @@ public class JournalApi extends BaseApi {
     public Object list(@RequestBody Journal journal){
         Page<Journal> page = journalService.list(journal);
         return retMsg.Set(MsgType.SUCCESS, page);
+    }
+
+    @RequestMapping(value = "deleteByIds",method = RequestMethod.POST)
+    @ResponseBody
+    public Object deleteByIds(@RequestBody List<Journal> list){
+        journalService.deleteByIds(list);
+        return retMsg.Set(MsgType.SUCCESS);
     }
 }

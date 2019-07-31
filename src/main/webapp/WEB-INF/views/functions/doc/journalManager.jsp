@@ -12,10 +12,10 @@
     <%-- 顶栏 --%>
     <div style="padding: 15px 20px 0 15px;">
         <span class="button-group">
-            <el-button size="small" type="success" @click="">
-                <span>操作</span>
-            </el-button>
-            <el-button size="small" type="danger" @click=""
+            <%--<el-button size="small" type="success" @click="">--%>
+                <%--<span>操作</span>--%>
+            <%--</el-button>--%>
+            <el-button size="small" type="danger" @click="deleteByIds(table.selectionList)"
                        style="margin-left: 10px;">
                 <span>批量删除</span>
             </el-button>
@@ -26,7 +26,7 @@
                       @keyup.enter.native="table.params.pageIndex=1;refreshTable()">
             </el-input>
             <el-button size="small" type="primary" style="position:relative;"
-                       @click="table.entity.params.pageIndex=1;refreshTable()">
+                       @click="table.params.pageIndex=1;refreshTable()">
                 <span>搜索</span>
             </el-button>
         </span>
@@ -36,13 +36,14 @@
               style="width: 100%;overflow-y: hidden;margin-top: 15px;" class="scroll-bar"
               @selection-change="onSelectionChange" stripe>
         <el-table-column type="selection" width="40"></el-table-column>
-        <el-table-column label="期刊名" width="300" prop="journalTitle"></el-table-column>
+        <el-table-column label="期刊名" width="400" prop="journalTitle"></el-table-column>
         <el-table-column label="分区" width="100" prop="journalDivision" align="center"></el-table-column>
         <el-table-column label="年份" width="100" prop="journalYear" align="center">
             <template slot-scope="scope">
-                {{ formatYear(scope.row.createDate) }}
+                {{ formatYear(scope.row.journalYear) }}
             </template>
         </el-table-column>
+        <el-table-column label="影响因子" width="100" prop="impactFactor" align="center"></el-table-column>
         <el-table-column></el-table-column>
         <el-table-column label="操作" width="190" header-align="center" align="center">
             <template slot-scope="scope">
@@ -51,7 +52,7 @@
                     <span>编辑</span>
                 </el-button>
                 <el-button type="danger" size="mini" style="position:relative;bottom: 1px;margin-left: 6px;"
-                           @click="deleteEntityListByIds([{id: scope.row.id}])">
+                           @click="deleteByIds([{id: scope.row.id}])">
                     <span>删除</span>
                 </el-button>
             </template>

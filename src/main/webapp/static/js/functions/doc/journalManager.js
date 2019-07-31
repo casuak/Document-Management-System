@@ -3,7 +3,8 @@ app = new Vue({
     data: {
         fullScreenLoading: false,
         urls: {
-            getJournalList: '/api/doc/journal/list'
+            getJournalList: '/api/doc/journal/list',
+            deleteListByIds: '/api/doc/journal/deleteByIds'
         },
         table: {
             loading: false,
@@ -27,13 +28,32 @@ app = new Vue({
             let data = {
                 page: app.table.params
             };
-            console.log(data);
             ajaxPostJSON(this.urls.getJournalList, data, function (d) {
-                console.log(d);
                 app.table.loading = false;
                 app.table.data = d.data.resultList;
                 app.table.params.total = d.data.total;
             })
+        },
+        deleteByIds: function(journalList){
+            if (journalList.length === 0) {
+                window.parent.app.showMessage('提示：未选中任何项', 'warning');
+                return;
+            }
+            window.parent.app.$confirm('确认删除选中的项', '警告', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+            }).then(() => {
+                let data = journalList;
+                let app = this;
+                app.table.loading = true;
+                ajaxPostJSON(this.urls.deleteListByIds, data, function (d) {
+                    window.parent.app.showMessage('删除成功！', 'success');
+                    app.refreshTable();
+                })
+            }).catch(() => {
+                window.parent.app.showMessage('已取消删除', 'warning');
+            });
         },
         // 打开编辑entity窗口
         openDialog_updateEntity: function (row) {

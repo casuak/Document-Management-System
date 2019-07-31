@@ -32,9 +32,13 @@ public class ExcelUtils {
                     break;
                 case "int":
                     val = (int) cell.getNumericCellValue();
+                    break;
                 case "decimal":
                     // TODO
-                    val = cell.getNumericCellValue();
+                    val = cell.getStringCellValue();
+                    if (!StringUtils.isDigit((String) val)) {
+                        val = "0";
+                    }
                     break;
                 case "float":
                     val = (float) cell.getNumericCellValue();

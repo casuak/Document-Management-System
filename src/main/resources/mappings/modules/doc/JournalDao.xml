@@ -8,6 +8,7 @@
         <result column="journal_title" property="journalTitle"/>
         <result column="journal_division" property="journalDivision"/>
         <result column="journal_year" property="journalYear"/>
+        <result column="impact_factor" property="impactFactor"/>
 
         <result column="remarks" property="remarks"/>
         <result column="create_user_id" property="createUserId"/>
@@ -20,11 +21,20 @@
     <select id="list" parameterType="journal" resultMap="journalBean">
         select a.*
         from doc_journal a
+        where a.journal_title like concat('%', #{page.searchKey}, '%')
         limit #{page.pageStart}, #{page.pageSize}
     </select>
 
     <select id="listCount" resultType="int">
         select count(*)
         from doc_journal a
+        where a.journal_title like concat('%', #{page.searchKey}, '%')
     </select>
+
+    <delete id="deleteByIds" parameterType="journal">
+        delete from doc_journal where id in
+        <foreach collection="list" open="(" close=")" separator="," item="item" index="index">
+            #{item.id}
+        </foreach>
+    </delete>
 </mapper>
