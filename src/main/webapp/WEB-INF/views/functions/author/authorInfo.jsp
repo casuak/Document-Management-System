@@ -33,7 +33,8 @@
                 <%-- 顶栏 --%>
                 <div style="margin-left: 10px">
                     <span class="button-group">
-                        <el-button size="small" type="danger" @click="deletePaperListByIds(table.paperTable.entity.selectionList)"
+                        <el-button size="small" type="danger"
+                                   @click="deletePaperListByIds(table.paperTable.entity.selectionList)"
                                    style="margin-left: 10px;">
                             <span>批量删除</span>
                         </el-button>
@@ -152,7 +153,8 @@
                 <%-- 顶栏 --%>
                 <div style="margin-left: 10px">
                     <span class="button-group">
-                        <el-button size="small" type="danger" @click="deletePatentListByIds(table.paperTable.entity.selectionList)"
+                        <el-button size="small" type="danger"
+                                   @click="deletePatentListByIds(table.paperTable.entity.selectionList)"
                                    style="margin-left: 10px;">
                             <span>批量删除</span>
                         </el-button>
@@ -188,6 +190,32 @@
                             label="专利名"
                             show-overflow-tooltip>
                     </el-table-column>
+                    <el-table-column
+                            prop="patentNumber"
+                            align="center"
+                            width="100"
+                            label="专利号">
+                    </el-table-column>
+                    <el-table-column
+                            prop="institute"
+                            align="center"
+                            width="100"
+                            label="所属学院">
+                    </el-table-column>
+
+                    <el-table-column
+                            prop="patentTypeValue"
+                            align="center"
+                            width="100"
+                            label="专利类型">
+                    </el-table-column>
+
+                    <el-table-column
+                            prop="patentAuthorizationDateString"
+                            align="center"
+                            width="100"
+                            label="专利授权日">
+                    </el-table-column>
 
                     <el-table-column
                             prop="firstAuthorName"
@@ -196,10 +224,34 @@
                             label="第一作者">
                     </el-table-column>
                     <el-table-column
+                            prop="firstAuthorWorkId"
+                            align="center"
+                            width="100"
+                            label="第一作者工号">
+                    </el-table-column>
+                    <el-table-column
+                            prop="firstAuthorType"
+                            align="center"
+                            width="100"
+                            label="第一作者类型">
+                    </el-table-column>
+                    <el-table-column
                             prop="secondAuthorName"
                             align="center"
                             width="100"
                             label="第二作者">
+                    </el-table-column>
+                    <el-table-column
+                            prop="secondAuthorWorkId"
+                            align="center"
+                            width="100"
+                            label="第二作者工号">
+                    </el-table-column>
+                    <el-table-column
+                            prop="secondAuthorType"
+                            align="center"
+                            width="100"
+                            label="第二作者类型">
                     </el-table-column>
                     <el-table-column
                             prop="authorList"
@@ -262,7 +314,7 @@
                     insertPaper: '',
                     deletePaperListByIds: '',
                     updatePaper: '',
-                    selectPatentListByPage: '',
+                    selectMyPatentListByPage: '/api/patent/selectMyPatentByPage',
                 }
             },
             fullScreenLoading: false,
@@ -317,6 +369,8 @@
             handleCollapseChange(val) {
                 console.log(val);
             },
+
+            /*------- 论文部分函数 start ------*/
             insertPaper: function () {
                 // 首先检测表单数据是否合法
                 this.$refs['form_insertPaper'].validate((valid) => {
@@ -385,7 +439,7 @@
                     }
                 });
             },
-
+            //获取当前作者的论文List
             selectPaperListByPage: function () {
                 let data = {
                     authorList: "${author.id}",                        //借用authorList来暂存一下authorId
@@ -408,7 +462,6 @@
                     app.table.paperTable.entity.params.total = d.data.total;
                 });
             },
-
             // 刷新paper table数据
             refreshTable_paper: function () {
                 this.selectPaperListByPage();
@@ -428,27 +481,59 @@
                 this.table.paperTable.entity.params.pageIndex = newIndex;
                 this.refreshTable_paper();
             },
+            /*------- 论文部分函数 end  ------*/
 
+
+            /*------- 专利部分函数 start ------*/
+            selectMyPatentListByPage: function () {
+                // 1.docPatent.firstAuthorId暂存作者id
+                // 2.docPatent.secondAuthorId暂存作者工号
+                // 3.docPatent.page存贮所需分页
+                let docPatent = {
+                    firstAuthorId: "${author.id}",
+                    secondAuthorId: "${author.workId}",
+                    page: this.table.patentTable.entity.params
+                };
+                let app = this;
+                app.table.patentTable.entity.loading = true;
+                ajaxPostJSON(this.urls.patent.selectMyPatentListByPage, docPatent, function (d) {
+                    console.log("查询patent返回：");
+                    console.log(d.data.resultList);
+
+                    let resList = d.data.resultList;
+                    /*处理日期*/
+                    /*for (let i = 0; i < resList.length; i++) {
+                        tmpDate = resList[i].patentAuthorizationDate;
+                        resList[i].patentAuthorizationDate = dateFormat(tmpDate);
+                    }*/
+                    app.table.patentTable.entity.data = resList;
+                    app.table.patentTable.entity.params.total = d.data.total;
+                    app.table.patentTable.entity.loading = false;
+                });
+            },
+            // 刷新patent_table数据
+            refreshTable_patent: function () {
+                this.selectMyPatentListByPage();
+            },
+            // 处理patent的pageSize变化
+            onPageSizeChange_patent: function (newSize) {
+                this.table.patentTable.entity.params.pageSize = newSize;
+                this.refreshTable_patent();
+            },
+            // 处理patent的pageIndex变化
+            onPageIndexChange_patent: function (newIndex) {
+                this.table.patentTable.entity.params.pageIndex = newIndex;
+                this.refreshTable_patent();
+            },
+            /*------- 专利部分函数 end ------*/
+
+            handleSelectionChange(val) {
+                this.table.paperTable.entity.selectionList = val;
+            }
             // 重置表单
             /*resetForm: function (ref) {
                 this.$refs[ref].resetFields();
             },*/
-
-            //表格选择框
-            toggleSelection(rows) {
-                if (rows) {
-                    rows.forEach(row => {
-                        this.$refs.multipleTable.toggleRowSelection(row);
-                    });
-                } else {
-                    this.$refs.multipleTable.clearSelection();
-                }
-            },
-
-            handleSelectionChange(val) {
-
-                this.table.paperTable.entity.selectionList = val;
-            }
         },
         /*加载的时候就执行一次*/
         mounted: function () {
@@ -467,7 +552,7 @@
         let appHeight = getAppHeight();
         for (let i = 0; i < mains.length; i++) {
             console.log(getAppHeight());
-            mains[0].style.height = appHeight + "px";
+            mains[i].style.height = appHeight + "px";
         }
     }
 
@@ -485,7 +570,7 @@
         let mm = time.getMinutes() + 1;
         let s = time.getSeconds() + 1;
         //return y + '-' + add0(m) + '-' + add0(d) + ' ' + add0(h) + ':' + add0(mm) + ':' + add0(s);
-        return y + '-' + add0(m) + '-' + add0(d) ;
+        return y + '-' + add0(m) + '-' + add0(d);
     }
 
     window.onload = function () {

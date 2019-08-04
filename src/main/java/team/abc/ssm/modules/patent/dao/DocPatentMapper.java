@@ -44,9 +44,21 @@ public interface DocPatentMapper {
 
     int convertToCompleteByIds(List<DocPatent> patentList);
 
-    int selectByStatusAndPatentNumberAndDelFlag(@Param("status")String status,@Param("patentNumber")String patentNumber,@Param("delFlag")Boolean delFlag);
+    int selectByStatusAndPatentNumberAndDelFlag(
+            @Param("status")String status,
+            @Param("patentNumber")String patentNumber,
+            @Param("delFlag")Boolean delFlag);
 
     int selectStudentPatent(Author tmpAuthor);
 
     int selectTeacherPatent(Author tmpAuthor);
+
+    /**
+     * @author zm
+     * @date 2019/8/4 17:00
+     * @params [userId]
+     * @return: int
+     * @Description //查询个人专利数
+     **/
+    int selectMyPatentNum(@Param("userWorkId") String userWorkId);
 }

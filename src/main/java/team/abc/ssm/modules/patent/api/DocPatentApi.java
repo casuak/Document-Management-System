@@ -4,17 +4,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import team.abc.ssm.common.persistence.Page;
-import team.abc.ssm.common.utils.UserUtils;
 import team.abc.ssm.common.web.AjaxMessage;
 import team.abc.ssm.common.web.BaseApi;
 import team.abc.ssm.common.web.MsgType;
-import team.abc.ssm.modules.author.entity.SysUser;
-import team.abc.ssm.modules.author.service.SysUserService;
+import team.abc.ssm.common.web.PatentMatchType;
+import team.abc.ssm.modules.author.entity.Author;
+import team.abc.ssm.modules.author.service.AuthorService;
 import team.abc.ssm.modules.patent.entity.DocPatent;
-import team.abc.ssm.modules.patent.entity.MapUserPatent;
 import team.abc.ssm.modules.patent.service.DocPatentService;
-import team.abc.ssm.modules.patent.service.MapUserPatentService;
-import team.abc.ssm.modules.sys.entity.User;
 
 import java.text.ParseException;
 import java.util.*;
@@ -25,15 +22,16 @@ public class DocPatentApi extends BaseApi {
 
     @Autowired
     private DocPatentService patentService;
-    
+
+    @Autowired
+    private AuthorService authorService;
+
     @RequestMapping(value = "selectListByPage", method = RequestMethod.POST)
     @ResponseBody
     public Object selectListByPage(@RequestBody DocPatent patent) {
         Page<DocPatent> data = new Page<>();
         data.setResultList(patentService.selectListByPage(patent));
         data.setTotal(patentService.selectSearchCount(patent));
-        System.out.println(data.getResultList());
-        System.out.println(data.getTotal());
         return new AjaxMessage().Set(MsgType.SUCCESS, data);
     }
 
@@ -170,5 +168,41 @@ public class DocPatentApi extends BaseApi {
             @RequestParam("institute") String institute){
         patentService.changeInstitute(patentId,institute);
         return retMsg.Set(MsgType.SUCCESS);
+    }
+
+    /**
+     * @author zm
+     * @date 2019/8/4 16:31
+     * @params [sysUser]
+     * @return: java.lang.Object
+     * @Description //获取当前作者的全部专利(返回分页)
+     *
+     * docPatent.firstAuthorId暂存作者id
+     * docPatent.secondAuthorId暂存作者工号
+     * docPatent.page存贮所需分页
+     **/
+    @RequestMapping(value = "selectMyPatentByPage",method = RequestMethod.POST)
+    @ResponseBody
+    public Object selectMyPatentByPage(
+            @RequestBody DocPatent docPatent){
+
+        String authorId = docPatent.getFirstAuthorId();
+        String authorWorkId = docPatent.getSecondAuthorId();
+        //1.获取当前作者
+        Author authorNow = authorService.getAuthor(authorId);
+        //2.设置需要查询的patent的状态为：已经完成
+        docPatent.setStatus(PatentMatchType.MATCH_FINISHED.toString());
+        //3.获取专利列表
+        List<DocPatent> myPatentList = patentService.selectListByPage(docPatent);
+        //4.获取专利总数
+        int myPatentNum = patentService.getMyPatentNum(authorWorkId);
+        //5.构造返回分页
+        Page<DocPatent> myPatentPage = new Page<>();
+        myPatentPage.setResultList(myPatentList);
+        myPatentPage.setTotal(myPatentNum);
+        System.out.println("-----专利page----");
+        System.out.println(myPatentPage);
+        AjaxMessage retMsg = new AjaxMessage();
+        return retMsg.Set(MsgType.SUCCESS,myPatentPage);
     }
 }

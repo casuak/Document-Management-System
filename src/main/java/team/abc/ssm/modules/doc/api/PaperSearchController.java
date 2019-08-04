@@ -13,6 +13,7 @@ import team.abc.ssm.common.persistence.Page;
 import team.abc.ssm.common.web.AjaxMessage;
 import team.abc.ssm.common.web.MsgType;
 import team.abc.ssm.modules.author.entity.Author;
+import team.abc.ssm.modules.author.entity.SysUser;
 import team.abc.ssm.modules.author.service.AuthorService;
 import team.abc.ssm.modules.doc.entity.Paper;
 import team.abc.ssm.modules.doc.service.PaperSearchService;

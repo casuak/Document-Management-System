@@ -73,7 +73,6 @@ public class DocPatentService {
 
     public List<DocPatent> selectListByPage(DocPatent patent) {
         List<DocPatent> patentList = docPatentMapper.selectListByPage(patent);
-        System.out.println("service_selectByPage");
         for (DocPatent tmpPatent : patentList) {
             if (tmpPatent.getFirstAuthorId() != null && !tmpPatent.getFirstAuthorId().equals("")) {
                 tmpPatent.setFirstAuthor(sysUserMapper.selectByPrimaryKey(tmpPatent.getFirstAuthorId()));
@@ -83,7 +82,6 @@ public class DocPatentService {
                 tmpPatent.setSecondAuthor(sysUserMapper.selectByPrimaryKey(tmpPatent.getSecondAuthorId()));
             }
         }
-        System.out.println(patentList);
         return patentList;
     }
 
@@ -864,5 +862,16 @@ public class DocPatentService {
         theDocPatent.setModifyUserId(UserUtils.getCurrentUser().getId());
         theDocPatent.setModifyDate(new Date());
         return docPatentMapper.updateByPrimaryKeySelective(theDocPatent) == 1;
+    }
+
+    /**
+     * @author zm
+     * @date 2019/8/4 16:55
+     * @params [workId]
+     * @return: int
+     * @Description //获取
+     **/
+    public int getMyPatentNum(String myWorkId) {
+        return docPatentMapper.selectMyPatentNum(myWorkId);
     }
 }
