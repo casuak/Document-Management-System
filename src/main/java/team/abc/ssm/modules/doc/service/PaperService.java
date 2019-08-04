@@ -80,12 +80,9 @@ public class PaperService {
     public boolean initAll() {
         List<Paper> allList = paperDao.selectAll();
         List<Paper> initList = new ArrayList<>();
-        List<Paper> otherList = new ArrayList<>();
         for (Paper paper : allList) {
             if (paper.getStatus().equals("-1"))
                 initList.add(paper);
-            else
-                otherList.add(paper);
         }
         List<DanweiNicknames> danweiList = danweiNicknamesService.selectAllList();
         for (DanweiNicknames danwei : danweiList) {
@@ -115,7 +112,7 @@ public class PaperService {
             danwei.setNicknames(nicknames);
         }
 
-        List<Paper> updateList = new ArrayList<>();
+//        List<Paper> updateList = new ArrayList<>();
         for (Paper paper : initList) {
             // 更新状态信息为初始化成功
             paper.setStatus("0");
@@ -131,10 +128,10 @@ public class PaperService {
                 }
                 if (count > 1) break;
             }
-            if (count == 1)
-                updateList.add(paper);
-            else
+            if (count > 1) {
+                paper.setStatus("-2");
                 continue;
+            }
             // 1、从作者列表中提取第一、二作者
             if (paper.getAuthorList() == null) {
                 paper.setFirstAuthorName(null);
@@ -190,9 +187,9 @@ public class PaperService {
                 }
             }
         }
-        if (updateList.size() == 0) return true;
-        int count = paperDao.updateBatch(updateList);
-        return count == updateList.size();
+        if (initList.size() == 0) return true;
+        int count = paperDao.updateBatch(initList);
+        return count == initList.size();
     }
 
     public boolean deleteListByIds(List<Paper> paperList) {

@@ -168,7 +168,7 @@ app = new Vue({
                     authorWorkId: null
                 };
                 app.loading.table = true;
-                ajaxPost(this.urls.selectAuthor, data, function (d) {
+                ajaxPost(app.urls.selectAuthor, data, function (d) {
                     app.loading.table = false;
                     if (authorIndex === 1)
                         paper.firstAuthorId = null;
