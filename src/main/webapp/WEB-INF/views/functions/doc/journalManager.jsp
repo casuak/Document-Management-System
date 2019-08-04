@@ -47,10 +47,10 @@
         <el-table-column></el-table-column>
         <el-table-column label="操作" width="190" header-align="center" align="center">
             <template slot-scope="scope">
-                <el-button type="warning" size="mini" style="position:relative;bottom: 1px;"
-                           @click="openDialog_updateEntity(scope.row)">
-                    <span>编辑</span>
-                </el-button>
+                <%--<el-button type="warning" size="mini" style="position:relative;bottom: 1px;"--%>
+                           <%--@click="openDialog_updateEntity(scope.row)">--%>
+                    <%--<span>编辑</span>--%>
+                <%--</el-button>--%>
                 <el-button type="danger" size="mini" style="position:relative;bottom: 1px;margin-left: 6px;"
                            @click="deleteByIds([{id: scope.row.id}])">
                     <span>删除</span>
