@@ -46,7 +46,7 @@
 所有功能以树的方式组织，总共二个层级，各层级中都按次序排列 \
 第一层级为分类层，第二层级为具体页面 \
 其中的权限码字段在后端的@RequirePermission等注解中使用，从而实现权限控制\
-（shiro权限标识符的用法：https://minjiechenjava.iteye.com/blog/2252020） \
+（shiro权限标识符的用法：https://minjiechenjava.iteye.com/blog/2252020 ） \
 地址字段为具体页面的访问地址，在ViewController中注册
 
 对应的实体表为sys_function \
