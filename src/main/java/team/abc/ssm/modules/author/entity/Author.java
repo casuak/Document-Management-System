@@ -67,4 +67,16 @@ public class Author extends DataEntity<Author> {
 
     private String tutorWorkId;
     private String tutorRealName;
+
+    /**学生学位类型（学术型、专业学位）*/
+    private String studentTrainLevel;
+
+    /**学生学位类型（学术型、专业学位）*/
+    private String studentDegreeType;
+
+    /**导师类别（硕士生导师、博士生导师、博士和硕士导师）*/
+    private String tutorType;
+
+    /**导师职称*/
+    private String tutorTitle;
 }

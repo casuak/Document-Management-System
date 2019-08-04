@@ -93,7 +93,7 @@
             <el-button size="small" type="primary" @click="patentUserMatch()" v-if="status === '0'">
                 自动匹配
             </el-button>
-            <el-button size="small" type="primary" @click="completePatent(patentList)" v-if="status === '2'">
+            <el-button size="small" type="primary" @click="completeAllPatent()" v-if="status === '2'">
                 全部完成
             </el-button>
         </span>
@@ -146,22 +146,26 @@
             </template>
         </el-table-column>
         <el-table-column label="所属学院" width="150" prop="institute" fixed="left" align="center"
-                         v-if="['2', '4'].contains(status)" key="key1">
+                         v-if="status == 4" key="ketInstitute0">
         </el-table-column>
         <el-table-column label="所属学院" width="150" fixed="left" align="center"
-                         v-if="['1', '3'].contains(status)" key="key2">
+                         v-else-if="['1', '2', '3'].contains(status)" key="ketInstitute1">
             <template slot-scope="{row}">
                 <template v-if="row.institute != null&&row.institute != ''" key="key3">
-                    <span style="color: #2D8CF0;font-family: 'PingFang SC'"
-                          @click="openInstituteSelect(row)">
-                        {{row.institute}}
-                    </span>
+                   <span>
+                       <span @click="openInstituteSelect(row)">
+                           {{row.institute}}
+                       </span>
+                       <i-button style="height: 25px;position:relative;left: 4px;"
+                              type="primary" size="small" @click="openInstituteSelect(row)">C</i-button>
+                   </span>
                 </template>
-                <i-button v-else type="primary" size="small" key="key4"
-                          @click="openInstituteSelect(row)">选择学院
-                </i-button>
+                <el-button v-else type="primary" size="small" key="ketInstitute2"
+                           @click="openInstituteSelect(row)">手动选择学院
+                </el-button>
             </template>
         </el-table-column>
+
         <el-table-column label="第一发明人" width="332" align="center"
                          v-if="['0','1', '2', '3', '4'].contains(status)">
             <template slot-scope="{row}">
@@ -232,13 +236,18 @@
                 </el-Tooltip>
             </template>
         </el-table-column>
-        <el-table-column label="授权公告日" width="150" prop="patentAuthorizationDate" align="center"
+        <el-table-column label="授权公告日" width="150"
+                         prop="patentAuthorizationDate"
+                         align="center"
                          v-if="['-1', '-2', '-3'].contains(status)">
             <template slot-scope="{row}">
                 {{ row.patentAuthorizationDateString }}
             </template>
         </el-table-column>
-        <el-table-column label="授权公告日" width="150" prop="patentAuthorizationDate" align="center" v-else>
+        <el-table-column label="授权公告日" width="150"
+                         prop="patentAuthorizationDate"
+                         align="center"
+                         v-else>
             <template slot-scope="{row}">
                 {{ row.patentAuthorizationDate === null ? '' : (new
                 Date(row.patentAuthorizationDate)).Format("yyyy-MM-dd") }}
@@ -256,7 +265,7 @@
                     <el-button type="success" size="mini"
                                style="margin-right: 0;"
                                @click="convertToSuccessByIds([{id:row.id}])"
-                               :disabled="!['0','1','3'].contains(status)"
+                               :disabled="!['0','1','3','4'].contains(status)"
                                v-else>
                         <span>转入成功</span>
                     </el-button>
@@ -278,7 +287,7 @@
                    :total="page.total"
                    layout="total, sizes, prev, pager, next, jumper">
     </el-pagination>
-    <%-- 选择用户 --%>
+    <%-- 选择用户 dialog --%>
     <el-dialog title="手动匹配发明人" :visible.sync="searchUserDialog.visible" class="dialog-searchUser">
         <div v-loading="searchUserDialog.loading" style="height: 450px;">
             <iframe v-if="searchUserDialog.visible" :src="searchUserUrl"
@@ -286,7 +295,7 @@
                     @load="searchUserDialog.loading=false;"></iframe>
         </div>
     </el-dialog>
-    <%--选择学院--%>
+    <%--选择学院 dialog--%>
     <el-dialog title="选择专利所属学院"
                width="250px" center
                :before-close="cancelInstituteSelect"
@@ -324,15 +333,15 @@
                 },
                 {
                     value: '-3',
-                    label: '2.2 缺少发明人信息'
+                    label: '2.1 缺少发明人信息'
                 },
                 {
                     value: '-2',
-                    label: '2.3 专利权人不是北理被过滤'
+                    label: '2.2 专利权人不是北理被过滤'
                 },
                 {
                     value: '0',
-                    label: '2.4 初始化完成(暂未匹配)'
+                    label: '2.3 初始化完成(暂未匹配)'
                 },
                 {
                     value: '1',
@@ -371,7 +380,7 @@
                 patentUserSearch: '/functions/patent/searchUser',
                 setPatentAuthor: '/api/patent/setPatentAuthor',
                 selectDanweiNicknamesAllList: '/api/doc/danweiNicknames/selectAllList',
-                changeInstitute:'/api/patent/changeInstitute'
+                changeInstitute: '/api/patent/changeInstitute'
             },
             searchUserDialog: {
                 visible: false,
@@ -380,7 +389,7 @@
             searchInstituteDialog: {
                 visible: false,
                 loading: false,
-                patentNow:{},
+                patentNow: {},
                 instituteList: [],
                 selectedInstitute: '',
             },
@@ -531,6 +540,31 @@
         });
     }
 
+    //全部完成或者把选中的完成
+    function completeAllPatent() {
+        window.parent.app.showConfirm(function () {
+            //判断有没有选中：
+            if (app.selectionList.length === 0) {
+                //1：全部转到成功
+                ajaxPost("/api/patent/convertToCompleteAll", null,
+                    function success(res) {
+                        app.loading.table = false;
+                        window.parent.app.showMessage('操作成功！', 'success');
+                        app.status = '4';
+                        getPatentList();
+                    },
+                    function error() {
+                        app.loading.table = false;
+                        window.parent.app.showMessage('操作失败！', 'error');
+                    }
+                );
+            } else {
+                //2.仅仅把选中的完成
+                completePatent(app.selectionList);
+            }
+        })
+    }
+
     //根据ids把专利设置成完成状态
     function completePatent(ids) {
         console.log(ids);
@@ -549,20 +583,20 @@
     }
 
     //取消选择学院
-    function cancelInstituteSelect(){
+    function cancelInstituteSelect() {
         app.searchInstituteDialog.visible = false;
         app.searchInstituteDialog.patentNow = {};
         app.searchInstituteDialog.selectedInstitute = '';
     }
 
     //确定选择学院
-    function ensureInstituteSelect(){
+    function ensureInstituteSelect() {
         let data = {
             patentId: app.searchInstituteDialog.patentNow.id,
             institute: app.searchInstituteDialog.selectedInstitute
         };
         console.log(data);
-        ajaxPost(app.urls.changeInstitute,data,function (res) {
+        ajaxPost(app.urls.changeInstitute, data, function (res) {
             console.log(res.message);
             cancelInstituteSelect();
             window.parent.app.showMessage('操作成功', 'success');

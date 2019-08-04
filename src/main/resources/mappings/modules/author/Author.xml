@@ -22,6 +22,10 @@
         <result column="tutor_real_name" property="tutorRealName"/>
         <result column="school" property="organizationName"/>
         <result column="major" property="subjectName"/>
+        <result column="student_train_level" property="studentTrainLevel"/>
+        <result column="student_degree_type" property="studentDegreeType"/>
+        <result column="tutor_type" property="tutorType"/>
+        <result column="title" property="tutorTitle"/>
        <!-- <association property="paperAmount" column="work_id"
                      select="getPaperAmount"/>
         <association property="patentAmount" column="work_id"
@@ -41,7 +45,7 @@
         a.*,
         b.real_name as tutor_real_name
         from sys_user a
-        left join docmanager.sys_user b on a.tutor_work_id = b.work_id
+            left join docmanager.sys_user b on a.tutor_work_id = b.work_id
         where a.del_flag != 1
         <if test="workId != '' and workId != null">
             and a.work_id = #{workId}

@@ -266,7 +266,7 @@
         (select * from sys_user
         <where>
             <if test="page != null and page != '' and page.searchKey != null and page.searchKey != ''">
-                real_name like concat('%', #{page.searchKey}, '%')
+                real_name = #{page.searchKey}
             </if>
             <if test="userType != null and userType != ''">
                 and user_type = #{userType}

@@ -30,6 +30,9 @@ public class SysUserService{
         return sysUserMapper.selectByPrimaryKey(id);
     }
 
+    public SysUser selectByWorkId(String workId){
+        return sysUserMapper.selectByWorkId(workId);
+    }
     
     public int updateByPrimaryKeySelective(SysUser record) {
         return sysUserMapper.updateByPrimaryKeySelective(record);
@@ -39,5 +42,4 @@ public class SysUserService{
     public int updateByPrimaryKey(SysUser record) {
         return sysUserMapper.updateByPrimaryKey(record);
     }
-
 }

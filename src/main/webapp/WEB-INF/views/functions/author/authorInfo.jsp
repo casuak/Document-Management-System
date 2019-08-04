@@ -27,7 +27,7 @@
              v-model="docSelected"
              type="border-card">
 
-        <%--论文Tab--%>
+        <%--1.论文Tab--%>
         <el-tab-pane name="paper" label="论文">
             <el-main style="padding: 10px 0;">
                 <%-- 顶栏 --%>
@@ -63,36 +63,67 @@
                     <el-table-column type="selection" width="40"></el-table-column>
                     <el-table-column
                             prop="paperName"
-                            width="200"
-                            show-overflow-tooltip
-                            label="论文名">
+                            width="220"
+                            align="center"
+                            fixed="left"
+                            label="论文名"
+                            show-overflow-tooltip>
                     </el-table-column>
                     <el-table-column
                             prop="ISSN"
+                            align="center"
+                            fixed="left"
+                            width="100"
                             label="ISSN">
                     </el-table-column>
                     <el-table-column
                             prop="danweiCN"
+                            align="center"
                             label="单位">
                     </el-table-column>
                     <el-table-column
-                            prop="docTypeValue"
+                            prop="docType"
+                            align="center"
+                            width="100"
                             label="论文种类">
                     </el-table-column>
                     <el-table-column
                             prop="firstAuthorName"
+                            align="center"
+                            width="100"
                             label="第一作者">
                     </el-table-column>
                     <el-table-column
                             prop="secondAuthorName"
+                            align="center"
+                            width="100"
                             label="第二作者">
                     </el-table-column>
                     <el-table-column
+                            prop="authorList"
+                            width="300"
+                            align="center"
+                            show-overflow-tooltip
+                            label="作者列表">
+                    </el-table-column>
+                    <el-table-column
+                            prop="storeNum"
+                            width="160"
+                            align="center"
+                            label="入藏号">
+                    </el-table-column>
+                    <el-table-column
                             prop="_PD"
+                            align="center"
+                            width="100"
                             label="出版日期">
                     </el-table-column>
 
-                    <el-table-column label="操作" width="190" header-align="center" align="center">
+                    <el-table-column
+                            label="操作"
+                            width="100"
+                            fixed="right"
+                            align="center">
                         <template slot-scope="scope">
                             <el-button type="danger" size="mini" style="position:relative;bottom: 1px;margin-left: 6px;"
                                        @click="deletePaperListByIds([{id: scope.row.id}])">
@@ -100,7 +131,6 @@
                             </el-button>
                         </template>
                     </el-table-column>
-                    <el-table-column width="50"></el-table-column>
                 </el-table>
                 <%-- entity分页 --%>
                 <el-pagination style="text-align: center;margin: 8px auto;"
@@ -116,9 +146,95 @@
             </el-main>
         </el-tab-pane>
 
-        <%--专利Tab--%>
+        <%--2.专利Tab--%>
         <el-tab-pane name="patent" label="专利">
+            <el-main style="padding: 10px 0;">
+                <%-- 顶栏 --%>
+                <div style="margin-left: 10px">
+                    <span class="button-group">
+                        <el-button size="small" type="danger" @click="deletePatentListByIds(table.paperTable.entity.selectionList)"
+                                   style="margin-left: 10px;">
+                            <span>批量删除</span>
+                        </el-button>
+                    </span>
+                    <span style="float: right;margin-right: 10px;">
+                        <el-input size="small" placeholder="输入相关专利名称搜索论文" suffix-icon="el-icon-search"
+                                  style="width: 250px;margin-right: 10px;"
+                                  v-model="table.patentTable.entity.params.searchKey"
+                                  @keyup.enter.native="table.patentTable.entity.params.pageIndex=1;refreshTable_patent()">
+                        </el-input>
+                        <el-button size="small" type="primary" style="position:relative;"
+                                   @click="table.patentTable.entity.params.pageIndex=1;refreshTable_patent()">
+                            <span>搜索</span>
+                        </el-button>
+                    </span>
+                </div>
+                <%-- entity表格 --%>
+                <el-table :data="table.patentTable.entity.data"
+                          id="patentTable"
+                          ref="multipleTable"
+                          v-loading="table.patentTable.entity.loading"
+                          height="calc(100% - 130px)"
+                          style="width: 100%;overflow-y: hidden;margin-top: 20px;"
+                          class="scroll-bar"
+                          @selection-change="handleSelectionChange"
+                          stripe>
+                    <el-table-column type="selection" width="40"></el-table-column>
+                    <el-table-column
+                            prop="patentName"
+                            width="220"
+                            align="center"
+                            fixed="left"
+                            label="专利名"
+                            show-overflow-tooltip>
+                    </el-table-column>
 
+                    <el-table-column
+                            prop="firstAuthorName"
+                            align="center"
+                            width="100"
+                            label="第一作者">
+                    </el-table-column>
+                    <el-table-column
+                            prop="secondAuthorName"
+                            align="center"
+                            width="100"
+                            label="第二作者">
+                    </el-table-column>
+                    <el-table-column
+                            prop="authorList"
+                            width="300"
+                            align="center"
+                            show-overflow-tooltip
+                            label="作者列表">
+                    </el-table-column>
+
+                    </el-table-column>
+
+                    <el-table-column
+                            label="操作"
+                            width="100"
+                            fixed="right"
+                            align="center">
+                        <template slot-scope="scope">
+                            <el-button type="danger" size="mini" style="position:relative;bottom: 1px;margin-left: 6px;"
+                                       @click="deletePatentListByIds([{id: scope.row.id}])">
+                                <span>删除</span>
+                            </el-button>
+                        </template>
+                    </el-table-column>
+                </el-table>
+                <%-- entity分页 --%>
+                <el-pagination style="text-align: center;margin: 8px auto;"
+                               @size-change="onPageSizeChange_patent"
+                               @current-change="onPageIndexChange_patent"
+                               :current-page="table.patentTable.entity.params.pageIndex"
+                               :page-sizes="table.patentTable.entity.params.pageSizes"
+                               :page-size="table.patentTable.entity.params.pageSize"
+                               :total="table.patentTable.entity.params.total"
+                               layout="total, sizes, prev, pager, next, jumper">
+                </el-pagination>
+            </el-main>
         </el-tab-pane>
     </el-tabs>
 </div>
@@ -147,12 +263,6 @@
                     deletePaperListByIds: '',
                     updatePaper: '',
                     selectPatentListByPage: '',
-                },
-                copyright: {
-                    insertPaper: '',
-                    deletePaperListByIds: '',
-                    updatePaper: '',
-                    selectCopyrightListByPage: '',
                 }
             },
             fullScreenLoading: false,
@@ -172,20 +282,6 @@
                     }
                 },
                 patentTable: {
-                    entity: {
-                        data: [],
-                        loading: false,
-                        selectionList: [],
-                        params: {
-                            pageIndex: 1,
-                            pageSize: 10,
-                            pageSizes: [5, 10, 20, 40],
-                            searchKey: '',  // 搜索词
-                            total: 0,       // 总数
-                        }
-                    }
-                },
-                copyrightTable: {
                     entity: {
                         data: [],
                         loading: false,
@@ -322,7 +418,6 @@
                 this.dialog.updatePaper.visible = true;
                 this.dialog.updatePaper.formData = copy(row);
             },
-
             // 处理paper的pageSize变化
             onPageSizeChange_paper: function (newSize) {
                 this.table.paperTable.entity.params.pageSize = newSize;
@@ -335,9 +430,9 @@
             },
 
             // 重置表单
-            resetForm: function (ref) {
+            /*resetForm: function (ref) {
                 this.$refs[ref].resetFields();
-            },
+            },*/
 
             //表格选择框
             toggleSelection(rows) {
@@ -349,6 +444,7 @@
                     this.$refs.multipleTable.clearSelection();
                 }
             },
+
             handleSelectionChange(val) {
 
                 this.table.paperTable.entity.selectionList = val;
@@ -357,6 +453,7 @@
         /*加载的时候就执行一次*/
         mounted: function () {
             this.refreshTable_paper();
+            this.refreshTable_patent();
         }
     });
 
@@ -379,7 +476,7 @@
     }
 
     function dateFormat(shijianchuo) {
-        //shijianchuo是整数，否则要parseInt转换
+        //时间戳是整数，否则要parseInt转换
         let time = new Date(shijianchuo);
         let y = time.getFullYear();
         let m = time.getMonth() + 1;
@@ -398,13 +495,6 @@
     window.onresize = function () {
         setMainHeight();
     };
-
-
-    function dateTest() {
-        let dateTime = new Date().getTime();
-        let date = dateFormat(dateTime);
-        console.log(date);
-    }
 </script>
 </body>
 </html>

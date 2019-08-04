@@ -92,7 +92,6 @@ public class AuthorApi extends BaseApi {
             ModelAndView modelAndView
     ) {
         modelAndView.setViewName("functions/author/authorInfo");
-
         Author authorNow = authorService.getAuthor(authorId);
         modelAndView.addObject("author", authorNow);
         return modelAndView;
@@ -154,15 +153,11 @@ public class AuthorApi extends BaseApi {
     ) {
         Page<Author> data = new Page<>();
         List<Author> authorList = authorService.getAuthorList(author);
-
+        //设置返回的authorList信息
         data.setResultList(authorList);
-        LOG.info("查询的作者信息：" + authorList);
-
         int authorNum = authorService.getAuthorListCount(author);
+        //设置查询出的作者总数
         data.setTotal(authorNum);
-
-        LOG.info("查询的作者个数：" + authorNum);
         return retMsg.Set(MsgType.SUCCESS, data, "getAuthorListByPage-ok");
-
     }
 }

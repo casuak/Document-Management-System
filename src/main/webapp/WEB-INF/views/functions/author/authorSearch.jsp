@@ -165,8 +165,8 @@
                           height="calc(100% - 35px)"
                           v-loading="table.authorTable.loading"
                           class="scroll-bar"
-                          :default-sort = "{prop: 'paperAmount', order: 'descending'}"
-                <%--                          style="margin-top: 0;width: 100%;overflow-y: hidden;"--%>
+                <%-- :default-sort = "{prop: 'paperAmount', order: 'descending'}"--%>
+                <%--style="margin-top: 0;width: 100%;overflow-y: hidden;"--%>
                 <%--@selection-change="onSelectionChange_entity"--%>
                           stripe>
                     <%--<el-table-column type="selection" width="60px">--%>
@@ -176,24 +176,31 @@
                             label="序号"
                             header-align="center"
                             align="center"
-                            width="80px">
+                            fixed="left"
+                            width="50">
                     </el-table-column>
                     <el-table-column
                             prop="realName"
                             header-align="center"
                             align="center"
+                            fixed="left"
+                            width="150"
+                            show-overflow-tooltip
                             label="作者姓名">
                     </el-table-column>
                     <el-table-column
                             prop="workId"
                             header-align="center"
                             align="center"
+                            width="150"
+                            fixed="left"
                             label="作者工号">
                     </el-table-column>
                     <el-table-column
                             prop="userType"
                             header-align="center"
                             align="center"
+                            width="80"
                             label="作者身份">
                         <template slot-scope="{row}">
                             <template v-if="row.userType == 'student'">
@@ -208,8 +215,44 @@
                         </template>
                     </el-table-column>
                     <el-table-column
+                            prop="major"
                             header-align="center"
                             align="center"
+                            sortable
+                            width="195"
+                            label="所属学科">
+                    </el-table-column>
+                    <el-table-column
+                            prop="school"
+                            header-align="center"
+                            align="center"
+                            sortable
+                            width="195"
+                            label="所属机构">
+                    </el-table-column>
+                    <el-table-column
+                            header-align="center"
+                            align="center"
+                            width="150"
+                            label="导师类别">
+                        <template slot-scope="{row}">
+                            <template v-if="row.userType == 'teacher'" key="keyTutorType0">
+                                (职称){{row.tutorTitle}}
+                            </template>
+                            <template v-else key="keyTutorType1">
+                                <template v-if="row.tutorType == '' || row.tutorType == null" key="keyTutorType2">
+                                    <el-button type="primary" size="mini">暂无导师类别</el-button>
+                                </template>
+                                <template v-else key="keyTutorType3">
+                                    {{row.tutorType}}
+                                </template>
+                            </template>
+                        </template>
+                    </el-table-column>
+                    <el-table-column
+                            header-align="center"
+                            align="center"
+                            width="120"
                             label="导师姓名">
                         <template slot-scope="{row}">
                             <template v-if="row.userType == 'teacher'" key="key1">
@@ -228,6 +271,7 @@
                     <el-table-column
                             header-align="center"
                             align="center"
+                            width="120"
                             label="导师工号">
                         <template slot-scope="{row}">
                             <template v-if="row.userType == 'teacher'" key="key5">
@@ -243,24 +287,21 @@
                             </template>
                         </template>
                     </el-table-column>
-                    <el-table-column
-                            prop="major"
+                   <%-- <el-table-column
+                            prop="nicknames"
                             header-align="center"
                             align="center"
                             sortable
-                            label="所属学科">
-                    </el-table-column>
-                    <el-table-column
-                            prop="school"
-                            header-align="center"
-                            align="center"
-                            sortable
-                            label="所属机构">
-                    </el-table-column>
-                    <el-table-column
+                            width="200"
+                            show-overflow-tooltip
+                            label="昵称列表">
+                    </el-table-column>--%>
+                    <%--<el-table-column
                             prop="paperAmount"
                             header-align="center"
                             align="center"
+                            fixed="right"
+                            width="80"
                             sortable
                             label="论文数量">
                     </el-table-column>
@@ -268,16 +309,70 @@
                             prop="patentAmount"
                             header-align="center"
                             align="center"
+                            fixed="right"
+                            width="80"
                             sortable
                             label="专利数量">
-                    </el-table-column>
+                    </el-table-column>--%>
                     <%-- <el-table-column
                              prop="copyrightAmount"
                              header-align="center"
                              align="center"
                              label="著作权数量">
                      </el-table-column>--%>
-                    <el-table-column label="操作" width="190px" header-align="center" align="center">
+                    <el-table-column
+                            header-align="center"
+                            align="center"
+                            width="120"
+                            label="学生培养层次类型">
+                        <template slot-scope="{row}">
+                            <template v-if="row.userType == 'teacher'" key="keyTrainLevel0">
+                                <el-button type="danger" size="mini">已是导师</el-button>
+                            </template>
+                            <template v-else key="keyTrainLevel1">
+                                <template v-if="row.studentTrainLevel == '' || row.studentTrainLevel == null" key="keyTrainLevel2">
+                                    <el-button type="primary" size="mini">暂无培养层次</el-button>
+                                </template>
+                                <template v-else key="keyTrainLevel3">
+                                    {{row.studentTrainLevel}}
+                                </template>
+                            </template>
+                        </template>
+                    </el-table-column>
+
+                    <el-table-column
+                            header-align="center"
+                            align="center"
+                            width="120"
+                            label="学生学位类型">
+                        <template slot-scope="{row}">
+                            <template v-if="row.userType == 'teacher'" key="keyDegreeType0">
+                                <el-button type="danger" size="mini">已是导师</el-button>
+                            </template>
+                            <template v-else key="keyDegreeType1">
+                                <template v-if="row.studentDegreeType == '' || row.studentDegreeType == null" key="keyDegreeType2">
+                                    <el-button type="primary" size="mini">暂无学位类型</el-button>
+                                </template>
+                                <template v-else key="keyDegreeType3">
+                                    {{row.studentDegreeType}}
+                                </template>
+                            </template>
+                        </template>
+                    </el-table-column>
+
+                    <el-table-column
+                            prop="nicknames"
+                            header-align="center"
+                            align="center"
+                            width="200"
+                            show-overflow-tooltip
+                            label="昵称列表">
+                    </el-table-column>
+                    <el-table-column label="操作"
+                                     width="100"
+                                     fixed="right"
+                                     header-align="center"
+                                     align="center">
                         <template slot-scope="scope">
                             <el-button type="primary" plain
                                        size="mini"
@@ -545,32 +640,6 @@
             updatePaper: function () {
 
             },
-            selectPaperListByPage: function () {
-                //formatParams
-                let data = {
-                    paperName: app.optionView.paper.paperName,
-                    firstAuthorName: app.optionView.paper.firstAuthorWorkNum,            //其实是FA工号
-                    secondAuthorName: app.optionView.paper.secondAuthorWorkNum,          //其实是SA工号
-                    authorList: app.optionView.paper.otherAuthorWorkNum,                 //其实是OA工号
-                    storeNum: app.optionView.paper.storeNum,
-                    docType: app.optionView.paper.paperType,
-                    ISSN: app.optionView.paper.ISSN,
-                    page: app.table.paperTable.params
-                };
-                console.log("post: " + data);
-                app.table.paperTable.loading = true;
-                ajaxPostJSON("/api/doc/search/selectPaperListByPagePost", data,
-                    function success(res) {
-                        app.table.paperTable.loading = false;
-                        console.log("post请求成功" + res);
-                        app.table.paperTable.data = res.data.paperList;
-                        app.table.paperTable.params.total = res.data.paperAmount;
-                    },
-                    function error(res) {
-                        console.log("post请求失败: " + res);
-                    }
-                );
-            },
 
             // 处理选中的行变化
             onSelectionChange: function (val) {
@@ -593,79 +662,6 @@
             // resetForm: function (ref) {
             //     this.$refs[ref].resetFields();
             // },
-
-            /*统计搜索*/
-            statisticalSearch: function () {
-                /*let paperIndex = $.inArray('论文', app.doc.checkedDoc);
-                let patentIndex = $.inArray('专利', app.doc.checkedDoc);
-                let copyrightIndex = $.inArray('著作权', app.doc.checkedDoc);*/
-
-                let paramsData = {
-                    commonParams: {
-                        userType: app.optionView.commonSelect.userType,
-                        subject: app.optionView.commonSelect.subject,
-                        workId: app.optionView.commonSelect.workId,
-                        pubDate: app.optionView.commonSelect.publishDate
-                    },
-                    paperParams: {
-                        paperName: app.optionView.paper.paperName,
-                        paperLevel: app.optionView.paper.paperLevel,
-                        IF: app.optionView.paper.impactFactor,
-                        paperType: app.optionView.paper.paperType
-                    },
-                    patentParams: {
-                        applicationNum: app.optionView.patent.applicationNum,
-                        publicNum: app.optionView.patent.publicNum
-                    },
-                    copyrightParams: {
-                        copySubject: app.optionView.copyright.copySubject,
-                        copyType: app.optionView.copyright.copyType
-                    }
-                };
-                app.table.commonTable.loading = true;
-
-                let jsonParamsData = JSON.stringify(paramsData);
-
-                $.ajax({
-                    url: "/doc/statisticalSearch",
-                    type: "post",
-                    data: {jsonStr: jsonParamsData},
-                    //contentType: 'application/json;charset=utf-8',
-                    success: function (res) {
-                        console.log(res)
-                    },
-                    error: function (res) {
-                        console.log("post error:" + res)
-                    }
-                });
-
-                // ajaxPostJSON("/doc/statisticalSearch",{jsonStr:paramsData},
-                // function success(res) {
-                //     if(res.code === 'success'){
-                //         console.log("ok")
-                //     }else{
-                //         console.log("bu ok")
-                //     }
-                // },
-                // function error(res) {
-                //     console.log("post error"+ res)
-                // });
-                app.table.commonTable.loading = false;
-            },
-
-            /*查看文献详情*/
-            viewDocDetails(row) {
-                parent.addTab1("文献详情test1", "api/doc/search/docDetails");
-                // alert($('#default', window.parent.document).html());
-                console.log(row);
-                ajaxGet("api/doc/search/docDetails", null,
-                    function success(res) {
-                        console.log(res);
-                    },
-                    function error(res) {
-                        console.log(res);
-                    })
-            },
 
             getSummaries(param) {
                 const {columns, data} = param;
@@ -698,7 +694,7 @@
     function searchClick() {
         app.table.authorTable.params = {
             pageIndex: 1,
-            pageSize: 10,
+            pageSize: app.table.authorTable.params.pageSize,
             pageSizes: [5, 10, 20, 40],
             searchKey: '',
             total: 100,
@@ -710,25 +706,29 @@
     function authorSearch() {
         app.table.authorTable.loading = true;
         let author = {
+            //待查作者类型
             userType: app.optionView.commonSelect.userType,
+            //待查作者工号
             workId: app.optionView.commonSelect.workId,
+            //待查作者学科名
             subjectName: app.optionView.commonSelect.subject,
+            //待查作者机构名称
             organizationName: app.optionView.commonSelect.organization,
+            //分页信息
             page: app.table.authorTable.params,
         };
-
         setTimeout(function () {
             ajaxPostJSON("/author/getAuthorListByPage", author,
-                function suc(res) {
+                function success(res) {
                     if (res.code === 'success') {
-                        console.log(res);
+                        console.log(res.data.resultList);
                         app.table.authorTable.data = res.data.resultList;
                         app.table.authorTable.params.total = res.data.total;
-
                         app.table.authorTable.loading = false;
                     }
-                }, null, false);
-        }, 500)
+                }, null, false
+            );
+        }, 200)
     }
 
     //选择对应筛选框视图:
@@ -857,7 +857,6 @@
 
     /*查看作者详情-打开新页面*/
     function viewAuthorDetail(row) {
-        console.log(row)
         let authorId = row.id;
         let tabTitle = row.realName + "-作者详情";
         let link = "/author/goAuthorDetail?authorId=" + authorId;
