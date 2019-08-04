@@ -1,7 +1,6 @@
 # Document-Management-System
 文献管理系统
 
-# 目录
 ## 1.登陆
 管理员（拥有系统所有权限）\
 用户名：admin \
