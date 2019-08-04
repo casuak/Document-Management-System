@@ -71,18 +71,18 @@
             <template slot-scope="{row}">
                 <span v-if="row.firstAuthorId != null && row.firstAuthorId !== ''"
                       style="display: flex;align-items: center;justify-content: space-between">
-                    <div @click="openSearchUser(row, 1, row.firstAuthorName, row.firstAuthorId)">{{ row.firstAuthorId }}</div>
+                    <div>{{ row.firstAuthorId }}</div>
                     <el-Tooltip open-delay="500" effect="dark" :content="row.firstAuthor.realName" placement="top">
                         <div style="display: inline-block;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;width: 100px;">
                             {{ row.firstAuthor != null ? row.firstAuthor.realName : ''}}
                         </div>
                     </el-Tooltip>
                     <div>{{ row.firstAuthor != null ? row.firstAuthor.userType : ''}}</div>
-                    <i-button style="height: 25px;position:relative;left: 4px;" v-if="row.status !== '3'"
-                              type="warning" size="small" @click="clearAuthor(row, 1)">C</i-button>
+                    <i-button style="height: 25px;position:relative;left: 4px;"
+                              type="warning" size="small" @click="clearAuthor(row, 1)">X</i-button>
                 </span>
                 <span v-else>
-                    <i-button v-if="row.status !== '3'" type="success" size="small"
+                    <i-button type="success" size="small"
                               @click="openSearchUser(row, 1, row.firstAuthorName, '')">手动匹配</i-button>
                 </span>
             </template>
@@ -92,18 +92,18 @@
             <template slot-scope="{row}">
                 <span v-if="row.secondAuthorId != null && row.secondAuthorId !== ''"
                       style="display: flex;align-items: center;justify-content: space-between">
-                    <div @click="openSearchUser(row, 2, row.secondAuthorName, row.secondAuthorId)">{{ row.secondAuthorId }}</div>
+                    <div>{{ row.secondAuthorId }}</div>
                     <el-Tooltip open-delay="500" effect="dark" :content="row.secondAuthor.realName" placement="top">
                         <div style="display: inline-block;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;width: 100px;">
                             {{ row.secondAuthor != null ? row.secondAuthor.realName : '' }}
                         </div>
                     </el-Tooltip>
                     <div>{{ row.secondAuthor != null ? row.secondAuthor.userType : '' }}</div>
-                    <i-button style="height: 25px;position:relative;left: 4px;" v-if="row.status !== '3'"
-                              type="warning" size="small" @click="clearAuthor(row, 2)">C</i-button>
+                    <i-button style="height: 25px;position:relative;left: 4px;"
+                              type="warning" size="small" @click="clearAuthor(row, 2)">X</i-button>
                 </span>
                 <span v-else>
-                    <i-button v-if="row.status !== '3'" type="success" size="small"
+                    <i-button type="success" size="small"
                               @click="openSearchUser(row, 2, row.secondAuthorName, '')">手动匹配</i-button>
                 </span>
             </template>
