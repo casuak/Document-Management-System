@@ -292,11 +292,6 @@
                             >
                                 <span>查看论文详情</span>
                             </el-button>
-                          <%--  <el-button type="danger" size="mini" style="position:relative;bottom: 1px;margin-left: 6px;"
-                            @click="deleteEntityListByIds([{id: scope.row.id}])"
-                            >
-                                <span>删除</span>
-                            </el-button>--%>
                         </template>
                     </el-table-column>
                     <el-table-column width="50"></el-table-column>

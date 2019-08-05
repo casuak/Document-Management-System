@@ -16,12 +16,12 @@ import java.util.Map;
 
 /**
  * @author zm
- * @description 文献API
+ * @description 文献统计api
  * @data 2019/5/8
  */
 @Controller
-@RequestMapping("/doc")
-public class DocCountApi {
+@RequestMapping("/api/doc/statistic")
+public class DocStatisticApi {
 
     @Autowired
     private PaperSearchService paperSearchService;
@@ -34,11 +34,11 @@ public class DocCountApi {
     @Autowired
     private FunctionService functionService;
 
-    @RequestMapping(value = "goDocCount",method = RequestMethod.GET)
+    @RequestMapping(value = "goDocStatistic",method = RequestMethod.GET)
     public ModelAndView goDocCount(
             ModelAndView modelAndView
     ){
-        modelAndView.setViewName("functions/doc/docCount");
+        modelAndView.setViewName("functions/doc/statistic/docStatistic");
 
         List<Map<String, String>> paperType = paperSearchService.getPaperType();
         List<Map<String, String>> patentType = patentService.getPatentType();

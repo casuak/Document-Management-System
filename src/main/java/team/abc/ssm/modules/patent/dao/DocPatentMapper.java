@@ -5,6 +5,7 @@ import java.util.Date;
 import org.apache.ibatis.annotations.Param;
 
 import team.abc.ssm.modules.author.entity.Author;
+import team.abc.ssm.modules.doc.entity.StatisticCondition;
 import team.abc.ssm.modules.patent.entity.DocPatent;
 import team.abc.ssm.modules.sys.entity.User;
 
@@ -73,4 +74,14 @@ public interface DocPatentMapper {
      * 2作者workId保存在patent的id字段中
      **/
     List<DocPatent> selectMyPatentList(DocPatent docPatent);
+
+    /**
+     * 根据给定条件统计专利数目
+     *
+     * @author zm
+     * @param1 statisticCondition
+     * @return int        
+     * @date 2019/8/5 16:34
+     **/
+    int getStasticNumOfPaper(StatisticCondition statisticCondition);
 }

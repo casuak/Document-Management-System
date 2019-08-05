@@ -111,4 +111,9 @@ public class DocPaper extends DataEntity<DocPaper> {
      * 第二作者类型
      */
     private String secondAuthorType;
+
+    /**
+     * 论文所属学科
+     */
+    private String subject;
 }

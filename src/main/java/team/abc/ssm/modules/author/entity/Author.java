@@ -4,7 +4,6 @@ import io.swagger.models.auth.In;
 import lombok.Data;
 import team.abc.ssm.common.persistence.DataEntity;
 import team.abc.ssm.common.persistence.Page;
-import team.abc.ssm.modules.doc.entity.Copyright;
 import team.abc.ssm.modules.doc.entity.Paper;
 import team.abc.ssm.modules.doc.entity.Patent;
 import team.abc.ssm.modules.sys.entity.Role;
@@ -60,7 +59,6 @@ public class Author extends DataEntity<Author> {
 
     private Page<Paper> myPaperPage;
     private Page<Patent> myPatentPage;
-    private Page<Copyright> myCopyrightPage;
 
     private String school;
     private String major;
