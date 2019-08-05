@@ -9,7 +9,7 @@ import org.springframework.web.servlet.ModelAndView;
 import team.abc.ssm.modules.author.service.AuthorService;
 import team.abc.ssm.modules.doc.service.PaperSearchService;
 import team.abc.ssm.modules.doc.service.PatentService;
-import team.abc.ssm.modules.organization.service.CommonOrganizeService;
+import team.abc.ssm.modules.sys.service.FunctionService;
 
 import java.util.List;
 import java.util.Map;
@@ -29,10 +29,10 @@ public class DocCountApi {
     private PatentService patentService;
 
     @Autowired
-    private CommonOrganizeService orgService;
+    private AuthorService authorService;
 
     @Autowired
-    private AuthorService authorService;
+    private FunctionService functionService;
 
     @RequestMapping(value = "goDocCount",method = RequestMethod.GET)
     public ModelAndView goDocCount(
@@ -42,7 +42,7 @@ public class DocCountApi {
 
         List<Map<String, String>> paperType = paperSearchService.getPaperType();
         List<Map<String, String>> patentType = patentService.getPatentType();
-        List<String> orgList = orgService.getOrgList();
+        List<String> orgList = functionService.getOrgList();
         List<String> subjectList = authorService.getSubList();
 
         modelAndView.addObject("paperType", JSONArray.fromObject(paperType));

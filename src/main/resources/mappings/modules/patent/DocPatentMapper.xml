@@ -458,4 +458,32 @@
          ) as t where t.first_author_work_id = #{userWorkId,jdbcType=VARCHAR}
          or t.second_author_work_id = #{userWorkId,jdbcType=VARCHAR}
     </select>
+
+    <select id="selectMyPatentList" parameterType="team.abc.ssm.modules.patent.entity.DocPatent"
+            resultMap="BaseResultMap">
+        select
+        a.*,
+        b.user_type as first_author_type,
+        c.user_type as second_author_type,
+        b.real_name as first_author_name,
+        c.real_name as second_author_name
+        from (
+            select * from (
+                select * from docmanager.doc_patent
+                where first_author_work_id = #{id,jdbcType=VARCHAR}
+                or second_author_work_id = #{id,jdbcType=VARCHAR}
+            ) as tmp
+            <where>
+                <if test="status != null and status != ''">
+                    and status = #{status}
+                </if>
+                <if test="page.searchKey != null and page.searchKey != ''">
+                    and patent_name like concat('%',#{page.searchKey} ,'%')
+                </if>
+            </where>
+            limit #{page.pageStart} ,#{page.pageSize}
+        ) as a
+        left join sys_user b on b.work_id = a.first_author_work_id
+        left join sys_user c on c.work_id = a.second_author_work_id
+    </select>
 </mapper>

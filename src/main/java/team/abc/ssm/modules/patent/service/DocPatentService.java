@@ -85,6 +85,22 @@ public class DocPatentService {
         return patentList;
     }
 
+    /**
+     * @author zm
+     * @date 2019/8/5 8:30
+     * @params [authorWorkId, docPatent]
+     * @return: java.util.List<team.abc.ssm.modules.patent.entity.DocPatent>
+     * @Description //获取指定作者的所有专利List
+     **/
+    public List<DocPatent> selectMyPatentListByPage(String authorWorkId, DocPatent docPatent) {
+        //1.docPatent的id暂时存储当前需要查询的作者的workId
+        docPatent.setId(authorWorkId);
+        //2.设置需要查找的专利的状态为：已完成
+        docPatent.setStatus(PatentMatchType.MATCH_FINISHED.toString());
+        //2.查询当前作者的专利List
+        return docPatentMapper.selectMyPatentList(docPatent);
+    }
+
     public int selectSearchCount(DocPatent patent) {
         return docPatentMapper.selectSearchCount(patent);
     }

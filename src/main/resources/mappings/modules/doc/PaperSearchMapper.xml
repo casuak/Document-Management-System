@@ -39,12 +39,6 @@
         )
     </select>
 
-    <select id="getAllOrganize" resultType="team.abc.ssm.modules.organization.entity.CommonOrganize">
-        select*
-        from docmanager.common_organize `org`
-        where org.del_flag != -1
-    </select>
-
     <select id="getPaperTypeMap" resultType="java.util.HashMap">
         select id, name_en
         from docmanager.sys_dict
@@ -119,36 +113,29 @@
            or second_author_id = #{0}
     </select>
 
-    <select id="getPaperList" parameterType="team.abc.ssm.modules.author.entity.Author" resultMap="paperBean">
-        select *
-        from doc_paper
-        <where>
-            (first_author_id = #{workId}
-            or second_author_id = #{workId})
-            <if test="page!=null">
+    <select id="getMyPaperList" parameterType="team.abc.ssm.modules.author.entity.Author" resultMap="paperBean">
+        select
+        a.*,
+        b.user_type as first_author_type,
+        c.user_type as second_author_type,
+        b.real_name as first_author_name,
+        c.real_name as second_author_name
+        from (
+            select * from (
+                select * from docmanager.doc_paper
+                where first_author_id = #{workId,jdbcType=VARCHAR}
+                or second_author_id = #{workId,jdbcType=VARCHAR}
+            ) as tmp
+            <where>
+                 status = '2'
                 <if test="page.searchKey != null and page.searchKey != ''">
-                    and paper_name like concat('%', #{page.searchKey}, '%')
+                    and paper_name like concat('%',#{page.searchKey} ,'%')
                 </if>
-            </if>
-        </where>
-
-        <if test="page!=null">
-            limit #{page.pageStart}, #{page.pageSize}
-        </if>
-    </select>
-    <select id="getMyPaperCount"  parameterType="team.abc.ssm.modules.author.entity.Author" resultType="int">
-        select count(*)
-        from doc_paper
-        <where>
-            (first_author_id = #{workId}
-            or second_author_id = #{workId})
-            <if test="page!=null">
-                <if test="page.searchKey != null and page.searchKey != ''">
-                    and paper_name like concat('%', #{page.searchKey}, '%')
-                </if>
-            </if>
-        </where>
-
+            </where>
+            limit #{page.pageStart} ,#{page.pageSize}
+        ) as a
+        left join sys_user b on b.work_id = a.first_author_id
+        left join sys_user c on c.work_id = a.second_author_id
     </select>
 
     <select id="selectTypeValue" resultType="java.lang.String">
@@ -215,7 +202,5 @@
         </if>
         ) sUser
         on (patent.first_author_id = sUser.work_id or patent.second_author_id=sUser.work_id)
-
     </select>
-
 </mapper>

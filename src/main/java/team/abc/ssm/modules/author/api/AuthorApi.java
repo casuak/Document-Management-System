@@ -21,7 +21,7 @@ import team.abc.ssm.modules.doc.service.CopyrightService;
 import team.abc.ssm.modules.doc.service.PaperSearchService;
 import team.abc.ssm.modules.doc.service.PaperService;
 import team.abc.ssm.modules.doc.service.PatentService;
-import team.abc.ssm.modules.organization.service.CommonOrganizeService;
+import team.abc.ssm.modules.sys.service.FunctionService;
 
 import java.util.HashMap;
 import java.util.List;
@@ -51,7 +51,7 @@ public class AuthorApi extends BaseApi {
     private CopyrightService copyrightService;
 
     @Autowired
-    private CommonOrganizeService orgService;
+    private FunctionService functionService;
 
     /**
      * @param []
@@ -68,7 +68,7 @@ public class AuthorApi extends BaseApi {
 
         List<Map<String, String>> paperType = paperSearchService.getPaperType();
 
-        List<String> orgList = orgService.getOrgList();
+        List<String> orgList = functionService.getOrgList();
 
         List<String> subjectList = authorService.getSubList();
 

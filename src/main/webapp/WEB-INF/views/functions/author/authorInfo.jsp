@@ -36,11 +36,11 @@
                         <el-button size="small" type="danger"
                                    @click="deletePaperListByIds(table.paperTable.entity.selectionList)"
                                    style="margin-left: 10px;">
-                            <span>批量删除</span>
+                            <span>论文-批量删除</span>
                         </el-button>
                     </span>
                     <span style="float: right;margin-right: 10px;">
-                        <el-input size="small" placeholder="输入相关论文名称搜索论文" suffix-icon="el-icon-search"
+                        <el-input size="small" placeholder="输入论文名称" suffix-icon="el-icon-search"
                                   style="width: 250px;margin-right: 10px;"
                                   v-model="table.paperTable.entity.params.searchKey"
                                   @keyup.enter.native="table.paperTable.entity.params.pageIndex=1;refreshTable_paper()">
@@ -59,28 +59,29 @@
                           height="calc(100% - 130px)"
                           style="width: 100%;overflow-y: hidden;margin-top: 20px;"
                           class="scroll-bar"
-                          @selection-change="handleSelectionChange"
+                          @selection-change="table.paperTable.entity.selectionList=$event"
                           stripe>
                     <el-table-column type="selection" width="40"></el-table-column>
                     <el-table-column
                             prop="paperName"
-                            width="220"
+                            width="250"
                             align="center"
                             fixed="left"
                             label="论文名"
                             show-overflow-tooltip>
                     </el-table-column>
                     <el-table-column
-                            prop="ISSN"
+                            prop="issn"
                             align="center"
                             fixed="left"
                             width="100"
                             label="ISSN">
                     </el-table-column>
                     <el-table-column
-                            prop="danweiCN"
+                            prop="danweiCn"
                             align="center"
-                            label="单位">
+                            width="200"
+                            label="所属学院">
                     </el-table-column>
                     <el-table-column
                             prop="docType"
@@ -89,16 +90,74 @@
                             label="论文种类">
                     </el-table-column>
                     <el-table-column
+                            prop="publishDate"
+                            align="center"
+                            width="120"
+                            label="出版日期">
+                    </el-table-column>
+                    <el-table-column
                             prop="firstAuthorName"
                             align="center"
-                            width="100"
+                            width="120"
                             label="第一作者">
+                    </el-table-column>
+                    <el-table-column
+                            prop="firstAuthorId"
+                            align="center"
+                            width="160"
+                            label="第一作者工号">
+                    </el-table-column>
+                    <el-table-column
+                            prop="firstAuthorType"
+                            align="center"
+                            width="160"
+                            label="第一作者类型">
+                        <template slot-scope="{row}">
+                            <template v-if="row.firstAuthorType == 'student'">
+                                学生
+                            </template>
+                            <template v-else-if="row.firstAuthorType == 'teacher'">
+                                导师
+                            </template>
+                            <template v-else>
+                                博士后
+                            </template>
+                        </template>
                     </el-table-column>
                     <el-table-column
                             prop="secondAuthorName"
                             align="center"
-                            width="100"
+                            width="120"
                             label="第二作者">
+                    </el-table-column>
+                    <el-table-column
+                            prop="secondAuthorId"
+                            align="center"
+                            width="160"
+                            label="第二作者工号">
+                    </el-table-column>
+                    <el-table-column
+                            prop="secondAuthorType"
+                            align="center"
+                            width="160"
+                            label="第二作者类型">
+                        <template slot-scope="{row}">
+                            <template v-if="row.secondAuthorType == 'student'">
+                                学生
+                            </template>
+                            <template v-else-if="row.secondAuthorType == 'teacher'">
+                                导师
+                            </template>
+                            <template v-else>
+                                博士后
+                            </template>
+                        </template>
+                    </el-table-column>
+                    <el-table-column
+                            prop="storeNum"
+                            width="160"
+                            align="center"
+                            label="入藏号">
                     </el-table-column>
                     <el-table-column
                             prop="authorList"
@@ -108,19 +167,6 @@
                             label="作者列表">
                     </el-table-column>
                     <el-table-column
-                            prop="storeNum"
-                            width="160"
-                            align="center"
-                            label="入藏号">
-                    </el-table-column>
-                    <el-table-column
-                            prop="_PD"
-                            align="center"
-                            width="100"
-                            label="出版日期">
-                    </el-table-column>
-
-                    <el-table-column
                             label="操作"
                             width="100"
                             fixed="right"
@@ -128,7 +174,7 @@
                         <template slot-scope="scope">
                             <el-button type="danger" size="mini" style="position:relative;bottom: 1px;margin-left: 6px;"
                                        @click="deletePaperListByIds([{id: scope.row.id}])">
-                                <span>删除</span>
+                                <span>删除论文</span>
                             </el-button>
                         </template>
                     </el-table-column>
@@ -154,13 +200,13 @@
                 <div style="margin-left: 10px">
                     <span class="button-group">
                         <el-button size="small" type="danger"
-                                   @click="deletePatentListByIds(table.paperTable.entity.selectionList)"
+                                   @click="deletePatentByIds(table.patentTable.entity.selectionList)"
                                    style="margin-left: 10px;">
-                            <span>批量删除</span>
+                            <span>专利-批量删除</span>
                         </el-button>
                     </span>
                     <span style="float: right;margin-right: 10px;">
-                        <el-input size="small" placeholder="输入相关专利名称搜索论文" suffix-icon="el-icon-search"
+                        <el-input size="small" placeholder="输入专利名称" suffix-icon="el-icon-search"
                                   style="width: 250px;margin-right: 10px;"
                                   v-model="table.patentTable.entity.params.searchKey"
                                   @keyup.enter.native="table.patentTable.entity.params.pageIndex=1;refreshTable_patent()">
@@ -179,12 +225,15 @@
                           height="calc(100% - 130px)"
                           style="width: 100%;overflow-y: hidden;margin-top: 20px;"
                           class="scroll-bar"
-                          @selection-change="handleSelectionChange"
+                          @selection-change="table.patentTable.entity.selectionList=$event"
                           stripe>
+                    <template slot="empty">
+                        <img class="data-pic" src="/static/ima" alt="" />
+                    </template>
                     <el-table-column type="selection" width="40"></el-table-column>
                     <el-table-column
                             prop="patentName"
-                            width="220"
+                            width="250"
                             align="center"
                             fixed="left"
                             label="专利名"
@@ -194,73 +243,125 @@
                             prop="patentNumber"
                             align="center"
                             width="100"
+                            fixed="left"
                             label="专利号">
                     </el-table-column>
                     <el-table-column
                             prop="institute"
                             align="center"
-                            width="100"
+                            width="200"
                             label="所属学院">
                     </el-table-column>
-
                     <el-table-column
-                            prop="patentTypeValue"
+                            prop="patentType"
                             align="center"
                             width="100"
                             label="专利类型">
                     </el-table-column>
-
                     <el-table-column
                             prop="patentAuthorizationDateString"
                             align="center"
-                            width="100"
+                            width="120"
                             label="专利授权日">
                     </el-table-column>
-
+                    <el-table-column
+                            prop="patentRightPerson"
+                            align="center"
+                            width="120"
+                            label="专利权人">
+                    </el-table-column>
                     <el-table-column
                             prop="firstAuthorName"
                             align="center"
-                            width="100"
+                            width="120"
                             label="第一作者">
                     </el-table-column>
                     <el-table-column
                             prop="firstAuthorWorkId"
                             align="center"
-                            width="100"
+                            width="160"
                             label="第一作者工号">
                     </el-table-column>
                     <el-table-column
                             prop="firstAuthorType"
                             align="center"
-                            width="100"
+                            width="160"
                             label="第一作者类型">
+                        <template slot-scope="{row}">
+                            <template v-if="row.firstAuthorType == 'student'">
+                                学生
+                            </template>
+                            <template v-else-if="row.firstAuthorType == 'teacher'">
+                                导师
+                            </template>
+                            <template v-else>
+                                博士后
+                            </template>
+                        </template>
                     </el-table-column>
                     <el-table-column
-                            prop="secondAuthorName"
                             align="center"
-                            width="100"
+                            width="120"
                             label="第二作者">
+                        <template slot-scope="{row}">
+                            <template v-if="row.secondAuthorName == '' || row.secondAuthorName == null">
+                                <el-button type="primary" size="mini">暂无第二作者</el-button>
+                            </template>
+                            <template v-else>
+                                {{row.secondAuthorName}}
+                            </template>
+                        </template>
                     </el-table-column>
                     <el-table-column
-                            prop="secondAuthorWorkId"
                             align="center"
-                            width="100"
+                            width="160"
                             label="第二作者工号">
+                        <template slot-scope="{row}">
+                            <template v-if="row.secondAuthorWorkId == '' || row.secondAuthorWorkId == null">
+                                <el-button type="primary" size="mini">暂无第二作者</el-button>
+                            </template>
+                            <template v-else>
+                                {{row.secondAuthorWorkId}}
+                            </template>
+                        </template>
                     </el-table-column>
                     <el-table-column
-                            prop="secondAuthorType"
                             align="center"
-                            width="100"
+                            width="160"
                             label="第二作者类型">
+                        <template slot-scope="{row}">
+                            <template
+                                    v-if="row.secondAuthorType == '' || row.secondAuthorType == null"
+                                    key="keySecondAuthorType0">
+                                <el-button type="primary" size="mini">暂无第二作者</el-button>
+                            </template>
+                            <template v-else
+                                      key="keySecondAuthorType1">
+                                <template
+                                        key="keySecondAuthorType2"
+                                        v-if="row.firstAuthorType == 'student'">
+                                    学生
+                                </template>
+                                <template
+                                        key="keySecondAuthorType3"
+                                        v-else-if="row.firstAuthorType == 'teacher'">
+                                    导师
+                                </template>
+                                <template
+                                        key="keySecondAuthorType4"
+                                        v-else>
+                                    博士后
+                                </template>
+                                {{row.secondAuthorType}}
+                            </template>
+                        </template>
                     </el-table-column>
                     <el-table-column
                             prop="authorList"
-                            width="300"
+                            width="260"
                             align="center"
                             show-overflow-tooltip
                             label="作者列表">
-                    </el-table-column>
-
                     </el-table-column>
 
                     <el-table-column
@@ -270,8 +371,8 @@
                             align="center">
                         <template slot-scope="scope">
                             <el-button type="danger" size="mini" style="position:relative;bottom: 1px;margin-left: 6px;"
-                                       @click="deletePatentListByIds([{id: scope.row.id}])">
-                                <span>删除</span>
+                                       @click="deletePatentByIds([{id: scope.row.id}])">
+                                <span>删除专利</span>
                             </el-button>
                         </template>
                     </el-table-column>
@@ -308,11 +409,11 @@
                     insertPaper: '',
                     deletePaperListByIds: '/api/doc/paper/deleteListByIds',
                     updatePaper: '',
-                    selectPaperListByPage: '/api/doc/search/selectPaperListByPage2',
+                    selectPaperListByPage: '/api/paper/selectMyPaperByPage',
                 },
                 patent: {
                     insertPaper: '',
-                    deletePaperListByIds: '',
+                    deletePatentByIds: '/api/patent/deleteListByIds',
                     updatePaper: '',
                     selectMyPatentListByPage: '/api/patent/selectMyPatentByPage',
                 }
@@ -442,7 +543,7 @@
             //获取当前作者的论文List
             selectPaperListByPage: function () {
                 let data = {
-                    authorList: "${author.id}",                        //借用authorList来暂存一下authorId
+                    theAuthorWorkId: "${author.workId}",                        //借用authorList来暂存一下authorId
                     page: this.table.paperTable.entity.params
                 };
                 let app = this;
@@ -452,11 +553,10 @@
                     console.log(d.data.resultList);
                     app.table.paperTable.entity.loading = false;
                     /*处理日期*/
-
                     let resList = d.data.resultList;
                     for (let i = 0; i < resList.length; i++) {
-                        tmpDate = resList[i]._PD;
-                        resList[i]._PD = dateFormat(tmpDate);
+                        tmpDate = resList[i].publishDate;
+                        resList[i].publishDate = dateFormat(tmpDate);
                     }
                     app.table.paperTable.entity.data = resList;
                     app.table.paperTable.entity.params.total = d.data.total;
@@ -511,6 +611,23 @@
                     app.table.patentTable.entity.loading = false;
                 });
             },
+            //根据ids删除专利
+            deletePatentByIds: function (ids) {
+                let app = this;
+                if (ids.length === 0) {
+                    window.parent.app.showMessage('提示：未选中任何项', 'warning');
+                    return;
+                }
+                window.parent.app.showConfirm(function () {
+                    let data = ids;
+                    app.table.patentTable.entity.loading = true;
+                    ajaxPostJSON(app.urls.patent.deletePatentByIds, data, function (d) {
+                        app.table.patentTable.entity.loading = false;
+                        window.parent.app.showMessage('删除成功！', 'success');
+                        app.selectMyPatentListByPage();
+                    })
+                });
+            },
             // 刷新patent_table数据
             refreshTable_patent: function () {
                 this.selectMyPatentListByPage();
@@ -527,9 +644,6 @@
             },
             /*------- 专利部分函数 end ------*/
 
-            handleSelectionChange(val) {
-                this.table.paperTable.entity.selectionList = val;
-            }
             // 重置表单
             /*resetForm: function (ref) {
                 this.$refs[ref].resetFields();
@@ -542,24 +656,11 @@
         }
     });
 
-    /*获取app高度*/
-    function getAppHeight() {
-        return document.getElementById("app").clientHeight;
-    }
-
-    function setMainHeight() {
-        let mains = document.getElementsByClassName("el-main");
-        let appHeight = getAppHeight();
-        for (let i = 0; i < mains.length; i++) {
-            console.log(getAppHeight());
-            mains[i].style.height = appHeight + "px";
-        }
-    }
-
     function add0(m) {
         return m < 10 ? '0' + m : m
     }
 
+    //格式化时间
     function dateFormat(shijianchuo) {
         //时间戳是整数，否则要parseInt转换
         let time = new Date(shijianchuo);
@@ -571,6 +672,21 @@
         let s = time.getSeconds() + 1;
         //return y + '-' + add0(m) + '-' + add0(d) + ' ' + add0(h) + ':' + add0(mm) + ':' + add0(s);
         return y + '-' + add0(m) + '-' + add0(d);
+    }
+
+    //获取app高度
+    function getAppHeight() {
+        return document.getElementById("app").clientHeight;
+    }
+
+    //设置el-main的高度
+    function setMainHeight() {
+        let mains = document.getElementsByClassName("el-main");
+        let appHeight = getAppHeight();
+        for (let i = 0; i < mains.length; i++) {
+            console.log(getAppHeight());
+            mains[i].style.height = appHeight + "px";
+        }
     }
 
     window.onload = function () {

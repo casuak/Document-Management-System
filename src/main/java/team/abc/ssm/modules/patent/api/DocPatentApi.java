@@ -185,18 +185,14 @@ public class DocPatentApi extends BaseApi {
     @ResponseBody
     public Object selectMyPatentByPage(
             @RequestBody DocPatent docPatent){
-
+        //1.提取暂存在docPatent中的authorId，和authorWorkId信息
         String authorId = docPatent.getFirstAuthorId();
         String authorWorkId = docPatent.getSecondAuthorId();
-        //1.获取当前作者
-        Author authorNow = authorService.getAuthor(authorId);
-        //2.设置需要查询的patent的状态为：已经完成
-        docPatent.setStatus(PatentMatchType.MATCH_FINISHED.toString());
-        //3.获取专利列表
-        List<DocPatent> myPatentList = patentService.selectListByPage(docPatent);
-        //4.获取专利总数
+        //2.获取专利列表
+        List<DocPatent> myPatentList = patentService.selectMyPatentListByPage(authorWorkId,docPatent);
+        //3.获取专利总数
         int myPatentNum = patentService.getMyPatentNum(authorWorkId);
-        //5.构造返回分页
+        //4.构造返回分页
         Page<DocPatent> myPatentPage = new Page<>();
         myPatentPage.setResultList(myPatentList);
         myPatentPage.setTotal(myPatentNum);

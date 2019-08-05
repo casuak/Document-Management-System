@@ -61,4 +61,16 @@ public interface DocPatentMapper {
      * @Description //查询个人专利数
      **/
     int selectMyPatentNum(@Param("userWorkId") String userWorkId);
+
+    /**
+     * @author zm
+     * @date 2019/8/5 8:32
+     * @params [docPatent]
+     * @return: java.util.List<team.abc.ssm.modules.patent.entity.DocPatent>
+     * @Description
+     * 
+     * 1.返回指定作者的专利List
+     * 2作者workId保存在patent的id字段中
+     **/
+    List<DocPatent> selectMyPatentList(DocPatent docPatent);
 }

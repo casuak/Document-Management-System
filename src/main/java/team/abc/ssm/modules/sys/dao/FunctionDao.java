@@ -19,4 +19,13 @@ public interface FunctionDao extends CrudDao<Function>{
 
     // 获取与角色相关的功能列表
     List<Function> selectByRole(Role role);
+
+    /**
+     * //获取全部的机构List(学院)
+     *
+     * @author zm
+     * @return java.util.List<java.lang.String>
+     * @date 2019/8/5 11:07
+     **/
+    List<String> getOrgList();
 }
