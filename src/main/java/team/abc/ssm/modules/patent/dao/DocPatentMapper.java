@@ -5,6 +5,7 @@ import java.util.Date;
 import org.apache.ibatis.annotations.Param;
 
 import team.abc.ssm.modules.author.entity.Author;
+import team.abc.ssm.modules.doc.entity.StatisticCondition;
 import team.abc.ssm.modules.patent.entity.DocPatent;
 import team.abc.ssm.modules.sys.entity.User;
 
@@ -44,9 +45,52 @@ public interface DocPatentMapper {
 
     int convertToCompleteByIds(List<DocPatent> patentList);
 
-    int selectByStatusAndPatentNumberAndDelFlag(@Param("status")String status,@Param("patentNumber")String patentNumber,@Param("delFlag")Boolean delFlag);
+    int selectByStatusAndPatentNumberAndDelFlag(
+            @Param("status")String status,
+            @Param("patentNumber")String patentNumber,
+            @Param("delFlag")Boolean delFlag);
 
     int selectStudentPatent(Author tmpAuthor);
 
     int selectTeacherPatent(Author tmpAuthor);
+
+    /**
+     * @author zm
+     * @date 2019/8/4 17:00
+     * @params [userId]
+     * @return: int
+     * @Description //查询个人专利数
+     **/
+    int selectMyPatentNum(@Param("userWorkId") String userWorkId);
+
+    /**
+     * @author zm
+     * @date 2019/8/5 8:32
+     * @params [docPatent]
+     * @return: java.util.List<team.abc.ssm.modules.patent.entity.DocPatent>
+     * @Description
+     * 
+     * 1.返回指定作者的专利List
+     * 2作者workId保存在patent的id字段中
+     **/
+    List<DocPatent> selectMyPatentList(DocPatent docPatent);
+
+    /**
+     * 根据给定条件统计专利数目
+     *
+     * @author zm
+     * @param1 statisticCondition
+     * @return int        
+     * @date 2019/8/5 16:34
+     **/
+    int getStatisticNumOfPaper(StatisticCondition statisticCondition);
+
+    /**
+     * 查询返回所有的专利类型
+     *
+     * @author zm
+     * @return java.util.List<java.lang.String>
+     * @date 2019/8/5 19:57
+     **/
+    List<String> selectAllPatentType();
 }

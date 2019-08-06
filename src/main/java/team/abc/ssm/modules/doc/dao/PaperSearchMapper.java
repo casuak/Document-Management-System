@@ -3,8 +3,6 @@ package team.abc.ssm.modules.doc.dao;
 import org.apache.ibatis.annotations.Param;
 import team.abc.ssm.modules.author.entity.Author;
 import team.abc.ssm.modules.doc.entity.Paper;
-import team.abc.ssm.modules.doc.entity.Statistics;
-import team.abc.ssm.modules.organization.entity.CommonOrganize;
 
 import java.util.Date;
 import java.util.List;
@@ -31,9 +29,6 @@ public interface PaperSearchMapper {
     /**获取所有的论文种类*/
     public List<Map<String,String>> getPaperTypeMap();
 
-    /**获取所有机构*/
-    public List<CommonOrganize> getAllOrganize();
-
     /**获取所有的有效论文数量(del_flag不等于-1)*/
     public Integer getPaperNum();
 
@@ -44,9 +39,7 @@ public interface PaperSearchMapper {
     int getMyPaperAmount(String authorId);
 
     /**根据author来返回Paper*/
-    List<Paper> getPaperList(Author author);
-
-    int getMyPaperCount(Author author);
+    List<Paper> getMyPaperList(Author author);
 
     String selectTypeValue(String typeId);
 

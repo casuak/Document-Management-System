@@ -118,4 +118,11 @@
         where b.type_id in
               (select a.parent_id from sys_dict_type a where a.id = #{typeId})
     </select>
+
+    <select id="selectNameEnById" resultType="java.lang.String">
+        select name_en
+        from docmanager.sys_dict
+        where id = #{dictId,jdbcType=VARCHAR}
+    </select>
+
 </mapper>

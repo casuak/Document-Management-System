@@ -263,6 +263,7 @@
             resetForm: function (ref) {
                 this.$refs[ref].resetFields();
             },
+            //选择专利用户
             selectPatentAuthor : function (id) {
                 let data = {
                     patentId: pageParams.patentId,

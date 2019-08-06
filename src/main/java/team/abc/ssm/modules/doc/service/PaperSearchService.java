@@ -88,7 +88,7 @@ public class PaperSearchService {
     public List<Paper> getMyPaperByPage(Author author) {
         List<Paper> res = new ArrayList<>();
         try{
-            res = paperSearchMapper.getPaperList(author);
+            res = paperSearchMapper.getMyPaperList(author);
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -97,10 +97,6 @@ public class PaperSearchService {
 
     public int getMyPaperAmount(String authorId) {
         return paperSearchMapper.getMyPaperAmount(authorId);
-    }
-
-    public int getMyPaperCount(Author author){
-        return paperSearchMapper.getMyPaperCount(author);
     }
 
     public Map<String,Statistics> getStatisticRes(String subject,String organization, Date startDate, Date endDate, String paperType,

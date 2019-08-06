@@ -122,4 +122,14 @@
             del_flag       = #{delFlag}
         where id = #{id}
     </update>
+
+    <select id="getOrgList" resultType="java.lang.String">
+        select distinct name_cn
+        from sys_dict
+        where type_id = (
+            select id
+            from sys_dict_type `type`
+            where type.name_cn = '署名单位'
+        )
+    </select>
 </mapper>

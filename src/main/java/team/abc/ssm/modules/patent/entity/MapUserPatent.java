@@ -10,19 +10,27 @@ public class MapUserPatent {
     private String id;
 
     /**
-     * 用户id
-     */
-    private String userId;
-
-    /**
      * 专利 from 专利表
      */
     private String patentId;
 
     /**
-     * 作者类型:1是第一作者，2是第二作者，3是其他作者
+     * 作者类型
+     * student
+     * teacher
+     * doctor
      */
-    private Integer authorType;
+    private String authorType;
+
+    /**
+     * 用户id
+     */
+    private String userId;
+
+    /**
+     * 作者工号
+     */
+    private String userWorkId;
 
     /**
      * 备注
@@ -56,19 +64,5 @@ public class MapUserPatent {
 
     public MapUserPatent() {
         this.id = UUID.randomUUID().toString();
-    }
-
-    public MapUserPatent(String userId, String patentId, Integer authorType, String remarks, String createUserId,
-                         String modifyUserId, Date createDate, Date modifyDate, Boolean delFlag) {
-        this.id = UUID.randomUUID().toString();
-        this.userId = userId;
-        this.patentId = patentId;
-        this.authorType = authorType;
-        this.remarks = remarks;
-        this.createUserId = createUserId;
-        this.modifyUserId = modifyUserId;
-        this.createDate = createDate;
-        this.modifyDate = modifyDate;
-        this.delFlag = delFlag;
     }
 }

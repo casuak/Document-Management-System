@@ -7,13 +7,14 @@ import team.abc.ssm.common.persistence.Page;
 import team.abc.ssm.common.web.AjaxMessage;
 import team.abc.ssm.common.web.BaseApi;
 import team.abc.ssm.common.web.MsgType;
+import team.abc.ssm.common.web.PatentMatchType;
+import team.abc.ssm.modules.author.entity.Author;
+import team.abc.ssm.modules.author.service.AuthorService;
 import team.abc.ssm.modules.patent.entity.DocPatent;
 import team.abc.ssm.modules.patent.service.DocPatentService;
 
 import java.text.ParseException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Controller
 @RequestMapping("/api/patent")
@@ -22,14 +23,15 @@ public class DocPatentApi extends BaseApi {
     @Autowired
     private DocPatentService patentService;
 
+    @Autowired
+    private AuthorService authorService;
+
     @RequestMapping(value = "selectListByPage", method = RequestMethod.POST)
     @ResponseBody
     public Object selectListByPage(@RequestBody DocPatent patent) {
         Page<DocPatent> data = new Page<>();
         data.setResultList(patentService.selectListByPage(patent));
         data.setTotal(patentService.selectSearchCount(patent));
-        System.out.println(data.getResultList());
-        System.out.println(data.getTotal());
         return new AjaxMessage().Set(MsgType.SUCCESS, data);
     }
 
@@ -125,16 +127,37 @@ public class DocPatentApi extends BaseApi {
 
     /**
      * @author zm
+     * @date 2019/8/4 14:57
+     * @params []
+     * @return: java.lang.Object
+     * @Description //把专利状态设置成2(匹配成功)___全部已完成匹配的专利
+     **/
+    @RequestMapping(value = "convertToCompleteAll",method = RequestMethod.POST)
+    @ResponseBody
+    public Object convertToCompleteAll(){
+        if (patentService.convertToCompleteAll()){
+            return retMsg.Set(MsgType.SUCCESS);
+        }else {
+            return retMsg.Set(MsgType.ERROR);
+        }
+    }
+    /**
+     * @author zm
      * @date 2019/7/5 9:31
      * @params [patentList]
      * @return: java.lang.Object
-     * @Description //根据传来的专利list，把专利状态设置成4(匹配完成)
+     * @Description //根据传来的专利list，把专利状态设置成4(匹配完成)，并且插入新的记录在mapUserPatent中。
      **/
     @RequestMapping(value = "convertToCompleteByIds",method = RequestMethod.POST)
     @ResponseBody
-    public Object convertToCompleteByIds(@RequestBody List<DocPatent> patentList){
+    public Object convertToCompleteByIds(
+            @RequestBody List<DocPatent> patentList){
+        System.out.println("--------------------------zhuanru wancheng ");
         System.out.println(patentList);
+        //更改专利的状态
         patentService.convertToCompleteByIds(patentList);
+        //插入记录——mapUserPatent
+        //patentService.insertPatentMapRecord(ids);
         return retMsg.Set(MsgType.SUCCESS);
     }
 
@@ -145,5 +168,37 @@ public class DocPatentApi extends BaseApi {
             @RequestParam("institute") String institute){
         patentService.changeInstitute(patentId,institute);
         return retMsg.Set(MsgType.SUCCESS);
+    }
+
+    /**
+     * @author zm
+     * @date 2019/8/4 16:31
+     * @params [sysUser]
+     * @return: java.lang.Object
+     * @Description //获取当前作者的全部专利(返回分页)
+     *
+     * docPatent.firstAuthorId暂存作者id
+     * docPatent.secondAuthorId暂存作者工号
+     * docPatent.page存贮所需分页
+     **/
+    @RequestMapping(value = "selectMyPatentByPage",method = RequestMethod.POST)
+    @ResponseBody
+    public Object selectMyPatentByPage(
+            @RequestBody DocPatent docPatent){
+        //1.提取暂存在docPatent中的authorId，和authorWorkId信息
+        String authorId = docPatent.getFirstAuthorId();
+        String authorWorkId = docPatent.getSecondAuthorId();
+        //2.获取专利列表
+        List<DocPatent> myPatentList = patentService.selectMyPatentListByPage(authorWorkId,docPatent);
+        //3.获取专利总数
+        int myPatentNum = patentService.getMyPatentNum(authorWorkId);
+        //4.构造返回分页
+        Page<DocPatent> myPatentPage = new Page<>();
+        myPatentPage.setResultList(myPatentList);
+        myPatentPage.setTotal(myPatentNum);
+        System.out.println("-----专利page----");
+        System.out.println(myPatentPage);
+        AjaxMessage retMsg = new AjaxMessage();
+        return retMsg.Set(MsgType.SUCCESS,myPatentPage);
     }
 }

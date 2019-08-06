@@ -327,14 +327,16 @@
         c.real_name as first_author_name,
         d.real_name as second_author_name
         from (
-        select * from doc_patent
-        <where>
-            status = #{status}
-            <if test="page.searchKey != null and page.searchKey != ''">
-                and patent_name like concat('%',#{page.searchKey} ,'%')
-            </if>
-        </where>
-        limit #{page.pageStart} ,#{page.pageSize}
+            select * from doc_patent
+            <where>
+                <if test="status != null and status != ''">
+                    status = #{status}
+                </if>
+                <if test="page.searchKey != null and page.searchKey != ''">
+                    and patent_name like concat('%',#{page.searchKey} ,'%')
+                </if>
+            </where>
+            limit #{page.pageStart} ,#{page.pageSize}
         ) as a
         left join sys_dict b on b.id = a.patent_type
         left join sys_user c on c.id = a.first_author_id
@@ -446,5 +448,85 @@
             where b.user_type = 'student'
             and b.work_id = a.first_author_work_id
         )
+    </select>
+    <select id="selectMyPatentNum" resultType="int" parameterType="java.lang.String">
+         select count(*)
+         from (
+            select *
+            from doc_patent
+            where  status = '4'
+         ) as t where t.first_author_work_id = #{userWorkId,jdbcType=VARCHAR}
+         or t.second_author_work_id = #{userWorkId,jdbcType=VARCHAR}
+    </select>
+
+    <select id="selectMyPatentList" parameterType="team.abc.ssm.modules.patent.entity.DocPatent"
+            resultMap="BaseResultMap">
+        select
+        a.*,
+        b.user_type as first_author_type,
+        c.user_type as second_author_type,
+        b.real_name as first_author_name,
+        c.real_name as second_author_name
+        from (
+            select * from (
+                select * from docmanager.doc_patent
+                where first_author_work_id = #{id,jdbcType=VARCHAR}
+                or second_author_work_id = #{id,jdbcType=VARCHAR}
+            ) as tmp
+            <where>
+                <if test="status != null and status != ''">
+                    and status = #{status}
+                </if>
+                <if test="page.searchKey != null and page.searchKey != ''">
+                    and patent_name like concat('%',#{page.searchKey} ,'%')
+                </if>
+            </where>
+            limit #{page.pageStart} ,#{page.pageSize}
+        ) as a
+        left join sys_user b on b.work_id = a.first_author_work_id
+        left join sys_user c on c.work_id = a.second_author_work_id
+    </select>
+
+    <select id="getStatisticNumOfPaper"
+            parameterType="StatisticCondition"
+            resultType="int">
+        select count(*)
+        from (
+            select a.*,
+            b.user_type as first_author_type,
+            c.user_type as second_author_type
+            from (
+                select *
+                from docmanager.doc_patent dp
+                where dp.status = #{status,jdbcType=VARCHAR}
+                <if test="patentType != null and patentType != ''">
+                    and dp.patent_type = #{patentType,jdbcType=VARCHAR}
+                </if>
+                <if test="institute != null and institute != ''">
+                    and dp.institute = #{institute,jdbcType=VARCHAR}
+                </if>
+                <if test="endDate != null">
+                    and dp.patent_authorization_date &gt;= #{startDate,jdbcType=TIMESTAMP}
+                    and dp.patent_authorization_date &lt;= #{endDate,jdbcType=TIMESTAMP}
+                </if>
+            ) as a
+            left join docmanager.sys_user b on b.work_id = a.first_author_work_id
+            left join docmanager.sys_user c on c.work_id = a.second_author_work_id
+            <where>
+                <if test="subject != null and subject != ''">
+                    b.major = #{subject,jdbcType=VARCHAR}
+                </if>
+            </where>
+        ) as res
+        <where>
+            <if test="authorType != null and authorType != ''">
+                res.first_author_type = #{authorType,jdbcType=VARCHAR}
+                or res.second_author_type = #{authorType,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+    <select id="selectAllPatentType" resultType="java.lang.String">
+        select distinct patent_type
+        from docmanager.doc_patent
     </select>
 </mapper>

@@ -2,7 +2,6 @@ package team.abc.ssm.modules.doc.api;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
-import org.apache.ibatis.annotations.Param;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,11 +15,8 @@ import team.abc.ssm.modules.author.entity.Author;
 import team.abc.ssm.modules.author.service.AuthorService;
 import team.abc.ssm.modules.doc.entity.Paper;
 import team.abc.ssm.modules.doc.service.PaperSearchService;
-import team.abc.ssm.modules.organization.service.CommonOrganizeService;
-import team.abc.ssm.modules.sys.entity.User;
+import team.abc.ssm.modules.sys.service.FunctionService;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,7 +33,7 @@ public class PaperSearchController {
     private static final Logger LOG = LoggerFactory.getLogger(PaperSearchController.class);
 
     @Autowired
-    private CommonOrganizeService orgService;
+    private FunctionService functionService;
 
     @Autowired
     private AuthorService authorService;
@@ -52,7 +48,7 @@ public class PaperSearchController {
         modelAndView.setViewName("functions/doc/docSearch");
 
         List<Map<String, String>> paperType = paperSearchService.getPaperType();
-        List<String> orgList = orgService.getOrgList();
+        List<String> orgList = functionService.getOrgList();
         List<String> subjectList = authorService.getSubList();
 
         modelAndView.addObject("paperType", JSONArray.fromObject(paperType));
@@ -209,42 +205,5 @@ public class PaperSearchController {
     @RequestMapping(value = "selectCopyrightListByPageGet", method = RequestMethod.GET)
     public Object selectCopyrightListByPageGet() {
         return null;
-    }
-
-
-    /**
-     * @param
-     * @return java.lang.Object
-     * @Description 在作者信息页面获取其下的所有论文
-     * @author zm
-     * @date 16:43 2019/4/23
-     */
-    @RequestMapping(value = "selectPaperListByPage2",method = RequestMethod.POST)
-    @ResponseBody
-    public Object selectPaperListByPage2(
-            @RequestBody Paper paper
-    ){
-        //取出paper中暂存的authorId
-        String authorId = paper.getAuthorList();
-
-        //获取当前的author
-        Author authorNow = authorService.getAuthor(authorId);
-
-        //3120160547
-        Page page=paper.getPage();
-        int pageStart=(page.getPageIndex()-1)*page.getPageSize();
-        page.setPageStart(pageStart);
-        //设置当前作者的论文Page
-        authorNow.setPage(page);
-        LOG.debug("当前page"+authorNow.getPage());
-        List<Paper> paperList = paperSearchService.getMyPaperByPage(authorNow);
-
-        Page<Paper> paperResPage = new Page<>();
-        paperResPage.setResultList(paperList);
-
-        LOG.debug("当前作者的论文"+paperList);
-        paperResPage.setTotal(paperSearchService.getMyPaperCount(authorNow));
-
-        return new AjaxMessage().Set(MsgType.SUCCESS, paperResPage);
     }
 }

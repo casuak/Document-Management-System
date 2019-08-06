@@ -34,13 +34,4 @@
     <select id="getPatentStatisticsRes" resultType="team.abc.ssm.modules.doc.entity.Statistics">
 
     </select>
-
-    <select id="getPatentTypeMap" resultType="java.util.HashMap">
-        select id, name_en
-        from docmanager.sys_dict
-        where type_id = (
-            select id from docmanager.sys_dict_type where sys_dict_type.name_cn = '专利种类'
-        )
-          and del_flag != -1
-    </select>
 </mapper>

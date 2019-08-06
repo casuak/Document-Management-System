@@ -177,4 +177,15 @@ public class FunctionService {
         int count = functionDao.update(function);
         return count == 1;
     }
+
+    /**
+     * @author zm
+     * @date 2019/8/5 10:34
+     * @params []
+     * @return: java.util.List<java.lang.String>
+     * @Description //获取全部的机构List(学院)
+     **/
+    public List<String> getOrgList() {
+        return functionDao.getOrgList();
+    }
 }

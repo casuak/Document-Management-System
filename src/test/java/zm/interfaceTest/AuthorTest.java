@@ -10,10 +10,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import team.abc.ssm.common.persistence.Page;
 import team.abc.ssm.modules.author.entity.Author;
 import team.abc.ssm.modules.author.service.AuthorService;
-import team.abc.ssm.modules.doc.entity.Copyright;
 import team.abc.ssm.modules.doc.entity.Paper;
 import team.abc.ssm.modules.doc.entity.Patent;
-import team.abc.ssm.modules.doc.service.CopyrightService;
 import team.abc.ssm.modules.doc.service.PaperSearchService;
 import team.abc.ssm.modules.doc.service.PatentService;
 
@@ -37,9 +35,6 @@ public class AuthorTest {
 
     @Autowired
     private PatentService patentService;
-
-    @Autowired
-    private CopyrightService copyrightService;
 
 
     @Test

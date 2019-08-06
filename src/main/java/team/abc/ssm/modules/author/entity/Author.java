@@ -4,7 +4,6 @@ import io.swagger.models.auth.In;
 import lombok.Data;
 import team.abc.ssm.common.persistence.DataEntity;
 import team.abc.ssm.common.persistence.Page;
-import team.abc.ssm.modules.doc.entity.Copyright;
 import team.abc.ssm.modules.doc.entity.Paper;
 import team.abc.ssm.modules.doc.entity.Patent;
 import team.abc.ssm.modules.sys.entity.Role;
@@ -60,11 +59,22 @@ public class Author extends DataEntity<Author> {
 
     private Page<Paper> myPaperPage;
     private Page<Patent> myPatentPage;
-    private Page<Copyright> myCopyrightPage;
 
     private String school;
     private String major;
 
     private String tutorWorkId;
     private String tutorRealName;
+
+    /**学生学位类型（学术型、专业学位）*/
+    private String studentTrainLevel;
+
+    /**学生学位类型（学术型、专业学位）*/
+    private String studentDegreeType;
+
+    /**导师类别（硕士生导师、博士生导师、博士和硕士导师）*/
+    private String tutorType;
+
+    /**导师职称*/
+    private String tutorTitle;
 }
