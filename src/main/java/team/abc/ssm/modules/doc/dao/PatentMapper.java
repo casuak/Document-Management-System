@@ -37,7 +37,4 @@ public interface PatentMapper extends Mapper<Patent> {
             @Param("endDate") Date endDate,
             @Param("paperType") String paperType,
             @Param("partition") String partition);
-
-    /**获取所有的论文种类*/
-    public List<Map<String,String>> getPatentTypeMap();
 }

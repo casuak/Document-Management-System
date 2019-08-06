@@ -49,5 +49,5 @@ public interface DocPaperMapper {
      * @return int
      * @date 2019/8/5 16:25
      **/
-    int getStasticNumOfPaper(StatisticCondition statisticCondition);
+    int getStatisticNumOfPaper(StatisticCondition statisticCondition);
 }

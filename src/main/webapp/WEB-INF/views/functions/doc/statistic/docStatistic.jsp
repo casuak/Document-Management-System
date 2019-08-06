@@ -141,7 +141,6 @@
                                     type="daterange"
                                     align="right"
                                     unlink-panels
-                            <%--                                    range-separator="至"--%>
                                     start-placeholder="开始日期"
                                     end-placeholder="结束日期">
                             </el-date-picker>
@@ -188,15 +187,26 @@
                         <span class="inputSpanText">影响因子: </span>
                         <div class="commonInput">
                             <el-input-number
-                                    v-model="optionView.paper.impactFactor"
+                                    v-model="optionView.paper.impactFactorMin"
                                     @change=""
                                     :min="0"
+                                    :step="0.001"
                                     controls-position="right"
-                                    style="width: 217px"
-                                    placeholder="输入论文影响因子">
+                                    style="width: 106px;margin-left: 10px"
+                                    placeholder="最低影响因子">
+                            </el-input-number>
+                            <el-input-number
+                                    v-model="optionView.paper.impactFactorMax"
+                                    @change=""
+                                    :min="0.001"
+                                    :step="0.001"
+                                    controls-position="right"
+                                    style="width: 106px;margin-left: 10px"
+                                    placeholder="最高影响因子">
                             </el-input-number>
                         </div>
                     </div>
+
                 </row>
             </div>
 
@@ -210,7 +220,7 @@
                         <div class="commonInput">
                             <el-select v-model="optionView.patent.patentType" clearable placeholder="选择专利种类">
                                 <el-option
-                                        v-for="item in optionValue.patentTypeOption"
+                                        v-for="item in optionValue.orgOption"
                                         :key="item.value"
                                         :label="item.label"
                                         :value="item.value">
@@ -254,9 +264,14 @@
 
             <row>
                 <div v-show="radio ==2">
-                    <el-button type="primary" size="medium" @click="statisticalSearch()">统计结果</el-button>
-                    <%--  <el-button type="danger" size="medium" @click="">结果导出</el-button>
-                      <el-button type="success" size="medium" @click="test4">Test</el-button>--%>
+                    <el-button type="primary" size="medium"
+                               :disabled="table.commonTable.loading"
+                               @click="statisticalSearch()">统计结果
+                    </el-button>
+                    <el-button type="danger" size="medium"
+                               :disabled="table.commonTable.loading"
+                               @click="exportStatisticResult()">导出结果
+                    </el-button>
                 </div>
             </row>
 
@@ -339,237 +354,299 @@
 <%@include file="/WEB-INF/views/include/blankScript.jsp" %>
 <script>
     const docOptions = ["论文", "专利"];
+
     var app = new Vue({
-        el: '#app',
-        data: {
-            radio: "2",
-            doc: {
-                checkAll: false,
-                docType: {
-                    /*应该从字典项中查询：*/
-                    paper: "论文",
-                    patent: "专利",
+            el: '#app',
+            data: {
+                radio: "2",
+                doc: {
+                    checkAll: false,
+                    docType: {
+                        /*应该从字典项中查询：*/
+                        paper: "论文",
+                        patent: "专利",
+                    },
+                    checkedDoc: [],
+                    isIndeterminate: true,
+                    paperResult:{
+                       /* totalPaper:0,
+                        teacherPaper:0,
+                        studentPaper:0,
+                        doctorPaper:0*/
+                    },
+                    patentResult:{
+                       /* totalPatent:0,
+                        teacherPatent:0,
+                        studentPatent:0,
+                        doctorPatent:0*/
+                    }
                 },
-                checkedDoc: [],
-                isIndeterminate: true
-            },
-            //条件输入(选择)框的候选项：
-            optionValue: {
-                partitionOption: [
-                    {
-                        label: "Q1",
-                        value: "Q1"
-                    },
-                    {
-                        label: "Q2",
-                        value: "Q2"
-                    },
-                    {
-                        label: "Q3",
-                        value: "Q3"
-                    },
-                    {
-                        label: "Q4",
-                        value: "Q4"
-                    }
-                ],
-                paperTypeOption: [],
-                patentTypeOption: [],
-                orgOption: [],
-                userTypeOption: [
-                    {
-                        label: "教师",
-                        value: "teacher"
-                    },
-                    {
-                        label: "学生",
-                        value: "student"
-                    },
-                    {
-                        label: "博士后",
-                        value: "postdoctoral"
-                    }
-                ],
-                subjectOption: []
-            },
-
-            //条件输入(选择)框(V-model绑定的值)：
-            optionView: {
-                commonSelect: {
-                    show: true,
-                    userType: "",                             //作者工号
-                    workId: "",
-                    publishDate: [new Date(1889, 9, 10, 8, 40),new Date()],
-                    subject: "",
-                    organization: ""
+                //条件输入(选择)框的候选项：
+                optionValue: {
+                    partitionOption: [
+                        {
+                            label: "Q1",
+                            value: "Q1"
+                        },
+                        {
+                            label: "Q2",
+                            value: "Q2"
+                        },
+                        {
+                            label: "Q3",
+                            value: "Q3"
+                        },
+                        {
+                            label: "Q4",
+                            value: "Q4"
+                        }
+                    ],
+                    paperTypeOption: [],
+                    patentTypeOption: [],
+                    orgOption: [],
+                    userTypeOption: [
+                        {
+                            label: "教师",
+                            value: "teacher"
+                        },
+                        {
+                            label: "学生",
+                            value: "student"
+                        },
+                        {
+                            label: "博士后",
+                            value: "postdoctoral"
+                        }
+                    ],
+                    subjectOption: []
                 },
-                paper: {
-                    show: false,
-                    paperName: "",
-                    firstAuthorWorkNum: "",
-                    secondAuthorWorkNum: "",
-                    otherAuthorWorkNum: "",
-                    ISSN: "",
-                    storeNum: "",
-                    paperType: "",
-                    /*new add*/
-                    impactFactor: "",                                //影响因子
-                    paperLevel: "",                                 //论文级别
 
-                    DOI: "",
-                    partition: "",
-                },
-                patent: {
-                    show: false,
-                    applicationNum: "",
-                    countryCode: "",
-                    patentType:""
-                },
-                copyright: {
-                    show: false,
-                    copySubject: "",
-                    copyType: ""
-                }
-            },
-            //fullScreenLoading: false,
-            //表格
-            table: {
-                commonTable: {
-                    data: [],
-                    loading: false,
-                    selectionList: [],
-                    params: {
-                        pageIndex: 1,
-                        pageSize: 10,
-                        pageSizes: [5, 10, 20, 40],
-                        searchKey: '',  // 搜索词
-                        total: 100,       // 总数
-                    }
-                }
-            },
-            dialog: {},
-            options: {},
-        },
-        methods: {
-            handleCheckAllChange(val) {
-                this.doc.checkedDoc = val ? docOptions : [];
-                this.doc.isIndeterminate = false;
-                optionViewSelect();
-            },
-            handleCheckedDocsChange(value) {
-                let checkedCount = value.length;
-                console.log("checkedDoc：" + app.doc.checkedDoc);
-                this.doc.checkAll = checkedCount === 3;
-                this.doc.isIndeterminate = checkedCount > 0 && checkedCount < 3;
-                optionViewSelect();
-            },
-
-            /*查看文献统计详情*/
-            viewStatistics: function (row) {
-                if (row.type === "论文") {
-                    let data = {
-                        paperName: app.optionView.paper.paperName,
-                        firstAuthorName: app.optionView.paper.firstAuthorWorkNum,            //其实是FA工号
-                        secondAuthorName: app.optionView.paper.secondAuthorWorkNum,          //其实是SA工号
-                        authorList: app.optionView.paper.otherAuthorWorkNum,                 //其实是OA工号
-                        storeNum: app.optionView.paper.storeNum,
-                        paperType: app.optionView.paper.paperType,
-                        ISSN: app.optionView.paper.ISSN,
-                        pageIndex: app.table.commonTable.params.pageIndex,
-                        pageSize: app.table.commonTable.params.pageSize
-                    };
-                    let getParam = formatParams(data);
-                    let getLink = "/api/doc/search/selectPaperListByPageGet?" + getParam;
-                    console.log(getLink);
-                    window.parent.app.addTab("论文", getLink);
-                } else if (row.type === "专利") {
-                    alert("专利统计详情页面");
-                } else {
-                    alert("著作权统计详情页面");
-                }
-            },
-
-            /*统计搜索*/
-            statisticalSearch: function () {
-                let params = {
-                    subject: this.optionView.commonSelect.subject,
-                    organization: this.optionView.commonSelect.organization,
-                    startDate:this.optionView.commonSelect.publishDate[0],
-                    endDate:this.optionView.commonSelect.publishDate[1],
-                    paperType: this.optionView.paper.paperType,
-                    partition: this.optionView.paper.partition,
-                    impactFactor: this.optionView.paper.impactFactor,
-                    patentType:this.optionView.patent.patentType
-                };
-
-                console.log("统计条件");
-                console.log(params);
-
-                this.table.commonTable.loading = true;
-
-                ajaxPost(
-                    "/doc/statisticalSearch",
-                    params,
-                    function success(res) {
-                        console.log("统计结果查询");
-                        console.log(res.data);
-                        app.table.commonTable.data=[];
-                        app.table.commonTable.data.push(res.data.paper);
-                        app.table.commonTable.data.push(res.data.patent);
-                        app.table.commonTable.loading = false;
+                //条件输入(选择)框(V-model绑定的值)：
+                optionView: {
+                    commonSelect: {
+                        show: true,
+                        userType: "",                             //作者工号
+                        workId: "",
+                        publishDate: ['', ''],
+                        subject: "",
+                        organization: ""
                     },
-                    function error(res) {
-                        console.log(res);
-                        app.table.commonTable.loading = false;
-                    }
-                );
-            },
+                    paper: {
+                        show: false,
+                        paperName: "",
+                        firstAuthorWorkNum: "",
+                        secondAuthorWorkNum: "",
+                        otherAuthorWorkNum: "",
+                        ISSN: "",
+                        storeNum: "",
+                        paperType: "",
+                        /*new add*/
+                        impactFactorMin: 0.000,                                //影响因子min
+                        impactFactorMax: 100,                                //影响因子max
+                        paperLevel: "",                                     //论文级别
 
-            /*查看文献详情*/
-            viewDocDetails(row) {
-                parent.addTab1("文献详情test1", "api/doc/search/docDetails");
-                // alert($('#default', window.parent.document).html());
-                console.log(row);
-                ajaxGet("api/doc/search/docDetails", null,
-                    function success(res) {
-                        console.log(res);
+                        DOI: "",
+                        partition: "",
                     },
-                    function error(res) {
-                        console.log(res);
-                    })
-            },
-
-            getSummaries(param) {
-                const {columns, data} = param;
-                const sums = [];
-                columns.forEach((column, index) => {
-                    if (index === 1) {
-                        sums[index] = '总价';
-                        return;
+                    patent: {
+                        show: false,
+                        applicationNum: "",
+                        countryCode: "",
+                        patentType: ""
+                    },
+                    copyright: {
+                        show: false,
+                        copySubject: "",
+                        copyType: ""
                     }
-                    const values = data.map(item => Number(item[column.property]));
-                    if (!values.every(value => isNaN(value))) {
-                        sums[index] = values.reduce((prev, curr) => {
-                            const value = Number(curr);
-                            if (!isNaN(value)) {
-                                return prev + curr;
-                            } else {
-                                return prev;
-                            }
-                        }, 0);
-                        sums[index] += ' 元';
+                },
+                table: {
+                    commonTable: {
+                        data: [],
+                        loading: true,
+                        selectionList: [],
+                        params: {
+                            pageIndex: 1,
+                            pageSize: 10,
+                            pageSizes: [5, 10, 20, 40],
+                            searchKey: '',  // 搜索词
+                            total: 100,       // 总数
+                        }
+                    }
+                },
+                dialog: {},
+                options: {},
+            },
+            methods: {
+                handleCheckAllChange(val) {
+                    this.doc.checkedDoc = val ? docOptions : [];
+                    this.doc.isIndeterminate = false;
+                    optionViewSelect();
+                },
+
+                handleCheckedDocsChange(value) {
+                    let checkedCount = value.length;
+                    console.log("checkedDoc：" + app.doc.checkedDoc);
+                    this.doc.checkAll = checkedCount === 3;
+                    this.doc.isIndeterminate = checkedCount > 0 && checkedCount < 3;
+                    optionViewSelect();
+                },
+
+                /*查看文献统计详情*/
+                viewStatistics: function (row) {
+                    if (row.type === "论文") {
+                        let data = {
+                            paperName: app.optionView.paper.paperName,
+                            firstAuthorName: app.optionView.paper.firstAuthorWorkNum,            //其实是FA工号
+                            secondAuthorName: app.optionView.paper.secondAuthorWorkNum,          //其实是SA工号
+                            authorList: app.optionView.paper.otherAuthorWorkNum,                 //其实是OA工号
+                            storeNum: app.optionView.paper.storeNum,
+                            paperType: app.optionView.paper.paperType,
+                            ISSN: app.optionView.paper.ISSN,
+                            pageIndex: app.table.commonTable.params.pageIndex,
+                            pageSize: app.table.commonTable.params.pageSize
+                        };
+                        let getParam = formatParams(data);
+                        let getLink = "/api/doc/search/selectPaperListByPageGet?" + getParam;
+                        console.log(getLink);
+                        window.parent.app.addTab("论文", getLink);
+                    } else if (row.type === "专利") {
+                        alert("专利统计详情页面");
                     } else {
-                        sums[index] = 'N/A';
+                        alert("著作权统计详情页面");
                     }
-                });
-                return sums;
+                },
+
+                /*统计搜索*/
+                statisticalSearch: function () {
+                    this.table.commonTable.loading = true;
+
+                    let app = this;
+                    /*version2.0_2019/08/05*/
+                    let params = {
+                        subject: app.optionView.commonSelect.subject,
+                        institute: app.optionView.commonSelect.organization,
+                        paperType: app.optionView.paper.paperType,
+                        startDate: app.optionView.commonSelect.publishDate[0],
+                        endDate: app.optionView.commonSelect.publishDate[1],
+                        journalDivision: app.optionView.paper.partition,
+                        impactFactorMin: app.optionView.paper.impactFactorMin,
+                        impactFactorMax: app.optionView.paper.impactFactorMax,
+                        patentType: app.optionView.patent.patentType
+                    };
+                    ajaxPostJSON("/api/doc/statistic/doDocStatistic", params,
+                        function suc(d) {
+                            let res = d.data;
+                            let paper = {
+                                type: '论文',
+                                totalDocNum: res.totalPaper,
+                                teacherDocNum: res.teacherPaper,
+                                studentDocNum: res.studentPaper,
+                                postdoctoralDocNum: res.doctorPaper
+                            };
+                            let patent = {
+                                type: '专利',
+                                totalDocNum: res.totalPatent,
+                                teacherDocNum: res.teacherPatent,
+                                studentDocNum: res.studentPatent,
+                                postdoctoralDocNum: res.doctorPatent
+                            };
+                            app.doc.paperResult = paper;
+                            app.doc.patentResult = patent;
+                          /*  app.doc.paperResult.totalPaper = paper.totalDocNum;
+                            app.doc.paperResult.teacherPaper = paper.teacherDocNum;
+                            app.doc.paperResult.studentPaper = paper.studentDocNum;
+                            app.doc.paperResult.doctorPaper = paper.postdoctoralDocNum;*/
+
+                            app.table.commonTable.data = [];
+                            app.table.commonTable.data.push(paper);
+                            app.table.commonTable.data.push(patent);
+
+                            app.table.commonTable.loading = false;
+                        }, null)
+                    /*version1.0_2019/4/16*/
+                    /*let params = {
+                        subject: this.optionView.commonSelect.subject,
+                        organization: this.optionView.commonSelect.organization,
+                        startDate: this.optionView.commonSelect.publishDate[0],
+                        endDate: this.optionView.commonSelect.publishDate[1],
+                        paperType: this.optionView.paper.paperType,
+                        partition: this.optionView.paper.partition,
+                        impactFactor: this.optionView.paper.impactFactor,
+                        patentType: this.optionView.patent.patentType
+                    };
+
+                    console.log("统计条件");
+                    console.log(params);
+
+                    this.table.commonTable.loading = true;
+
+                    ajaxPost(
+                        "/doc/statisticalSearch",
+                        params,
+                        function success(res) {
+                            console.log("统计结果查询");
+                            console.log(res.data);
+                            app.table.commonTable.data = [];
+                            app.table.commonTable.data.push(res.data.paper);
+                            app.table.commonTable.data.push(res.data.patent);
+                            app.table.commonTable.loading = false;
+                        },
+                        function error(res) {
+                            console.log(res);
+                            app.table.commonTable.loading = false;
+                        }
+                    );*/
+                },
+
+                getSummaries(param) {
+                    const {columns, data} = param;
+                    const sums = [];
+                    columns.forEach((column, index) => {
+                        if (index === 1) {
+                            sums[index] = '总价';
+                            return;
+                        }
+                        const values = data.map(item => Number(item[column.property]));
+                        if (!values.every(value => isNaN(value))) {
+                            sums[index] = values.reduce((prev, curr) => {
+                                const value = Number(curr);
+                                if (!isNaN(value)) {
+                                    return prev + curr;
+                                } else {
+                                    return prev;
+                                }
+                            }, 0);
+                            sums[index] += ' 元';
+                        } else {
+                            sums[index] = 'N/A';
+                        }
+                    });
+                    return sums;
+                },
+
+                //4. 统计结果导出成excel格式
+                exportStatisticResult() {
+                    let app = this;
+                    console.log(app.doc.paperResult);
+                    console.log(app.doc.patentResult);
+                    window.location.href = "/api/doc/statistic/exportStatisticExcel?" +
+                        "studentPaper=" + app.doc.paperResult.studentDocNum +
+                        "&teacherPaper=" + app.doc.paperResult.teacherDocNum +
+                        "&doctorPaper=" + app.doc.paperResult.postdoctoralDocNum +
+                        "&totalPaper=" + app.doc.paperResult.totalDocNum +
+                        "&studentPatent=" + app.doc.patentResult.studentDocNum +
+                        "&teacherPatent=" + app.doc.patentResult.teacherDocNum +
+                        "&doctorPatent=" + app.doc.patentResult.postdoctoralDocNum +
+                        "&totalPatent=" + app.doc.patentResult.totalDocNum
+                }
+            },
+            /*加载的时候就执行一次*/
+            mounted: function () {
+                this.statisticalSearch();
             }
-        },
-        /*加载的时候就执行一次*/
-        mounted: function () {
-            this.statisticalSearch();
-        }
-    });
+        })
+    ;
 
     //选择对应筛选框视图:
     function optionViewSelect() {
@@ -629,17 +706,15 @@
             };
             app.optionValue.paperTypeOption.push(tmpItem);
         }
-
         /*初始化patentType*/
         let tmp1 = ${patentType};
         for (let i = 0; i < tmp.length; i++) {
             let tmpItem = {
-                value: tmp[i].id,
-                label: tmp[i].name_en
+                value: tmp[i],
+                label: tmp[i]
             };
             app.optionValue.patentTypeOption.push(tmpItem);
         }
-
         /*初始化学校机构*/
         let org = ${orgList};
         for (let i = 0; i < org.length; i++) {
@@ -649,7 +724,6 @@
             };
             app.optionValue.orgOption.push(tmpOrg);
         }
-
         /*初始化学科*/
         let subject = ${subjectList};
         for (let i = 0; i < subject.length; i++) {
@@ -662,19 +736,8 @@
     }
 
     window.onload = function () {
-        // app.selectPaperListByPage();
         initialize();
-        /*更新一下作者表格数据*/
-        // authorSearch();
     };
-
-    /*测试*/
-    function test4() {
-        /*输出时间段*/
-        console.log(app.optionView.commonSelect.publishDate);
-    }
-
-
 </script>
 
 </body>

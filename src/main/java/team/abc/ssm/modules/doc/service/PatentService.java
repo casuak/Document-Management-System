@@ -26,10 +26,4 @@ public class PatentService {
     public int getMyPatentAmount(String authorId) {
         return patentMapper.getMyPatentAmount(authorId);
     }
-
-    /** 返回专利种类候选项*/
-    public List<Map<String, String>> getPatentType(){
-        List<Map<String, String>> patentTypeMap = patentMapper.getPatentTypeMap();
-        return patentTypeMap;
-    }
 }

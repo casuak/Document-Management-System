@@ -14,6 +14,7 @@ import team.abc.ssm.common.web.SecondAuMatchType;
 import team.abc.ssm.modules.author.dao.SysUserMapper;
 import team.abc.ssm.modules.author.entity.SysUser;
 import team.abc.ssm.modules.author.service.SysUserService;
+import team.abc.ssm.modules.doc.entity.StatisticCondition;
 import team.abc.ssm.modules.patent.dao.DocPatentMapper;
 import team.abc.ssm.modules.patent.entity.DocPatent;
 import team.abc.ssm.modules.patent.entity.MapUserPatent;
@@ -71,6 +72,8 @@ public class DocPatentService {
         return docPatentMapper.updateByPrimaryKey(record);
     }
 
+    /*-------------- auto maded --------------*/
+
     public List<DocPatent> selectListByPage(DocPatent patent) {
         List<DocPatent> patentList = docPatentMapper.selectListByPage(patent);
         for (DocPatent tmpPatent : patentList) {
@@ -86,11 +89,7 @@ public class DocPatentService {
     }
 
     /**
-     * @author zm
-     * @date 2019/8/5 8:30
-     * @params [authorWorkId, docPatent]
-     * @return: java.util.List<team.abc.ssm.modules.patent.entity.DocPatent>
-     * @Description //获取指定作者的所有专利List
+     * 获取指定作者的所有专利List
      **/
     public List<DocPatent> selectMyPatentListByPage(String authorWorkId, DocPatent docPatent) {
         //1.docPatent的id暂时存储当前需要查询的作者的workId
@@ -105,13 +104,8 @@ public class DocPatentService {
         return docPatentMapper.selectSearchCount(patent);
     }
 
-
     /**
-     * @author zm
-     * @date 2019/6/23 20:20
-     * @params [authorNames]
-     * @return: java.lang.String
-     * @Description //统计发明人的所属学院，决策出最优的patent的学院(前提是第一作者不确定)
+     * 统计发明人的所属学院，决策出最优的patent的学院(前提是第一作者不确定)
      **/
     public String getInstitute(String[] authorNames) {
         Map<String, Integer> instituteMap = new HashMap<>();
@@ -145,11 +139,7 @@ public class DocPatentService {
     }
 
     /**
-     * @author zm
-     * @date 2019/6/24 8:23
-     * @params []
-     * @return: void
-     * @Description //初始化所有专利
+     * 初始化所有专利
      **/
     public void initialPatent() throws ParseException {
         User userNow = UserUtils.getCurrentUser();
@@ -230,10 +220,7 @@ public class DocPatentService {
 
     /**
      * @author zm
-     * @date 2019/7/12 13:06
-     * @params [docPatent]
-     * @return: team.abc.ssm.modules.patent.entity.DocPatent
-     * @Description //第一作者唯一的处理：
+     * 第一作者唯一的处理：
      **/
     public DocPatent firstAuthorUnique(DocPatent docPatent) {
         //2.2 此时唯一确定第一作者
@@ -431,11 +418,7 @@ public class DocPatentService {
     }
 
     /**
-     * @author zm
-     * @date 2019/6/24 8:22
-     * @params [patent]
-     * @return: void
-     * @Description //单个patent的作者匹配函数
+     * 单个patent的作者匹配函数
      **/
     @Transactional(rollbackFor = Exception.class)
     public String authorMatch(DocPatent docPatent) {
@@ -711,13 +694,6 @@ public class DocPatentService {
         return docPatent.getStatus();
     }
 
-    /**
-     * @author zm
-     * @date 2019/7/3 10:15
-     * @params []
-     * @return: java.util.Map<java.lang.String, java.lang.Integer>
-     * @Description //对所有已初始化(未匹配)的专利进行专利用户匹配
-     **/
     public Map<String, Integer> patentUserMatch() {
         String tmpRes;
         int totalMatch;
@@ -750,13 +726,6 @@ public class DocPatentService {
         return resMap;
     }
 
-    /**
-     * @author zm
-     * @date 2019/7/3 9:48
-     * @params [patentList]
-     * @return: boolean
-     * @Description //根据ids删除patents
-     **/
     @Transactional(rollbackFor = Exception.class)
     public boolean deleteListByIds(List<DocPatent> patentList) {
         int count = 0;
@@ -768,25 +737,11 @@ public class DocPatentService {
         return count == patentList.size();
     }
 
-    /**
-     * @author zm
-     * @date 2019/7/3 14:58
-     * @params [status]
-     * @return: boolean
-     * @Description //根据status删除patents
-     **/
     public boolean deleteByStatus(String status) {
         docPatentMapper.deleteByStatus(status);
         return true;
     }
 
-    /**
-     * @author zm
-     * @date 2019/7/3 14:58
-     * @params [patentId, authorIndex, authorId]
-     * @return: int
-     * @Description //设置专利的第一/第二作者
-     **/
     public int setPatentAuthor(String patentId, int authorIndex, String authorId) {
         return docPatentMapper.setPatentAuthor(patentId, authorIndex, authorId);
     }
@@ -796,37 +751,20 @@ public class DocPatentService {
         return count == patentList.size();
     }
 
-    /**
-     * @author zm
-     * @date 2019/8/4 14:40
-     * @params []
-     * @return: void
-     * @Description //把所有成功的转到完成
-     **/
     public boolean convertToCompleteAll() {
         List<DocPatent> matchSucPatents = docPatentMapper.selectAllByStatus(MATCH_SUCCESS.toString());
         int count = docPatentMapper.convertToCompleteByIds(matchSucPatents);
         return count == matchSucPatents.size();
     }
 
-    /**
-     * @author zm
-     * @date 2019/8/4 14:55
-     * @params [ids]
-     * @return: boolean
-     * @Description //根据传入的匹配成功的ids转到完成
-     **/
     public boolean convertToCompleteByIds(List<DocPatent> patentList) {
         int count = docPatentMapper.convertToCompleteByIds(patentList);
         return count == patentList.size();
     }
 
     /**
-     * @author zm
-     * @date 2019/7/19 8:55
-     * @params [patentList]
-     * @return: boolean
-     * @Description //完成专利后，再mapUserPatent插入记录
+     * 完成专利后，再mapUserPatent插入记录
+     * not used —— 08-05
      **/
     @Transactional(rollbackFor = Exception.class)
     public void insertPatentMapRecord(List<DocPatent> patentList) {
@@ -880,14 +818,45 @@ public class DocPatentService {
         return docPatentMapper.updateByPrimaryKeySelective(theDocPatent) == 1;
     }
 
-    /**
-     * @author zm
-     * @date 2019/8/4 16:55
-     * @params [workId]
-     * @return: int
-     * @Description //获取
-     **/
     public int getMyPatentNum(String myWorkId) {
         return docPatentMapper.selectMyPatentNum(myWorkId);
+    }
+
+    public int doSinglePatentStatistics(StatisticCondition statisticCondition){
+        return docPatentMapper.getStatisticNumOfPaper(statisticCondition);
+    }
+
+    public Map<String,Integer> doPatentStatistics(StatisticCondition statisticCondition){
+        //0.专利的已完成状态是4
+        statisticCondition.setStatus("4");
+
+        int totalNum,studentPatentNum,teacherPatentNum,doctorPatentNum = 0;
+        Map<String,Integer> statisticsResMap = new HashMap<>();
+
+        //1.统计学生一共有多少专利
+        statisticCondition.setAuthorType("student");
+        studentPatentNum = doSinglePatentStatistics(statisticCondition);
+        statisticsResMap.put("studentPatent",studentPatentNum);
+
+        //2.统计导师一共有多少论文
+        statisticCondition.setAuthorType("teacher");
+        teacherPatentNum = doSinglePatentStatistics(statisticCondition);
+        statisticsResMap.put("teacherPatent",teacherPatentNum);
+
+        //3.统计博士后一共有多少论文
+        statisticCondition.setAuthorType("doctor");
+        doctorPatentNum = doSinglePatentStatistics(statisticCondition);
+        statisticsResMap.put("doctorPatent",doctorPatentNum);
+
+        //4.统计论文总量
+        statisticCondition.setAuthorType(null);
+        totalNum = docPatentMapper.getStatisticNumOfPaper(statisticCondition);
+        statisticsResMap.put("totalPatent",totalNum);
+        return statisticsResMap;
+    }
+
+    /** 获取所有专利类型 */
+    public List<String> getAllPatentType() {
+        return docPatentMapper.selectAllPatentType();
     }
 }

@@ -364,7 +364,7 @@
     where tmp.status = '3'
     </select>
 
-    <select id="getStasticNumOfPaper"
+    <select id="getStatisticNumOfPaper"
             parameterType="StatisticCondition"
             resultType="int">
         select count(*)

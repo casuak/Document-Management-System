@@ -83,5 +83,14 @@ public interface DocPatentMapper {
      * @return int        
      * @date 2019/8/5 16:34
      **/
-    int getStasticNumOfPaper(StatisticCondition statisticCondition);
+    int getStatisticNumOfPaper(StatisticCondition statisticCondition);
+
+    /**
+     * 查询返回所有的专利类型
+     *
+     * @author zm
+     * @return java.util.List<java.lang.String>
+     * @date 2019/8/5 19:57
+     **/
+    List<String> selectAllPatentType();
 }

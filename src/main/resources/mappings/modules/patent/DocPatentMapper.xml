@@ -487,7 +487,7 @@
         left join sys_user c on c.work_id = a.second_author_work_id
     </select>
 
-    <select id="getStasticNumOfPaper"
+    <select id="getStatisticNumOfPaper"
             parameterType="StatisticCondition"
             resultType="int">
         select count(*)
@@ -524,5 +524,9 @@
                 or res.second_author_type = #{authorType,jdbcType=VARCHAR}
             </if>
         </where>
+    </select>
+    <select id="selectAllPatentType" resultType="java.lang.String">
+        select distinct patent_type
+        from docmanager.doc_patent
     </select>
 </mapper>
