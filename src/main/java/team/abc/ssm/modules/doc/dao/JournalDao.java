@@ -11,4 +11,6 @@ public interface JournalDao {
     int listCount(Journal journal);
 
     int deleteByIds(List<Journal> list);
+
+    int deleteAll();
 }

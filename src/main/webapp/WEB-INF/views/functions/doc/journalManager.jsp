@@ -15,6 +15,9 @@
             <%--<el-button size="small" type="success" @click="">--%>
                 <%--<span>操作</span>--%>
             <%--</el-button>--%>
+            <el-button size="small" type="warning" @click="deleteAll()">
+                <span>全部删除</span>
+            </el-button>
             <el-button size="small" type="danger" @click="deleteByIds(table.selectionList)"
                        style="margin-left: 10px;">
                 <span>批量删除</span>
@@ -48,8 +51,8 @@
         <el-table-column label="操作" width="190" header-align="center" align="center">
             <template slot-scope="scope">
                 <%--<el-button type="warning" size="mini" style="position:relative;bottom: 1px;"--%>
-                           <%--@click="openDialog_updateEntity(scope.row)">--%>
-                    <%--<span>编辑</span>--%>
+                <%--@click="openDialog_updateEntity(scope.row)">--%>
+                <%--<span>编辑</span>--%>
                 <%--</el-button>--%>
                 <el-button type="danger" size="mini" style="position:relative;bottom: 1px;margin-left: 6px;"
                            @click="deleteByIds([{id: scope.row.id}])">

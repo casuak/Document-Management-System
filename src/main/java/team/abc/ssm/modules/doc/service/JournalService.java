@@ -24,4 +24,8 @@ public class JournalService {
     public void deleteByIds(List<Journal> list){
         journalDao.deleteByIds(list);
     }
+
+    public void deleteAll(){
+        journalDao.deleteAll();
+    }
 }

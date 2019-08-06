@@ -4,7 +4,8 @@ app = new Vue({
         fullScreenLoading: false,
         urls: {
             getJournalList: '/api/doc/journal/list',
-            deleteListByIds: '/api/doc/journal/deleteByIds'
+            deleteListByIds: '/api/doc/journal/deleteByIds',
+            deleteAll: '/api/doc/journal/deleteAll'
         },
         table: {
             loading: false,
@@ -39,15 +40,31 @@ app = new Vue({
                 window.parent.app.showMessage('提示：未选中任何项', 'warning');
                 return;
             }
+            let app = this;
             window.parent.app.$confirm('确认删除选中的项', '警告', {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',
                 type: 'warning'
             }).then(() => {
                 let data = journalList;
-                let app = this;
                 app.table.loading = true;
-                ajaxPostJSON(this.urls.deleteListByIds, data, function (d) {
+                ajaxPostJSON(app.urls.deleteListByIds, data, function (d) {
+                    window.parent.app.showMessage('删除成功！', 'success');
+                    app.refreshTable();
+                })
+            }).catch(() => {
+                window.parent.app.showMessage('已取消删除', 'warning');
+            });
+        },
+        deleteAll: function(){
+            let app = this;
+            window.parent.app.$confirm('确认删除选中的项', '警告', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+            }).then(() => {
+                app.table.loading = true;
+                ajaxPostJSON(this.urls.deleteAll, null, function (d) {
                     window.parent.app.showMessage('删除成功！', 'success');
                     app.refreshTable();
                 })

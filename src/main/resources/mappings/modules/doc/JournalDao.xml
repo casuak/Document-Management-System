@@ -22,6 +22,7 @@
         select a.*
         from doc_journal a
         where a.journal_title like concat('%', #{page.searchKey}, '%')
+        order by a.journal_year, a.journal_division
         limit #{page.pageStart}, #{page.pageSize}
     </select>
 
@@ -36,5 +37,11 @@
         <foreach collection="list" open="(" close=")" separator="," item="item" index="index">
             #{item.id}
         </foreach>
+    </delete>
+
+    <delete id="deleteAll">
+        delete
+        from doc_journal
+        where 1 = 1
     </delete>
 </mapper>

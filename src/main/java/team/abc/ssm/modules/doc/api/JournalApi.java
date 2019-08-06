@@ -24,15 +24,22 @@ public class JournalApi extends BaseApi {
 
     @RequestMapping(value = "list", method = RequestMethod.POST)
     @ResponseBody
-    public Object list(@RequestBody Journal journal){
+    public Object list(@RequestBody Journal journal) {
         Page<Journal> page = journalService.list(journal);
         return retMsg.Set(MsgType.SUCCESS, page);
     }
 
-    @RequestMapping(value = "deleteByIds",method = RequestMethod.POST)
+    @RequestMapping(value = "deleteByIds", method = RequestMethod.POST)
     @ResponseBody
-    public Object deleteByIds(@RequestBody List<Journal> list){
+    public Object deleteByIds(@RequestBody List<Journal> list) {
         journalService.deleteByIds(list);
+        return retMsg.Set(MsgType.SUCCESS);
+    }
+
+    @RequestMapping(value = "deleteAll", method = RequestMethod.POST)
+    @ResponseBody
+    public Object deleteAll() {
+        journalService.deleteAll();
         return retMsg.Set(MsgType.SUCCESS);
     }
 }
