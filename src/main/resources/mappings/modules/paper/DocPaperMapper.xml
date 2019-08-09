@@ -30,6 +30,7 @@
         <result column="first_author_type" jdbcType="VARCHAR" property="firstAuthorType"/>
         <result column="second_author_type" jdbcType="VARCHAR" property="secondAuthorType"/>
         <result column="paper_subject" jdbcType="VARCHAR" property="subject"/>
+        <result column="doc_partition" jdbcType="VARCHAR" property="docPartition"/>
     </resultMap>
     <sql id="Base_Column_List">
         <!--@mbg.generated-->
@@ -415,6 +416,131 @@
                 or res.second_author_type = #{authorType,jdbcType=VARCHAR}
             </if>
         </where>
+    </select>
+
+    <select id="selectPapersWithCondition" resultMap="BaseResultMap" parameterType="StatisticCondition">
+        select *
+        from(
+            select a.*,
+            b.major as paper_subject,
+            b.user_type as first_author_type,
+            c.user_type as second_author_type
+            from (
+                select dp.*,
+                j.journal_division as doc_partition
+                from (
+                    select*
+                    from doc_paper
+                    where status=#{status,jdbcType=VARCHAR}
+                    <if test="issn != null and issn != ''">
+                        and ISSN = #{issn,jdbcType=VARCHAR}
+                    </if>
+                    <if test="paperType != null and paperType != ''">
+                        and doc_type=#{paperType,jdbcType=VARCHAR}
+                    </if>
+                    <if test="institute != null and institute != ''">
+                        and danwei_cn=#{institute,jdbcType=VARCHAR}
+                    </if>
+                    <if test="endDate != null">
+                        and publish_date &gt;= #{startDate,jdbcType=TIMESTAMP}
+                        and publish_date &lt;= #{endDate,jdbcType=TIMESTAMP}
+                    </if>
+                    <if test="firstAuthorWorkId != null and firstAuthorWorkId != ''">
+                        and first_author_id = #{firstAuthorWorkId,jdbcType=VARCHAR}
+                    </if>
+                    <if test="secondAuthorWorkId != null and secondAuthorWorkId != ''">
+                        and second_author_id = #{secondAuthorWorkId,jdbcType=VARCHAR}
+                    </if>
+                    <if test="paperName != null and paperName != ''">
+                        and paper_name like concat('%',#{paperName,jdbcType=VARCHAR}  ,'%')
+                    </if>
+                ) as dp
+                left join (
+                    select *
+                    from doc_journal dj
+                    where 1=1
+                    <if test="impactFactorMax != null">
+                        and dj.impact_factor &gt;= #{impactFactorMin}
+                        and dj.impact_factor &lt;= #{impactFactorMax}
+                    </if>
+                ) j on j.issn = dp.ISSN
+                <where>
+                    <if test="journalDivision != null and journalDivision != ''">
+                        and  j.journal_division = #{journalDivision,jdbcType=VARCHAR}
+                    </if>
+                </where>
+            ) as a
+            left join sys_user b on b.work_id = a.first_author_id
+            left join sys_user c on c.work_id = a.second_author_id
+            <where>
+                <if test="subject != null and subject != ''">
+                    b.major = #{subject,jdbcType=VARCHAR}
+                </if>
+            </where>
+        ) as res
+        limit #{page.pageStart} ,#{page.pageSize}
+    </select>
+
+    <select id="selectPaperNumWithCondition" resultType="int">
+        select count(*)
+        from(
+            select a.*,
+            b.major as paper_subject,
+            b.user_type as first_author_type,
+            c.user_type as second_author_type
+            from (
+                select dp.*,
+                j.journal_division as doc_partition
+                from (
+                    select*
+                    from doc_paper
+                    where status=#{status,jdbcType=VARCHAR}
+                    <if test="issn != null and issn != ''">
+                        and ISSN = #{issn,jdbcType=VARCHAR}
+                    </if>
+                    <if test="paperType != null and paperType != ''">
+                        and doc_type=#{paperType,jdbcType=VARCHAR}
+                    </if>
+                    <if test="institute != null and institute != ''">
+                        and danwei_cn=#{institute,jdbcType=VARCHAR}
+                    </if>
+                    <if test="endDate != null">
+                        and publish_date &gt;= #{startDate,jdbcType=TIMESTAMP}
+                        and publish_date &lt;= #{endDate,jdbcType=TIMESTAMP}
+                    </if>
+                    <if test="firstAuthorWorkId != null and firstAuthorWorkId != ''">
+                        and first_author_id = #{firstAuthorWorkId,jdbcType=VARCHAR}
+                    </if>
+                    <if test="secondAuthorWorkId != null and secondAuthorWorkId != ''">
+                        and second_author_id = #{secondAuthorWorkId,jdbcType=VARCHAR}
+                    </if>
+                    <if test="paperName != null and paperName != ''">
+                        and paper_name like concat('%',#{paperName,jdbcType=VARCHAR}  ,'%')
+                    </if>
+                ) as dp
+                left join (
+                    select *
+                    from doc_journal dj
+                    where 1=1
+                    <if test="impactFactorMax != null">
+                        and dj.impact_factor &gt;= #{impactFactorMin}
+                        and dj.impact_factor &lt;= #{impactFactorMax}
+                    </if>
+                ) j on j.issn = dp.ISSN
+                <where>
+                    <if test="journalDivision != null and journalDivision != ''">
+                        and  j.journal_division = #{journalDivision,jdbcType=VARCHAR}
+                    </if>
+                </where>
+            ) as a
+            left join sys_user b on b.work_id = a.first_author_id
+            left join sys_user c on c.work_id = a.second_author_id
+            <where>
+                <if test="subject != null and subject != ''">
+                    b.major = #{subject,jdbcType=VARCHAR}
+                </if>
+            </where>
+        ) as res
     </select>
 
 </mapper>

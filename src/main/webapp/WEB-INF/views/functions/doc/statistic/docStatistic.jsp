@@ -172,7 +172,7 @@
                     <div class="commonInputSection">
                         <span class="inputSpanText">科睿唯安: </span>
                         <div class="commonInput">
-                            <el-select v-model="optionView.paper.partition" clearable placeholder="选择论文种类">
+                            <el-select v-model="optionView.paper.partition" clearable placeholder="选择论文分区   ">
                                 <el-option
                                         v-for="item in optionValue.partitionOption"
                                         :key="item.value"
@@ -272,6 +272,9 @@
                                :disabled="table.commonTable.loading"
                                @click="exportStatisticResult()">导出结果
                     </el-button>
+                    <el-button type="success" size="medium"
+                               @click="viewStatisticsDetail({'type':'论文'})">TEST
+                    </el-button>
                 </div>
             </row>
 
@@ -337,7 +340,7 @@
                                 <el-button type="primary" plain
                                            size="mini"
                                            style="position:relative;bottom: 1px;"
-                                           @click="viewStatistics(scope.row)">
+                                           @click="viewStatisticsDetail(scope.row)">
                                     <span>查看统计详情</span>
                                 </el-button>
                             </template>
@@ -493,10 +496,20 @@
                 },
 
                 /*查看文献统计详情*/
-                viewStatistics: function (row) {
+                viewStatisticsDetail: function (row) {
+                    let app = this;
+
                     if (row.type === "论文") {
                         let data = {
-                            paperName: app.optionView.paper.paperName,
+                            subject: app.optionView.commonSelect.subject,
+                            institute: app.optionView.commonSelect.organization,
+                            startDate: app.optionView.commonSelect.publishDate[0],
+                            endDate: app.optionView.commonSelect.publishDate[1],
+                            paperType: app.optionView.paper.paperType,
+                            paperPartition: app.optionView.paper.partition,
+                            impactFactorMin: app.optionView.paper.impactFactorMin,
+                            impactFactorMax: app.optionView.paper.impactFactorMax
+                           /* paperName: app.optionView.paper.paperName,
                             firstAuthorName: app.optionView.paper.firstAuthorWorkNum,            //其实是FA工号
                             secondAuthorName: app.optionView.paper.secondAuthorWorkNum,          //其实是SA工号
                             authorList: app.optionView.paper.otherAuthorWorkNum,                 //其实是OA工号
@@ -504,11 +517,14 @@
                             paperType: app.optionView.paper.paperType,
                             ISSN: app.optionView.paper.ISSN,
                             pageIndex: app.table.commonTable.params.pageIndex,
-                            pageSize: app.table.commonTable.params.pageSize
+                            pageSize: app.table.commonTable.params.pageSize*/
                         };
+
+                        console.log(data);
+
                         let getParam = formatParams(data);
                         let getLink = "/api/doc/search/selectPaperListByPageGet?" + getParam;
-                        console.log(getLink);
+                        //console.log(getLink);
                         window.parent.app.addTab("论文", getLink);
                     } else if (row.type === "专利") {
                         alert("专利统计详情页面");

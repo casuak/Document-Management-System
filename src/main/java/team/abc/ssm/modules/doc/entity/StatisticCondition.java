@@ -35,6 +35,11 @@ public class StatisticCondition extends DataEntity<StatisticCondition> {
     private Date endDate;
 
     /**
+     * 论文名
+     */
+    private String paperName;
+
+    /**
      * 论文种类
      */
     private String paperType;
@@ -50,7 +55,7 @@ public class StatisticCondition extends DataEntity<StatisticCondition> {
     private double impactFactorMax;
 
     /**
-     * 期刊种类
+     * 期刊分区
      */
     private String journalDivision;
 
@@ -70,4 +75,10 @@ public class StatisticCondition extends DataEntity<StatisticCondition> {
      * 论文为：'3'->代表已经完成匹配
      */
      private String status;
+
+     private String firstAuthorWorkId;
+
+     private String secondAuthorWorkId;
+
+     private String issn;
 }

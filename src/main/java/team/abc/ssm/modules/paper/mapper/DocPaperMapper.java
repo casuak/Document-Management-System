@@ -19,6 +19,26 @@ public interface DocPaperMapper {
     int updateByPrimaryKey(DocPaper record);
 
     /**
+     * 传入DocPaper，根据约束条件查询返回指定的paperList
+     *
+     * @author zm
+     * @param1 statisticCondition
+     * @return java.util.List<team.abc.ssm.modules.paper.entity.DocPaper>
+     * @date 2019/8/9 19:07
+     **/
+    List<DocPaper> selectPapersWithCondition(StatisticCondition statisticCondition);
+
+    /**
+     * 传入DocPaper，根据约束条件查询返回指定的paper的数目
+     *
+     * @author zm
+     * @param1 statisticCondition
+     * @return int        
+     * @date 2019/8/9 19:53
+     **/
+    int selectPaperNumWithCondition(StatisticCondition statisticCondition);
+    
+    /**
      * 传入DocPaper，查询并返回指定作者的所有论文List
      * 1.DocPaper中的theAuthorWorkId为待查作者的工号
      * 2.DocPaper中的page存储的是分页信息

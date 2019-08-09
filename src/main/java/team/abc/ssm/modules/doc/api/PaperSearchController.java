@@ -17,6 +17,7 @@ import team.abc.ssm.modules.doc.entity.Paper;
 import team.abc.ssm.modules.doc.service.PaperSearchService;
 import team.abc.ssm.modules.sys.service.FunctionService;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -56,14 +57,6 @@ public class PaperSearchController {
         modelAndView.addObject("orgList", JSONArray.fromObject(orgList));
         modelAndView.addObject("subjectList", JSONArray.fromObject(subjectList));
 
-        return modelAndView;
-    }
-
-    /*跳转文献详情页面*/
-    @RequestMapping(value = "docDetails", method = RequestMethod.GET)
-    public ModelAndView docDetails() {
-        ModelAndView modelAndView = new ModelAndView();
-        modelAndView.setViewName("functions/doc/docSearch/docDetails");
         return modelAndView;
     }
 
@@ -150,47 +143,52 @@ public class PaperSearchController {
         return retMsg.Set(MsgType.SUCCESS, resDataMap);
     }
 
-    /*查看论文统计详情*/
+
     @RequestMapping(value = "selectPaperListByPageGet", method = RequestMethod.GET)
     @ResponseBody
     public Object selectPaperListByPageGet(
-            @RequestParam(value = "paperName") String paperName,
-            @RequestParam(value = "firstAuthorName") String firstAuthorWorkNum,
-            @RequestParam(value = "secondAuthorName") String secondAuthorWorkNum,
-            @RequestParam(value = "authorList") String otherAuthorWorkNum,
-            @RequestParam(value = "ISSN") String ISSN,
-            @RequestParam(value = "storeNum") String storeNum,
+            @RequestParam(value = "subject") String subject,
+            @RequestParam(value = "institute") String institute,
+            @RequestParam(value = "startDate") String startDate,
+            @RequestParam(value = "endDate") String endDate,
             @RequestParam(value = "paperType") String paperType,
-            @RequestParam(value = "pageIndex") int pageIndex,
-            @RequestParam(value = "pageSize") int pageSize,
+            @RequestParam(value = "paperPartition") String paperPartition,
+            @RequestParam(value = "impactFactorMin") Double impactFactorMin,
+            @RequestParam(value = "impactFactorMax") Double impactFactorMax,
             ModelAndView modelAndView
     ) {
-        System.out.println("ISSN" + ISSN);
-        Map<String, Object> commonParams = new HashMap<>();
-        Map<String, Object> paperParams = new HashMap<>();
-        System.out.println("论文统计详情页面————————————————");
-        paperParams.put("paperName", paperName);
-        paperParams.put("firstAuthorWorkNum", firstAuthorWorkNum);
-        paperParams.put("secondAuthorWorkNum", secondAuthorWorkNum);
-        paperParams.put("otherAuthorWorkNum", otherAuthorWorkNum);
-        paperParams.put("ISSN", ISSN);
-        paperParams.put("storeNum", storeNum);
+        /*文献统计页原有参数*/
+        /*Map<String, Object> paperParams = new HashMap<>();
+        paperParams.put("subject", subject);
+        paperParams.put("institute", institute);
+        paperParams.put("startDate", startDate);
+        paperParams.put("endDate", endDate);
         paperParams.put("paperType", paperType);
+        paperParams.put("paperDivision", paperDivision);
+        paperParams.put("impactFactorMin", impactFactorMin);
+        paperParams.put("impactFactorMax", impactFactorMax);
 
-        Page<Paper> tmpPage = new Page<>();
-        tmpPage.setPageIndex(pageIndex);
-        tmpPage.setPageSize(pageSize);
+        modelAndView.addObject("paperPageParams", JSONObject.fromObject(paperParams));
+        */
 
-        List<Paper> paperList = paperSearchService.getPaperListByPage(paperName, firstAuthorWorkNum, secondAuthorWorkNum,
-                otherAuthorWorkNum, ISSN, storeNum, paperType, tmpPage);
-        int paperAmount = paperSearchService.getPaperAmount();
-        List<Map<String, String>> paperTypeOption = paperSearchService.getPaperType();
+        List<Map<String, String>> paperTypeList = paperSearchService.getPaperType();
+        List<String> subjectList = authorService.getSubList();
+        List<String> orgList = functionService.getOrgList();
 
         modelAndView.setViewName("functions/doc/docManage/paperList");
-        modelAndView.addObject("paperList", JSONArray.fromObject(paperList));
-        modelAndView.addObject("paperAmount", paperAmount);
-        modelAndView.addObject("paperType", JSONArray.fromObject(paperTypeOption));
-        modelAndView.addObject("paperParams", JSONObject.fromObject(paperParams));
+
+        modelAndView.addObject("paperTypeList",JSONArray.fromObject(paperTypeList));
+        modelAndView.addObject("subjectList", JSONArray.fromObject(subjectList));
+        modelAndView.addObject("orgList", JSONArray.fromObject(orgList));
+
+        modelAndView.addObject("subject",subject);
+        modelAndView.addObject("institute",institute);
+        modelAndView.addObject("startDate",startDate);
+        modelAndView.addObject("endDate",endDate);
+        modelAndView.addObject("paperType",paperType);
+        modelAndView.addObject("paperPartition",paperPartition);
+        modelAndView.addObject("impactFactorMin",impactFactorMin);
+        modelAndView.addObject("impactFactorMax",impactFactorMax);
 
         return modelAndView;
     }
