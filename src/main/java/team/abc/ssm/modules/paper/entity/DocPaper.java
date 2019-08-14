@@ -116,4 +116,9 @@ public class DocPaper extends DataEntity<DocPaper> {
      * 论文所属学科
      */
     private String subject;
+
+    /**
+     * 论文分区
+     */
+    private String docPartition;
 }

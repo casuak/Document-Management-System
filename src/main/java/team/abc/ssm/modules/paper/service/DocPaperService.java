@@ -82,7 +82,15 @@ public class DocPaperService{
         return docPaperMapper.updateByPrimaryKey(record);
     }
 
-    public List<DocPaper> selectMyPatentListByPage(DocPaper docPaper) {
+    public List<DocPaper> selectAllPaperByPage(StatisticCondition statisticCondition) {
+        return docPaperMapper.selectPapersWithCondition(statisticCondition);
+    }
+
+    public int selectAllPaperNum(StatisticCondition statisticCondition) {
+        return docPaperMapper.selectPaperNumWithCondition(statisticCondition);
+    }
+
+    public List<DocPaper> selectMyPaperListByPage(DocPaper docPaper) {
         return docPaperMapper.selectTheAuthorPapers(docPaper);
     }
 
