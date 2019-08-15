@@ -64,7 +64,7 @@
                     <el-table-column type="selection" width="40"></el-table-column>
                     <el-table-column
                             prop="paperName"
-                            width="250"
+                            width="220"
                             align="center"
                             fixed="left"
                             label="论文名"
@@ -74,14 +74,66 @@
                             prop="issn"
                             align="center"
                             fixed="left"
-                            width="100"
+                            width="120"
                             label="ISSN">
                     </el-table-column>
+
+                    <%--2019-08-15 add--%>
+                    <el-table-column
+                            align="center"
+                            fixed="left"
+                            width="120"
+                            label="期刊年份">
+                        <template slot-scope="{row}">
+                            <template v-if="row.journalYear == null || row.journalYear == ''">
+                                <el-button type="danger" size="mini" style="position:relative;bottom: 1px;margin-left: 6px;">
+                                    <span>暂无期刊年份</span>
+                                </el-button>
+                            </template>
+                            <template v-else>
+                                {{row.journalYear}}
+                            </template>
+                        </template>
+                    </el-table-column>
+                    <el-table-column
+                            align="center"
+                            fixed="left"
+                            width="80"
+                            label="分区">
+                        <template slot-scope="{row}">
+                            <template v-if="row.journalDivision == null || row.journalDivision == ''">
+                                <el-button type="danger" size="mini" style="position:relative;bottom: 1px;margin-left: 6px;">
+                                    <span>暂无分区</span>
+                                </el-button>
+                            </template>
+                            <template v-else>
+                                {{row.journalDivision}}
+                            </template>
+                        </template>
+                    </el-table-column>
+                    <el-table-column
+                            align="center"
+                            fixed="left"
+                            width="100"
+                            label="影响因子">
+                        <template slot-scope="{row}">
+                            <template v-if="row.impactFactor == null || row.impactFactor == ''">
+                                <el-button type="danger" size="mini" style="position:relative;bottom: 1px;margin-left: 6px;">
+                                    <span>暂无影响因子</span>
+                                </el-button>
+                            </template>
+                            <template v-else>
+                                {{row.impactFactor}}
+                            </template>
+                        </template>
+                    </el-table-column>
+
                     <el-table-column
                             prop="danweiCn"
                             align="center"
-                            width="200"
-                            label="所属学院">
+                            width="150"
+                            label="所属学院"
+                            show-overflow-tooltip>
                     </el-table-column>
                     <el-table-column
                             prop="docType"
@@ -555,8 +607,10 @@
                     /*处理日期*/
                     let resList = d.data.resultList;
                     for (let i = 0; i < resList.length; i++) {
-                        tmpDate = resList[i].publishDate;
-                        resList[i].publishDate = dateFormat(tmpDate);
+                        tmpDate1 = resList[i].publishDate;
+                        tmpDate2 = resList[i].journalYear;
+                        resList[i].publishDate = dateFormat(tmpDate1);
+                        resList[i].journalYear = dateFormat(tmpDate2);
                     }
                     app.table.paperTable.entity.data = resList;
                     app.table.paperTable.entity.params.total = d.data.total;

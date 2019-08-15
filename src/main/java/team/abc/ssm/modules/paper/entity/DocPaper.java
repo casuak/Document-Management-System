@@ -120,5 +120,15 @@ public class DocPaper extends DataEntity<DocPaper> {
     /**
      * 论文分区
      */
-    private String docPartition;
+    private String journalDivision;
+
+    /**
+     * 论文分区
+     */
+    private Date journalYear;
+
+    /**
+     * 影响因子
+     */
+    private Double impactFactor;
 }
