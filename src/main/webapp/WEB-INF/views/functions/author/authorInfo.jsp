@@ -162,7 +162,7 @@
                     <el-table-column
                             prop="firstAuthorType"
                             align="center"
-                            width="160"
+                            width="80"
                             label="第一作者类型">
                         <template slot-scope="{row}">
                             <template v-if="row.firstAuthorType == 'student'">
@@ -191,7 +191,7 @@
                     <el-table-column
                             prop="secondAuthorType"
                             align="center"
-                            width="160"
+                            width="80"
                             label="第二作者类型">
                         <template slot-scope="{row}">
                             <template v-if="row.secondAuthorType == 'student'">
@@ -207,7 +207,7 @@
                     </el-table-column>
                     <el-table-column
                             prop="storeNum"
-                            width="160"
+                            width="230"
                             align="center"
                             label="入藏号">
                     </el-table-column>

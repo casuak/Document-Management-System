@@ -611,8 +611,8 @@
                 //4. 统计结果导出成excel格式
                 exportStatisticResult() {
                     let app = this;
-                    console.log(app.doc.paperResult);
-                    console.log(app.doc.patentResult);
+                    /*console.log(app.doc.paperResult);
+                    console.log(app.doc.patentResult);*/
                     window.location.href = "/api/doc/statistic/exportStatisticExcel?" +
                         "studentPaper=" + app.doc.paperResult.studentDocNum +
                         "&teacherPaper=" + app.doc.paperResult.teacherDocNum +

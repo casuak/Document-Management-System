@@ -85,7 +85,6 @@ public class DocPaperService{
     public List<DocPaper> selectAllPaperByPage(StatisticCondition statisticCondition) {
         return docPaperMapper.selectPapersWithCondition(statisticCondition);
     }
-
     public int selectAllPaperNum(StatisticCondition statisticCondition) {
         return docPaperMapper.selectPaperNumWithCondition(statisticCondition);
     }

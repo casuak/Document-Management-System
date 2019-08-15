@@ -486,7 +486,9 @@
                 </if>
             </where>
         ) as res
-        limit #{page.pageStart} ,#{page.pageSize}
+        <if test="page != null">
+            limit #{page.pageStart} ,#{page.pageSize}
+        </if>
     </select>
 
     <select id="selectPaperNumWithCondition" resultType="int">

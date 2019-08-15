@@ -1,11 +1,13 @@
 package team.abc.ssm.modules.paper.api;
 
+import org.apache.http.client.utils.DateUtils;
+import org.apache.poi.hssf.usermodel.*;
+import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import team.abc.ssm.common.persistence.Page;
 import team.abc.ssm.common.web.BaseApi;
 import team.abc.ssm.common.web.MsgType;
@@ -14,6 +16,13 @@ import team.abc.ssm.modules.paper.entity.DocPaper;
 import team.abc.ssm.modules.paper.service.DocPaperService;
 import team.abc.ssm.modules.sys.service.DictService;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -85,5 +94,183 @@ public class DocPaperApi extends BaseApi {
         paperResPage.setTotal(paperNum);
 
         return retMsg.Set(MsgType.SUCCESS,paperResPage);
+    }
+
+    /**
+     * 导出论文查询的结果
+     *
+     * @author zm
+     * @return void        
+     * @date 2019/8/15 23:06
+     **/
+    @RequestMapping(value = "/exportPaperList",method = RequestMethod.GET)
+    public void exportPaperList(
+            @RequestParam("paperName") String paperName,
+            @RequestParam("paperType") String paperType,
+            @RequestParam("subject") String subject,
+            @RequestParam("institute") String institute,
+            @RequestParam("journalDivision") String journalDivision,
+            @RequestParam("impactFactorMin") Double impactFactorMin,
+            @RequestParam("impactFactorMax") Double impactFactorMax,
+            @RequestParam("firstAuthorWorkId") String firstAuthorWorkId,
+            @RequestParam("secondAuthorWorkId") String secondAuthorWorkId,
+            @RequestParam("issn") String issn,
+            @RequestParam("startDate") String startDate,
+            @RequestParam("endDate") String endDate,
+            HttpServletRequest httpServletRequest,
+            HttpServletResponse httpServletResponse
+    ) throws IOException, ParseException {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+        StatisticCondition statisticCondition = new StatisticCondition();
+
+        //1.设置待导出的论文List的状态为：已完成
+        statisticCondition.setStatus("3");
+        //2.reset一下论文的种类
+        statisticCondition.setPaperType(dictService.getDictNameEnById(paperType));
+        //3.设置其他的查询筛选条件
+        statisticCondition.setPaperName(paperName);
+        statisticCondition.setSubject(subject);
+        statisticCondition.setInstitute(institute);
+        statisticCondition.setJournalDivision(journalDivision);
+        statisticCondition.setImpactFactorMin(impactFactorMin);
+        statisticCondition.setImpactFactorMax(impactFactorMax);
+        statisticCondition.setFirstAuthorWorkId(firstAuthorWorkId);
+        statisticCondition.setSecondAuthorWorkId(secondAuthorWorkId);
+        statisticCondition.setIssn(issn);
+        statisticCondition.setStartDate(sdf.parse(startDate));
+        statisticCondition.setEndDate(sdf.parse(endDate));
+        //4.直接查询符合条件的paperList(statisticCondition中不含page，所以不会有分页的数目限制)
+        List<DocPaper> paperList = docPaperService.selectAllPaperByPage(statisticCondition);
+
+        //5.导出
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFSheet sheet = wb.createSheet("论文统计结果");
+        String[] excelHeader = {
+                "序号", "论文名称", "ISSN", "分区","影响因子","一级学科","所属学院","论文种类", "出版日期",
+                "第一作者","第一作者工号","第一作者类型","第二作者","第二作者工号","第二作者类型","入藏号","作者列表"
+        };
+        // 单元格列宽
+        int[] excelHeaderWidth = {
+                80, 250, 120, 100, 100, 250, 200, 120,200,
+                120, 150, 120,120,150,120,300,400
+        };
+
+        HSSFRow row = sheet.createRow((int) 0);
+        HSSFCellStyle style = wb.createCellStyle();
+        // 设置居中样式
+        style.setAlignment(HSSFCellStyle.ALIGN_CENTER); // 水平居中
+        style.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER); // 垂直居中
+        // 设置合计样式
+        HSSFCellStyle style1 = wb.createCellStyle();
+        Font font = wb.createFont();
+        font.setColor(HSSFColor.BLACK.index);
+        font.setBoldweight(Font.BOLDWEIGHT_BOLD); // 粗体
+        font.setFontHeightInPoints((short)12); //设置字体大小
+        style1.setFont(font);
+        style1.setAlignment(HSSFCellStyle.ALIGN_CENTER); // 水平居中
+        style1.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER); // 垂直居中
+        // 合并单元格
+       /* sheet.addMergedRegion(new CellRangeAddress(0, 1, 0, 0));
+        sheet.addMergedRegion(new CellRangeAddress(0, 1, 1, 1));
+        sheet.addMergedRegion(new CellRangeAddress(0, 1, 2, 2));
+        sheet.addMergedRegion(new CellRangeAddress(0, 1, 3, 3));
+        sheet.addMergedRegion(new CellRangeAddress(0, 1, 4, 4));
+        sheet.addMergedRegion(new CellRangeAddress(0, 1, 5, 5));*/
+
+        // 设置列宽度（像素）
+        for (int i = 0; i < excelHeaderWidth.length; i++) {
+            sheet.setColumnWidth(i, 32 * excelHeaderWidth[i]);
+        }
+        // 添加表格头
+        for (int i = 0; i < excelHeader.length; i++) {
+            HSSFCell cell = row.createCell(i);
+            cell.setCellValue(excelHeader[i]);
+            cell.setCellStyle(style1);
+        }
+        row = sheet.createRow((int) 1);
+
+        for (int i = 0; i < paperList.size(); i++) {
+            row = sheet.createRow(i+1);
+            int cellNum = 0;
+            //第一列存的是序号
+            HSSFCell cell = row.createCell(cellNum++);
+            cell.setCellValue(i);
+            cell.setCellStyle(style);
+            //第2列：论文名称
+            cell = row.createCell(cellNum++);
+            cell.setCellValue(paperList.get(i).getPaperName());
+            cell.setCellStyle(style);
+            //第3列：issn
+            cell = row.createCell(cellNum++);
+            cell.setCellValue(paperList.get(i).getIssn());
+            cell.setCellStyle(style);
+            //第4列：分区
+            cell = row.createCell(cellNum++);
+            cell.setCellValue(paperList.get(i).getJournalDivision());
+            cell.setCellStyle(style);
+            //第5列：影响因子
+            cell = row.createCell(cellNum++);
+            cell.setCellValue(paperList.get(i).getPaperName());
+            cell.setCellStyle(style);
+            //第6列：一级学科
+            cell = row.createCell(cellNum++);
+            cell.setCellValue(paperList.get(i).getSubject());
+            cell.setCellStyle(style);
+            //第7列：所属学院
+            cell = row.createCell(cellNum++);
+            cell.setCellValue(paperList.get(i).getDanweiCn());
+            cell.setCellStyle(style);
+            //第8列：论文种类
+            cell = row.createCell(cellNum++);
+            cell.setCellValue(paperList.get(i).getDocType());
+            cell.setCellStyle(style);
+            //第9列：出版日期
+            cell = row.createCell(cellNum++);
+            cell.setCellValue(paperList.get(i).getPublishDate());
+            cell.setCellStyle(style);
+            //第10列：第一作者
+            cell = row.createCell(cellNum++);
+            cell.setCellValue(paperList.get(i).getFirstAuthorName());
+            cell.setCellStyle(style);
+            //第11列：第一作者工号
+            cell = row.createCell(cellNum++);
+            cell.setCellValue(paperList.get(i).getFirstAuthorId());
+            cell.setCellStyle(style);
+            //第12列：第一作者类型
+            cell = row.createCell(cellNum++);
+            cell.setCellValue(paperList.get(i).getFirstAuthorType());
+            cell.setCellStyle(style);
+            //第13列：第二作者
+            cell = row.createCell(cellNum++);
+            cell.setCellValue(paperList.get(i).getSecondAuthorName());
+            cell.setCellStyle(style);
+            //第14列：第二作者工号
+            cell = row.createCell(cellNum++);
+            cell.setCellValue(paperList.get(i).getSecondAuthorId());
+            cell.setCellStyle(style);
+            //第15列：第二作者类型
+            cell = row.createCell(cellNum++);
+            cell.setCellValue(paperList.get(i).getSecondAuthorType());
+            cell.setCellStyle(style);
+            //第16列：入藏号
+            cell = row.createCell(cellNum++);
+            cell.setCellValue(paperList.get(i).getStoreNum());
+            cell.setCellStyle(style);
+            //第17列：作者列表
+            cell = row.createCell(cellNum++);
+            cell.setCellValue(paperList.get(i).getAuthorList());
+            cell.setCellStyle(style);
+        }
+
+        httpServletResponse.setContentType("application/vnd.ms-excel");
+        //注意此处文件名称如果想使用中文的话，要转码new String( "中文".getBytes( "gb2312" ), "ISO8859-1" )
+        httpServletResponse.setHeader("Content-disposition",
+                "attachment;filename=" + new String( "论文统计结果".getBytes( "gb2312" ), "ISO8859-1" )
+                        + DateUtils.formatDate(new Date(), "yyyyMMddHHmmss") + ".xls");
+        OutputStream ouputStream = httpServletResponse.getOutputStream();
+        wb.write(ouputStream);
+        ouputStream.flush();
+        ouputStream.close();
     }
 }
