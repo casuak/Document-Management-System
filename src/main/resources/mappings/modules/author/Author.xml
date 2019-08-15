@@ -47,6 +47,9 @@
         from sys_user a
             left join docmanager.sys_user b on a.tutor_work_id = b.work_id
         where a.del_flag != 1
+        <if test="realName != null and realName != ''">
+            and a.real_name = #{realName,jdbcType=VARCHAR}
+        </if>
         <if test="workId != '' and workId != null">
             and a.work_id = #{workId}
         </if>
@@ -107,6 +110,9 @@
         select count(*)
         from sys_user
         where del_flag != -1
+        <if test="realName != null and realName != ''">
+            and real_name = #{realName,jdbcType=VARCHAR}
+        </if>
         <if test="workId != '' and workId != null">
             and work_id = #{workId}
         </if>
