@@ -62,7 +62,6 @@
         </el-table-column>
         <el-table-column width="50"></el-table-column>
     </el-table>
-    <span></span>
     <%-- 分页 --%>
     <el-pagination style="text-align: center;margin: 8px auto;"
                    @size-change="onPageSizeChange"
