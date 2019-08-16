@@ -331,8 +331,13 @@
                         <template v-else-if="row.secondAuthorType == 'teacher'">
                             导师
                         </template>
-                        <template v-else>
+                        <template v-else-if="row.secondAuthorType == 'doctor'">
                             博士后
+                        </template>
+                        <template v-else="">
+                            <el-button type="danger" size="mini" style="position:relative;bottom: 1px;margin-left: 6px;">
+                                <span>不明</span>
+                            </el-button>
                         </template>
                     </template>
                 </el-table-column>

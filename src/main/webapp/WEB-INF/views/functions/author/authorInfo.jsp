@@ -335,7 +335,6 @@
                             label="第一作者工号">
                     </el-table-column>
                     <el-table-column
-                            prop="firstAuthorType"
                             align="center"
                             width="160"
                             label="第一作者类型">
@@ -391,12 +390,12 @@
                                       key="keySecondAuthorType1">
                                 <template
                                         key="keySecondAuthorType2"
-                                        v-if="row.firstAuthorType == 'student'">
+                                        v-if="row.secondAuthorType == 'student'">
                                     学生
                                 </template>
                                 <template
                                         key="keySecondAuthorType3"
-                                        v-else-if="row.firstAuthorType == 'teacher'">
+                                        v-else-if="row.secondAuthorType == 'teacher'">
                                     导师
                                 </template>
                                 <template
@@ -404,7 +403,6 @@
                                         v-else>
                                     博士后
                                 </template>
-                                {{row.secondAuthorType}}
                             </template>
                         </template>
                     </el-table-column>
