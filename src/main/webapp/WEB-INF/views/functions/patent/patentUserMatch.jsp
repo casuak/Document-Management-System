@@ -153,7 +153,7 @@
             <template slot-scope="{row}">
                 <template v-if="row.institute != null&&row.institute != ''" key="key3">
                    <span>
-                       <span @click="openInstituteSelect(row)">
+                       <span>
                            {{row.institute}}
                        </span>
                        <i-button style="height: 25px;position:relative;left: 4px;"

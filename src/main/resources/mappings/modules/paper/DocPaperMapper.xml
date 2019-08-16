@@ -30,7 +30,9 @@
         <result column="first_author_type" jdbcType="VARCHAR" property="firstAuthorType"/>
         <result column="second_author_type" jdbcType="VARCHAR" property="secondAuthorType"/>
         <result column="paper_subject" jdbcType="VARCHAR" property="subject"/>
-        <result column="doc_partition" jdbcType="VARCHAR" property="docPartition"/>
+        <result column="journal_division" jdbcType="VARCHAR" property="journalDivision"/>
+        <result column="impact_factor" jdbcType="DOUBLE" property="impactFactor"/>
+        <result column="journal_year" jdbcType="DATE" property="journalYear"/>
     </resultMap>
     <sql id="Base_Column_List">
         <!--@mbg.generated-->
@@ -335,12 +337,15 @@
         b.user_type as first_author_type,
         c.user_type as second_author_type,
         b.real_name as first_author_name,
-        c.real_name as second_author_name
+        c.real_name as second_author_name,
+        dj.impact_factor as impact_factor,
+        dj.journal_division as journal_division,
+        dj.journal_year as journal_year
         from (
-        select * from (
-        select * from docmanager.doc_paper
-        where first_author_id = #{theAuthorWorkId,jdbcType=VARCHAR}
-        or second_author_id = #{theAuthorWorkId,jdbcType=VARCHAR}
+            select * from (
+                select * from docmanager.doc_paper
+                where first_author_id = #{theAuthorWorkId,jdbcType=VARCHAR}
+                or second_author_id = #{theAuthorWorkId,jdbcType=VARCHAR}
         ) as tmp
         <where>
             tmp.status = '3'
@@ -352,6 +357,7 @@
         ) as a
         left join sys_user b on b.work_id = a.first_author_id
         left join sys_user c on c.work_id = a.second_author_id
+        left join docmanager.doc_journal dj on a.ISSN = dj.issn
     </select>
 
     <select id="selectTheAuthorPaperNum" resultType="int">
@@ -362,6 +368,7 @@
         where first_author_id = #{authorWorkId,jdbcType=VARCHAR}
         or second_author_id = #{authorWorkId,jdbcType=VARCHAR}
     ) as tmp
+    left join docmanager.doc_journal dj on tmp.ISSN = dj.issn
     where tmp.status = '3'
     </select>
 
@@ -427,7 +434,8 @@
             c.user_type as second_author_type
             from (
                 select dp.*,
-                j.journal_division as doc_partition
+                j.journal_division as journal_division,
+                j.impact_factor as impact_factor
                 from (
                     select*
                     from doc_paper
@@ -478,7 +486,9 @@
                 </if>
             </where>
         ) as res
-        limit #{page.pageStart} ,#{page.pageSize}
+        <if test="page != null">
+            limit #{page.pageStart} ,#{page.pageSize}
+        </if>
     </select>
 
     <select id="selectPaperNumWithCondition" resultType="int">
@@ -490,7 +500,7 @@
             c.user_type as second_author_type
             from (
                 select dp.*,
-                j.journal_division as doc_partition
+                j.journal_division as journal_division
                 from (
                     select*
                     from doc_paper

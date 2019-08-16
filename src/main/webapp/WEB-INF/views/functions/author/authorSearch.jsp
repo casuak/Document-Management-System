@@ -105,6 +105,16 @@
                         </div>
                     </div>
                     <div class="commonInputSection">
+                        <span class="inputSpanText">作者姓名: </span>
+                        <div class="commonInput">
+                            <el-input
+                                    placeholder="输入作者真实姓名"
+                                    v-model="optionView.commonSelect.realName"
+                                    clearable>
+                            </el-input>
+                        </div>
+                    </div>
+                    <div class="commonInputSection">
                         <span class="inputSpanText">作者工号: </span>
                         <div class="commonInput">
                             <el-input
@@ -114,13 +124,15 @@
                             </el-input>
                         </div>
                     </div>
+                </row>
+                <row>
                     <div class="commonInputSection">
                         <span class="inputSpanText">一级学科: </span>
                         <div class="commonInput">
                             <el-select v-model="optionView.commonSelect.subject"
                                        filterable
                                        clearable
-                                       placeholder="选择所属学科">
+                                       placeholder="选择一级学科">
                                 <el-option
                                         v-for="item in optionValue.subjectOption"
                                         :key="item.value"
@@ -184,7 +196,7 @@
                             header-align="center"
                             align="center"
                             fixed="left"
-                            width="150"
+                            width="130"
                             show-overflow-tooltip
                             label="作者姓名">
                     </el-table-column>
@@ -199,6 +211,7 @@
                     <el-table-column
                             prop="userType"
                             header-align="center"
+                            fixed="left"
                             align="center"
                             width="80"
                             label="作者身份">
@@ -220,7 +233,7 @@
                             align="center"
                             sortable
                             width="195"
-                            label="所属学科">
+                            label="一级学科">
                     </el-table-column>
                     <el-table-column
                             prop="school"
@@ -494,7 +507,8 @@
             optionView: {
                 commonSelect: {
                     show: true,
-                    userType: "",                             //作者工号
+                    userType: "",
+                    realName:"",
                     workId: "",
                     publishDate: "",
                     subject: "",
@@ -708,6 +722,8 @@
         let author = {
             //待查作者类型
             userType: app.optionView.commonSelect.userType,
+            //待查作者的真实姓名
+            realName: app.optionView.commonSelect.realName,
             //待查作者工号
             workId: app.optionView.commonSelect.workId,
             //待查作者学科名

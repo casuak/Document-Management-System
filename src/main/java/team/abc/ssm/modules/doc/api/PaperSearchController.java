@@ -152,7 +152,7 @@ public class PaperSearchController {
             @RequestParam(value = "startDate") String startDate,
             @RequestParam(value = "endDate") String endDate,
             @RequestParam(value = "paperType") String paperType,
-            @RequestParam(value = "paperPartition") String paperPartition,
+            @RequestParam(value = "journalDivision") String journalDivision,
             @RequestParam(value = "impactFactorMin") Double impactFactorMin,
             @RequestParam(value = "impactFactorMax") Double impactFactorMax,
             ModelAndView modelAndView
@@ -186,7 +186,7 @@ public class PaperSearchController {
         modelAndView.addObject("startDate",startDate);
         modelAndView.addObject("endDate",endDate);
         modelAndView.addObject("paperType",paperType);
-        modelAndView.addObject("paperPartition",paperPartition);
+        modelAndView.addObject("journalDivision",journalDivision);
         modelAndView.addObject("impactFactorMin",impactFactorMin);
         modelAndView.addObject("impactFactorMax",impactFactorMax);
 

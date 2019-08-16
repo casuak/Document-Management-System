@@ -164,7 +164,7 @@
                     <div class="commonInputSection">
                         <span class="inputSpanText">论文分区: </span>
                         <div class="commonInput">
-                            <el-select v-model="optionView.paper.paperPartition" clearable placeholder="选择论文分区">
+                            <el-select v-model="optionView.paper.journalDivision" clearable placeholder="选择论文分区">
                                 <el-option
                                         v-for="item in optionValue.partitionOption"
                                         :key="item.value"
@@ -222,7 +222,7 @@
                                     @click="selectPaperListByPage()">搜索查询</el-button>
                     </span>
 
-                    <div class="commonInputSection">
+                    <div class="commonInputSection" style="width: 330px">
                         <span class="inputSpanText">影响因子: </span>
                         <div class="commonInput">
                             <el-input-number
@@ -231,7 +231,7 @@
                                     :min="0"
                                     :step="0.001"
                                     controls-position="right"
-                                    style="width: 106px;margin-left: 10px"
+                                    style="width: 120px;margin-left: 10px"
                                     placeholder="最低影响因子">
                             </el-input-number>
                             <el-input-number
@@ -240,16 +240,22 @@
                                     :min="0.001"
                                     :step="0.001"
                                     controls-position="right"
-                                    style="width: 106px;margin-left: 10px"
+                                    style="width: 120px;margin-left: 10px"
                                     placeholder="最高影响因子">
                             </el-input-number>
                         </div>
                     </div>
+
+                    <span class="selectText">
+                         <el-button type="danger"
+                                    size="small"
+                                    :disabled="table.paperTable.entity.loading"
+                                    @click="exportPaperList()">导出结果</el-button>
+                    </span>
                 </row>
             </div>
         </el-header>
 
-        <%--1.论文Tab--%>
         <el-main style="padding: 10px 0;">
             <%-- entity表格 --%>
             <el-table :data="table.paperTable.entity.data"
@@ -263,7 +269,7 @@
                 <el-table-column type="selection" width="40"></el-table-column>
                 <el-table-column
                         prop="paperName"
-                        width="250"
+                        width="200"
                         align="center"
                         fixed="left"
                         label="论文名"
@@ -282,28 +288,52 @@
                         width="100"
                         label="分区">
                     <template slot-scope="{row}">
-                        <template v-if="row.docPartition == null || row.docPartition == ''">
-                            <el-button type="danger" size="mini" style="position:relative;bottom: 1px;margin-left: 6px;">
+                        <template v-if="row.journalDivision == null || row.journalDivision == ''">
+                            <el-button type="danger" size="mini"
+                                       style="position:relative;bottom: 1px;margin-left: 6px;">
                                 <span>暂无分区</span>
                             </el-button>
                         </template>
                         <template v-else>
-                            {{row.docPartition}}
+                            {{row.journalDivision}}
                         </template>
                     </template>
                 </el-table-column>
-
+                <el-table-column
+                        align="center"
+                        fixed="left"
+                        width="100"
+                        label="影响因子">
+                    <template slot-scope="{row}">
+                        <template v-if="row.impactFactor == null || row.impactFactor == ''">
+                            <el-button type="danger" size="mini"
+                                       style="position:relative;bottom: 1px;margin-left: 6px;">
+                                <span>暂无影响因子</span>
+                            </el-button>
+                        </template>
+                        <template v-else>
+                            {{row.impactFactor}}
+                        </template>
+                    </template>
+                </el-table-column>
+                <el-table-column
+                        prop="subject"
+                        align="center"
+                        width="200"
+                        label="一级学科">
+                </el-table-column>
                 <el-table-column
                         prop="danweiCn"
                         align="center"
-                        width="160"
+                        width="180"
                         label="所属学院">
                 </el-table-column>
                 <el-table-column
                         prop="docType"
                         align="center"
-                        width="160"
-                        label="论文种类">
+                        width="140"
+                        label="论文种类"
+                        show-overflow-tooltip>
                 </el-table-column>
                 <el-table-column
                         prop="publishDate"
@@ -405,9 +435,7 @@
                            :total="table.paperTable.entity.params.total"
                            layout="total, sizes, prev, pager, next, jumper">
             </el-pagination>
-
         </el-main>
-
     </el-container>
 </div>
 
@@ -476,7 +504,7 @@
                     secondAuthorWorkId: "",
                     ISSN: "",
                     paperType: "",
-                    paperPartition: "",                   //论文分区
+                    journalDivision: "",                   //论文分区
                     impactFactorMin: null,
                     impactFactorMax: null
                     /*2019-08-09 change*/
@@ -487,14 +515,15 @@
                     authorType: "",
                     subject: "",
                     institute: "",
-                    publishDate: ['',''],
+                    publishDate: ['', ''],
                 }
             },
             fullScreenLoading: false,
-            urls:{
+            urls: {
                 paper: {
                     selectAllPaperByPage: '/api/paper/selectAllPaperByPage',
                     deletePaperListByIds: '/api/doc/paper/deleteListByIds',
+                    exportPaperList: '/api/doc/paper/exportPaperList'
                 },
             },
             //表格
@@ -531,29 +560,28 @@
                 this.doc.isIndeterminate = checkedCount > 0 && checkedCount < 3;
                 optionViewSelect();
             },
-
             //按页条件查询论文数据
             selectPaperListByPage: function () {
                 let app = this;
 
-                if (app.optionView.commonSelect.publishDate == null){
-                    app.optionView.commonSelect.publishDate = ['',''];
+                if (app.optionView.commonSelect.publishDate == null) {
+                    app.optionView.commonSelect.publishDate = ['', ''];
                 }
 
                 let data = {
                     //筛选条件
                     subject: app.optionView.commonSelect.subject,
-                    institute:app.optionView.commonSelect.institute,
-                    startDate:app.optionView.commonSelect.publishDate[0],
-                    endDate:app.optionView.commonSelect.publishDate[1],
-                    paperName:app.optionView.paper.paperName,
-                    paperType:app.optionView.paper.paperType,
-                    journalDivision:app.optionView.paper.paperPartition,        //分区
-                    impactFactorMin:app.optionView.paper.impactFactorMin,
-                    impactFactorMax:app.optionView.paper.impactFactorMax,
-                    firstAuthorWorkId:app.optionView.paper.firstAuthorWorkId,
-                    secondAuthorWorkId:app.optionView.paper.secondAuthorWorkId,
-                    issn:app.optionView.paper.ISSN,
+                    institute: app.optionView.commonSelect.institute,
+                    startDate: app.optionView.commonSelect.publishDate[0],
+                    endDate: app.optionView.commonSelect.publishDate[1],
+                    paperName: app.optionView.paper.paperName,
+                    paperType: app.optionView.paper.paperType,
+                    journalDivision: app.optionView.paper.journalDivision,        //分区
+                    impactFactorMin: app.optionView.paper.impactFactorMin,
+                    impactFactorMax: app.optionView.paper.impactFactorMax,
+                    firstAuthorWorkId: app.optionView.paper.firstAuthorWorkId,
+                    secondAuthorWorkId: app.optionView.paper.secondAuthorWorkId,
+                    issn: app.optionView.paper.ISSN,
 
                     page: app.table.paperTable.entity.params                    //分页
                 };
@@ -613,10 +641,65 @@
                 this.table.paperTable.entity.params.pageIndex = newIndex;
                 this.refreshTable_paper();
             },
+            //导出当前的所有的论文数据
+            exportPaperList: function () {
+                window.parent.app.$confirm('确认导出当前条件下的所有论文', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    let app = this;
+                    let data = {
+                        //筛选条件
+                        subject: app.optionView.commonSelect.subject,
+                        institute: app.optionView.commonSelect.institute,
+                        startDate: app.optionView.commonSelect.publishDate[0],
+                        endDate: app.optionView.commonSelect.publishDate[1],
+                        paperName: app.optionView.paper.paperName,
+                        paperType: app.optionView.paper.paperType,
+                        journalDivision: app.optionView.paper.journalDivision,        //分区
+                        impactFactorMin: app.optionView.paper.impactFactorMin,
+                        impactFactorMax: app.optionView.paper.impactFactorMax,
+                        firstAuthorWorkId: app.optionView.paper.firstAuthorWorkId,
+                        secondAuthorWorkId: app.optionView.paper.secondAuthorWorkId,
+                        issn: app.optionView.paper.ISSN,
+                    };
 
-
+                    window.location.href = "/api/paper/exportPaperList?" +
+                        "paperName=" + data.paperName +
+                        "&paperType=" + data.paperType +
+                        "&subject=" + data.subject +
+                        "&institute=" + data.institute +
+                        "&journalDivision=" + data.journalDivision +
+                        "&impactFactorMin=" + data.impactFactorMin +
+                        "&impactFactorMax=" + data.impactFactorMax +
+                        "&firstAuthorWorkId=" + data.firstAuthorWorkId +
+                        "&secondAuthorWorkId=" + data.secondAuthorWorkId +
+                        "&issn=" + data.issn +
+                        "&startDate=" + dateToString(data.startDate) +
+                        "&endDate=" + dateToString(data.endDate);
+                }).catch(() => {
+                    window.parent.app.showMessage('已取消导出', 'warning');
+                });
+            }
         }
     });
+
+    function dateToString(date) {
+        console.log(date);
+        console.log(typeof (date));
+        console.log(date.getFullYear);
+        let year = date.getFullYear();
+        let month = (date.getMonth() + 1).toString();
+        let day = (date.getDate()).toString();
+        if (month.length === 1) {
+            month = "0" + month;
+        }
+        if (day.length === 1) {
+            day = "0" + day;
+        }
+        return year + "-" + month + "-" + day;
+    }
 
     function add0(m) {
         return m < 10 ? '0' + m : m
@@ -719,14 +802,14 @@
         app.selectPaperListByPage();
     }
 
+    //初始化页面接收初始参数
     window.onload = function () {
-        //let paperPageParams = ${paperPageParams};
         app.optionView.commonSelect.subject = '${subject}';
         app.optionView.commonSelect.institute = '${institute}';
         app.optionView.commonSelect.publishDate[0] = new Date(Date.parse('${startDate}'));
         app.optionView.commonSelect.publishDate[1] = new Date(Date.parse('${endDate}'));
         app.optionView.paper.paperType = '${paperType}';               //这里是type的id
-        app.optionView.paper.paperPartition = '${paperPartition}';
+        app.optionView.paper.paperPartition = '${journalDivision}';
         app.optionView.paper.impactFactorMin = ${impactFactorMin};
         app.optionView.paper.impactFactorMax = ${impactFactorMax};
 

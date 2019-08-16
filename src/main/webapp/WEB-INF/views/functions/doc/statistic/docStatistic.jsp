@@ -172,9 +172,9 @@
                     <div class="commonInputSection">
                         <span class="inputSpanText">科睿唯安: </span>
                         <div class="commonInput">
-                            <el-select v-model="optionView.paper.partition" clearable placeholder="选择论文分区   ">
+                            <el-select v-model="optionView.paper.journalDivision" clearable placeholder="选择论文分区">
                                 <el-option
-                                        v-for="item in optionValue.partitionOption"
+                                        v-for="item in optionValue.journalDivisionOption"
                                         :key="item.value"
                                         :label="item.label"
                                         :value="item.value">
@@ -272,9 +272,9 @@
                                :disabled="table.commonTable.loading"
                                @click="exportStatisticResult()">导出结果
                     </el-button>
-                    <el-button type="success" size="medium"
+                   <%-- <el-button type="success" size="medium"
                                @click="viewStatisticsDetail({'type':'论文'})">TEST
-                    </el-button>
+                    </el-button>--%>
                 </div>
             </row>
 
@@ -386,7 +386,7 @@
                 },
                 //条件输入(选择)框的候选项：
                 optionValue: {
-                    partitionOption: [
+                    journalDivisionOption: [
                         {
                             label: "Q1",
                             value: "Q1"
@@ -449,7 +449,7 @@
                         paperLevel: "",                                     //论文级别
 
                         DOI: "",
-                        partition: "",
+                        journalDivision: "",
                     },
                     patent: {
                         show: false,
@@ -506,7 +506,7 @@
                             startDate: app.optionView.commonSelect.publishDate[0],
                             endDate: app.optionView.commonSelect.publishDate[1],
                             paperType: app.optionView.paper.paperType,
-                            paperPartition: app.optionView.paper.partition,
+                            journalDivision: app.optionView.paper.journalDivision,
                             impactFactorMin: app.optionView.paper.impactFactorMin,
                             impactFactorMax: app.optionView.paper.impactFactorMax
                            /* paperName: app.optionView.paper.paperName,
@@ -545,7 +545,7 @@
                         paperType: app.optionView.paper.paperType,
                         startDate: app.optionView.commonSelect.publishDate[0],
                         endDate: app.optionView.commonSelect.publishDate[1],
-                        journalDivision: app.optionView.paper.partition,
+                        journalDivision: app.optionView.paper.journalDivision,
                         impactFactorMin: app.optionView.paper.impactFactorMin,
                         impactFactorMax: app.optionView.paper.impactFactorMax,
                         patentType: app.optionView.patent.patentType
@@ -580,39 +580,6 @@
 
                             app.table.commonTable.loading = false;
                         }, null)
-                    /*version1.0_2019/4/16*/
-                    /*let params = {
-                        subject: this.optionView.commonSelect.subject,
-                        organization: this.optionView.commonSelect.organization,
-                        startDate: this.optionView.commonSelect.publishDate[0],
-                        endDate: this.optionView.commonSelect.publishDate[1],
-                        paperType: this.optionView.paper.paperType,
-                        partition: this.optionView.paper.partition,
-                        impactFactor: this.optionView.paper.impactFactor,
-                        patentType: this.optionView.patent.patentType
-                    };
-
-                    console.log("统计条件");
-                    console.log(params);
-
-                    this.table.commonTable.loading = true;
-
-                    ajaxPost(
-                        "/doc/statisticalSearch",
-                        params,
-                        function success(res) {
-                            console.log("统计结果查询");
-                            console.log(res.data);
-                            app.table.commonTable.data = [];
-                            app.table.commonTable.data.push(res.data.paper);
-                            app.table.commonTable.data.push(res.data.patent);
-                            app.table.commonTable.loading = false;
-                        },
-                        function error(res) {
-                            console.log(res);
-                            app.table.commonTable.loading = false;
-                        }
-                    );*/
                 },
 
                 getSummaries(param) {
@@ -644,8 +611,8 @@
                 //4. 统计结果导出成excel格式
                 exportStatisticResult() {
                     let app = this;
-                    console.log(app.doc.paperResult);
-                    console.log(app.doc.patentResult);
+                    /*console.log(app.doc.paperResult);
+                    console.log(app.doc.patentResult);*/
                     window.location.href = "/api/doc/statistic/exportStatisticExcel?" +
                         "studentPaper=" + app.doc.paperResult.studentDocNum +
                         "&teacherPaper=" + app.doc.paperResult.teacherDocNum +
