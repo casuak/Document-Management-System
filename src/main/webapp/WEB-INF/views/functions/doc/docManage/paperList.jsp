@@ -222,7 +222,7 @@
                                     @click="selectPaperListByPage()">搜索查询</el-button>
                     </span>
 
-                    <div class="commonInputSection">
+                    <div class="commonInputSection" style="width: 330px">
                         <span class="inputSpanText">影响因子: </span>
                         <div class="commonInput">
                             <el-input-number
@@ -231,7 +231,7 @@
                                     :min="0"
                                     :step="0.001"
                                     controls-position="right"
-                                    style="width: 106px;margin-left: 10px"
+                                    style="width: 120px;margin-left: 10px"
                                     placeholder="最低影响因子">
                             </el-input-number>
                             <el-input-number
@@ -240,7 +240,7 @@
                                     :min="0.001"
                                     :step="0.001"
                                     controls-position="right"
-                                    style="width: 106px;margin-left: 10px"
+                                    style="width: 120px;margin-left: 10px"
                                     placeholder="最高影响因子">
                             </el-input-number>
                         </div>
@@ -249,7 +249,7 @@
                     <span class="selectText">
                          <el-button type="danger"
                                     size="small"
-<%--                                    :disabled="table.paperTable.entity.loading"--%>
+                                    :disabled="table.paperTable.entity.loading"
                                     @click="exportPaperList()">导出结果</el-button>
                     </span>
                 </row>
@@ -643,41 +643,52 @@
             },
             //导出当前的所有的论文数据
             exportPaperList: function () {
-                let app = this;
-                let data = {
-                    //筛选条件
-                    subject: app.optionView.commonSelect.subject,
-                    institute: app.optionView.commonSelect.institute,
-                    startDate: app.optionView.commonSelect.publishDate[0],
-                    endDate: app.optionView.commonSelect.publishDate[1],
-                    paperName: app.optionView.paper.paperName,
-                    paperType: app.optionView.paper.paperType,
-                    journalDivision: app.optionView.paper.journalDivision,        //分区
-                    impactFactorMin: app.optionView.paper.impactFactorMin,
-                    impactFactorMax: app.optionView.paper.impactFactorMax,
-                    firstAuthorWorkId: app.optionView.paper.firstAuthorWorkId,
-                    secondAuthorWorkId: app.optionView.paper.secondAuthorWorkId,
-                    issn: app.optionView.paper.ISSN,
-                };
+                window.parent.app.$confirm('确认导出当前条件下的所有论文', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    let app = this;
+                    let data = {
+                        //筛选条件
+                        subject: app.optionView.commonSelect.subject,
+                        institute: app.optionView.commonSelect.institute,
+                        startDate: app.optionView.commonSelect.publishDate[0],
+                        endDate: app.optionView.commonSelect.publishDate[1],
+                        paperName: app.optionView.paper.paperName,
+                        paperType: app.optionView.paper.paperType,
+                        journalDivision: app.optionView.paper.journalDivision,        //分区
+                        impactFactorMin: app.optionView.paper.impactFactorMin,
+                        impactFactorMax: app.optionView.paper.impactFactorMax,
+                        firstAuthorWorkId: app.optionView.paper.firstAuthorWorkId,
+                        secondAuthorWorkId: app.optionView.paper.secondAuthorWorkId,
+                        issn: app.optionView.paper.ISSN,
+                    };
 
-                window.location.href = "/api/paper/exportPaperList?" +
-                    "paperName=" + data.paperName +
-                    "&paperType=" + data.paperType +
-                    "&subject=" + data.subject +
-                    "&institute=" + data.institute +
-                    "&journalDivision=" + data.journalDivision +
-                    "&impactFactorMin=" + data.impactFactorMin +
-                    "&impactFactorMax=" + data.impactFactorMax +
-                    "&firstAuthorWorkId=" + data.firstAuthorWorkId +
-                    "&secondAuthorWorkId=" + data.secondAuthorWorkId +
-                    "&issn=" + data.issn +
-                    "&startDate=" + dateToString(data.startDate) +
-                    "&endDate=" + dateToString(data.endDate)
+                    window.location.href = "/api/paper/exportPaperList?" +
+                        "paperName=" + data.paperName +
+                        "&paperType=" + data.paperType +
+                        "&subject=" + data.subject +
+                        "&institute=" + data.institute +
+                        "&journalDivision=" + data.journalDivision +
+                        "&impactFactorMin=" + data.impactFactorMin +
+                        "&impactFactorMax=" + data.impactFactorMax +
+                        "&firstAuthorWorkId=" + data.firstAuthorWorkId +
+                        "&secondAuthorWorkId=" + data.secondAuthorWorkId +
+                        "&issn=" + data.issn +
+                        "&startDate=" + dateToString(data.startDate) +
+                        "&endDate=" + dateToString(data.endDate);
+                }).catch(() => {
+                    window.parent.app.showMessage('已取消导出', 'warning');
+                });
             }
         }
     });
 
     function dateToString(date) {
+        console.log(date);
+        console.log(typeof (date));
+        console.log(date.getFullYear);
         let year = date.getFullYear();
         let month = (date.getMonth() + 1).toString();
         let day = (date.getDate()).toString();

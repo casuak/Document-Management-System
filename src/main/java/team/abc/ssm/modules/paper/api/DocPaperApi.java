@@ -45,16 +45,16 @@ public class DocPaperApi extends BaseApi {
      * 获取指定作者下的所有论文List
      * 1.传入参数的
      *
+     * @return java.lang.Object
      * @author zm
      * @param1 paper
-     * @return java.lang.Object
      * @date 2019/8/5 11:18
      **/
-    @RequestMapping(value = "selectMyPaperByPage",method = RequestMethod.POST)
+    @RequestMapping(value = "selectMyPaperByPage", method = RequestMethod.POST)
     @ResponseBody
     public Object selectMyPaperByPage(
             @RequestBody DocPaper docPaper
-    ){
+    ) {
         //1.获取当前用户的全部的论文List(根据作者工号，论文状态，以及page分页信息)
         List<DocPaper> myPaperList = docPaperService.selectMyPaperListByPage(docPaper);
         //2.获取当前作者论文总数(根据作者工号)
@@ -63,23 +63,23 @@ public class DocPaperApi extends BaseApi {
         Page<DocPaper> paperResPage = new Page<>();
         paperResPage.setResultList(myPaperList);
         paperResPage.setTotal(myPaperNum);
-        return retMsg.Set(MsgType.SUCCESS,paperResPage);
+        return retMsg.Set(MsgType.SUCCESS, paperResPage);
     }
 
 
     /**
      * 根据筛选条件获取相应的论文List
      *
+     * @return java.lang.Object
      * @author zm
      * @param1 condition
-     * @return java.lang.Object        
      * @date 2019/8/9 19:08
      **/
-    @RequestMapping(value = "selectAllPaperByPage",method = RequestMethod.POST)
+    @RequestMapping(value = "selectAllPaperByPage", method = RequestMethod.POST)
     @ResponseBody
     public Object selectAllPaperByPage(
             @RequestBody StatisticCondition condition
-    ){
+    ) {
         //1.设置待查询的论文List的状态为：已完成
         condition.setStatus("3");
         //2.reset一下论文的种类
@@ -93,17 +93,17 @@ public class DocPaperApi extends BaseApi {
         paperResPage.setResultList(paperList);
         paperResPage.setTotal(paperNum);
 
-        return retMsg.Set(MsgType.SUCCESS,paperResPage);
+        return retMsg.Set(MsgType.SUCCESS, paperResPage);
     }
 
     /**
      * 导出论文查询的结果
      *
+     * @return void
      * @author zm
-     * @return void        
      * @date 2019/8/15 23:06
      **/
-    @RequestMapping(value = "/exportPaperList",method = RequestMethod.GET)
+    @RequestMapping(value = "/exportPaperList", method = RequestMethod.GET)
     public void exportPaperList(
             @RequestParam("paperName") String paperName,
             @RequestParam("paperType") String paperType,
@@ -123,7 +123,6 @@ public class DocPaperApi extends BaseApi {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
         StatisticCondition statisticCondition = new StatisticCondition();
-
         //1.设置待导出的论文List的状态为：已完成
         statisticCondition.setStatus("3");
         //2.reset一下论文的种类
@@ -138,22 +137,27 @@ public class DocPaperApi extends BaseApi {
         statisticCondition.setFirstAuthorWorkId(firstAuthorWorkId);
         statisticCondition.setSecondAuthorWorkId(secondAuthorWorkId);
         statisticCondition.setIssn(issn);
-        statisticCondition.setStartDate(sdf.parse(startDate));
-        statisticCondition.setEndDate(sdf.parse(endDate));
+        if (!"NaN-NaN-NaN".equals(startDate)) {
+            statisticCondition.setStartDate(sdf.parse(startDate));
+        }
+        if (!"NaN-NaN-NaN".equals(endDate)) {
+            statisticCondition.setEndDate(sdf.parse(endDate));
+        }
         //4.直接查询符合条件的paperList(statisticCondition中不含page，所以不会有分页的数目限制)
         List<DocPaper> paperList = docPaperService.selectAllPaperByPage(statisticCondition);
 
         //5.导出
         HSSFWorkbook wb = new HSSFWorkbook();
+
         HSSFSheet sheet = wb.createSheet("论文统计结果");
         String[] excelHeader = {
-                "序号", "论文名称", "ISSN", "分区","影响因子","一级学科","所属学院","论文种类", "出版日期",
-                "第一作者","第一作者工号","第一作者类型","第二作者","第二作者工号","第二作者类型","入藏号","作者列表"
+                "序号", "论文名称", "ISSN", "分区", "影响因子", "一级学科", "所属学院", "论文种类", "出版日期",
+                "第一作者", "第一作者工号", "第一作者类型", "第二作者", "第二作者工号", "第二作者类型", "入藏号", "作者列表"
         };
         // 单元格列宽
         int[] excelHeaderWidth = {
-                80, 250, 120, 100, 100, 250, 200, 120,200,
-                120, 150, 120,120,150,120,300,400
+                40, 300, 150, 150, 150, 200, 200, 120, 200,
+                160, 150, 120, 160, 150, 120, 250, 400
         };
 
         HSSFRow row = sheet.createRow((int) 0);
@@ -166,7 +170,7 @@ public class DocPaperApi extends BaseApi {
         Font font = wb.createFont();
         font.setColor(HSSFColor.BLACK.index);
         font.setBoldweight(Font.BOLDWEIGHT_BOLD); // 粗体
-        font.setFontHeightInPoints((short)12); //设置字体大小
+        font.setFontHeightInPoints((short) 12); //设置字体大小
         style1.setFont(font);
         style1.setAlignment(HSSFCellStyle.ALIGN_CENTER); // 水平居中
         style1.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER); // 垂直居中
@@ -191,7 +195,7 @@ public class DocPaperApi extends BaseApi {
         row = sheet.createRow((int) 1);
 
         for (int i = 0; i < paperList.size(); i++) {
-            row = sheet.createRow(i+1);
+            row = sheet.createRow(i + 1);
             int cellNum = 0;
             //第一列存的是序号
             HSSFCell cell = row.createCell(cellNum++);
@@ -207,11 +211,19 @@ public class DocPaperApi extends BaseApi {
             cell.setCellStyle(style);
             //第4列：分区
             cell = row.createCell(cellNum++);
-            cell.setCellValue(paperList.get(i).getJournalDivision());
+            if (paperList.get(i).getJournalDivision() == null || "".equals(paperList.get(i).getJournalDivision())){
+                cell.setCellValue("暂无分区信息");
+            }else{
+                cell.setCellValue(paperList.get(i).getJournalDivision());
+            }
             cell.setCellStyle(style);
             //第5列：影响因子
             cell = row.createCell(cellNum++);
-            cell.setCellValue(paperList.get(i).getPaperName());
+            if (paperList.get(i).getJournalDivision() == null || "".equals(paperList.get(i).getJournalDivision())){
+                cell.setCellValue("暂无影响因子");
+            }else{
+                cell.setCellValue(paperList.get(i).getImpactFactor());
+            }
             cell.setCellStyle(style);
             //第6列：一级学科
             cell = row.createCell(cellNum++);
@@ -227,7 +239,7 @@ public class DocPaperApi extends BaseApi {
             cell.setCellStyle(style);
             //第9列：出版日期
             cell = row.createCell(cellNum++);
-            cell.setCellValue(paperList.get(i).getPublishDate());
+            cell.setCellValue(sdf.format(paperList.get(i).getPublishDate()));
             cell.setCellStyle(style);
             //第10列：第一作者
             cell = row.createCell(cellNum++);
@@ -266,8 +278,8 @@ public class DocPaperApi extends BaseApi {
         httpServletResponse.setContentType("application/vnd.ms-excel");
         //注意此处文件名称如果想使用中文的话，要转码new String( "中文".getBytes( "gb2312" ), "ISO8859-1" )
         httpServletResponse.setHeader("Content-disposition",
-                "attachment;filename=" + new String( "论文统计结果".getBytes( "gb2312" ), "ISO8859-1" )
-                        + DateUtils.formatDate(new Date(), "yyyyMMddHHmmss") + ".xls");
+                "attachment;filename=" + new String("论文统计结果".getBytes("gb2312"), "ISO8859-1")
+                        + DateUtils.formatDate(new Date(), "yyyy-MM-dd") + ".xls");
         OutputStream ouputStream = httpServletResponse.getOutputStream();
         wb.write(ouputStream);
         ouputStream.flush();

@@ -272,9 +272,9 @@
                                :disabled="table.commonTable.loading"
                                @click="exportStatisticResult()">导出结果
                     </el-button>
-                    <el-button type="success" size="medium"
+                   <%-- <el-button type="success" size="medium"
                                @click="viewStatisticsDetail({'type':'论文'})">TEST
-                    </el-button>
+                    </el-button>--%>
                 </div>
             </row>
 
