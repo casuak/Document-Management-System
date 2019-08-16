@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="team.abc.ssm.modules.doc.dao.FundDao">
+
+    <resultMap id="fundBean" type="fund">
+        <id column="id" property="id"/>
+
+        <result column="metric_name" property="metricName"/>
+        <result column="person_name" property="personName"/>
+        <result column="project_year" property="projectYear"/>
+        <result column="project_name" property="projectName"/>
+        <result column="project_money" property="projectMoney"/>
+    </resultMap>
+
+    <select id="list" parameterType="fund" resultMap="fundBean">
+        select *
+        from doc_fund
+        where project_name like concat('%', #{page.searchKey}, '%')
+        limit #{page.pageStart}, #{page.pageSize}
+    </select>
+
+    <select id="listCount" resultType="Integer">
+        select count(*)
+        from doc_fund
+        where project_name like concat('%', #{page.searchKey}, '%')
+    </select>
+
+    <delete id="deleteByIds" parameterType="fund">
+        delete from doc_fund where id in
+        <foreach collection="list" open="(" close=")" separator="," item="item" index="index">
+            #{item.id}
+        </foreach>
+    </delete>
+
+
+    <delete id="deleteAll">
+        delete
+        from doc_fund
+        where 1 = 1
+    </delete>
+
+</mapper>

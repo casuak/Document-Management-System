@@ -19,11 +19,13 @@ let app = new Vue({
             ajaxPostJSON(app.urls.login, data, function (d) {
                 app.fullScreenLoading = false;
                 if (d.code === 'success') {
-                    location.href = "/";
                     app.$message({
                         message: '登陆成功',
                         type: 'success'
                     });
+                    setTimeout(function(){
+                        location.href = "/";
+                    }, 1200);
                 } else {
                     app.$message({
                         message: '登陆失败',

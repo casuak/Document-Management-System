@@ -6,6 +6,8 @@ import java.util.List;
 
 public interface JournalDao {
 
+    List<Journal> listAll();
+
     List<Journal> list(Journal journal);
 
     int listCount(Journal journal);

@@ -44,4 +44,8 @@
         from doc_journal
         where 1 = 1
     </delete>
+
+    <select id="listAll" resultMap="journalBean">
+        select * from doc_journal
+    </select>
 </mapper>

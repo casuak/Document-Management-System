@@ -1,6 +1,7 @@
 package team.abc.ssm.modules.doc.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Data;
 import team.abc.ssm.common.persistence.DataEntity;
 import team.abc.ssm.modules.sys.entity.User;
 
@@ -78,6 +79,8 @@ public class Paper extends DataEntity<Paper> {
 
     private String danwei; // 单位名称
     private String danweiCN; // 单位中文名（只包含学院名称）
+
+    private double impactFactor; // 所属期刊的影响因子
 
     /**
 	* 所属期刊 from 期刊表
@@ -265,5 +268,13 @@ public class Paper extends DataEntity<Paper> {
 
     public void setDanweiCN(String danweiCN) {
         this.danweiCN = danweiCN;
+    }
+
+    public double getImpactFactor() {
+        return impactFactor;
+    }
+
+    public void setImpactFactor(double impactFactor) {
+        this.impactFactor = impactFactor;
     }
 }

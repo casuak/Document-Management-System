@@ -40,7 +40,7 @@ public class ViewController extends BaseController {
 
     @RequestMapping(value = "login", method = RequestMethod.GET)
     public String login() {
-        return "login2";
+        return "login";
     }
 
     @RequestMapping(value = "register", method = RequestMethod.GET)
@@ -149,6 +149,11 @@ public class ViewController extends BaseController {
     @RequestMapping(value = "functions/doc/journalManager", method = RequestMethod.GET)
     public String doc_journalManager(){
         return "functions/doc/journalManager";
+    }
+
+    @RequestMapping(value = "functions/doc/fundManager", method = RequestMethod.GET)
+    public String doc_fundManager(){
+        return "functions/doc/fundManager";
     }
 
     @RequestMapping(value = "functions/patent/searchUser", method = RequestMethod.GET)
