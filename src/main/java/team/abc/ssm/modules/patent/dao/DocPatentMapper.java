@@ -93,4 +93,16 @@ public interface DocPatentMapper {
      * @date 2019/8/5 19:57
      **/
     List<String> selectAllPatentType();
+
+    /**
+     * 根据statisticCondition条件查询所有的专利
+     *
+     * @author zm
+     * @param1 statisticCondition
+     * @return java.util.List<team.abc.ssm.modules.patent.entity.DocPatent>        
+     * @date 2019/8/16 13:45
+     **/
+    List<DocPatent> selectAllByPageWithStatisticCondition(StatisticCondition statisticCondition);
+
+    int selectNumWithStatisticCondition(StatisticCondition statisticCondition);
 }

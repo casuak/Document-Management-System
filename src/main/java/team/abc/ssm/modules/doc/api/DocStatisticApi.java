@@ -84,13 +84,11 @@ public class DocStatisticApi extends BaseApi {
     @ResponseBody
     public Object doDocStatistic(
             @RequestBody StatisticCondition statisticCondition){
-        System.out.println("-------------------------------------------aaaaaaaaa-----------");
-        System.out.println(statisticCondition);
         Map<String,Integer> resMap = new HashMap<>();
         Map<String,Integer> paperMap,patentMap;
 
         //1.处理一下paperType
-        if (statisticCondition.getPaperType() != null && statisticCondition.getPaperType() != ""){
+        if (statisticCondition.getPaperType() != null && !"".equals(statisticCondition.getPaperType())){
             statisticCondition.setPaperType(dictService.getDictNameEnById(statisticCondition.getPaperType()));
         }
 

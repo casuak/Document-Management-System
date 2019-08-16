@@ -1,8 +1,10 @@
 package team.abc.ssm.modules.patent.api;
 
+import net.sf.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 import team.abc.ssm.common.persistence.Page;
 import team.abc.ssm.common.web.AjaxMessage;
 import team.abc.ssm.common.web.BaseApi;
@@ -10,8 +12,10 @@ import team.abc.ssm.common.web.MsgType;
 import team.abc.ssm.common.web.PatentMatchType;
 import team.abc.ssm.modules.author.entity.Author;
 import team.abc.ssm.modules.author.service.AuthorService;
+import team.abc.ssm.modules.doc.entity.StatisticCondition;
 import team.abc.ssm.modules.patent.entity.DocPatent;
 import team.abc.ssm.modules.patent.service.DocPatentService;
+import team.abc.ssm.modules.sys.service.FunctionService;
 
 import java.text.ParseException;
 import java.util.*;
@@ -25,6 +29,9 @@ public class DocPatentApi extends BaseApi {
 
     @Autowired
     private AuthorService authorService;
+
+    @Autowired
+    private FunctionService functionService;
 
     @RequestMapping(value = "selectListByPage", method = RequestMethod.POST)
     @ResponseBody
@@ -200,5 +207,60 @@ public class DocPatentApi extends BaseApi {
         System.out.println(myPatentPage);
         AjaxMessage retMsg = new AjaxMessage();
         return retMsg.Set(MsgType.SUCCESS,myPatentPage);
+    }
+
+    /*查看专利统计详情*/
+    @RequestMapping(value = "selectPatentListByPageGet", method = RequestMethod.GET)
+    public Object selectPatentListByPageGet(
+            @RequestParam(value = "subject") String subject,
+            @RequestParam(value = "institute") String institute,
+            @RequestParam(value = "startDate") String startDate,
+            @RequestParam(value = "endDate") String endDate,
+            @RequestParam(value = "patentType") String patentType,
+            ModelAndView modelAndView
+    ) {
+        //获取专利所有类别
+        List<String> patentTypeList = patentService.getAllPatentType();
+        //获取学科类别
+        List<String> subjectList = authorService.getSubList();
+        //获取机构(学院)类别
+        List<String> orgList = functionService.getOrgList();
+
+        modelAndView.setViewName("functions/doc/docManage/patentList");
+
+        modelAndView.addObject("patentTypeList", JSONArray.fromObject(patentTypeList));
+        modelAndView.addObject("subjectList", JSONArray.fromObject(subjectList));
+        modelAndView.addObject("orgList", JSONArray.fromObject(orgList));
+
+        modelAndView.addObject("subject",subject);
+        modelAndView.addObject("institute",institute);
+        modelAndView.addObject("startDate",startDate);
+        modelAndView.addObject("endDate",endDate);
+        modelAndView.addObject("patentType",patentType);
+
+        return modelAndView;
+    }
+
+    @RequestMapping(value = "selectAllPatentByPage", method = RequestMethod.POST)
+    @ResponseBody
+    public Object selectAllPatentByPage(
+            @RequestBody StatisticCondition condition
+    ) {
+
+        System.out.println("_-------------------");
+        //1.设置待查询的专利List的状态为：已完成
+        condition.setStatus(PatentMatchType.MATCH_FINISHED.toString());
+        //2.分页查询patentList
+        List<DocPatent> patentList = patentService.selectListByPageWithStatisticCondition(condition);
+        //3.查询总数目
+        int patentNum = patentService.selectNumWithStatisticCondition(condition);
+
+        Page<DocPatent> patentResPage = new Page<>();
+        patentResPage.setResultList(patentList);
+        patentResPage.setTotal(patentNum);
+
+        System.out.println(patentResPage);
+
+        return retMsg.Set(MsgType.SUCCESS, patentResPage);
     }
 }

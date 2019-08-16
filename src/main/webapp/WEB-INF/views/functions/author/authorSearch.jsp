@@ -158,14 +158,13 @@
                             </el-select>
                         </div>
                     </div>
+                    <div class="commonInputSection" style="margin-top: 5px">
+                        <el-button type="primary" size="small" @click="searchClick">查询作者
+                        </el-button>
+                    </div>
                 </row>
             </div>
 
-            <div style="height: 10px"></div>
-            <row>
-                <el-button type="primary" size="small" @click="searchClick">查询作者
-                </el-button>
-            </row>
             <hr style="width: 100%;margin: 10px auto;"/>
         </el-header>
 
@@ -300,39 +299,6 @@
                             </template>
                         </template>
                     </el-table-column>
-                   <%-- <el-table-column
-                            prop="nicknames"
-                            header-align="center"
-                            align="center"
-                            sortable
-                            width="200"
-                            show-overflow-tooltip
-                            label="昵称列表">
-                    </el-table-column>--%>
-                    <%--<el-table-column
-                            prop="paperAmount"
-                            header-align="center"
-                            align="center"
-                            fixed="right"
-                            width="80"
-                            sortable
-                            label="论文数量">
-                    </el-table-column>
-                    <el-table-column
-                            prop="patentAmount"
-                            header-align="center"
-                            align="center"
-                            fixed="right"
-                            width="80"
-                            sortable
-                            label="专利数量">
-                    </el-table-column>--%>
-                    <%-- <el-table-column
-                             prop="copyrightAmount"
-                             header-align="center"
-                             align="center"
-                             label="著作权数量">
-                     </el-table-column>--%>
                     <el-table-column
                             header-align="center"
                             align="center"

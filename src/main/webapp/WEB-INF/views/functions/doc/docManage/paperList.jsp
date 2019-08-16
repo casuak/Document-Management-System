@@ -266,10 +266,10 @@
                       class="scroll-bar"
                       @selection-change="table.paperTable.entity.selectionList=$event"
                       stripe>
-                <el-table-column type="selection" width="40"></el-table-column>
+                <%--<el-table-column type="selection" width="40"></el-table-column>--%>
                 <el-table-column
                         prop="paperName"
-                        width="200"
+                        width="240"
                         align="center"
                         fixed="left"
                         label="论文名"
@@ -523,7 +523,6 @@
                 paper: {
                     selectAllPaperByPage: '/api/paper/selectAllPaperByPage',
                     deletePaperListByIds: '/api/doc/paper/deleteListByIds',
-                    exportPaperList: '/api/doc/paper/exportPaperList'
                 },
             },
             //表格

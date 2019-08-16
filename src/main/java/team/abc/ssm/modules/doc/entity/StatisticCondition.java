@@ -45,6 +45,11 @@ public class StatisticCondition extends DataEntity<StatisticCondition> {
     private String paperType;
 
     /**
+     * 论文期刊号
+     */
+    private String issn;
+
+    /**
      * 影响因子(下限)
      */
     private double impactFactorMin;
@@ -60,9 +65,19 @@ public class StatisticCondition extends DataEntity<StatisticCondition> {
     private String journalDivision;
 
     /**
+     * 专利名称
+     */
+    private String patentName;
+
+    /**
      * 专利种类
      */
     private String patentType;
+
+    /**
+     * 专利号
+     */
+    private String patentNumber;
 
     /**
      * 作者身份：导师、学生、博士后
@@ -79,6 +94,4 @@ public class StatisticCondition extends DataEntity<StatisticCondition> {
      private String firstAuthorWorkId;
 
      private String secondAuthorWorkId;
-
-     private String issn;
 }
