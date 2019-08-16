@@ -102,6 +102,11 @@ public class DocPatent extends DataEntity<DocPatent> {
     private String secondAuthorType;
 
     /**
+     * 专利学科
+     * */
+    private String patentSubject;
+
+    /**
     * 专利备注
     */
     private String remarks;

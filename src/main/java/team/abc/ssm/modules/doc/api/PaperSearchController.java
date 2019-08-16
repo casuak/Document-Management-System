@@ -143,7 +143,6 @@ public class PaperSearchController {
         return retMsg.Set(MsgType.SUCCESS, resDataMap);
     }
 
-
     @RequestMapping(value = "selectPaperListByPageGet", method = RequestMethod.GET)
     @ResponseBody
     public Object selectPaperListByPageGet(
@@ -157,20 +156,6 @@ public class PaperSearchController {
             @RequestParam(value = "impactFactorMax") Double impactFactorMax,
             ModelAndView modelAndView
     ) {
-        /*文献统计页原有参数*/
-        /*Map<String, Object> paperParams = new HashMap<>();
-        paperParams.put("subject", subject);
-        paperParams.put("institute", institute);
-        paperParams.put("startDate", startDate);
-        paperParams.put("endDate", endDate);
-        paperParams.put("paperType", paperType);
-        paperParams.put("paperDivision", paperDivision);
-        paperParams.put("impactFactorMin", impactFactorMin);
-        paperParams.put("impactFactorMax", impactFactorMax);
-
-        modelAndView.addObject("paperPageParams", JSONObject.fromObject(paperParams));
-        */
-
         List<Map<String, String>> paperTypeList = paperSearchService.getPaperType();
         List<String> subjectList = authorService.getSubList();
         List<String> orgList = functionService.getOrgList();
@@ -191,17 +176,5 @@ public class PaperSearchController {
         modelAndView.addObject("impactFactorMax",impactFactorMax);
 
         return modelAndView;
-    }
-
-    /*查看专利统计详情*/
-    @RequestMapping(value = "selectPatentListByPageGet", method = RequestMethod.GET)
-    public Object selectPatentListByPageGet() {
-        return null;
-    }
-
-    /*查看著作权统计详情*/
-    @RequestMapping(value = "selectCopyrightListByPageGet", method = RequestMethod.GET)
-    public Object selectCopyrightListByPageGet() {
-        return null;
     }
 }

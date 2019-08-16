@@ -74,6 +74,16 @@ public class DocPatentService {
 
     /*-------------- auto maded --------------*/
 
+    //专利统计详情页面的条件查询
+    public List<DocPatent> selectListByPageWithStatisticCondition(StatisticCondition statisticCondition){
+        return docPatentMapper.selectAllByPageWithStatisticCondition(statisticCondition);
+    }
+
+    //专利统计详情页面的专利数目统计
+    public int selectNumWithStatisticCondition(StatisticCondition statisticCondition) {
+        return docPatentMapper.selectNumWithStatisticCondition(statisticCondition);
+    }
+
     public List<DocPatent> selectListByPage(DocPatent patent) {
         List<DocPatent> patentList = docPatentMapper.selectListByPage(patent);
         for (DocPatent tmpPatent : patentList) {

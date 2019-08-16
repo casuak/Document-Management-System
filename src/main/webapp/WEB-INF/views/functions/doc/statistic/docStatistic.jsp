@@ -220,7 +220,7 @@
                         <div class="commonInput">
                             <el-select v-model="optionView.patent.patentType" clearable placeholder="选择专利种类">
                                 <el-option
-                                        v-for="item in optionValue.orgOption"
+                                        v-for="item in optionValue.patentTypeOption"
                                         :key="item.value"
                                         :label="item.label"
                                         :value="item.value">
@@ -509,25 +509,23 @@
                             journalDivision: app.optionView.paper.journalDivision,
                             impactFactorMin: app.optionView.paper.impactFactorMin,
                             impactFactorMax: app.optionView.paper.impactFactorMax
-                           /* paperName: app.optionView.paper.paperName,
-                            firstAuthorName: app.optionView.paper.firstAuthorWorkNum,            //其实是FA工号
-                            secondAuthorName: app.optionView.paper.secondAuthorWorkNum,          //其实是SA工号
-                            authorList: app.optionView.paper.otherAuthorWorkNum,                 //其实是OA工号
-                            storeNum: app.optionView.paper.storeNum,
-                            paperType: app.optionView.paper.paperType,
-                            ISSN: app.optionView.paper.ISSN,
-                            pageIndex: app.table.commonTable.params.pageIndex,
-                            pageSize: app.table.commonTable.params.pageSize*/
                         };
-
-                        console.log(data);
 
                         let getParam = formatParams(data);
                         let getLink = "/api/doc/search/selectPaperListByPageGet?" + getParam;
                         //console.log(getLink);
                         window.parent.app.addTab("论文", getLink);
                     } else if (row.type === "专利") {
-                        alert("专利统计详情页面");
+                        let data = {
+                            subject: app.optionView.commonSelect.subject,
+                            institute: app.optionView.commonSelect.organization,
+                            startDate: app.optionView.commonSelect.publishDate[0],
+                            endDate: app.optionView.commonSelect.publishDate[1],
+                            patentType: app.optionView.patent.patentType
+                        };
+                        let getParam = formatParams(data);
+                        let getLink = "/api/patent/selectPatentListByPageGet?" + getParam;
+                        window.parent.app.addTab("专利", getLink);
                     } else {
                         alert("著作权统计详情页面");
                     }
@@ -536,7 +534,6 @@
                 /*统计搜索*/
                 statisticalSearch: function () {
                     this.table.commonTable.loading = true;
-
                     let app = this;
                     /*version2.0_2019/08/05*/
                     let params = {
@@ -568,6 +565,8 @@
                                 postdoctoralDocNum: res.doctorPatent
                             };
                             app.doc.paperResult = paper;
+                            console.log("论文统计结果")
+                            console.log(paper)
                             app.doc.patentResult = patent;
                           /*  app.doc.paperResult.totalPaper = paper.totalDocNum;
                             app.doc.paperResult.teacherPaper = paper.teacherDocNum;
