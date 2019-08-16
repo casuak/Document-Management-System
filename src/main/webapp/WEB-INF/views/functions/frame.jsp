@@ -12,7 +12,11 @@
     <el-container style="height: 100%" v-loading="fullScreenLoading">
         <el-header height="48px"
                    style="background: #007cc4;padding-right: 60px;box-shadow: 0 2px 10px 0 rgba(0,0,0,.15);">
-            <span class="title">文献管理系统</span>
+            <span class="title">
+                <img src="/static/images/beili_logo.png"
+                     style="width: 24px;height: 24px;position: relative;bottom: 1px;"/>
+                <span style="top: 1px;position:relative;">研究生院文献管理系统</span>
+            </span>
             <el-popover placement="bottom" trigger="hover">
                 <el-button style="margin-left: 32px;" type="danger" size="small" @click="logout">退出</el-button>
                 <span slot="reference" class="userInfo">

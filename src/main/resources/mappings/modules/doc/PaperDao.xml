@@ -31,6 +31,7 @@
         <result column="_PY" property="_PY"/>
         <result column="danwei" property="danwei"/>
         <result column="danwei_cn" property="danweiCN"/>
+        <result column="impact_factor" property="impactFactor"/>
 
         <association property="firstAuthor" javaType="user">
             <id column="first_author_id" property="id"/>
@@ -421,6 +422,11 @@
             <trim prefix="del_flag = case" suffix="end,">
                 <foreach collection="list" index="index" item="item">
                     when id = #{item.id,jdbcType=VARCHAR} then #{item.delFlag,jdbcType=BOOLEAN}
+                </foreach>
+            </trim>
+            <trim prefix="impact_factor = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    when id = #{item.id,jdbcType=VARCHAR} then #{item.impactFactor,jdbcType=DOUBLE}
                 </foreach>
             </trim>
         </trim>

@@ -40,7 +40,7 @@ public class ViewController extends BaseController {
 
     @RequestMapping(value = "login", method = RequestMethod.GET)
     public String login() {
-        return "login2";
+        return "login";
     }
 
     @RequestMapping(value = "register", method = RequestMethod.GET)

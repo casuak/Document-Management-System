@@ -1,26 +1,405 @@
+
+
+
+/********全局页面样式*********/
+html,body,form {
+    height: 100%;
+    margin: 0px;
+    padding: 0px;
+    font-family:'Microsoft YaHei'
+}
+
+body {
+    /*background-color: #3573a9;*/
+    background: url(/static/images/login/bg1.jpg);
+    filter:"progid:DXImageTransform.Microsoft.AlphaImageLoader(sizingMethod='scale')";
+    -moz-background-size:100% 100%;
+    background-size:100% 100%;
+}
+
+
+.opacity {
+    height:66px;
+    background-color:rgba(0,0,0,0.1);  /*标准浏览器 只需这句*/
+    background-color:#000\9;      /*IE 系列*/
+    filter:alpha(opacity=10);     /*IE 系列*/
+}
+.kclear {
+    clear: both;
+}
+.margin-bottom-5 {
+    margin-bottom: 20px;
+    width:100%;
+}
+.margin-bottom-35 {
+    margin-bottom: 35px;
+}
+/********body*********/
+.mainbody {
+    width: 100%;
+    min-height: 100%;
+    /*height: 100%;*/
+    /*background: url(../images/.png) no-repeat center center;*/
+    background-color:#3573a9;
+    background-size: cover;
+}
+/*******login*******/
+
+
+.login-body {
+    width: 800px;
+    height: 340px;
+    margin: auto;
+    color: white;
+    position: absolute;
+    top: 0; left: 0; bottom: 220px; right: 0;
+
+}
+
+.login-body .login-logo {
+    /*text-align: center;*/
+    margin: 0 20px 30px 20px;
+
+}
+
+.login-logo img {
+    max-width: 100%;
+}
+
 .login-container {
     width: 100%;
     height: 100%;
-    display: flex;
-    align-items: center;
-}
-.login-page {
-    -webkit-border-radius: 5px;
-    border-radius: 5px;
-    width: 450px;
     margin: 0 auto;
-    padding: 60px 55px 25px 55px;
-    background: #fff;
-    position: relative;
-    bottom: 20px;
-    border: 1px solid #eaeaea;
-    box-shadow: 0 0 25px #cac6c6;
+    font-size: 16px;
+    border:2px solid #FFFFFF;
+    -moz-border-radius: 2px;
+    -webkit-border-radius: 2px;
+    border-radius:2px;
+
+
+    background: url(/static/images/login/login-bg.png) no-repeat;
+    background-size: cover;
+    /*filter:alpha(Opacity=20);
+    background-color:#ffffff;
+    -moz-opacity: 0.2;
+    opacity: 0.2;*/
 }
-label.el-checkbox.rememberme {
-    margin: 0 0 15px;
+
+.login-left{
+    width: 300px;
+    height: 100%;
+    margin: 0;
+    position: absolute;
+    /*border:2px solid #ff0000;*/
 }
-.title{
+
+.login-mid{
+    width: 2px;
+    height: 100%;
+    margin: 0 0 0 300px;
+    position: absolute;
+    background: url(/static/images/login/login-mid.png) no-repeat center center;
+}
+
+.login-right{
+    width: 498px;
+    height: 100%;
+    margin: 0 0 0 302px;
+    /*position: absolute;*/
+    /*border:2px solid #00ff00;*/
+}
+.left-logo{
+    width: 100%;
+    height: 100%;
+    top: 0; left: 130px; bottom: 0; right: 30px;
+    background: url(/static/images/login/logo.png) no-repeat center center;
+    background-size:contain;
+}
+
+
+
+.login-content {
+    /*height: 320px;*/
+    /*border: 1px solid white;*/
+    margin-top:50px;
+    width:100%;
+    /*border: 2px solid #14b8f7;*/
+}
+
+
+.login-input-wrap {
+    min-height: 175px;
+    width:100%;
+    margin: 0 auto;
+}
+
+.loginLabal{
+    font-family : 黑体;
+    font-size : 25px;
+    margin-left:50px;
+    color:#00a608;
+}
+
+.login-input-wrap .txtInput {
+    font-family : 黑体;
+    border: 1px solid #6aba35;
+    height: 40px;
+    width: 350px;
+    /*background: none transparent scroll repeat 0% 0%;*/
+    background-color:white;
+    font-size : 20px;
+    border-radius: 2px;
+    -moz-border-radius: 2px;
+    -webkit-border-radius: 2px;
+    color: black;
+    margin-left:50px;
+}
+
+
+#txtSchool{
+    cursor: pointer;
+}
+.password-wrap {
+
+}
+.login-trigger-wrap {
+    /*margin-top: 5px;*/
+}
+.vcode-container {
+
+}
+.vcode-container .vcode-left {
+    float: left;
+    width: 220px;
+}
+.vcode-container .vcode-input {
+    width: 200px;
+    height: 35px;
+    background: none transparent scroll repeat 0% 0%;
+    border-radius: 0px;
+    -moz-border-radius: 0px;
+    -webkit-border-radius: 0px;
+    color: white;
+}
+.vcode-container .vcode-right {
+    float: left;
+    width: 100px;
+}
+.vcode-container .vcode-img {
+    height: 44px;
+    width: 98px;
+}
+.login-button-container {
+    /*margin-top: 10px;*/
+    overflow:hidden;
+}
+
+/*.login-button-container input{
+     font-family : 黑体;
+    border: 1px solid #6aba35;
+}*/
+
+.login-button-container input{
+
+    font-family : '黑体' !important;
+    /*zoom:150%;*/
+    color:black;
+    /*margin:10px 0 0 35px;*/
+    margin-left:50px;
+    line-height: 20px;
+    float:left;
+
+}
+
+.login-button-container label{
+    width:150px;
+    height:30px;
+    font-family : 黑体;
+    font-size:20px;
+    color:black;
+    /*margin:12px 0 0 5px;*/
+    margin-left:5px;
+    float:left;
+}
+
+.login-button {
+    /*font-family:黑体;*/
+    font-size:20px;
+    display: block;
+    height: 45px;
+    width: 100px;
+    line-height: 45px;
     text-align: center;
-    font-size: 22px;
-    margin-bottom: 40px;
+    letter-spacing: 2px;
+    background: #ef6c34;
+    color: white;
+    border-radius: 5px;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    float:right;
+    margin-right:100px;
+
 }
+.login-button:hover {
+    background: #3dc1f3;
+    color: white;
+    text-decoration: none;
+}
+.fgreg_wrap {
+    margin-top: 10px;
+    font-size: 15px;
+}
+.fgreg_wrap input {
+    background: none transparent scroll repeat 0% 0%;
+}
+
+.fgreg_wrap label {
+    font-size: 15px;
+}
+.fgreg_wrap a {
+    color: white;
+}
+.fgreg_wrap a:hover {
+    text-decoration: none;
+    color: #3dc1f3;
+}
+/****footer***/
+.footer {
+    color: #eee;
+    text-align: center;
+    font-size: 14px;
+    /*border: 1px solid white;*/
+    /*height: 250px;*/
+}
+.footer-top-part {
+    height: 80px;
+    line-height: 80px;
+    vertical-align: middle;
+}
+.footer-top-part a {
+    color: #eee;
+}
+.footer-top-part a:hover {
+    color: #bbb;
+    text-decoration: none;
+}
+
+.line1 {
+    width: 75%;
+    height: 0px;
+    border-top: 1px solid #eee;
+    margin: 0 auto;
+}
+.footer-bottom-part {
+    /*height: 130px;*/
+}
+.item-spacing {
+    margin: 0 20px;
+}
+.copyright {
+    margin-top: 20px;
+}
+.security-cert {
+    margin-top: 10px;
+    text-align: center;
+}
+
+/*******school panel*********/
+
+/*.xubox_main {
+    background: none;
+  
+}*/
+
+#div_selectschool {
+    display: none;
+    width: 580px;
+    height: 280px;
+    background: none;
+}
+#div_selectschool .school_search {
+    width: 100%;
+    background: #EBEBEB;
+    font-family: 微软雅黑;
+}
+#div_selectschool .school_search p {
+    margin: 0px;
+    margin-left: 10px;
+    height: 45px;
+    line-height: 45px;
+    /*border-bottom: 1px solid #D5D5D5;*/
+    font-size: 14px;
+    color: #333;
+    vertical-align: middle;
+}
+#div_selectschool .school_search p input {
+    margin: 0px;
+}
+#div_selectschool .school_list {
+    width: 100%;
+    height: 100%;
+    /*background-color:rgba(0,0,0,0.1);*/  /*标准浏览器 只需这句*/
+    /*background-color:#000\9;*/      /*IE 系列*/
+    /*filter:alpha(opacity=10);*/     /*IE 系列*/
+    /*padding-left: 10px;
+    padding-top: 10px;*/
+    /*overflow-y: auto;*/
+}
+#school_ul {
+
+    margin: 0px;
+    padding: 0px;
+    list-style: none;
+    overflow-x: hidden;
+    overflow-y: auto;
+    /*width: 480px;*/
+    /*width: 100%;*/
+    height: 230px;
+    zoom: 1;
+    /*width: 100%;*/
+    /*border: 1px solid #c3c3c3;*/
+    /*background: #FFF;
+    padding: 5px 0 10px 10px;
+    margin: 5px 0;*/
+    /*font-size: 10px;*/
+    font-family: Tahoma,Verdana,STHeiTi,simsun,sans-serif;
+    word-wrap: break-word;
+    padding-top: 10px;
+    padding-left: 10px;
+}
+
+#school_ul li a, #popup-unis-hs li a {
+    color: #333;
+    text-decoration: none;
+    padding: 2px;
+}
+
+#school_ul li a:hover, #popup-unis-hs li a:hover {
+    border-bottom:2px solid #14b8f7;
+    text-decoration: none;
+    padding: 2px;
+}
+
+#school_ul li {
+    float: left;
+    width: 150px;
+    padding: 4px 12px;
+    background: url(/admin/images/images_index_v3/school_list_dot.gif) no-repeat 0 12px;
+    list-style: none;
+    font-family: 微软雅黑;
+}
+
+#school_ul li .font-large {
+    font-size: 10pt;
+}
+
+#school_ul li .font-small {
+    font-size: 7pt;
+}
+
+#div_selectschool .search {
+    margin-top: 20px;
+    margin-left: 20px;
+    font-size: 10pt;
+}
+/******end school */
