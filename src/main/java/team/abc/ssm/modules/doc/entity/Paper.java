@@ -81,6 +81,7 @@ public class Paper extends DataEntity<Paper> {
     private String danweiCN; // 单位中文名（只包含学院名称）
 
     private double impactFactor; // 所属期刊的影响因子
+    private String journalDivision; // 所属期刊分区
 
     /**
 	* 所属期刊 from 期刊表
@@ -276,5 +277,13 @@ public class Paper extends DataEntity<Paper> {
 
     public void setImpactFactor(double impactFactor) {
         this.impactFactor = impactFactor;
+    }
+
+    public String getJournalDivision() {
+        return journalDivision;
+    }
+
+    public void setJournalDivision(String journalDivision) {
+        this.journalDivision = journalDivision;
     }
 }

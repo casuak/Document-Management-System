@@ -10,16 +10,16 @@
 <body>
 <div id="app" v-cloak style="height: 100%;overflow: hidden;" v-loading="fullScreenLoading">
     <div class="login-body">
-        <div class="login-logo">
-            <h1 style="text-align: center;letter-spacing: 0.2em;font-size: 40px;">
+        <div class="login-logo" style="text-align: center;letter-spacing: 0.2em;font-size: 40px;font-weight: bold;">
+            <div>
                 北京理工大大学研究生院
-            </h1>
-            <h1 style="text-align: center;letter-spacing: 0.2em;font-size: 40px;padding-top: 30px;">
+            </div>
+            <div style="padding-top: 15px;">
                 文献管理系统
-            </h1>
+            </div>
         </div>
 
-        <div class="login-container" style="top: 20px;position:relative;">
+        <div class="login-container" style="top: 15px;position:relative;">
 
             <div class="login-left">
                 <div class="left-logo">

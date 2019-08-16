@@ -126,6 +126,7 @@
             </template>
         </el-table-column>
         <el-table-column label="影响因子" width="100" prop="impactFactor" align="center"></el-table-column>
+        <el-table-column label="分区" width="100" prop="journalDivision" align="center"></el-table-column>
         <el-table-column label="PY" width="100" prop="_PY" align="center"></el-table-column>
         <el-table-column label="PD" width="100" prop="_PD" align="center">
             <template slot-scope="{row}">

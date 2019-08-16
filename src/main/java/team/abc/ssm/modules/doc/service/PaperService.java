@@ -6,8 +6,10 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.util.*;
 
+import team.abc.ssm.modules.doc.dao.JournalDao;
 import team.abc.ssm.modules.doc.dao.PaperDao;
 import team.abc.ssm.modules.doc.entity.DanweiNicknames;
+import team.abc.ssm.modules.doc.entity.Journal;
 import team.abc.ssm.modules.doc.entity.Paper;
 import team.abc.ssm.modules.sys.entity.User;
 import team.abc.ssm.modules.sys.service.UserService;
@@ -23,6 +25,9 @@ public class PaperService {
 
     @Autowired
     private DanweiNicknamesService danweiNicknamesService;
+
+    @Autowired
+    private JournalDao journalDao;
 
     public int deleteByPrimaryKey(String id) {
         return paperDao.deleteByPrimaryKey(id);
@@ -80,6 +85,7 @@ public class PaperService {
     public boolean initAll() {
         List<Paper> allList = paperDao.selectAll();
         List<Paper> initList = new ArrayList<>();
+        List<Journal> journalList = journalDao.listAll();
         for (Paper paper : allList) {
             if (paper.getStatus().equals("-1"))
                 initList.add(paper);
@@ -184,6 +190,14 @@ public class PaperService {
                         }
                     }
                     if (flag) break;
+                }
+            }
+            // 5、添加所属期刊信息
+            for (Journal journal : journalList) {
+                if (journal.getIssn().equals(paper.getISSN())) {
+                    paper.setImpactFactor(journal.getImpactFactor());
+                    paper.setJournalDivision(journal.getJournalDivision());
+                    break;
                 }
             }
         }

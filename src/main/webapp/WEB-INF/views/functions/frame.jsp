@@ -21,7 +21,7 @@
                 <el-button style="margin-left: 32px;" type="danger" size="small" @click="logout">退出</el-button>
                 <span slot="reference" class="userInfo">
                     <span class="username"
-                          style="font-size: 16px;color: aliceblue;float: right;line-height: 40px">{{ user.username }}</span>
+                          style="font-size: 16px;color: aliceblue;float: right;line-height: 40px">{{ user.realName }}</span>
                     <Avatar icon="ios-person"
                             style="float: right;position:relative;top: 4px;right: 10px;background-color: #87d068"
                             size="default"/>

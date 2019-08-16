@@ -32,6 +32,7 @@
         <result column="danwei" property="danwei"/>
         <result column="danwei_cn" property="danweiCN"/>
         <result column="impact_factor" property="impactFactor"/>
+        <result column="journal_division" property="journalDivision"/>
 
         <association property="firstAuthor" javaType="user">
             <id column="first_author_id" property="id"/>
@@ -427,6 +428,11 @@
             <trim prefix="impact_factor = case" suffix="end,">
                 <foreach collection="list" index="index" item="item">
                     when id = #{item.id,jdbcType=VARCHAR} then #{item.impactFactor,jdbcType=DOUBLE}
+                </foreach>
+            </trim>
+            <trim prefix="journal_division = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    when id = #{item.id,jdbcType=VARCHAR} then #{item.journalDivision,jdbcType=VARCHAR}
                 </foreach>
             </trim>
         </trim>
