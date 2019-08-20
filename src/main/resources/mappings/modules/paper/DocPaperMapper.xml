@@ -337,10 +337,7 @@
         b.user_type as first_author_type,
         c.user_type as second_author_type,
         b.real_name as first_author_name,
-        c.real_name as second_author_name,
-        dj.impact_factor as impact_factor,
-        dj.journal_division as journal_division,
-        dj.journal_year as journal_year
+        c.real_name as second_author_name
         from (
             select * from (
                 select * from docmanager.doc_paper
@@ -357,7 +354,6 @@
         ) as a
         left join sys_user b on b.work_id = a.first_author_id
         left join sys_user c on c.work_id = a.second_author_id
-        left join docmanager.doc_journal dj on a.ISSN = dj.issn
     </select>
 
     <select id="selectTheAuthorPaperNum" resultType="int">
@@ -368,7 +364,6 @@
         where first_author_id = #{authorWorkId,jdbcType=VARCHAR}
         or second_author_id = #{authorWorkId,jdbcType=VARCHAR}
     ) as tmp
-    left join docmanager.doc_journal dj on tmp.ISSN = dj.issn
     where tmp.status = '3'
     </select>
 

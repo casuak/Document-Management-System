@@ -90,6 +90,7 @@ public class DocPaperService{
     }
 
     public List<DocPaper> selectMyPaperListByPage(DocPaper docPaper) {
+        //获取作者的所有期刊的专利作品
         return docPaperMapper.selectTheAuthorPapers(docPaper);
     }
 

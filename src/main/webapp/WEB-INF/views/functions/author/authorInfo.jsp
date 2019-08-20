@@ -79,7 +79,7 @@
                     </el-table-column>
 
                     <%--2019-08-15 add--%>
-                    <el-table-column
+                    <%--<el-table-column
                             align="center"
                             fixed="left"
                             width="120"
@@ -94,7 +94,7 @@
                                 {{row.journalYear}}
                             </template>
                         </template>
-                    </el-table-column>
+                    </el-table-column>--%>
                     <el-table-column
                             align="center"
                             fixed="left"
@@ -606,9 +606,9 @@
                     let resList = d.data.resultList;
                     for (let i = 0; i < resList.length; i++) {
                         tmpDate1 = resList[i].publishDate;
-                        tmpDate2 = resList[i].journalYear;
+                        //tmpDate2 = resList[i].journalYear;
                         resList[i].publishDate = dateFormat(tmpDate1);
-                        resList[i].journalYear = dateFormat(tmpDate2);
+                        //resList[i].journalYear = dateFormat(tmpDate2);
                     }
                     app.table.paperTable.entity.data = resList;
                     app.table.paperTable.entity.params.total = d.data.total;
