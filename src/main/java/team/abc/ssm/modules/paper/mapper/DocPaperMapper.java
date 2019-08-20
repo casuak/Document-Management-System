@@ -62,12 +62,12 @@ public interface DocPaperMapper {
     int selectTheAuthorPaperNum(String authorWorkId);
 
     /**
-     * 根据传入参数统计论文的数量
+     * 根据传入参数统计论文的数量，直接全部返回java内统计数目
      *
      * @author zm
      * @param1 statisticCondition
      * @return int
      * @date 2019/8/5 16:25
      **/
-    int getStatisticNumOfPaper(StatisticCondition statisticCondition);
+    List<DocPaper> getStatisticNumOfPaper(StatisticCondition statisticCondition);
 }
