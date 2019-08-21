@@ -98,7 +98,7 @@
                     <div class="commonInputSection">
                         <span class="inputSpanText">所属学院: </span>
                         <div class="commonInput">
-                            <el-select v-model="optionView.commonSelect.organization"
+                            <el-select v-model="optionView.commonSelect.institute"
                                        filterable
                                        clearable
                                        placeholder="所属学院">
@@ -169,7 +169,13 @@
                 </row>
 
                 <row style="margin-top: 10px">
-                    <div class="commonInputSection" style="margin-left: 145px">
+                     <span class="selectText">
+                         <el-button type="primary"
+                                    size="small"
+                                    :disabled="table.patentTable.entity.loading"
+                                    @click="selectPatentListByPage()">搜索查询</el-button>
+                    </span>
+                    <div class="commonInputSection">
                         <span class="inputSpanText">第一作者: </span>
                         <div class="commonInput">
                             <el-input
@@ -190,16 +196,6 @@
                         </div>
 
                     </div>
-                </row>
-
-                <row style="margin-top: 10px">
-
-                    <span class="selectText">
-                         <el-button type="primary"
-                                    size="small"
-                                    :disabled="table.patentTable.entity.loading"
-                                    @click="selectPatentListByPage()">搜索查询</el-button>
-                    </span>
                     <span class="selectText">
                          <el-button type="danger"
                                     size="small"
@@ -235,23 +231,23 @@
                         width="100"
                         label="专利号">
                 </el-table-column>
-               <%-- <el-table-column
-                        align="center"
-                        fixed="left"
-                        width="100"
-                        label="分区">
-                    <template slot-scope="{row}">
-                        <template v-if="row.journalDivision == null || row.journalDivision == ''">
-                            <el-button type="danger" size="mini"
-                                       style="position:relative;bottom: 1px;margin-left: 6px;">
-                                <span>暂无分区</span>
-                            </el-button>
-                        </template>
-                        <template v-else>
-                            {{row.journalDivision}}
-                        </template>
-                    </template>
-                </el-table-column>--%>
+                <%-- <el-table-column
+                         align="center"
+                         fixed="left"
+                         width="100"
+                         label="分区">
+                     <template slot-scope="{row}">
+                         <template v-if="row.journalDivision == null || row.journalDivision == ''">
+                             <el-button type="danger" size="mini"
+                                        style="position:relative;bottom: 1px;margin-left: 6px;">
+                                 <span>暂无分区</span>
+                             </el-button>
+                         </template>
+                         <template v-else>
+                             {{row.journalDivision}}
+                         </template>
+                     </template>
+                 </el-table-column>--%>
 
                 <el-table-column
                         prop="patentSubject"
@@ -314,10 +310,20 @@
                         label="第二作者">
                 </el-table-column>
                 <el-table-column
-                        prop="secondAuthorWorkId"
                         align="center"
                         width="140"
                         label="第二作者工号">
+                    <template slot-scope="{row}">
+                        <template v-if="row.secondAuthorWorkId == null || row.secondAuthorWorkId == ''">
+                            <el-button type="danger" size="mini"
+                                       style="position:relative;bottom: 1px;margin-left: 6px;">
+                                <span>无第二作者</span>
+                            </el-button>
+                        </template>
+                        <template v-else>
+                            {{row.secondAuthorWorkId}}
+                        </template>
+                    </template>
                 </el-table-column>
                 <el-table-column
                         prop="secondAuthorType"
@@ -335,8 +341,9 @@
                             博士后
                         </template>
                         <template v-else="">
-                            <el-button type="danger" size="mini" style="position:relative;bottom: 1px;margin-left: 6px;">
-                                <span>不明</span>
+                            <el-button type="danger" size="mini"
+                                       style="position:relative;bottom: 1px;margin-left: 6px;">
+                                <span>无第二作者</span>
                             </el-button>
                         </template>
                     </template>
@@ -427,7 +434,7 @@
                         value: "Q4"
                     }
                 ],
-                patentTypeOption:[],
+                patentTypeOption: [],
                 subjectOption: [],
                 orgOption: [],
             },
@@ -437,9 +444,9 @@
                     show: false,
                     patentType: "",
                     patentName: "",
-                    patentNumber:"",
-                    firstAuthorWorkId:"",
-                    secondAuthorWorkId:"",
+                    patentNumber: "",
+                    firstAuthorWorkId: "",
+                    secondAuthorWorkId: "",
 
                 },
                 commonSelect: {
@@ -455,7 +462,6 @@
                 patent: {
                     selectAllPatentByPage: '/api/patent/selectAllPatentByPage',
                     deletePatentListByIds: '/api/doc/paper/deleteListByIds',
-                    exportPatentList: '/api/doc/paper/exportPaperList'
                 },
             },
             //表格
@@ -569,27 +575,21 @@
                         institute: app.optionView.commonSelect.institute,
                         startDate: app.optionView.commonSelect.publishDate[0],
                         endDate: app.optionView.commonSelect.publishDate[1],
-                        paperName: app.optionView.paper.paperName,
-                        paperType: app.optionView.paper.paperType,
-                        journalDivision: app.optionView.paper.journalDivision,        //分区
-                        impactFactorMin: app.optionView.paper.impactFactorMin,
-                        impactFactorMax: app.optionView.paper.impactFactorMax,
-                        firstAuthorWorkId: app.optionView.paper.firstAuthorWorkId,
-                        secondAuthorWorkId: app.optionView.paper.secondAuthorWorkId,
-                        issn: app.optionView.paper.ISSN,
+                        patentName: app.optionView.patent.patentName,
+                        patentType: app.optionView.patent.patentType,
+                        patentNumber: app.optionView.patent.patentNumber,
+                        firstAuthorWorkId: app.optionView.patent.firstAuthorWorkId,
+                        secondAuthorWorkId: app.optionView.patent.secondAuthorWorkId,
                     };
 
-                    window.location.href = "/api/paper/exportPaperList?" +
-                        "paperName=" + data.paperName +
-                        "&paperType=" + data.paperType +
-                        "&subject=" + data.subject +
+                    window.location.href = "/api/patent/exportPatentList?" +
+                        "subject=" + data.subject +
                         "&institute=" + data.institute +
-                        "&journalDivision=" + data.journalDivision +
-                        "&impactFactorMin=" + data.impactFactorMin +
-                        "&impactFactorMax=" + data.impactFactorMax +
+                        "&patentName=" + data.patentName +
+                        "&patentType=" + data.patentType +
+                        "&patentNumber=" + data.patentNumber +
                         "&firstAuthorWorkId=" + data.firstAuthorWorkId +
                         "&secondAuthorWorkId=" + data.secondAuthorWorkId +
-                        "&issn=" + data.issn +
                         "&startDate=" + dateToString(data.startDate) +
                         "&endDate=" + dateToString(data.endDate);
                 }).catch(() => {

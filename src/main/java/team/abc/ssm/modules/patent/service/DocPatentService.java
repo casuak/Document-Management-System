@@ -81,6 +81,7 @@ public class DocPatentService {
 
     //专利统计详情页面的专利数目统计
     public int selectNumWithStatisticCondition(StatisticCondition statisticCondition) {
+        System.out.println(statisticCondition);
         return docPatentMapper.selectNumWithStatisticCondition(statisticCondition);
     }
 
@@ -832,35 +833,35 @@ public class DocPatentService {
         return docPatentMapper.selectMyPatentNum(myWorkId);
     }
 
-    public int doSinglePatentStatistics(StatisticCondition statisticCondition){
-        return docPatentMapper.getStatisticNumOfPaper(statisticCondition);
-    }
-
     public Map<String,Integer> doPatentStatistics(StatisticCondition statisticCondition){
         //0.专利的已完成状态是4
         statisticCondition.setStatus("4");
 
-        int totalNum,studentPatentNum,teacherPatentNum,doctorPatentNum = 0;
+        int totalNum;
+        int studentPatentNum = 0,teacherPatentNum = 0,doctorPatentNum = 0;
         Map<String,Integer> statisticsResMap = new HashMap<>();
 
-        //1.统计学生一共有多少专利
-        statisticCondition.setAuthorType("student");
-        studentPatentNum = doSinglePatentStatistics(statisticCondition);
+        List<DocPatent> patentList = docPatentMapper.getStatisticNumOfPaper(statisticCondition);
+        totalNum = patentList.size();
+        for (DocPatent tmpPatent : patentList) {
+            if("teacher".equals(tmpPatent.getFirstAuthorType())){
+                teacherPatentNum ++;
+            }else if ("student".equals(tmpPatent.getFirstAuthorType())){
+                studentPatentNum++;
+            }else if ("doctor".equals(tmpPatent.getFirstAuthorType())){
+                doctorPatentNum++;
+            }
+            if("teacher".equals(tmpPatent.getSecondAuthorType())){
+                teacherPatentNum ++;
+            }else if ("student".equals(tmpPatent.getSecondAuthorType())){
+                studentPatentNum++;
+            }else if ("doctor".equals(tmpPatent.getSecondAuthorType())){
+                doctorPatentNum++;
+            }
+        }
         statisticsResMap.put("studentPatent",studentPatentNum);
-
-        //2.统计导师一共有多少论文
-        statisticCondition.setAuthorType("teacher");
-        teacherPatentNum = doSinglePatentStatistics(statisticCondition);
         statisticsResMap.put("teacherPatent",teacherPatentNum);
-
-        //3.统计博士后一共有多少论文
-        statisticCondition.setAuthorType("doctor");
-        doctorPatentNum = doSinglePatentStatistics(statisticCondition);
         statisticsResMap.put("doctorPatent",doctorPatentNum);
-
-        //4.统计论文总量
-        statisticCondition.setAuthorType(null);
-        totalNum = docPatentMapper.getStatisticNumOfPaper(statisticCondition);
         statisticsResMap.put("totalPatent",totalNum);
         return statisticsResMap;
     }

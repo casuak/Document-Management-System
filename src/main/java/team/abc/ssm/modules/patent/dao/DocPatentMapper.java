@@ -77,13 +77,14 @@ public interface DocPatentMapper {
 
     /**
      * 根据给定条件统计专利数目
+     * v2->修改为查询所有专利，在service层去判断作者类别所属
      *
      * @author zm
      * @param1 statisticCondition
      * @return int        
      * @date 2019/8/5 16:34
      **/
-    int getStatisticNumOfPaper(StatisticCondition statisticCondition);
+    List<DocPatent> getStatisticNumOfPaper(StatisticCondition statisticCondition);
 
     /**
      * 查询返回所有的专利类型

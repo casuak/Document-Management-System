@@ -523,6 +523,7 @@
                             endDate: app.optionView.commonSelect.publishDate[1],
                             patentType: app.optionView.patent.patentType
                         };
+                        console.log(data);
                         let getParam = formatParams(data);
                         let getLink = "/api/patent/selectPatentListByPageGet?" + getParam;
                         window.parent.app.addTab("专利", getLink);
@@ -690,10 +691,10 @@
         }
         /*初始化patentType*/
         let tmp1 = ${patentType};
-        for (let i = 0; i < tmp.length; i++) {
+        for (let i = 0; i < tmp1.length; i++) {
             let tmpItem = {
-                value: tmp[i],
-                label: tmp[i]
+                value: tmp1[i],
+                label: tmp1[i]
             };
             app.optionValue.patentTypeOption.push(tmpItem);
         }

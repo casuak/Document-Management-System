@@ -1,6 +1,10 @@
 package team.abc.ssm.modules.patent.api;
 
 import net.sf.json.JSONArray;
+import org.apache.http.client.utils.DateUtils;
+import org.apache.poi.hssf.usermodel.*;
+import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.ss.usermodel.Font;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -17,7 +21,12 @@ import team.abc.ssm.modules.patent.entity.DocPatent;
 import team.abc.ssm.modules.patent.service.DocPatentService;
 import team.abc.ssm.modules.sys.service.FunctionService;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Controller
@@ -246,8 +255,6 @@ public class DocPatentApi extends BaseApi {
     public Object selectAllPatentByPage(
             @RequestBody StatisticCondition condition
     ) {
-
-        System.out.println("_-------------------");
         //1.设置待查询的专利List的状态为：已完成
         condition.setStatus(PatentMatchType.MATCH_FINISHED.toString());
         //2.分页查询patentList
@@ -262,5 +269,149 @@ public class DocPatentApi extends BaseApi {
         System.out.println(patentResPage);
 
         return retMsg.Set(MsgType.SUCCESS, patentResPage);
+    }
+
+    @RequestMapping(value = "/exportPatentList", method = RequestMethod.GET)
+    public void exportPaperList(
+            @RequestParam("subject") String subject,
+            @RequestParam("institute") String institute,
+            @RequestParam("patentName") String patentName,
+            @RequestParam("patentType") String patentType,
+            @RequestParam("patentNumber") String patentNumber,
+            @RequestParam("firstAuthorWorkId") String firstAuthorWorkId,
+            @RequestParam("secondAuthorWorkId") String secondAuthorWorkId,
+            @RequestParam("startDate") String startDate,
+            @RequestParam("endDate") String endDate,
+            HttpServletRequest httpServletRequest,
+            HttpServletResponse httpServletResponse
+    ) throws IOException, ParseException {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+        StatisticCondition statisticCondition = new StatisticCondition();
+        //1.状态为已完成
+        statisticCondition.setStatus(PatentMatchType.MATCH_FINISHED.toString());
+        //2.设置其他的查询筛选条件
+        statisticCondition.setSubject(subject);
+        statisticCondition.setInstitute(institute);
+        statisticCondition.setPatentName(patentName);
+        statisticCondition.setPaperType(patentType);
+        statisticCondition.setPatentNumber(patentNumber);
+        statisticCondition.setFirstAuthorWorkId(firstAuthorWorkId);
+        statisticCondition.setSecondAuthorWorkId(secondAuthorWorkId);
+        if (!"NaN-NaN-NaN".equals(startDate)) {
+            statisticCondition.setStartDate(sdf.parse(startDate));
+        }
+        if (!"NaN-NaN-NaN".equals(endDate)) {
+            statisticCondition.setEndDate(sdf.parse(endDate));
+        }
+        //4.直接查询符合条件的patentList(statisticCondition中不含page，所以不会有分页的数目限制)
+        List<DocPatent> patentList = patentService.selectListByPageWithStatisticCondition(statisticCondition);
+        //5.导出
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFSheet sheet = wb.createSheet("专利统计结果");
+        String[] excelHeader = {
+                "序号", "专利名称", "一级学科", "所属学院", "专利种类", "专利授权日",
+                "第一作者", "第一作者工号", "第一作者类型", "第二作者", "第二作者工号", "第二作者类型", "作者列表"
+        };
+        // 单元格列宽
+        int[] excelHeaderWidth = {
+                40, 300, 200, 180, 100, 180,
+                160, 150, 120, 160, 150, 120, 400
+        };
+
+        HSSFRow row = sheet.createRow((int) 0);
+        HSSFCellStyle style = wb.createCellStyle();
+        // 设置居中样式
+        style.setAlignment(HSSFCellStyle.ALIGN_CENTER); // 水平居中
+        style.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER); // 垂直居中
+        // 设置合计样式
+        HSSFCellStyle style1 = wb.createCellStyle();
+        Font font = wb.createFont();
+        font.setColor(HSSFColor.BLACK.index);
+        font.setBoldweight(Font.BOLDWEIGHT_BOLD); // 粗体
+        font.setFontHeightInPoints((short) 12); //设置字体大小
+        style1.setFont(font);
+        style1.setAlignment(HSSFCellStyle.ALIGN_CENTER); // 水平居中
+        style1.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER); // 垂直居中
+
+        // 设置列宽度（像素）
+        for (int i = 0; i < excelHeaderWidth.length; i++) {
+            sheet.setColumnWidth(i, 32 * excelHeaderWidth[i]);
+        }
+        // 添加表格头
+        for (int i = 0; i < excelHeader.length; i++) {
+            HSSFCell cell = row.createCell(i);
+            cell.setCellValue(excelHeader[i]);
+            cell.setCellStyle(style1);
+        }
+        row = sheet.createRow((int) 1);
+
+        for (int i = 0; i < patentList.size(); i++) {
+            row = sheet.createRow(i + 1);
+            int cellNum = 0;
+            //第一列存的是序号
+            HSSFCell cell = row.createCell(cellNum++);
+            cell.setCellValue(i);
+            cell.setCellStyle(style);
+            //第2列：专利名称
+            cell = row.createCell(cellNum++);
+            cell.setCellValue(patentList.get(i).getPatentName());
+            cell.setCellStyle(style);
+
+            //第6列：一级学科
+            cell = row.createCell(cellNum++);
+            cell.setCellValue(patentList.get(i).getPatentSubject());
+            cell.setCellStyle(style);
+            //第7列：所属学院
+            cell = row.createCell(cellNum++);
+            cell.setCellValue(patentList.get(i).getInstitute());
+            cell.setCellStyle(style);
+            //第8列：论文种类
+            cell = row.createCell(cellNum++);
+            cell.setCellValue(patentList.get(i).getPatentType());
+            cell.setCellStyle(style);
+            //第9列：出版日期
+            cell = row.createCell(cellNum++);
+            cell.setCellValue(sdf.format(patentList.get(i).getPatentAuthorizationDate()));
+            cell.setCellStyle(style);
+            //第10列：第一作者
+            cell = row.createCell(cellNum++);
+            cell.setCellValue(patentList.get(i).getFirstAuthorName());
+            cell.setCellStyle(style);
+            //第11列：第一作者工号
+            cell = row.createCell(cellNum++);
+            cell.setCellValue(patentList.get(i).getFirstAuthorWorkId());
+            cell.setCellStyle(style);
+            //第12列：第一作者类型
+            cell = row.createCell(cellNum++);
+            cell.setCellValue(patentList.get(i).getFirstAuthorType());
+            cell.setCellStyle(style);
+            //第13列：第二作者
+            cell = row.createCell(cellNum++);
+            cell.setCellValue(patentList.get(i).getSecondAuthorName());
+            cell.setCellStyle(style);
+            //第14列：第二作者工号
+            cell = row.createCell(cellNum++);
+            cell.setCellValue(patentList.get(i).getSecondAuthorWorkId());
+            cell.setCellStyle(style);
+            //第15列：第二作者类型
+            cell = row.createCell(cellNum++);
+            cell.setCellValue(patentList.get(i).getSecondAuthorType());
+            cell.setCellStyle(style);
+            //第17列：作者列表
+            cell = row.createCell(cellNum++);
+            cell.setCellValue(patentList.get(i).getAuthorList());
+            cell.setCellStyle(style);
+        }
+
+        httpServletResponse.setContentType("application/vnd.ms-excel");
+        //注意此处文件名称如果想使用中文的话，要转码new String( "中文".getBytes( "gb2312" ), "ISO8859-1" )
+        httpServletResponse.setHeader("Content-disposition",
+                "attachment;filename=" + new String("专利统计结果".getBytes("gb2312"), "ISO8859-1")
+                        + DateUtils.formatDate(new Date(), "yyyy-MM-dd") + ".xls");
+        OutputStream ouputStream = httpServletResponse.getOutputStream();
+        wb.write(ouputStream);
+        ouputStream.flush();
+        ouputStream.close();
     }
 }

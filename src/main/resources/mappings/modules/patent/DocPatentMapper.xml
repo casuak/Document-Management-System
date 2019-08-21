@@ -490,8 +490,8 @@
 
     <select id="getStatisticNumOfPaper"
             parameterType="StatisticCondition"
-            resultType="int">
-        select count(*)
+            resultMap="BaseResultMap">
+        select *
         from (
             select a.*,
             b.user_type as first_author_type,
@@ -519,12 +519,6 @@
                 </if>
             </where>
         ) as res
-        <where>
-            <if test="authorType != null and authorType != ''">
-                res.first_author_type = #{authorType,jdbcType=VARCHAR}
-                or res.second_author_type = #{authorType,jdbcType=VARCHAR}
-            </if>
-        </where>
     </select>
     <select id="selectAllPatentType" resultType="java.lang.String">
         select distinct patent_type
@@ -553,6 +547,9 @@
                 <if test="patentNumber != null and patentNumber != ''">
                     and dp.patent_number = #{patentNumber,jdbcType=VARCHAR}
                 </if>
+                <if test="institute != null and institute != ''">
+                    and dp.institute = #{institute,jdbcType=VARCHAR}
+                </if>
                 <if test="patentType != null and patentType != ''">
                     and dp.patent_type = #{patentType,jdbcType=VARCHAR}
                 </if>
@@ -568,7 +565,9 @@
         <if test="subject != null and subject != ''">
             where res.patent_subject = #{subject,jdbcType=VARCHAR}
         </if>
-        limit #{page.pageStart} ,#{page.pageSize}
+        <if test="page != null">
+            limit #{page.pageStart} ,#{page.pageSize}
+        </if>
     </select>
     <select id="selectNumWithStatisticCondition" resultType="int">
         select count(*) from (
@@ -594,6 +593,9 @@
             </if>
             <if test="patentType != null and patentType != ''">
                 and dp.patent_type = #{patentType,jdbcType=VARCHAR}
+            </if>
+            <if test="institute != null and institute != ''">
+                and dp.institute = #{institute,jdbcType=VARCHAR}
             </if>
             <if test="startDate != null and endDate != null">
                 and dp.patent_authorization_date &gt;= #{startDate,jdbcType=TIMESTAMP}
