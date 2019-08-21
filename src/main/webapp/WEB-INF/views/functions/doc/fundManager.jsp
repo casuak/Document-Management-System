@@ -57,8 +57,6 @@
             </el-table-column>
             <el-table-column width="50"></el-table-column>
         </el-table>
-
-
     <%-- 分页 --%>
     <el-pagination style="text-align: center;margin: 8px auto;"
                    @size-change="onPageSizeChange"
@@ -69,6 +67,33 @@
                    :total="table.props.total"
                    layout="total, sizes, prev, pager, next, jumper">
     </el-pagination>
+
+        <el-dialog title="编辑" :visible.sync="dialog.visible">
+                <el-form label-position="left" label-width="140px" style="padding: 0 100px;"
+                         v-loading="dialog.loading" status-icon>
+                    <el-form-item label="指标名称" >
+                        <el-input v-model="dialog.data.metricName"></el-input>
+                    </el-form-item>
+
+                    <el-form-item label="姓名" >
+                        <el-input v-model="dialog.data.personName"></el-input>
+                    </el-form-item>
+                    <el-form-item label="年份" >
+                        <el-input v-model="dialog.data.projectYear"></el-input>
+                    </el-form-item>
+                    <el-form-item label="项目名称" >
+                        <el-input v-model="dialog.data.projectName"></el-input>
+                    </el-form-item>
+                    <el-form-item label="金额(万元)" >
+                        <el-input v-model="dialog.data.projectMoney"></el-input>
+                    </el-form-item>
+                </el-form>
+            <div slot="footer">
+                <el-button size="medium" @click="dialog.visible=false">取消</el-button>
+                <el-button size="medium" type="primary" style="margin-left: 10px;" @click="updateFund">提交
+                </el-button>
+            </div>
+        </el-dialog>
 </div>
 <%@include file="/WEB-INF/views/include/blankScript.jsp" %>
 <script src="/static/js/functions/doc/fundManager.js"></script>

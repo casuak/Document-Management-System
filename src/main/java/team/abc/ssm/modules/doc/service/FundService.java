@@ -25,4 +25,9 @@ public class FundService {
     }
 
     public void deleteAll(){fundDao.deleteAll();};
+
+    public void updateById(Fund fund){
+        fund.preUpdate();
+        fundDao.updateById(fund);
+    }
 }

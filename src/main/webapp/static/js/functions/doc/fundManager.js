@@ -5,7 +5,8 @@ app = new Vue({
         urls: {
             getFundList: '/api/doc/fund/list',
             deleteListByIds:'/api/doc/fund/deleteByIds',
-            deleteAll:'/api/doc/fund/deleteAll'
+            deleteAll:'/api/doc/fund/deleteAll',
+            updateById:'/api/doc/fund/updateById'
         },
         table: {
             loading: false,
@@ -19,7 +20,18 @@ app = new Vue({
                 total: 0
             }
         },
-        dialog: {},
+        dialog: {
+            visible:false,
+            loading:false,
+            data:{
+                metricName:'',
+                personName:'',
+                projectYear:'',
+                projectName:'',
+                projectMoney:'',
+                id:''
+            }
+        },
         options: {}
     },
     methods: {
@@ -47,8 +59,9 @@ app = new Vue({
         },
         //打开修改弹窗
         openDialog_updateEntity: function (row) {
-            this.dialog.updateEntity.visible = true;
-            this.dialog.updateEntity.formData = copy(row);
+            this.dialog.visible=true;
+            this.dialog.data = copy(row);
+
         },
         // 处理选中的行变化
         onSelectionChange: function (val) {
@@ -92,6 +105,17 @@ app = new Vue({
                 })
             }).catch(()=>{
                 window.parent.app.showMessage('已取消删除', 'warning');
+            })
+        },
+        updateFund:function () {
+            let app=this;
+            ajaxPostJSON(app.urls.updateById,app.dialog.data,function (v) {
+                app.$message({
+                    message:"更改成功！",
+                    type:"success"
+                })
+                app.refreshTable();
+                app.dialog.visible=false;
             })
         }
         

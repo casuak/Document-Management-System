@@ -39,4 +39,15 @@
         where 1 = 1
     </delete>
 
+    <update id="updateById">
+      update doc_fund set
+      `metric_name`=#{metricName},
+      `person_name`=#{personName},
+      `project_year`=#{projectYear},
+      `project_name`=#{projectName},
+      `project_money`=#{projectMoney},
+       `modify_date`=#{modifyDate}
+       where id=#{id}
+    </update>
+
 </mapper>

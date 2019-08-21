@@ -42,4 +42,11 @@ public class FundApi extends BaseApi {
         fundService.deleteAll();
         return retMsg.Set(MsgType.SUCCESS);
     }
+
+    @RequestMapping(value = "updateById",method = RequestMethod.POST)
+    @ResponseBody
+    public Object updateById(@RequestBody Fund fund ){
+        fundService.updateById(fund);
+        return retMsg.Set(MsgType.SUCCESS);
+    }
 }

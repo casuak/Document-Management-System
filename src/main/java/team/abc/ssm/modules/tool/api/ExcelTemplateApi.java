@@ -142,7 +142,7 @@ public class ExcelTemplateApi extends BaseApi {
 
     /**
      * @param tableName target table
-     * @return all fields' info in table
+     * @return all fields' info     in table
      */
     @RequestMapping(value = "selectAllFieldsInTable", method = RequestMethod.POST)
     @ResponseBody

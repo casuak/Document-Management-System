@@ -11,4 +11,6 @@ public interface FundDao {
     int deleteByIds(List<Fund> list);
 
     int deleteAll();
+
+    int updateById(Fund fund);
 }
