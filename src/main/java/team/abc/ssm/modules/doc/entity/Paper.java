@@ -83,6 +83,9 @@ public class Paper extends DataEntity<Paper> {
     private double impactFactor; // 所属期刊的影响因子
     private String journalDivision; // 所属期刊分区
 
+    private String firstAuthorType;     // 第一作者类型
+    private String secondAuthorType;    // 第二作者类型
+
     /**
 	* 所属期刊 from 期刊表
 	*/
@@ -285,5 +288,21 @@ public class Paper extends DataEntity<Paper> {
 
     public void setJournalDivision(String journalDivision) {
         this.journalDivision = journalDivision;
+    }
+
+    public String getFirstAuthorType() {
+        return firstAuthorType;
+    }
+
+    public void setFirstAuthorType(String firstAuthorType) {
+        this.firstAuthorType = firstAuthorType;
+    }
+
+    public String getSecondAuthorType() {
+        return secondAuthorType;
+    }
+
+    public void setSecondAuthorType(String secondAuthorType) {
+        this.secondAuthorType = secondAuthorType;
     }
 }
