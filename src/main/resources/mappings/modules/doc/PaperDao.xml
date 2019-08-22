@@ -435,6 +435,16 @@
                     when id = #{item.id,jdbcType=VARCHAR} then #{item.journalDivision,jdbcType=VARCHAR}
                 </foreach>
             </trim>
+            <trim prefix="first_author_type = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    when id = #{item.id,jdbcType=VARCHAR} then #{item.firstAuthorType,jdbcType=VARCHAR}
+                </foreach>
+            </trim>
+            <trim prefix="second_author_type = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    when id = #{item.id,jdbcType=VARCHAR} then #{item.secondAuthorType,jdbcType=VARCHAR}
+                </foreach>
+            </trim>
         </trim>
         where id in
         <foreach close=")" collection="list" item="item" open="(" separator=", ">
@@ -756,7 +766,8 @@
     </select>
 
     <select id="selectAll" resultMap="BaseResultMap">
-        select * from doc_paper
+        select *
+        from doc_paper
     </select>
 
     <delete id="deleteListByIds" parameterType="paper">
@@ -804,16 +815,18 @@
     </delete>
 
     <update id="selectAuthor">
-        update doc_paper set
+        update doc_paper a set
         <trim prefixOverrides="and">
             <if test="authorIndex == 1">
-                first_author_id = #{authorWorkId}
+                a.first_author_id = #{authorWorkId}
+                , first_author_type = (select b.user_type from sys_user b where b.work_id = #{authorWorkId})
             </if>
             <if test="authorIndex == 2">
                 and second_author_id = #{authorWorkId}
+                , second_author_type = (select b.user_type from sys_user b where b.work_id = #{authorWorkId})
             </if>
         </trim>
-        where id = #{paperId}
+        where a.id = #{paperId}
     </update>
 
     <update id="completeAll">
@@ -827,28 +840,28 @@
         select count(*)
         from docmanager.doc_paper
         where first_author_id = #{firstAuthorId,jdbcType=VARCHAR}
-        and status = '2'
+          and status = '2'
     </select>
     <select id="selectStudentPaper" parameterType="team.abc.ssm.modules.author.entity.Author" resultType="int">
         select count(*)
         from doc_paper
         where first_author_id = #{workId,jdbcType=VARCHAR}
-        or (
-           second_author_id = #{workId,jdbcType=VARCHAR}
-           and first_author_id = (
-            #{tutorWorkId,jdbcType=VARCHAR}
-           )
-        )
+           or (
+                second_author_id = #{workId,jdbcType=VARCHAR}
+                and first_author_id = (
+                #{tutorWorkId,jdbcType=VARCHAR}
+                )
+            )
     </select>
     <select id="selectTeacherPaper" parameterType="team.abc.ssm.modules.author.entity.Author" resultType="int">
         select count(*)
         from doc_paper a
         where first_author_id = #{workId,jdbcType=VARCHAR}
-        or #{workId,jdbcType=VARCHAR}  =(
+           or #{workId,jdbcType=VARCHAR} = (
             select b.tutor_work_id
             from sys_user b
             where b.user_type = 'student'
-            and b.work_id = a.first_author_id
+              and b.work_id = a.first_author_id
         )
     </select>
 </mapper>
