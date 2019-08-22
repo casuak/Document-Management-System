@@ -4,6 +4,9 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import team.abc.ssm.modules.author.dao.SysUserMapper;
 import team.abc.ssm.modules.author.entity.SysUser;
+
+import java.util.List;
+
 @Service
 public class SysUserService{
 
@@ -38,7 +41,10 @@ public class SysUserService{
         return sysUserMapper.updateByPrimaryKeySelective(record);
     }
 
-    
+    public List<SysUser> getTheWholeUser(){
+        return sysUserMapper.selectTheWholeUser();
+    }
+
     public int updateByPrimaryKey(SysUser record) {
         return sysUserMapper.updateByPrimaryKey(record);
     }

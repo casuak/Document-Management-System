@@ -249,12 +249,12 @@
                      </template>
                  </el-table-column>--%>
 
-                <el-table-column
+                <%--<el-table-column
                         prop="patentSubject"
                         align="center"
                         width="200"
                         label="一级学科">
-                </el-table-column>
+                </el-table-column>--%>
                 <el-table-column
                         prop="institute"
                         align="center"
