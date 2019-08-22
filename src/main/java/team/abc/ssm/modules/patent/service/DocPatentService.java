@@ -721,7 +721,7 @@ public class DocPatentService {
         //更新当前的patent信息
         docPatent.setModifyDate(dateNow);
         docPatent.setModifyUserId(userNow.getId());
-        docPatentMapper.updateByPrimaryKey(docPatent);
+        docPatentMapper.updateByPrimaryKeySelective(docPatent);
 
         return docPatent.getStatus();
     }

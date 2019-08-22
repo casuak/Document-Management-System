@@ -529,13 +529,14 @@
 
     <select id="selectAllByPageWithStatisticCondition" resultMap="BaseResultMap" parameterType="StatisticCondition">
         select * from (
-            select dp.*,
-            b.major as patent_subject,
-            b.user_type as first_author_type,
-            c.user_type as second_author_type
+            select dp.*
+            <if test="subject != null and subject != ''">
+                ,b.major as patent_subject
+            </if>
             from docmanager.doc_patent as dp
-            left join sys_user b on b.work_id = dp.first_author_work_id
-            left join sys_user c on c.work_id = dp.second_author_work_id
+            <if test="subject != null and subject != ''">
+                left join sys_user b on b.work_id = dp.first_author_work_id
+            </if>
             <where>
                 <if test="firstAuthorWorkId != null and firstAuthorWorkId != ''">
                     dp.first_author_work_id = #{firstAuthorWorkId,jdbcType=VARCHAR}
@@ -573,40 +574,41 @@
     </select>
     <select id="selectNumWithStatisticCondition" resultType="int">
         select count(*) from (
-        select dp.*,
-        b.major as patent_subject,
-        b.user_type as first_author_type,
-        c.user_type as second_author_type
-        from docmanager.doc_patent as dp
-        left join sys_user b on b.work_id = dp.first_author_work_id
-        left join sys_user c on c.work_id = dp.second_author_work_id
-        <where>
-            <if test="firstAuthorWorkId != null and firstAuthorWorkId != ''">
-                dp.first_author_work_id = #{firstAuthorWorkId,jdbcType=VARCHAR}
+            select dp.*
+            <if test="subject != null and subject != ''">
+                ,b.major as patent_subject
             </if>
-            <if test="secondAuthorWorkId != null and secondAuthorWorkId != ''">
-                and dp.second_author_work_id = #{secondAuthorWorkId,jdbcType=VARCHAR}
+            from docmanager.doc_patent as dp
+            <if test="subject != null and subject != ''">
+                left join sys_user b on b.work_id = dp.first_author_work_id
             </if>
-            <if test="patentName != null and patentName != ''">
-                and dp.patent_name like contact('%', #{patentName,jdbcType=VARCHAR}, '%')
-            </if>
-            <if test="patentNumber != null and patentNumber != ''">
-                and dp.patent_number = #{patentNumber,jdbcType=VARCHAR}
-            </if>
-            <if test="patentType != null and patentType != ''">
-                and dp.patent_type = #{patentType,jdbcType=VARCHAR}
-            </if>
-            <if test="institute != null and institute != ''">
-                and dp.institute = #{institute,jdbcType=VARCHAR}
-            </if>
-            <if test="startDate != null and endDate != null">
-                and dp.patent_authorization_date &gt;= #{startDate,jdbcType=TIMESTAMP}
-                and dp.patent_authorization_date &lt;= #{endDate,jdbcType=TIMESTAMP}
-            </if>
-            <if test="status != null and status != ''">
-                and dp.status = #{status,jdbcType=VARCHAR}
-            </if>
-        </where>
+            <where>
+                <if test="firstAuthorWorkId != null and firstAuthorWorkId != ''">
+                    dp.first_author_work_id = #{firstAuthorWorkId,jdbcType=VARCHAR}
+                </if>
+                <if test="secondAuthorWorkId != null and secondAuthorWorkId != ''">
+                    and dp.second_author_work_id = #{secondAuthorWorkId,jdbcType=VARCHAR}
+                </if>
+                <if test="patentName != null and patentName != ''">
+                    and dp.patent_name like contact('%', #{patentName,jdbcType=VARCHAR}, '%')
+                </if>
+                <if test="patentNumber != null and patentNumber != ''">
+                    and dp.patent_number = #{patentNumber,jdbcType=VARCHAR}
+                </if>
+                <if test="patentType != null and patentType != ''">
+                    and dp.patent_type = #{patentType,jdbcType=VARCHAR}
+                </if>
+                <if test="institute != null and institute != ''">
+                    and dp.institute = #{institute,jdbcType=VARCHAR}
+                </if>
+                <if test="startDate != null and endDate != null">
+                    and dp.patent_authorization_date &gt;= #{startDate,jdbcType=TIMESTAMP}
+                    and dp.patent_authorization_date &lt;= #{endDate,jdbcType=TIMESTAMP}
+                </if>
+                <if test="status != null and status != ''">
+                    and dp.status = #{status,jdbcType=VARCHAR}
+                </if>
+            </where>
         )as res
         <if test="subject != null and subject != ''">
             where res.patent_subject = #{subject,jdbcType=VARCHAR}

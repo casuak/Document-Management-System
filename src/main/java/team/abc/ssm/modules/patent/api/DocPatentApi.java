@@ -310,12 +310,12 @@ public class DocPatentApi extends BaseApi {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet = wb.createSheet("专利统计结果");
         String[] excelHeader = {
-                "序号", "专利名称", "一级学科", "所属学院", "专利种类", "专利授权日",
+                "序号", "专利名称", "所属学院", "专利种类", "专利授权日",
                 "第一作者", "第一作者工号", "第一作者类型", "第二作者", "第二作者工号", "第二作者类型", "作者列表"
         };
         // 单元格列宽
         int[] excelHeaderWidth = {
-                40, 300, 200, 180, 100, 180,
+                40, 300, 180, 100, 180,
                 160, 150, 120, 160, 150, 120, 400
         };
 
@@ -359,9 +359,9 @@ public class DocPatentApi extends BaseApi {
             cell.setCellStyle(style);
 
             //第6列：一级学科
-            cell = row.createCell(cellNum++);
+            /*cell = row.createCell(cellNum++);
             cell.setCellValue(patentList.get(i).getPatentSubject());
-            cell.setCellStyle(style);
+            cell.setCellStyle(style);*/
             //第7列：所属学院
             cell = row.createCell(cellNum++);
             cell.setCellValue(patentList.get(i).getInstitute());
