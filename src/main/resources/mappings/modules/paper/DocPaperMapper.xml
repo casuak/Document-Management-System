@@ -372,10 +372,10 @@
             resultMap="BaseResultMap">
         select *
         from(
-            select a.*,
-            b.major as paper_subject,
-            b.user_type as first_author_type,
-            c.user_type as second_author_type
+            select a.*
+            <if test="subject != null and subject != ''">
+                ,b.major as paper_subject
+            </if>
             from (
                 select dp.*
                 from doc_paper dp
@@ -399,8 +399,9 @@
                 </if>
                 and `status`=#{status,jdbcType=VARCHAR}
             ) as a
-            left join sys_user b on b.work_id = a.first_author_id
-            left join sys_user c on c.work_id = a.second_author_id
+            <if test="subject != null and subject != ''">
+                left join sys_user b on b.work_id = a.first_author_id
+            </if>
         ) as res
         <where>
             <if test="subject != null and subject != ''">

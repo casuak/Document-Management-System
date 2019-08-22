@@ -84,7 +84,7 @@ public interface DocPatentMapper {
      * @return int        
      * @date 2019/8/5 16:34
      **/
-    List<DocPatent> getStatisticNumOfPaper(StatisticCondition statisticCondition);
+    List<DocPatent> getStatisticNumOfPatent(StatisticCondition statisticCondition);
 
     /**
      * 查询返回所有的专利类型
