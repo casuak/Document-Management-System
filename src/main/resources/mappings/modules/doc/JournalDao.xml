@@ -46,6 +46,6 @@
     </delete>
 
     <select id="listAll" resultMap="journalBean">
-        select * from doc_journal
+        select issn, journal_division, impact_factor from doc_journal
     </select>
 </mapper>
