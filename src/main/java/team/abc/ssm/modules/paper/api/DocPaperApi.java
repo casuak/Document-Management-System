@@ -151,12 +151,12 @@ public class DocPaperApi extends BaseApi {
 
         HSSFSheet sheet = wb.createSheet("论文统计结果");
         String[] excelHeader = {
-                "序号", "论文名称", "ISSN", "分区", "影响因子", "一级学科", "所属学院", "论文种类", "出版日期",
+                "序号", "论文名称", "ISSN", "分区", "影响因子", "所属学院", "论文种类", "出版日期",
                 "第一作者", "第一作者工号", "第一作者类型", "第二作者", "第二作者工号", "第二作者类型", "入藏号", "作者列表"
         };
         // 单元格列宽
         int[] excelHeaderWidth = {
-                40, 300, 150, 150, 150, 200, 200, 120, 200,
+                40, 300, 150, 150, 150, 200, 120, 200,
                 160, 150, 120, 160, 150, 120, 250, 400
         };
 
@@ -226,9 +226,9 @@ public class DocPaperApi extends BaseApi {
             }
             cell.setCellStyle(style);
             //第6列：一级学科
-            cell = row.createCell(cellNum++);
+            /*cell = row.createCell(cellNum++);
             cell.setCellValue(paperList.get(i).getSubject());
-            cell.setCellStyle(style);
+            cell.setCellStyle(style);*/
             //第7列：所属学院
             cell = row.createCell(cellNum++);
             cell.setCellValue(paperList.get(i).getDanweiCn());

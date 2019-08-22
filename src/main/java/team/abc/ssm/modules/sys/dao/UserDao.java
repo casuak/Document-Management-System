@@ -1,6 +1,7 @@
 package team.abc.ssm.modules.sys.dao;
 
 import org.apache.ibatis.annotations.Select;
+import team.abc.ssm.modules.author.entity.SysUser;
 import team.abc.ssm.modules.sys.entity.User;
 
 import java.util.List;

@@ -316,12 +316,12 @@
                         </template>
                     </template>
                 </el-table-column>
-                <el-table-column
+                <%--<el-table-column
                         prop="subject"
                         align="center"
                         width="200"
                         label="一级学科">
-                </el-table-column>
+                </el-table-column>--%>
                 <el-table-column
                         prop="danweiCn"
                         align="center"

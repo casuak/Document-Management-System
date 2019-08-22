@@ -28,4 +28,6 @@ public interface SysUserMapper {
     SysUser selectByWorkId(@Param("workId")String workId);
 
     List<SysUser> selectListByPage(SysUser sysUser);
+
+    List<SysUser> selectTheWholeUser();
 }
