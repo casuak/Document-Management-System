@@ -9,7 +9,9 @@ import team.abc.ssm.modules.sys.dao.UserDao;
 import team.abc.ssm.modules.sys.entity.User;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @Slf4j
@@ -77,23 +79,45 @@ public class UserService {
      * 初始化导入的用户
      */
     public void initUser() {
-        List<User> userList = userDao.selectByStatus("0");
-        setUsersNicknamesAndTutorNicknames(userList);
+        List<User> updateList = userDao.selectByStatus("0");
 
-        for (User user : userList) {
+        setUsersNicknamesAndTutorNicknames(updateList);
+
+        for (User user : updateList) {
             user.setStatus("1");
         }
-        int updateCount = (int) Math.ceil(userList.size() / 1000f);
+        int updateCount = (int) Math.ceil(updateList.size() / 1000f);
         for (int i = 0; i < updateCount; i++) {
             int start = i * 1000;
             int end = start + 1000;
-            if (end > userList.size())
-                end = userList.size();
-            userDao.updateList(userList.subList(start, end));
+            if (end > updateList.size())
+                end = updateList.size();
+            userDao.updateList(updateList.subList(start, end));
             float progress = (i + 1f) / updateCount * 100f;
             log.info("当前进度：" + progress + "%");
         }
-//        updateList(userList);
+
+        // 博导和硕导去重
+        List<User> teacherList = userDao.selectByUserType("teacher");
+        List<User> saveList = new ArrayList<>();
+        List<User> deleteList = new ArrayList<>();
+        for (User teacher : teacherList) {
+            if (teacher.getWorkId() == null || teacher.getWorkId().equals("兼职") || teacher.getWorkId().equals("")) {
+                deleteList.add(teacher);
+                continue;
+            }
+            boolean repeat = false;
+            for (User u : saveList) {
+                if (teacher.getWorkId().equals(u.getWorkId())) {
+                    repeat = true;
+                    break;
+                }
+            }
+            if (repeat) deleteList.add(teacher);
+            else saveList.add(teacher);
+        }
+
+        userDao.deleteByIds(deleteList);
     }
 
     /**
@@ -123,6 +147,7 @@ public class UserService {
     }
 
     public boolean deleteUserByIds(List<User> userList) {
+        if (userList.size() == 0) return true;
         int count = userDao.deleteByIds(userList);
         return count == userList.size();
     }

@@ -22,6 +22,8 @@ public interface UserDao {
     // 获取所有用户(论文用户匹配中使用到)
     List<User> selectAll2();
 
+    List<User> selectByUserType(String userType);
+
     // 分页 + 搜索(模糊匹配用户名)获取用户列表（无角色信息）
     List<User> selectByPage(User user);
 
