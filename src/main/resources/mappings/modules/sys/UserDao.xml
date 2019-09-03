@@ -76,6 +76,10 @@
         where a.status = #{status}
     </select>
 
+    <select id="selectByUserType" parameterType="string" resultMap="userBean">
+        select * from sys_user where user_type = #{0}
+    </select>
+
     <select id="selectAll2" resultType="user">
         select work_id             as workId,
                nicknames,
