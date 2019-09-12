@@ -351,7 +351,7 @@ public class DocPatentApi extends BaseApi {
             int cellNum = 0;
             //第一列存的是序号
             HSSFCell cell = row.createCell(cellNum++);
-            cell.setCellValue(i);
+            cell.setCellValue(i+1);
             cell.setCellStyle(style);
             //第2列：专利名称
             cell = row.createCell(cellNum++);

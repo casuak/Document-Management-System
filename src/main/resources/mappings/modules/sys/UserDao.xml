@@ -307,4 +307,9 @@
             </if>
         </where>
     </select>
+
+
+    <insert id="insertIntoStatistics">
+
+    </insert>
 </mapper>
