@@ -154,6 +154,7 @@ public class AuthorApi extends BaseApi {
             @RequestParam("workId") String workId,
             @RequestParam("school") String school,
             @RequestParam("major") String major,
+            @RequestParam("type") String type,
             HttpServletRequest httpServletRequest,
             HttpServletResponse httpServletResponse
     ) throws IOException, ParseException {
@@ -167,6 +168,7 @@ public class AuthorApi extends BaseApi {
         authorStatistics.setWorkId(workId);
         authorStatistics.setSchool(school);
         authorStatistics.setMajor(major);
+        authorStatistics.setType(type);
         Page<AuthorStatistics> data = new Page<>();
         data.setPageStart(0);
         data.setPageIndex(1);

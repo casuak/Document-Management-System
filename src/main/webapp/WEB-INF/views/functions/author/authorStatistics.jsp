@@ -108,6 +108,25 @@
                             </el-input>
                         </div>
                     </div>
+
+
+                    <div class="commonInputSection">
+                        <span class="inputSpanText">导师类型: </span>
+                        <div class="commonInput">
+                            <el-select v-model="optionView.commonSelect.type"
+                                       filterable
+                                       clearable
+                                       placeholder="选择导师类型">
+                                <el-option
+                                        v-for="item in optionValue.typeOption"
+                                        :key="item.value"
+                                        :label="item.label"
+                                        :value="item.value">
+                                </el-option>
+                            </el-select>
+                        </div>
+                    </div>
+
                 </row>
                 <row>
                     <div class="commonInputSection">
@@ -142,10 +161,10 @@
                             </el-select>
                         </div>
                     </div>
-                    <div class="commonInputSection" style="margin-top: 5px">
+                    <div class="commonInputSection" style="margin-top: 5px;margin-left: 20px">
                         <el-button type="primary" size="small" @click="searchClick">查询导师
                         </el-button>
-                        <el-button type="danger" size="small"
+                        <el-button type="danger" size="small" style="margin-left: 20px"
                                    @click="exportStatisticResult()">导出结果
                         </el-button>
                     </div>
@@ -455,6 +474,7 @@
                 paperTypeOption: [],
                 orgOption: [],
                 subjectOption: [],
+                typeOption:[],
                 paperLevelOption: [
                     {
                         label: "第一级",
@@ -638,7 +658,8 @@
                         paperType: app.optionView.paper.paperType,
                         ISSN: app.optionView.paper.ISSN,
                         pageIndex: app.table.paperTable.params.pageIndex,
-                        pageSize: app.table.paperTable.params.pageSize
+                        pageSize: app.table.paperTable.params.pageSize,
+                        type:app.optionView.paper.type
                     };
                     let getParam = formatParams(data);
                     let getLink = "/api/doc/search/selectPaperListByPageGet?" + getParam;
@@ -689,7 +710,8 @@
                     "realName=" + app.optionView.commonSelect.realName +
                     "&workId=" + app.optionView.commonSelect.workId +
                     "&school=" + app.optionView.commonSelect.school+
-                    "&major=" +app.optionView.commonSelect.major
+                    "&major=" +app.optionView.commonSelect.major+
+                        "&type=" +app.optionView.commonSelect.type
             },
 
             getSummaries(param) {
@@ -743,6 +765,8 @@
             major: app.optionView.commonSelect.major,
             //待查作者机构名称
             school: app.optionView.commonSelect.school,
+
+            type:app.optionView.commonSelect.type,
             //分页信息
             page: app.table.authorTable.params,
         };
@@ -825,6 +849,17 @@
             };
             app.optionValue.subjectOption.push(tmpSub);
         }
+
+        /*初始化类型*/
+        app.optionValue.typeOption.push({
+            value:"硕士生导师",
+            label:"硕士生导师"
+        });
+
+        app.optionValue.typeOption.push({
+            value:"博士生导师",
+            label:"博士生导师"
+        });
     }
 
     window.onload = function () {

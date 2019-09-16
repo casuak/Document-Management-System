@@ -36,6 +36,12 @@
         <if test="major != null and major != ''">
             and `major` = #{major}
         </if>
+        <if test='type =="博士生导师"'>
+          and `is_doctor` ='是'
+        </if>
+        <if test='type =="硕士生导师"'>
+            and `is_master` ='是'
+        </if>
         limit #{page.pageStart},#{page.pageSize}
     </select>
 
@@ -58,7 +64,13 @@
         <if test="major != null and major != ''">
             and `major` = #{major}
         </if>
-        limit #{page.pageStart},#{page.pageSize}
+        <if test='type =="博士生导师"'>
+            and `is_doctor` ='是'
+        </if>
+        <if test='type =="硕士生导师"'>
+            and `is_master` ='是'
+        </if>
+
     </select>
 
     <select id="getStudentIdListByTeacherId" parameterType="java.lang.String" resultType="java.lang.String">
@@ -156,4 +168,12 @@
         and `del_flag` != 1
     </select>
 
+
+    <select id="getFundCount" resultType="java.lang.Integer">
+        select count(*) from doc_fund
+        where  person_work_id = #{param1}
+        and `status` ='2'
+        and del_flag != 1
+        and metric_name =#{param2}
+    </select>
 </mapper>

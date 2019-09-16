@@ -23,4 +23,7 @@ public interface AuthorStatisticsMapper {
     Integer getPatentStuFirstCount(List<String> idlist); //一作学生 二作导师
     Integer getPatentTeaFirstCount(Map<String,Object> info);//一作导师 二作学生
 
+    //获取基金数量
+    Integer getFundCount(String workId,String type);
+
 }

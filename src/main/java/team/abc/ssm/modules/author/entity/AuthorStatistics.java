@@ -13,6 +13,7 @@ public class AuthorStatistics extends DataEntity<AuthorStatistics> {
     String workId; //工号
     String school;//学院
     String major;//学科
+    String type; //博导 硕导
 
     List<String> stuList; //老师名下学生列表
 

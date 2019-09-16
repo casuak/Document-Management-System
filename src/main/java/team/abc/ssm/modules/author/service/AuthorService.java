@@ -161,18 +161,18 @@ public class AuthorService {
                 teacher.setStuPatent(0);
             }
             //获取老师基金信息 TODO
-            teacher.setNationFocus(0);
-            teacher.setNsfcZDYF(0);
-            teacher.setNationInstrument(0);
-            teacher.setNsfcKXZX(0);
-            teacher.setNsfcZDAXM(0);
-            teacher.setNsfcZDIANXM(0);
-            teacher.setNsfcMSXM(0);
-            teacher.setNsfcQNXM(0);
-            teacher.setNssfcZDAXM(0);
-            teacher.setNssfcZDIANXM(0);
-            teacher.setNssfcYBXM(0);
-            teacher.setNssfcQNXM(0);
+            teacher.setNationFocus(authorStatisticsMapper.getFundCount(teacher.getWorkId(),"bc66c15317fc45c09103230de7f7120e"));
+            teacher.setNsfcZDYF(authorStatisticsMapper.getFundCount(teacher.getWorkId(),"703386e1860648a6a397a6a24503bdf6"));
+            teacher.setNationInstrument(authorStatisticsMapper.getFundCount(teacher.getWorkId(),"2163f1d53f5d48f1bee577df1babeac2"));
+            teacher.setNsfcKXZX(authorStatisticsMapper.getFundCount(teacher.getWorkId(),"b8d6b2233c1b4ccaa46e19f405d474cc"));
+            teacher.setNsfcZDAXM(authorStatisticsMapper.getFundCount(teacher.getWorkId(),"9eddd16e476a459d81dd2735e21be83b"));
+            teacher.setNsfcZDIANXM(authorStatisticsMapper.getFundCount(teacher.getWorkId(),"9d8689193b584fd1903fe9abcf42877d"));
+            teacher.setNsfcMSXM(authorStatisticsMapper.getFundCount(teacher.getWorkId(),"a7454d55cfa84120ad404a83049c4476"));
+            teacher.setNsfcQNXM(authorStatisticsMapper.getFundCount(teacher.getWorkId(),"0a541d33521f415a870cbbfe88aaa758"));
+            teacher.setNssfcZDAXM(authorStatisticsMapper.getFundCount(teacher.getWorkId(),"a7b4fed10c524924b0d7b5c5e3e3fefa"));
+            teacher.setNssfcZDIANXM(authorStatisticsMapper.getFundCount(teacher.getWorkId(),"06c377960ec744f2a58b3e320dbea5c6"));
+            teacher.setNssfcYBXM(authorStatisticsMapper.getFundCount(teacher.getWorkId(),"fcff48a07dda4c73bf3ed525be5115cd"));
+            teacher.setNssfcQNXM(authorStatisticsMapper.getFundCount(teacher.getWorkId(),"4d0c8149b3064db69d7b2063bae7c709"));
             teacher.setFundSum(teacher.getNationFocus()+teacher.getNsfcZDYF()+teacher.getNationInstrument()+teacher.getNsfcKXZX()+teacher.getNsfcZDAXM()
             +teacher.getNsfcZDIANXM()+teacher.getNsfcMSXM()+teacher.getNsfcQNXM()+teacher.getNssfcZDAXM()+teacher.getNssfcYBXM()+teacher.getNssfcQNXM());
             resultList.add(teacher);
