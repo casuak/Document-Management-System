@@ -67,7 +67,7 @@ public class DocStatisticApi extends BaseApi {
     @RequestMapping(value = "getFundTypeList",method = RequestMethod.POST)
     @ResponseBody
     public Object getFundTypeList(){
-        List<Dict> list = fundService.getFundTypeList();
+        List<String> list = fundService.getFundTypeList();
         return retMsg.Set(MsgType.SUCCESS, list);
     }
 

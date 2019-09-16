@@ -48,5 +48,10 @@ public interface FundDao {
 
     int getTotal(String school, String matric);
 
-    List<Dict> getFundTypeList();
+    List<String> getFundTypeList();
+
+    List<Fund> selectListByPageWithStatisticCondition(StatisticCondition condition);
+    int selectNumWithStatisticCondition(StatisticCondition condition);
+
+    int deleteListByIds(List<Fund> list);
 }

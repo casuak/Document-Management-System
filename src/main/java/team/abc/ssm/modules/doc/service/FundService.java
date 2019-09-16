@@ -148,7 +148,19 @@ public class FundService {
         return statisticsResMap;
     }
 
-    public List<Dict> getFundTypeList(){
+    public List<String> getFundTypeList(){
         return fundDao.getFundTypeList();
+    }
+
+    public List<Fund> selectListByPageWithStatisticCondition(StatisticCondition condition){
+        return fundDao.selectListByPageWithStatisticCondition(condition);
+    }
+
+    public int selectNumWithStatisticCondition(StatisticCondition condition){
+        return fundDao.selectNumWithStatisticCondition(condition);
+    }
+
+    public void deleteListByIds(List<Fund> list){
+        fundDao.deleteListByIds(list);
     }
 }

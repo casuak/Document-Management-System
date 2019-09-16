@@ -465,7 +465,7 @@
                         paperLevel: "",                                     //论文级别
 
                         DOI: "",
-                        journalDivision: "",
+                        journalDivision: ""
                     },
                     patent: {
                         show: false,
@@ -493,7 +493,7 @@
                             pageSize: 10,
                             pageSizes: [5, 10, 20, 40],
                             searchKey: '',  // 搜索词
-                            total: 100,       // 总数
+                            total: 100       // 总数
                         }
                     }
                 },
@@ -516,7 +516,6 @@
                     optionViewSelect();
                 },
 
-                //todo 详情
                 /*查看文献统计详情*/
                 viewStatisticsDetail: function (row) {
                     let app = this;
@@ -530,7 +529,7 @@
                             paperType: app.optionView.paper.paperType,
                             journalDivision: app.optionView.paper.journalDivision,
                             impactFactorMin: app.optionView.paper.impactFactorMin,
-                            impactFactorMax: app.optionView.paper.impactFactorMax,
+                            impactFactorMax: app.optionView.paper.impactFactorMax
                         };
 
                         let getParam = formatParams(data);
@@ -549,6 +548,15 @@
                         let getParam = formatParams(data);
                         let getLink = "/api/patent/selectPatentListByPageGet?" + getParam;
                         window.parent.app.addTab("专利", getLink);
+                    } else if (row.type === "基金") {
+                        let data = {
+                            institute: app.optionView.commonSelect.organization,
+                            fundType: app.optionView.fund.fundType
+                        };
+                        let getParam = formatParams(data);
+                        let getLink = "api/doc/fund/selectFundListByPageGet?" + getParam;
+                        console.log(getLink);
+                        window.parent.app.addTab("基金", getLink);
                     } else {
                         alert("著作权统计详情页面");
                     }
@@ -723,11 +731,10 @@
         }
 
         ajaxPostJSON("/api/doc/statistic/getFundTypeList", null, function (result) {
-            console.log(result.data);
             (result.data).forEach(function (v) {
                 let tmpFund = {
-                    value: v.id,
-                    label: v.nameCn
+                    value: v,
+                    label: v
                 };
                 app.optionValue.fundOption.push(tmpFund);
             })
