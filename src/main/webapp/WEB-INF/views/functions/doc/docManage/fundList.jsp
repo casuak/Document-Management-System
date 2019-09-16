@@ -345,27 +345,15 @@
                     let app = this;
                 let data = {
                     //筛选条件
-                    subject: app.optionView.commonSelect.subject,
+                    type: app.optionView.fund.fundType,
                     institute: app.optionView.commonSelect.institute,
-                    startDate: app.optionView.commonSelect.publishDate[0],
-                    endDate: app.optionView.commonSelect.publishDate[1],
-                    patentName: app.optionView.patent.patentName,
-                    patentType: app.optionView.patent.patentType,
-                    patentNumber: app.optionView.patent.patentNumber,
-                    firstAuthorWorkId: app.optionView.patent.firstAuthorWorkId,
-                    secondAuthorWorkId: app.optionView.patent.secondAuthorWorkId,
+
                 };
 
-                window.location.href = "/api/patent/exportFundList?" +
-                    "subject=" + data.subject +
-                    "&institute=" + data.institute +
-                    "&patentName=" + data.patentName +
-                    "&patentType=" + data.patentType +
-                    "&patentNumber=" + data.patentNumber +
-                    "&firstAuthorWorkId=" + data.firstAuthorWorkId +
-                    "&secondAuthorWorkId=" + data.secondAuthorWorkId +
-                    "&startDate=" + dateToString(data.startDate) +
-                    "&endDate=" + dateToString(data.endDate);
+                window.location.href = "/api/doc/fund/exportFundList?" +
+                    "type=" + data.type +
+                    "&institute=" + data.institute
+
             }).catch(() => {
                     window.parent.app.showMessage('已取消导出', 'warning');
             });
