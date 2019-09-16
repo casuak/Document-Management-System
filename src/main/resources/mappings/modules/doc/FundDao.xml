@@ -1,43 +1,189 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="team.abc.ssm.modules.doc.dao.FundDao">
-
-    <resultMap id="fundBean" type="fund">
-        <id column="id" property="id"/>
-
-        <result column="metric_name" property="metricName"/>
-        <result column="person_name" property="personName"/>
-        <result column="project_year" property="projectYear"/>
-        <result column="project_name" property="projectName"/>
-        <result column="project_money" property="projectMoney"/>
+    <resultMap id="BaseResultMap" type="team.abc.ssm.modules.doc.entity.Fund">
+        <!--@mbg.generated-->
+        <id column="id" jdbcType="VARCHAR" property="id"/>
+        <result column="metric_name" jdbcType="VARCHAR" property="metricName"/>
+        <result column="person_name" jdbcType="VARCHAR" property="personName"/>
+        <result column="person_work_id" jdbcType="VARCHAR" property="personWorkId"/>
+        <result column="project_year" jdbcType="INTEGER" property="projectYear"/>
+        <result column="project_name" jdbcType="VARCHAR" property="projectName"/>
+        <result column="project_money" jdbcType="INTEGER" property="projectMoney"/>
+        <result column="remarks" jdbcType="VARCHAR" property="remarks"/>
+        <result column="person_id" jdbcType="VARCHAR" property="personId"/>
+        <result column="status" jdbcType="VARCHAR" property="status"/>
+        <result column="create_user_id" jdbcType="VARCHAR" property="createUserId"/>
+        <result column="modify_user_id" jdbcType="VARCHAR" property="modifyUserId"/>
+        <result column="create_date" jdbcType="TIMESTAMP" property="createDate"/>
+        <result column="modify_date" jdbcType="TIMESTAMP" property="modifyDate"/>
+        <result column="del_flag" jdbcType="BOOLEAN" property="delFlag"/>
     </resultMap>
 
-    <select id="list" parameterType="fund" resultMap="fundBean">
+    <sql id="Base_Column_List">
+        <!--@mbg.generated-->
+        `id`, metric_name, person_name, person_work_id, project_year, project_name, project_money,
+        remarks, person_id, `status`, create_user_id, modify_user_id, create_date, modify_date,
+        del_flag
+    </sql>
+
+    <update id="init">
+        UPDATE doc_fund SET `status` = '-1' WHERE `status` IS NULL
+    </update>
+
+    <select id="list" parameterType="team.abc.ssm.modules.doc.entity.Fund"
+            resultMap="BaseResultMap">
         select *
         from doc_fund
-        where project_name like concat('%', #{page.searchKey}, '%')
-        limit #{page.pageStart}, #{page.pageSize}
+        <where>
+            <if test="status != null and status != ''">
+                status = #{status}
+            </if>
+            <if test="page.searchKey != null and page.searchKey != ''">
+                and project_name like concat('%',#{page.searchKey} ,'%')
+            </if>
+        </where>
+        limit #{page.pageStart} ,#{page.pageSize}
     </select>
 
-    <select id="listCount" resultType="Integer">
+    <select id="listCount" parameterType="team.abc.ssm.modules.doc.entity.Fund"
+            resultType="Integer">
         select count(*)
         from doc_fund
-        where project_name like concat('%', #{page.searchKey}, '%')
+        <where>
+            <if test="status != null and status != ''">
+                status = #{status}
+            </if>
+            <if test="page.searchKey != null and page.searchKey != ''">
+                and project_name like concat('%',#{page.searchKey} ,'%')
+            </if>
+        </where>
     </select>
 
-    <delete id="deleteByIds" parameterType="fund">
-        delete from doc_fund where id in
-        <foreach collection="list" open="(" close=")" separator="," item="item" index="index">
-            #{item.id}
-        </foreach>
+    <delete id="deleteFundByStatus" parameterType="java.lang.String">
+        delete from doc_fund where `status`=#{status,jdbcType=VARCHAR}
     </delete>
 
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+        delete from doc_fund where id = #{id,jdbcType=VARCHAR}
+    </delete>
 
-    <delete id="deleteAll">
-        delete
+    <select id="selectAllByStatus" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
         from doc_fund
-        where 1 = 1
-    </delete>
+        where `status`=#{status,jdbcType=VARCHAR}
+    </select>
+
+    <select id="selectByStatusAndMetricNameAndProjectNameAndDelFlag" resultType="int">
+        select count(*)
+        from doc_fund
+        where `status`=#{status,jdbcType=VARCHAR}
+        and metric_name=#{metricName,jdbcType=VARCHAR}
+        and project_name=#{projectName,jdbcType=VARCHAR}
+        and del_flag=#{delFlag,jdbcType=BOOLEAN}
+    </select>
+
+    <update id="updateByPrimaryKeySelective" parameterType="team.abc.ssm.modules.doc.entity.Fund">
+        <!--@mbg.generated-->
+        update doc_fund
+        <set>
+            <if test="metricName != null">
+                metric_name = #{metricName,jdbcType=VARCHAR},
+            </if>
+            <if test="personName != null">
+                person_name = #{personName,jdbcType=VARCHAR},
+            </if>
+            <if test="personWorkId != null">
+                person_work_id = #{personWorkId,jdbcType=VARCHAR},
+            </if>
+            <if test="projectYear != null">
+                project_year = #{projectYear,jdbcType=INTEGER},
+            </if>
+            <if test="projectName != null">
+                project_name = #{projectName,jdbcType=VARCHAR},
+            </if>
+            <if test="projectMoney != null">
+                project_money = #{projectMoney,jdbcType=INTEGER},
+            </if>
+            <if test="remarks != null">
+                remarks = #{remarks,jdbcType=VARCHAR},
+            </if>
+            <if test="personId != null">
+                person_id = #{personId,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                `status` = #{status,jdbcType=VARCHAR},
+            </if>
+            <if test="createUserId != null">
+                create_user_id = #{createUserId,jdbcType=VARCHAR},
+            </if>
+            <if test="modifyUserId != null">
+                modify_user_id = #{modifyUserId,jdbcType=VARCHAR},
+            </if>
+            <if test="createDate != null">
+                create_date = #{createDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modifyDate != null">
+                modify_date = #{modifyDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="delFlag != null">
+                del_flag = #{delFlag,jdbcType=BOOLEAN},
+            </if>
+        </set>
+        where id = #{id,jdbcType=VARCHAR}
+    </update>
+
+    <select id="findUserByWorkId" resultType="int">
+        select count(*) from sys_user where work_id=#{workId,jdbcType=VARCHAR};
+    </select>
+
+    <select id="findUserName" resultType="java.lang.String">
+        select real_name from sys_user where work_id=#{workId,jdbcType=VARCHAR};
+    </select>
+
+    <select id="findPersonId" resultType="java.lang.String">
+        select `id` from sys_user where work_id=#{workId,jdbcType=VARCHAR};
+    </select>
+
+    <update id="updateFund" parameterType="Fund">
+        update doc_fund
+        set project_money=#{projectMoney},
+        project_year=#{projectYear},
+        project_name=#{projectName},
+        modify_date=#{modifyDate},
+        modify_user_id=#{modifyUserId}
+        where id=#{id}
+    </update>
+
+    <resultMap id="userMap" type="team.abc.ssm.modules.author.entity.SysUser">
+        <id column="id" jdbcType="VARCHAR" property="id"/>
+        <result column="real_name" jdbcType="VARCHAR" property="realName"/>
+        <result column="work_id" jdbcType="VARCHAR" property="workId"/>
+        <result column="school" jdbcType="VARCHAR" property="school"/>
+        <result column="title" jdbcType="VARCHAR" property="title"/>
+    </resultMap>
+
+    <select id="findById" resultMap="userMap">
+        select id,real_name,work_id,school,title from sys_user where work_id=#{id}
+    </select>
+
+    <select id="findByName" resultMap="userMap">
+        select id,real_name,work_id,school,title from sys_user where real_name=#{name}
+    </select>
+
+
+    <update id="matchFund" parameterType="Fund">
+        update doc_fund
+        set person_name=#{personName},
+        person_work_id=#{personWorkId},
+        person_id=#{personId},
+        modify_user_id=#{modifyUserId},
+        modify_date=#{modifyDate},
+        status=#{status}
+        where id=#{id}
+    </update>
+
 
     <update id="updateById">
       update doc_fund set
