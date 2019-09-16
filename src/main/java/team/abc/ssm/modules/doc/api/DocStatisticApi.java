@@ -14,10 +14,12 @@ import team.abc.ssm.common.web.BaseApi;
 import team.abc.ssm.common.web.MsgType;
 import team.abc.ssm.modules.author.service.AuthorService;
 import team.abc.ssm.modules.doc.entity.StatisticCondition;
+import team.abc.ssm.modules.doc.service.FundService;
 import team.abc.ssm.modules.doc.service.PaperSearchService;
 import team.abc.ssm.modules.doc.service.PatentService;
 import team.abc.ssm.modules.paper.service.DocPaperService;
 import team.abc.ssm.modules.patent.service.DocPatentService;
+import team.abc.ssm.modules.sys.entity.Dict;
 import team.abc.ssm.modules.sys.service.DictService;
 import team.abc.ssm.modules.sys.service.FunctionService;
 
@@ -59,6 +61,16 @@ public class DocStatisticApi extends BaseApi {
     @Autowired
     private DictService dictService;
 
+    @Autowired
+    private FundService fundService;
+
+    @RequestMapping(value = "getFundTypeList",method = RequestMethod.POST)
+    @ResponseBody
+    public Object getFundTypeList(){
+        List<Dict> list = fundService.getFundTypeList();
+        return retMsg.Set(MsgType.SUCCESS, list);
+    }
+
     /**跳转到统计页面，并传相关参数到页面*/
     @RequestMapping(value = "goDocStatistic",method = RequestMethod.GET)
     public ModelAndView goDocStatistic(
@@ -85,7 +97,7 @@ public class DocStatisticApi extends BaseApi {
     public Object doDocStatistic(
             @RequestBody StatisticCondition statisticCondition){
         Map<String,Integer> resMap = new HashMap<>();
-        Map<String,Integer> paperMap,patentMap;
+        Map<String,Integer> paperMap,patentMap,fundMap;
 
         //1.处理一下paperType
         if (statisticCondition.getPaperType() != null && !"".equals(statisticCondition.getPaperType())){
@@ -96,6 +108,8 @@ public class DocStatisticApi extends BaseApi {
         resMap.putAll(paperMap);
         patentMap = docPatentService.doPatentStatistics(statisticCondition);
         resMap.putAll(patentMap);
+        fundMap = fundService.doFundStatistics(statisticCondition);
+        resMap.putAll(fundMap);
 
         return retMsg.Set(MsgType.SUCCESS,resMap);
     }

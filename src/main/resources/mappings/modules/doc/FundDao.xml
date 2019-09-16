@@ -116,6 +116,9 @@
             <if test="personId != null">
                 person_id = #{personId,jdbcType=VARCHAR},
             </if>
+            <if test="school != null">
+                school = #{school,jdbcType=VARCHAR},
+            </if>
             <if test="status != null">
                 `status` = #{status,jdbcType=VARCHAR},
             </if>
@@ -182,6 +185,7 @@
         set person_name=#{personName},
         person_work_id=#{personWorkId},
         person_id=#{personId},
+        school=#{school},
         modify_user_id=#{modifyUserId},
         modify_date=#{modifyDate},
         status=#{status}
@@ -190,6 +194,32 @@
 
     <select id="findMetricDict" resultType="java.lang.String">
         select id from sys_dict where name_cn like CONCAT('%', #{metric}, '%')
+    </select>
+
+    <select id="findSchool" resultType="java.lang.String">
+        select school from sys_user where id=#{id}
+    </select>
+
+    <select id="getTotal" resultType="int">
+        select count(*) from doc_fund
+        <where>
+            <if test="param1 != null and param1 != ''">
+                and school = #{param1}
+            </if>
+            <if test="param2 != null and param2 != ''">
+                and metric_match = #{param2}
+            </if>
+        </where>
+    </select>
+
+    <resultMap id="dict" type="team.abc.ssm.modules.sys.entity.Dict">
+        <id column="id" jdbcType="VARCHAR" property="id"/>
+        <result column="name_cn" jdbcType="VARCHAR" property="nameCn"/>
+    </resultMap>
+
+    <select id="getFundTypeList" resultMap="dict">
+        select id, name_cn from sys_dict where type_id="5ec73e3619aa4f34ae4c32aa7b02d9ed"
+        order by name_cn
     </select>
 
 

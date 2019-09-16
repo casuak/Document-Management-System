@@ -1,8 +1,6 @@
 package team.abc.ssm.modules.doc.service;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -10,6 +8,8 @@ import team.abc.ssm.common.utils.UserUtils;
 import team.abc.ssm.modules.author.entity.SysUser;
 import team.abc.ssm.modules.doc.dao.FundDao;
 import team.abc.ssm.modules.doc.entity.Fund;
+import team.abc.ssm.modules.doc.entity.StatisticCondition;
+import team.abc.ssm.modules.sys.entity.Dict;
 import team.abc.ssm.modules.sys.entity.User;
 
 @Service
@@ -77,7 +77,6 @@ public class FundService {
 
         for (Fund f : fundList) {
             f.setMetricMatch(fundDao.findMetricDict(f.getMetricName()));
-            System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"+fundDao.findMetricDict(f.getMetricName()));
 
             //工号不存在或不唯一
             if (fundDao.findUserByWorkId(f.getPersonWorkId()) != 1) {
@@ -92,6 +91,7 @@ public class FundService {
             if (fundDao.findUserName(f.getPersonWorkId()).equals(f.getPersonName())) {
                 f.setStatus("2");
                 f.setPersonId(fundDao.findPersonId(f.getPersonWorkId()));
+                f.setSchool(fundDao.findSchool(f.getPersonId()));
             }
             //否则失败
             else
@@ -129,7 +129,26 @@ public class FundService {
         fund.setModifyDate(dateNow);
         fund.setModifyUserId(userNow.getId());
         fund.setStatus("2");
+        fund.setSchool(fundDao.findSchool(fund.getPersonId()));
 
         return fundDao.matchFund(fund) == 1;
+    }
+
+    public Map<String, Integer> doFundStatistics(StatisticCondition statisticCondition) {
+        Map<String, Integer> statisticsResMap = new HashMap<>();
+
+        String school = statisticCondition.getInstitute();
+        String metric = statisticCondition.getFundType();
+
+        Integer totalNum = fundDao.getTotal(school, metric);
+        statisticsResMap.put("studentFund", 0);
+        statisticsResMap.put("teacherFund", totalNum);
+        statisticsResMap.put("doctorFund", 0);
+        statisticsResMap.put("totalFund", totalNum);
+        return statisticsResMap;
+    }
+
+    public List<Dict> getFundTypeList(){
+        return fundDao.getFundTypeList();
     }
 }

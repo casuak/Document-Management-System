@@ -54,6 +54,11 @@ public class Fund extends DataEntity<Fund> {
     private String personId;
 
     /**
+     * 学院
+     */
+    private String school;
+
+    /**
      * -1未初始化 0未匹配 1匹配失败 2匹配成功
      */
     private String status;

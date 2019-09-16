@@ -5,6 +5,8 @@ import java.util.List;
 import org.apache.ibatis.annotations.Param;
 import team.abc.ssm.modules.author.entity.SysUser;
 import team.abc.ssm.modules.doc.entity.Fund;
+import team.abc.ssm.modules.doc.entity.StatisticCondition;
+import team.abc.ssm.modules.sys.entity.Dict;
 
 public interface FundDao {
     void init();
@@ -41,4 +43,10 @@ public interface FundDao {
     int matchFund(Fund fund);
 
     String findMetricDict(String metric);
+
+    String findSchool(String id);
+
+    int getTotal(String school, String matric);
+
+    List<Dict> getFundTypeList();
 }

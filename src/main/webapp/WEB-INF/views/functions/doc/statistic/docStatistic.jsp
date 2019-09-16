@@ -90,6 +90,7 @@
                     <el-checkbox-group v-model="doc.checkedDoc" @change="handleCheckedDocsChange">
                         <el-checkbox :label="doc.docType.paper" :key="doc.docType.paper"></el-checkbox>
                         <el-checkbox :label="doc.docType.patent" :key="doc.docType.patent"></el-checkbox>
+                        <el-checkbox :label="doc.docType.fund" :key="doc.docType.fund"></el-checkbox>
                     </el-checkbox-group>
                 </template>
             </div>
@@ -260,21 +261,43 @@
                 </row>
             </div>
 
+            <div id="fundBox" class="tmp" v-show="radio == 2 &&  optionView.fund.show">
+                <row>
+                    <span class="selectText">
+                        <el-tag type="success">基金筛选项</el-tag>
+                    </span>
+                    <div class="commonInputSection">
+                        <span class="inputSpanText">基金类型: </span>
+                        <div class="commonInput">
+                            <el-select v-model="optionView.fund.fundType" clearable placeholder="选择基金种类">
+                                <el-option
+                                        v-for="item in optionValue.fundOption"
+                                        :key="item.value"
+                                        :label="item.label"
+                                        :value="item.value">
+                                </el-option>
+                            </el-select>
+                        </div>
+                    </div>
+
+                </row>
+            </div>
+
             <div style="height: 10px"></div>
 
             <row>
                 <div v-show="radio ==2">
                     <el-button type="primary" size="medium"
                                :disabled="table.commonTable.loading"
-                               @click="statisticalSearch()">统计结果
+                               @click="statisticalSearch();console.log(optionView.fund.fundType);">统计结果
                     </el-button>
                     <el-button type="danger" size="medium"
                                :disabled="table.commonTable.loading"
                                @click="exportStatisticResult()">导出结果
                     </el-button>
-                   <%-- <el-button type="success" size="medium"
-                               @click="viewStatisticsDetail({'type':'论文'})">TEST
-                    </el-button>--%>
+                    <%-- <el-button type="success" size="medium"
+                                @click="viewStatisticsDetail({'type':'论文'})">TEST
+                     </el-button>--%>
                 </div>
             </row>
 
@@ -356,7 +379,7 @@
 
 <%@include file="/WEB-INF/views/include/blankScript.jsp" %>
 <script>
-    const docOptions = ["论文", "专利"];
+    const docOptions = ["论文", "专利", "基金"];
 
     var app = new Vue({
             el: '#app',
@@ -368,21 +391,13 @@
                         /*应该从字典项中查询：*/
                         paper: "论文",
                         patent: "专利",
+                        fund: "基金"
                     },
                     checkedDoc: [],
                     isIndeterminate: true,
-                    paperResult:{
-                       /* totalPaper:0,
-                        teacherPaper:0,
-                        studentPaper:0,
-                        doctorPaper:0*/
-                    },
-                    patentResult:{
-                       /* totalPatent:0,
-                        teacherPatent:0,
-                        studentPatent:0,
-                        doctorPatent:0*/
-                    }
+                    paperResult: {},
+                    patentResult: {},
+                    fundResult: {}
                 },
                 //条件输入(选择)框的候选项：
                 optionValue: {
@@ -421,7 +436,8 @@
                             value: "postdoctoral"
                         }
                     ],
-                    subjectOption: []
+                    subjectOption: [],
+                    fundOption: []
                 },
 
                 //条件输入(选择)框(V-model绑定的值)：
@@ -461,6 +477,10 @@
                         show: false,
                         copySubject: "",
                         copyType: ""
+                    },
+                    fund: {
+                        show: false,
+                        fundType: ""
                     }
                 },
                 table: {
@@ -478,7 +498,7 @@
                     }
                 },
                 dialog: {},
-                options: {},
+                options: {}
             },
             methods: {
                 handleCheckAllChange(val) {
@@ -487,6 +507,7 @@
                     optionViewSelect();
                 },
 
+                //todo 没改，这是干啥的？
                 handleCheckedDocsChange(value) {
                     let checkedCount = value.length;
                     console.log("checkedDoc：" + app.doc.checkedDoc);
@@ -495,6 +516,7 @@
                     optionViewSelect();
                 },
 
+                //todo 详情
                 /*查看文献统计详情*/
                 viewStatisticsDetail: function (row) {
                     let app = this;
@@ -508,7 +530,7 @@
                             paperType: app.optionView.paper.paperType,
                             journalDivision: app.optionView.paper.journalDivision,
                             impactFactorMin: app.optionView.paper.impactFactorMin,
-                            impactFactorMax: app.optionView.paper.impactFactorMax
+                            impactFactorMax: app.optionView.paper.impactFactorMax,
                         };
 
                         let getParam = formatParams(data);
@@ -546,7 +568,8 @@
                         journalDivision: app.optionView.paper.journalDivision,
                         impactFactorMin: app.optionView.paper.impactFactorMin,
                         impactFactorMax: app.optionView.paper.impactFactorMax,
-                        patentType: app.optionView.patent.patentType
+                        patentType: app.optionView.patent.patentType,
+                        fundType: app.optionView.fund.fundType
                     };
                     ajaxPostJSON("/api/doc/statistic/doDocStatistic", params,
                         function suc(d) {
@@ -565,49 +588,27 @@
                                 studentDocNum: res.studentPatent,
                                 postdoctoralDocNum: res.doctorPatent
                             };
+                            let fund = {
+                                type: '基金',
+                                totalDocNum: res.totalFund,
+                                teacherDocNum: res.totalFund,
+                                studentDocNum: 0,
+                                postdoctoralDocNum: 0
+                            };
                             app.doc.paperResult = paper;
-                            console.log("论文统计结果")
-                            console.log(paper)
                             app.doc.patentResult = patent;
-                          /*  app.doc.paperResult.totalPaper = paper.totalDocNum;
-                            app.doc.paperResult.teacherPaper = paper.teacherDocNum;
-                            app.doc.paperResult.studentPaper = paper.studentDocNum;
-                            app.doc.paperResult.doctorPaper = paper.postdoctoralDocNum;*/
+                            app.doc.fundResult = fund;
 
                             app.table.commonTable.data = [];
                             app.table.commonTable.data.push(paper);
                             app.table.commonTable.data.push(patent);
+                            app.table.commonTable.data.push(fund);
 
                             app.table.commonTable.loading = false;
                         }, null)
                 },
 
-                getSummaries(param) {
-                    const {columns, data} = param;
-                    const sums = [];
-                    columns.forEach((column, index) => {
-                        if (index === 1) {
-                            sums[index] = '总价';
-                            return;
-                        }
-                        const values = data.map(item => Number(item[column.property]));
-                        if (!values.every(value => isNaN(value))) {
-                            sums[index] = values.reduce((prev, curr) => {
-                                const value = Number(curr);
-                                if (!isNaN(value)) {
-                                    return prev + curr;
-                                } else {
-                                    return prev;
-                                }
-                            }, 0);
-                            sums[index] += ' 元';
-                        } else {
-                            sums[index] = 'N/A';
-                        }
-                    });
-                    return sums;
-                },
-
+                //todo 我没动
                 //4. 统计结果导出成excel格式
                 exportStatisticResult() {
                     let app = this;
@@ -636,6 +637,7 @@
         app.optionView.paper.show = false;
         app.optionView.patent.show = false;
         app.optionView.copyright.show = false;
+        app.optionView.fund.show = false;
         // app.optionView.commonSelect.show = app.doc.checkedDoc.length <= 0;
 
         for (let i = 0; i < app.doc.checkedDoc.length; i++) {
@@ -646,6 +648,9 @@
                     break;
                 case "专利":
                     app.optionView.patent.show = true;
+                    break;
+                case "基金":
+                    app.optionView.fund.show = true;
                     break;
                 default:
                     break;
@@ -716,6 +721,17 @@
             };
             app.optionValue.subjectOption.push(tmpSub);
         }
+
+        ajaxPostJSON("/api/doc/statistic/getFundTypeList", null, function (result) {
+            console.log(result.data);
+            (result.data).forEach(function (v) {
+                let tmpFund = {
+                    value: v.id,
+                    label: v.nameCn
+                };
+                app.optionValue.fundOption.push(tmpFund);
+            })
+        })
     }
 
     window.onload = function () {

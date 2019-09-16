@@ -94,4 +94,9 @@ public class StatisticCondition extends DataEntity<StatisticCondition> {
      private String firstAuthorWorkId;
 
      private String secondAuthorWorkId;
+
+    /**
+     * 基金类型
+     */
+     private String fundType;
 }
