@@ -54,4 +54,7 @@ public interface FundDao {
     int selectNumWithStatisticCondition(StatisticCondition condition);
 
     int deleteListByIds(List<Fund> list);
+
+    List<Fund> selectMyPatentListByPage(Fund fund);
+    int getMyPatentNum(Fund fund);
 }

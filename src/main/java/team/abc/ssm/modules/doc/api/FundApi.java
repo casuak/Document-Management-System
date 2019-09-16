@@ -134,15 +134,15 @@ public class FundApi extends BaseApi {
         modelAndView.addObject("orgList", JSONArray.fromObject(orgList));
 
 
-        modelAndView.addObject("institute",institute);
-        modelAndView.addObject("fundType",fundType);
+        modelAndView.addObject("institute", institute);
+        modelAndView.addObject("fundType", fundType);
 
         return modelAndView;
     }
 
-    @RequestMapping(value = "selectAllFundByPage",method = RequestMethod.POST)
+    @RequestMapping(value = "selectAllFundByPage", method = RequestMethod.POST)
     @ResponseBody
-    public Object selectAllFundByPage(@RequestBody StatisticCondition condition){
+    public Object selectAllFundByPage(@RequestBody StatisticCondition condition) {
         //1.设置待查询的List的状态为：已完成
         condition.setStatus("2");
         //2.分页查询
@@ -191,11 +191,11 @@ public class FundApi extends BaseApi {
 
         HSSFSheet sheet = wb.createSheet("论文统计结果");
         String[] excelHeader = {
-              "序号","指标名称","姓名","工号","年份","项目名称","金额（万元）"
+                "序号", "指标名称", "姓名", "工号", "年份", "项目名称", "金额（万元）"
         };
         // 单元格列宽
         int[] excelHeaderWidth = {
-                40, 300, 150, 150,  150, 300, 150,
+                40, 300, 150, 150, 150, 300, 150,
         };
 
         HSSFRow row = sheet.createRow((int) 0);
@@ -237,7 +237,7 @@ public class FundApi extends BaseApi {
             int cellNum = 0;
             //第一列存的是序号
             HSSFCell cell = row.createCell(cellNum++);
-            cell.setCellValue(i+1);
+            cell.setCellValue(i + 1);
             cell.setCellStyle(style);
             //第2列
             cell = row.createCell(cellNum++);
@@ -276,5 +276,27 @@ public class FundApi extends BaseApi {
         wb.write(ouputStream);
         ouputStream.flush();
         ouputStream.close();
+    }
+
+    @RequestMapping(value = "selectMyFundByPage", method = RequestMethod.POST)
+    @ResponseBody
+    public Object selectMyFundByPage(
+            @RequestBody Fund fund) {
+
+        List<Fund> myFundList = fundService.selectMyPatentListByPage(fund);
+        int myFundNum = fundService.getMyPatentNum(fund);
+
+        Page<Fund> myFundPage = new Page<>();
+        myFundPage.setResultList(myFundList);
+        myFundPage.setTotal(myFundNum);
+        AjaxMessage retMsg = new AjaxMessage();
+        return retMsg.Set(MsgType.SUCCESS, myFundPage);
+    }
+
+    @RequestMapping(value = "delete", method = RequestMethod.POST)
+    @ResponseBody
+    public Object delete(@RequestBody List<Fund> list) {
+        fundService.delete(list);
+        return retMsg.Set(MsgType.SUCCESS);
     }
 }

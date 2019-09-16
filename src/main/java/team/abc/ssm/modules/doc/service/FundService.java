@@ -96,6 +96,7 @@ public class FundService {
             //否则失败
             else
                 f.setStatus("1");
+
             f.setModifyUserId(userNow.getId());
             f.setModifyDate(dateNow);
             fundDao.updateByPrimaryKeySelective(f);
@@ -162,5 +163,19 @@ public class FundService {
 
     public void deleteListByIds(List<Fund> list){
         fundDao.deleteListByIds(list);
+    }
+
+    public List<Fund> selectMyPatentListByPage(Fund fund){
+        return fundDao.selectMyPatentListByPage(fund);
+    }
+
+    public int getMyPatentNum(Fund fund){
+        return fundDao.getMyPatentNum(fund);
+    }
+
+    public void delete(List<Fund> list){
+        for (Fund f : list) {
+            fundDao.deleteByPrimaryKey(f.getId());
+        }
     }
 }

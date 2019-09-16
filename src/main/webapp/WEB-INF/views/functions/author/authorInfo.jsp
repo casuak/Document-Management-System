@@ -439,6 +439,76 @@
                 </el-pagination>
             </el-main>
         </el-tab-pane>
+
+        <%--3.基金Tab--%>
+        <el-tab-pane name="fund" label="基金">
+            <el-main style="padding: 10px 0;">
+                <%-- 顶栏 --%>
+                <div style="margin-left: 10px">
+                <span class="button-group">
+                    <el-button size="small" type="danger"
+                               @click="deleteFundByIds(table.fundTable.entity.selectionList)"
+                               style="margin-left: 10px;">
+                        <span>基金-批量删除</span>
+                    </el-button>
+                </span>
+                    <span style="float: right;margin-right: 10px;">
+                    <el-input size="small" placeholder="输入基金名称" suffix-icon="el-icon-search"
+                              style="width: 250px;margin-right: 10px;"
+                              v-model="table.fundTable.entity.params.searchKey"
+                              @keyup.enter.native="table.fundTable.entity.params.pageIndex=1;refreshTable_fund()">
+                    </el-input>
+                    <el-button size="small" type="primary" style="position:relative;"
+                               @click="table.fundTable.entity.params.pageIndex=1;refreshTable_fund()">
+                        <span>搜索</span>
+                    </el-button>
+                </span>
+                </div>
+                <%-- entity表格 --%>
+                <el-table :data="table.fundTable.entity.data"
+                          id="fundTable"
+                          ref="multipleTable"
+                          v-loading="table.fundTable.entity.loading"
+                          height="calc(100% - 130px)"
+                          style="width: 100%;overflow-y: hidden;margin-top: 20px;"
+                          class="scroll-bar"
+                          @selection-change="table.fundTable.entity.selectionList=$event"
+                          stripe>
+                    <template slot="empty">
+                        <img class="data-pic" src="/static/ima" alt="" />
+                    </template>
+                    <el-table-column type="selection" width="40"></el-table-column>
+                    <el-table-column label="指标名称" width="150" prop="metricName" align="center"></el-table-column>
+                    <el-table-column label="姓名" width="150" prop="personName" align="center"></el-table-column>
+                    <el-table-column label="工号" width="150" prop="personWorkId" align="center"></el-table-column>
+                    <el-table-column label="年份" width="150" prop="projectYear" align="center"></el-table-column>
+                    <el-table-column label="项目名称" width="600" prop="projectName" align="center"></el-table-column>
+                    <el-table-column label="金额（万元)" width="100" prop="projectMoney" align="center"></el-table-column>
+                    <el-table-column
+                            label="操作"
+                            width="100"
+                            fixed="right"
+                            align="center">
+                        <template slot-scope="scope">
+                            <el-button type="danger" size="mini" style="position:relative;bottom: 1px;margin-left: 6px;"
+                                       @click="deleteFundByIds([{id: scope.row.id}])">
+                                <span>删除基金</span>
+                            </el-button>
+                        </template>
+                    </el-table-column>
+                </el-table>
+                <%-- entity分页 --%>
+                <el-pagination style="text-align: center;margin: 8px auto;"
+                               @size-change="onPageSizeChange_fund"
+                               @current-change="onPageIndexChange_fund"
+                               :current-page="table.fundTable.entity.params.pageIndex"
+                               :page-sizes="table.fundTable.entity.params.pageSizes"
+                               :page-size="table.fundTable.entity.params.pageSize"
+                               :total="table.fundTable.entity.params.total"
+                               layout="total, sizes, prev, pager, next, jumper">
+                </el-pagination>
+            </el-main>
+        </el-tab-pane>
     </el-tabs>
 </div>
 
@@ -459,13 +529,19 @@
                     insertPaper: '',
                     deletePaperListByIds: '/api/doc/paper/deleteListByIds',
                     updatePaper: '',
-                    selectPaperListByPage: '/api/paper/selectMyPaperByPage',
+                    selectPaperListByPage: '/api/paper/selectMyPaperByPage'
                 },
                 patent: {
                     insertPaper: '',
                     deletePatentByIds: '/api/patent/deleteListByIds',
                     updatePaper: '',
-                    selectMyPatentListByPage: '/api/patent/selectMyPatentByPage',
+                    selectMyPatentListByPage: '/api/patent/selectMyPatentByPage'
+                },
+                fund:{
+                    insertFund: '',
+                    deleteFundByIds: '/api/doc/fund/delete',
+                    updateFund: '',
+                    selectMyFundListByPage: '/api/doc/fund/selectMyFundByPage'
                 }
             },
             fullScreenLoading: false,
@@ -480,7 +556,7 @@
                             pageSize: 10,
                             pageSizes: [5, 10, 20, 40],
                             searchKey: '',  // 搜索词
-                            total: 0,       // 总数
+                            total: 0       // 总数
                         }
                     }
                 },
@@ -494,7 +570,21 @@
                             pageSize: 10,
                             pageSizes: [5, 10, 20, 40],
                             searchKey: '',  // 搜索词
-                            total: 0,       // 总数
+                            total: 0       // 总数
+                        }
+                    }
+                },
+                fundTable:{
+                    entity: {
+                        data: [],
+                        loading: false,
+                        selectionList: [],
+                        params: {
+                            pageIndex: 1,
+                            pageSize: 10,
+                            pageSizes: [5, 10, 20, 40],
+                            searchKey: '',  // 搜索词
+                            total: 0       // 总数
                         }
                     }
                 }
@@ -696,15 +786,60 @@
             },
             /*------- 专利部分函数 end ------*/
 
-            // 重置表单
-            /*resetForm: function (ref) {
-                this.$refs[ref].resetFields();
-            },*/
+            /*------- 基金部分函数 start ------*/
+            selectMyFundListByPage: function () {
+                let fund = {
+                    id: "${author.id}",
+                    page: this.table.fundTable.entity.params
+                };
+                let app = this;
+                app.table.fundTable.entity.loading = true;
+                ajaxPostJSON(this.urls.fund.selectMyFundListByPage, fund, function (d) {
+                    console.log(">>>>>>"+d.data.resultList);
+                    app.table.fundTable.entity.data = d.data.resultList;
+                    app.table.fundTable.entity.params.total = d.data.total;
+                    app.table.fundTable.entity.loading = false;
+                });
+            },
+
+            //根据ids删除基金
+            deleteFundByIds: function (ids) {
+                let app = this;
+                if (ids.length === 0) {
+                    window.parent.app.showMessage('提示：未选中任何项', 'warning');
+                    return;
+                }
+                window.parent.app.showConfirm(function () {
+                    let data = ids;
+                    app.table.fundTable.entity.loading = true;
+                    ajaxPostJSON(app.urls.fund.deleteFundByIds, data, function (d) {
+                        app.table.fundTable.entity.loading = false;
+                        window.parent.app.showMessage('删除成功！', 'success');
+                        app.selectMyFundListByPage();
+                    })
+                });
+            },
+            // 刷新fund_table数据
+            refreshTable_fund: function () {
+                this.selectMyFundListByPage();
+            },
+            // 处理fund的pageSize变化
+            onPageSizeChange_fund: function (newSize) {
+                this.table.fundTable.entity.params.pageSize = newSize;
+                this.refreshTable_fund();
+            },
+            // 处理fund的pageIndex变化
+            onPageIndexChange_fund: function (newIndex) {
+                this.table.fundTable.entity.params.pageIndex = newIndex;
+                this.refreshTable_fund();
+            }
+            /*------- 基金部分函数 end --------*/
         },
         /*加载的时候就执行一次*/
         mounted: function () {
             this.refreshTable_paper();
             this.refreshTable_patent();
+            this.refreshTable_fund();
         }
     });
 
