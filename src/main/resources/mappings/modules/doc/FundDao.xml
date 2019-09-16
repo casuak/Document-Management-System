@@ -225,7 +225,11 @@
         order by name_cn
     </select>
 
+
+
     <select id="selectListByPageWithStatisticCondition" resultMap="BaseResultMap">
+        <bind name="key_offset" value="(page.pageIndex-1)*page.pageSize"/>
+
         select * from doc_fund
         <where>
             <if test="1 == 1">
@@ -238,6 +242,7 @@
                 and metric_name =#{fundType}
             </if>
         </where>
+        limit #{key_offset}, #{page.pageSize}
     </select>
 
     <select id="selectNumWithStatisticCondition" resultType="int">
