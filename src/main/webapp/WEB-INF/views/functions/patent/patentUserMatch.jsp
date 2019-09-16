@@ -253,6 +253,7 @@
                 Date(row.patentAuthorizationDate)).Format("yyyy-MM-dd") }}
             </template>
         </el-table-column>
+        <el-table-column></el-table-column>
         <el-table-column label="操作" width="160" header-align="center" align="center" fixed="right">
             <template slot-scope="{row}">
                 <span style="position:relative;bottom: 1px;">

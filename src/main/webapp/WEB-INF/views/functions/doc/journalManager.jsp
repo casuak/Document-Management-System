@@ -40,13 +40,13 @@
               @selection-change="onSelectionChange" stripe>
         <el-table-column type="selection" width="40"></el-table-column>
         <el-table-column label="期刊名" width="400" prop="journalTitle"></el-table-column>
-        <el-table-column label="分区" width="100" prop="journalDivision" align="center"></el-table-column>
-        <el-table-column label="年份" width="100" prop="journalYear" align="center">
+        <el-table-column label="分区" width="200" prop="journalDivision" align="center"></el-table-column>
+        <el-table-column label="年份" width="200" prop="journalYear" align="center">
             <template slot-scope="scope">
                 {{ formatYear(scope.row.journalYear) }}
             </template>
         </el-table-column>
-        <el-table-column label="影响因子" width="100" prop="impactFactor" align="center"></el-table-column>
+        <el-table-column label="影响因子" width="200" prop="impactFactor" align="center"></el-table-column>
         <el-table-column></el-table-column>
         <el-table-column label="操作" width="190" header-align="center" align="center">
             <template slot-scope="scope">

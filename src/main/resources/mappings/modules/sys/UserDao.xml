@@ -307,4 +307,13 @@
             </if>
         </where>
     </select>
+
+
+    <update id="updateDoct">
+        update  sys_user set `is_master` =1 , `is_doctor`=1 where work_id in
+        <foreach collection="list" index="index" item="item"
+                 open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </update>
 </mapper>

@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="team.abc.ssm.modules.author.dao.AuthorStatisticsMapper">
+
+    <resultMap id="authorBean" type="team.abc.ssm.modules.author.entity.AuthorStatistics">
+        <id column="id" property="id"/>
+        <result column="remarks" property="remarks"/>
+        <result column="create_user_id" property="createUserId"/>
+        <result column="modify_user_id" property="modifyUserId"/>
+        <result column="create_date" property="createDate"/>
+        <result column="modify_date" property="modifyDate"/>
+        <result column="del_flag" property="delFlag"/>
+        <result column="work_id" property="workId"/>
+        <result column="real_name" property="realName"/>
+        <result column="school" property="school"/>
+        <result column="major" property="major"/>
+    </resultMap>
+
+
+
+    <select id="getAuthorListByPage" resultMap="authorBean">
+        select * from sys_user
+        where `del_flag` != 1
+        <if test="realName != null and realName != ''">
+            and `real_name` = #{realName,jdbcType=VARCHAR}
+        </if>
+        <if test="workId != '' and workId != null">
+            and `work_id` = #{workId}
+        </if>
+        <if test=" 1 == 1">
+            and `user_type` = "teacher"
+        </if>
+        <if test="school != null and school != ''">
+            and `school` = #{school}
+        </if>
+        <if test="major != null and major != ''">
+            and `major` = #{major}
+        </if>
+        <if test='type =="博士生导师"'>
+          and `is_doctor` =1
+        </if>
+        <if test='type =="硕士生导师"'>
+            and `is_master` =1
+        </if>
+        limit #{page.pageStart},#{page.pageSize}
+    </select>
+
+
+    <select id="getAuthorCount" resultType="java.lang.Integer">
+        select count(*) from sys_user
+        where `del_flag` != 1
+        <if test="realName != null and realName != ''">
+            and `real_name` = #{realName,jdbcType=VARCHAR}
+        </if>
+        <if test="workId != '' and workId != null">
+            and `work_id` = #{workId}
+        </if>
+        <if test=" 1 == 1">
+            and `user_type` = "teacher"
+        </if>
+        <if test="school != null and school != ''">
+            and `school` = #{school}
+        </if>
+        <if test="major != null and major != ''">
+            and `major` = #{major}
+        </if>
+        <if test='type =="博士生导师"'>
+            and `is_doctor` =1
+        </if>
+        <if test='type =="硕士生导师"'>
+            and `is_master` =1
+        </if>
+
+    </select>
+
+    <select id="getStudentIdListByTeacherId" parameterType="java.lang.String" resultType="java.lang.String">
+      select `work_id` from sys_user where `tutor_work_id`=#{param1} and del_flag!=1
+    </select>
+
+    <select id="getPaperTeacherCount" resultType="java.lang.Integer">
+      select count(*) from doc_paper
+       where (`first_author_id` =#{param1} or `second_author_id`=#{param1})
+       and `status`='3'
+       and `journal_division`=#{param2}
+       and del_flag!=1
+    </select>
+
+    <select id="getPaperBothStuCount" parameterType="java.util.HashMap" resultType="java.lang.Integer">
+        select count(*) from doc_paper
+        where `first_author_id`in
+        <foreach collection="idlist" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        and `first_author_type` = 'student'
+        and (`second_author_type` = 'student' or `second_author_type` is null )
+        and status='3'
+        and `journal_division`=#{type}
+        and del_flag!=1
+    </select>
+
+    <select id="getPaperStuFirstCount" parameterType="java.util.HashMap" resultType="java.lang.Integer">
+        select count(*) from doc_paper
+        where `first_author_id`in
+        <foreach collection="idlist" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        and `second_author_type` = 'teacher'
+        and status='3'
+        and `journal_division`=#{type}
+        and del_flag!=1
+    </select>
+
+
+
+    <select id="getPaperTeaFirstCount" parameterType="java.util.HashMap" resultType="java.lang.Integer">
+        select count(*) from doc_paper
+        where `second_author_id`in
+        <foreach collection="idlist" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        and `first_author_id` = #{teacherId}
+        and status='3'
+        and `journal_division`=#{type}
+        and del_flag!=1
+    </select>
+
+
+    <select id="getPatentTeacherCount" resultType="java.lang.Integer">
+         select count(*) from doc_patent
+       where `first_author_id` =#{param1}
+        or `second_author_id`=#{param1}
+        and `status`='4'
+        and `del_flag` != 1
+    </select>
+
+    <select id="getPatentStuBothCount" resultType="java.lang.Integer">
+        select count(*) from doc_patent
+        where `first_author_work_id` in
+        <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+
+        and `first_author_type` = 'student'
+        and (`second_author_type` = 'student' or `second_author_type` is null )
+        and `status`='4'
+        and `del_flag` != 1
+    </select>
+
+    <select id="getPatentStuFirstCount" resultType="java.lang.Integer">
+        select count(*) from doc_patent
+        where `first_author_work_id` in
+        <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        and `second_author_type` = 'teacher'
+        and `status`='4'
+        and `del_flag` != 1
+    </select>
+
+    <select id="getPatentTeaFirstCount" parameterType="java.util.List" resultType="java.lang.Integer">
+        select count(*) from doc_patent
+        where `second_author_work_id` in
+        <foreach collection="idlist" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        and `first_author_work_id` = #{teacherId}
+        and `status`='4'
+        and `del_flag` != 1
+    </select>
+
+
+    <select id="getFundCount" resultType="java.lang.Integer">
+        select count(*) from doc_fund
+        where  person_work_id = #{param1}
+        and `status` ='2'
+        and del_flag != 1
+        and metric_name =#{param2}
+    </select>
+</mapper>

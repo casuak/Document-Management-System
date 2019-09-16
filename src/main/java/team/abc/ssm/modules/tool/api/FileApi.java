@@ -18,12 +18,12 @@ import java.io.IOException;
 @Controller
 @RequestMapping("api/tool/file")
 public class FileApi extends BaseApi {
-
-    /**
-     * 上传文件到临时文件夹
-     *
-     * @return 保存在的本地的临时文件名
-     */
+    
+    
+       /**
+            * @param file Excel模板文件
+            *
+            */
     @RequestMapping(value = "uploadTempFile", method = RequestMethod.POST)
     @ResponseBody
     public Object uploadTempFile(@RequestParam MultipartFile file) {
@@ -35,4 +35,6 @@ public class FileApi extends BaseApi {
             return retMsg.Set(MsgType.ERROR);
         }
     }
+    
+
 }

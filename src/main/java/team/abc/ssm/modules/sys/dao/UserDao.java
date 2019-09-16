@@ -47,6 +47,8 @@ public interface UserDao {
     // 删除指定id的用户
     int deleteByIds(List<User> userList);
 
+    //更新用户是博导
+    int updateDoct(List<String> userList);
     /**
      * @author zm
      * @date 2019/7/5 14:08

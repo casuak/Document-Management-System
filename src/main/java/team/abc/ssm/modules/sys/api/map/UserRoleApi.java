@@ -26,5 +26,6 @@ public class UserRoleApi extends BaseApi {
     public Object update(@RequestBody User user) {
         userRoleService.update(user, user.getRoleList());
         return retMsg.Set(MsgType.SUCCESS);
+
     }
 }

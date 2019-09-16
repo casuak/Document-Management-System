@@ -101,6 +101,7 @@ public class UserService {
         List<User> teacherList = userDao.selectByUserType("teacher");
         List<User> saveList = new ArrayList<>();
         List<User> deleteList = new ArrayList<>();
+        List<String> upList = new ArrayList<>();
         for (User teacher : teacherList) {
             if (teacher.getWorkId() == null || teacher.getWorkId().equals("兼职") || teacher.getWorkId().equals("")) {
                 deleteList.add(teacher);
@@ -113,11 +114,15 @@ public class UserService {
                     break;
                 }
             }
-            if (repeat) deleteList.add(teacher);
+            if (repeat) {
+                upList.add(teacher.getWorkId());
+                deleteList.add(teacher);
+            }
             else saveList.add(teacher);
         }
 
         userDao.deleteByIds(deleteList);
+        userDao.updateDoct(upList);
     }
 
     /**
