@@ -39,4 +39,6 @@ public interface FundDao {
     List<SysUser> findByName(String name);
 
     int matchFund(Fund fund);
+
+    String findMetricDict(String metric);
 }

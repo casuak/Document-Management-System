@@ -76,6 +76,9 @@ public class FundService {
         List<Fund> fundList = fundDao.selectAllByStatus("0");
 
         for (Fund f : fundList) {
+            f.setMetricMatch(fundDao.findMetricDict(f.getMetricName()));
+            System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"+fundDao.findMetricDict(f.getMetricName()));
+
             //工号不存在或不唯一
             if (fundDao.findUserByWorkId(f.getPersonWorkId()) != 1) {
                 f.setStatus("1");

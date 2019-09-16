@@ -11,6 +11,7 @@
         <result column="project_name" jdbcType="VARCHAR" property="projectName"/>
         <result column="project_money" jdbcType="INTEGER" property="projectMoney"/>
         <result column="remarks" jdbcType="VARCHAR" property="remarks"/>
+        <result column="metric_match" jdbcType="VARCHAR" property="metricMatch"/>
         <result column="person_id" jdbcType="VARCHAR" property="personId"/>
         <result column="status" jdbcType="VARCHAR" property="status"/>
         <result column="create_user_id" jdbcType="VARCHAR" property="createUserId"/>
@@ -23,7 +24,7 @@
     <sql id="Base_Column_List">
         <!--@mbg.generated-->
         `id`, metric_name, person_name, person_work_id, project_year, project_name, project_money,
-        remarks, person_id, `status`, create_user_id, modify_user_id, create_date, modify_date,
+        remarks, metric_match, person_id, `status`, create_user_id, modify_user_id, create_date, modify_date,
         del_flag
     </sql>
 
@@ -109,6 +110,9 @@
             <if test="remarks != null">
                 remarks = #{remarks,jdbcType=VARCHAR},
             </if>
+            <if test="metricMatch != null">
+                metric_match = #{metricMatch,jdbcType=VARCHAR},
+            </if>
             <if test="personId != null">
                 person_id = #{personId,jdbcType=VARCHAR},
             </if>
@@ -183,6 +187,10 @@
         status=#{status}
         where id=#{id}
     </update>
+
+    <select id="findMetricDict" resultType="java.lang.String">
+        select id from sys_dict where name_cn like CONCAT('%', #{metric}, '%')
+    </select>
 
 
 </mapper>
