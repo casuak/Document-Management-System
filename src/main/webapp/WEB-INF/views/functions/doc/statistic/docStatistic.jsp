@@ -622,7 +622,8 @@
                         "&studentPatent=" + app.doc.patentResult.studentDocNum +
                         "&teacherPatent=" + app.doc.patentResult.teacherDocNum +
                         "&doctorPatent=" + app.doc.patentResult.postdoctoralDocNum +
-                        "&totalPatent=" + app.doc.patentResult.totalDocNum
+                        "&totalPatent=" + app.doc.patentResult.totalDocNum+
+                            "&teacherFund="+app.doc.fundResult.totalDocNum
                 }
             },
             /*加载的时候就执行一次*/
