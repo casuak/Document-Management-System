@@ -124,6 +124,7 @@ public class DocStatisticApi extends BaseApi {
             @RequestParam("teacherPatent") Integer teacherPatent,
             @RequestParam("doctorPatent") Integer doctorPatent,
             @RequestParam("totalPatent") Integer totalPatent,
+            @RequestParam("teacherFund")Integer totalFund,
             HttpServletRequest httpServletRequest,
             HttpServletResponse httpServletResponse
     ) throws Exception {
@@ -174,11 +175,11 @@ public class DocStatisticApi extends BaseApi {
         row = sheet.createRow((int) 1);
 
         //循环列表数据，逐个添加
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < 4; i++) {
             row = sheet.createRow(i + 2);
             int cellNum = 0;
             HSSFCell cell = row.createCell(cellNum++);
-            if(i != 2){
+            if(i != 3){
                 cell.setCellValue(i + 1);
             }else{
                 cell.setCellValue("合计");
@@ -224,17 +225,37 @@ public class DocStatisticApi extends BaseApi {
                 cell = row.createCell(cellNum);
                 cell.setCellValue(doctorPatent);
                 cell.setCellStyle(style);
-            }else{
+            }else if (i==2){
+                cell = row.createCell(cellNum++);
+                cell.setCellValue("基金");
+                cell.setCellStyle(style);
+
+                cell = row.createCell(cellNum++);
+                cell.setCellValue(totalFund);
+                cell.setCellStyle(style);
+
+                cell = row.createCell(cellNum++);
+                cell.setCellValue(totalFund);
+                cell.setCellStyle(style);
+
+                cell = row.createCell(cellNum++);
+                cell.setCellValue(0);
+                cell.setCellStyle(style);
+
+                cell = row.createCell(cellNum);
+                cell.setCellValue(0);
+                cell.setCellStyle(style);
+            }else {
                 cell = row.createCell(cellNum++);
                 cell.setCellValue("");
                 cell.setCellStyle(style);
 
                 cell = row.createCell(cellNum++);
-                cell.setCellValue(totalPaper + totalPatent);
+                cell.setCellValue(totalPaper + totalPatent+totalFund);
                 cell.setCellStyle(style);
 
                 cell = row.createCell(cellNum++);
-                cell.setCellValue(teacherPaper + teacherPatent);
+                cell.setCellValue(teacherPaper + teacherPatent+totalFund);
                 cell.setCellStyle(style);
 
                 cell = row.createCell(cellNum++);
