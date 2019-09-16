@@ -44,6 +44,11 @@ public class Fund extends DataEntity<Fund> {
     private String remarks;
 
     /**
+     * 指标名称数据字典
+     */
+    private String metricMatch;
+
+    /**
      * 匹配id
      */
     private String personId;
