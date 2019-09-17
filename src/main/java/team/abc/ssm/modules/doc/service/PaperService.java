@@ -178,19 +178,24 @@ public class PaperService {
             }
             // 4、提取署名单位中北京理工大学学院别名，并与单位别名表匹配，填充上中文单位名
             if (paper.getStatus().equals("0")) {
-                String[] danweis = paper.getDanwei().split(",");
-                boolean flag = false;
-                for (String danwei : danweis) {
-                    danwei = danwei.trim();
-                    for (DanweiNicknames targetDanwei : danweiList) {
-                        if (targetDanwei.getNicknames().contains(danwei)) {
-                            paper.setDanweiCN(targetDanwei.getName());
-                            flag = true;
-                            break;
+                if (paper.getDanwei() == null || paper.getDanwei().equals("")) {
+
+                } else {
+                    String[] danweis = paper.getDanwei().split(",");
+                    boolean flag = false;
+                    for (String danwei : danweis) {
+                        danwei = danwei.trim();
+                        for (DanweiNicknames targetDanwei : danweiList) {
+                            if (targetDanwei.getNicknames().contains(danwei)) {
+                                paper.setDanweiCN(targetDanwei.getName());
+                                flag = true;
+                                break;
+                            }
                         }
+                        if (flag) break;
                     }
-                    if (flag) break;
                 }
+
             }
             // 5、添加所属期刊信息
             for (Journal journal : journalList) {
@@ -315,14 +320,17 @@ public class PaperService {
                     if (testSecondAuthorAsTutor(firstAuthor.getTutorNicknames(), authorList)) {
                         paper.setStatus("2"); /***************************/
                         paper.setFirstAuthorId(firstAuthor.getWorkId());
+                        paper.setFirstAuthorCname(firstAuthor.getRealName());
                         paper.setFirstAuthorType("student");
                         paper.setSecondAuthorId(firstAuthor.getTutorWorkId());
+                        paper.setSecondAuthorCname(firstAuthor.getTutorName());
                         paper.setSecondAuthorType("teacher");
                         setPaperDanweiCn(paper, firstAuthor);
 
                     } else {
                         paper.setStatus("2"); /***************************/
                         paper.setFirstAuthorId(firstAuthor.getWorkId());
+                        paper.setFirstAuthorCname(firstAuthor.getRealName());
                         paper.setFirstAuthorType("student");
                         setPaperDanweiCn(paper, firstAuthor);
                     }
@@ -341,13 +349,16 @@ public class PaperService {
                     if (matchList2.size() == 0) { // 学生无匹配
                         paper.setStatus("2"); /***************************/
                         paper.setFirstAuthorId(firstAuthor.getWorkId());
+                        paper.setFirstAuthorCname(firstAuthor.getRealName());
                         paper.setFirstAuthorType("teacher");
                         setPaperDanweiCn(paper, firstAuthor);
                     } else if (matchList2.size() == 1) {
                         paper.setStatus("2"); /***************************/
                         paper.setFirstAuthorId(firstAuthor.getWorkId());
+                        paper.setFirstAuthorCname(firstAuthor.getRealName());
                         paper.setFirstAuthorType("teacher");
                         paper.setSecondAuthorId(matchList2.get(0).getWorkId());
+                        paper.setSecondAuthorCname(matchList2.get(0).getRealName());
                         paper.setSecondAuthorType("student");
                         setPaperDanweiCn(paper, firstAuthor);
                     } else if (matchList2.size() == 2) {
@@ -358,13 +369,16 @@ public class PaperService {
                             if (testFirstAuthorAsTutor(secondAuthor.getTutorNicknames(), authorList)) {
                                 paper.setStatus("2"); /***************************/
                                 paper.setFirstAuthorId(firstAuthor.getWorkId());
+                                paper.setFirstAuthorCname(firstAuthor.getRealName());
                                 paper.setFirstAuthorType("teacher");
                                 paper.setSecondAuthorId(secondAuthor.getWorkId());
+                                paper.setSecondAuthorCname(secondAuthor.getRealName());
                                 paper.setSecondAuthorType("student");
                                 setPaperDanweiCn(paper, firstAuthor);
                             } else {
                                 paper.setStatus("2"); /***************************/
                                 paper.setFirstAuthorId(firstAuthor.getWorkId());
+                                paper.setFirstAuthorCname(firstAuthor.getRealName());
                                 paper.setFirstAuthorType("teacher");
                                 setPaperDanweiCn(paper, firstAuthor);
                             }
@@ -372,6 +386,7 @@ public class PaperService {
                     } else {
                         paper.setStatus("1"); /************二作不确定***************/
                         paper.setFirstAuthorId(firstAuthor.getWorkId());
+                        paper.setFirstAuthorCname(firstAuthor.getRealName());
                         paper.setFirstAuthorType("teacher");
                         setPaperDanweiCn(paper, firstAuthor);
                     }
@@ -393,13 +408,16 @@ public class PaperService {
                         if (testSecondAuthorAsTutor(firstAuthor.getTutorNicknames(), authorList)) {
                             paper.setStatus("2"); /***************************/
                             paper.setFirstAuthorId(firstAuthor.getWorkId());
+                            paper.setFirstAuthorCname(firstAuthor.getRealName());
                             paper.setFirstAuthorType("student");
                             paper.setSecondAuthorId(firstAuthor.getTutorWorkId());
+                            paper.setSecondAuthorCname(firstAuthor.getTutorName());
                             paper.setSecondAuthorType("teacher");
                             setPaperDanweiCn(paper, firstAuthor);
                         } else {
                             paper.setStatus("2"); /***************************/
                             paper.setFirstAuthorId(firstAuthor.getWorkId());
+                            paper.setFirstAuthorCname(firstAuthor.getRealName());
                             paper.setFirstAuthorType("student");
                             setPaperDanweiCn(paper, firstAuthor);
                         }
@@ -426,8 +444,10 @@ public class PaperService {
                     if (matchList3.size() == 1) {
                         paper.setStatus("2"); /***************************/
                         paper.setFirstAuthorId(firstAuthor.getWorkId());
+                        paper.setFirstAuthorCname(firstAuthor.getRealName());
                         paper.setFirstAuthorType("student");
                         paper.setSecondAuthorId(firstAuthor.getTutorWorkId());
+                        paper.setSecondAuthorCname(firstAuthor.getTutorName());
                         paper.setSecondAuthorType("teacher");
                         setPaperDanweiCn(paper, firstAuthor);
                     } else if (matchList3.size() == 2) {
@@ -436,13 +456,16 @@ public class PaperService {
                             if (testSecondAuthorAsTutor(firstAuthor.getTutorNicknames(), authorList)) {
                                 paper.setStatus("2"); /***************************/
                                 paper.setFirstAuthorId(firstAuthor.getWorkId());
+                                paper.setFirstAuthorCname(firstAuthor.getRealName());
                                 paper.setFirstAuthorType("student");
                                 paper.setSecondAuthorId(firstAuthor.getTutorWorkId());
+                                paper.setSecondAuthorCname(firstAuthor.getTutorName());
                                 paper.setSecondAuthorType("teacher");
                                 setPaperDanweiCn(paper, firstAuthor);
                             } else {
                                 paper.setStatus("2"); /***************************/
                                 paper.setFirstAuthorId(firstAuthor.getWorkId());
+                                paper.setFirstAuthorCname(firstAuthor.getRealName());
                                 paper.setFirstAuthorType("student");
                                 setPaperDanweiCn(paper, firstAuthor);
                             }
@@ -475,8 +498,10 @@ public class PaperService {
                         if (testFirstAuthorAsTutor(secondAuthor.getTutorNicknames(), authorList)) {
                             paper.setStatus("2"); /***************************/
                             paper.setFirstAuthorId(secondAuthor.getTutorWorkId());
+                            paper.setFirstAuthorCname(secondAuthor.getTutorName());
                             paper.setFirstAuthorType("teacher");
                             paper.setSecondAuthorId(secondAuthor.getWorkId());
+                            paper.setSecondAuthorCname(secondAuthor.getRealName());
                             paper.setSecondAuthorType("student");
                             setPaperDanweiCn(paper, secondAuthor);
                         } else {
@@ -502,8 +527,10 @@ public class PaperService {
                         } else if (matchList1.size() == 1) {
                             paper.setStatus("2"); /***************************/
                             paper.setFirstAuthorId(matchList1.get(0).getWorkId());
+                            paper.setFirstAuthorCname(matchList1.get(0).getRealName());
                             paper.setFirstAuthorType("student");
                             paper.setSecondAuthorId(secondAuthor.getWorkId());
+                            paper.setSecondAuthorCname(secondAuthor.getRealName());
                             paper.setSecondAuthorType("teacher");
                             setPaperDanweiCn(paper, secondAuthor);
                         } else if (matchList1.size() == 2) {
@@ -514,8 +541,10 @@ public class PaperService {
                                 if (testSecondAuthorAsTutor(firstAuthor.getTutorNicknames(), authorList)) {
                                     paper.setStatus("2"); /***************************/
                                     paper.setFirstAuthorId(firstAuthor.getWorkId());
+                                    paper.setFirstAuthorCname(firstAuthor.getRealName());
                                     paper.setFirstAuthorType("student");
                                     paper.setSecondAuthorId(secondAuthor.getWorkId());
+                                    paper.setSecondAuthorCname(secondAuthor.getRealName());
                                     paper.setSecondAuthorType("teacher");
                                     setPaperDanweiCn(paper, secondAuthor);
                                 } else {
@@ -588,7 +617,7 @@ public class PaperService {
         // 首先判断两人是否为同一人
         if (!s1.getRealName().equals(s2.getRealName()))
             return null;
-        if (s1.getHireDate() == null) return null;
+        if (s1.getHireDate() == null || s2.getHireDate() == null) return null;
         if (s1.getHireDate().after(s2.getHireDate())) {
             User tmp = s1;
             s1 = s2;

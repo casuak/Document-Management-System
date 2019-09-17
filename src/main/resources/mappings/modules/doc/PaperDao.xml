@@ -33,6 +33,8 @@
         <result column="danwei_cn" property="danweiCN"/>
         <result column="impact_factor" property="impactFactor"/>
         <result column="journal_division" property="journalDivision"/>
+        <result column="first_author_cname" property="firstAuthorCname"/>
+        <result column="second_author_cname" property="secondAuthorCname"/>
 
         <association property="firstAuthor" javaType="user">
             <id column="first_author_id" property="id"/>
@@ -443,6 +445,16 @@
             <trim prefix="second_author_type = case" suffix="end,">
                 <foreach collection="list" index="index" item="item">
                     when id = #{item.id,jdbcType=VARCHAR} then #{item.secondAuthorType,jdbcType=VARCHAR}
+                </foreach>
+            </trim>
+            <trim prefix="first_author_cname = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    when id = #{item.id,jdbcType=VARCHAR} then #{item.firstAuthorCname,jdbcType=VARCHAR}
+                </foreach>
+            </trim>
+            <trim prefix="second_author_cname = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    when id = #{item.id,jdbcType=VARCHAR} then #{item.secondAuthorCname,jdbcType=VARCHAR}
                 </foreach>
             </trim>
         </trim>

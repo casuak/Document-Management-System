@@ -106,11 +106,13 @@ public class DocPaper extends DataEntity<DocPaper> {
      * 第一作者类型
      */
     private String firstAuthorType;
+    private String firstAuthorCname;
 
     /**
      * 第二作者类型
      */
     private String secondAuthorType;
+    private String secondAuthorCname;
 
     /**
      * 论文所属学科
@@ -131,4 +133,5 @@ public class DocPaper extends DataEntity<DocPaper> {
      * 影响因子
      */
     private Double impactFactor;
+
 }

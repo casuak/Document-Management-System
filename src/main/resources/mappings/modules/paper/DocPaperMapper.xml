@@ -33,6 +33,8 @@
         <result column="journal_division" jdbcType="VARCHAR" property="journalDivision"/>
         <result column="impact_factor" jdbcType="DOUBLE" property="impactFactor"/>
         <result column="journal_year" jdbcType="DATE" property="journalYear"/>
+        <result column="first_author_cname" jdbcType="VARCHAR" property="firstAuthorCname"/>
+        <result column="second_author_cname" jdbcType="VARCHAR" property="secondAuthorCname"/>
     </resultMap>
     <sql id="Base_Column_List">
         <!--@mbg.generated-->

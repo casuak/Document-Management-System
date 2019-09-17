@@ -146,7 +146,11 @@
                       class="scroll-bar"
                       @selection-change="table.fundTable.entity.selectionList=$event"
                       stripe>
-
+                <el-table-column
+                        type="index" label="序号"
+                        header-align="center" align="center"
+                        width="150">
+                </el-table-column>
                 <el-table-column label="指标名称" width="150" prop="metricName" align="center"></el-table-column>
                 <el-table-column label="姓名" width="150" prop="personName" align="center"></el-table-column>
                 <el-table-column label="工号" width="150" prop="personWorkId" align="center"></el-table-column>

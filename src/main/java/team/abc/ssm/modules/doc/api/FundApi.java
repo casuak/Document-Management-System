@@ -176,10 +176,14 @@ public class FundApi extends BaseApi {
     ) throws IOException, ParseException {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
+        Page<StatisticCondition> pages = new Page<>();
+        pages.setPageStart(0);
+        pages.setPageIndex(1);
+        pages.setPageSize(99999);
         StatisticCondition statisticCondition = new StatisticCondition();
         //1.设置待导出的论文List的状态为：已完成
         statisticCondition.setStatus("2");
-
+        statisticCondition.setPage(pages);
         //3.设置其他的查询筛选条件
         statisticCondition.setFundType(fundType);
         statisticCondition.setInstitute(institute);

@@ -127,8 +127,8 @@
 
     <select id="getPatentTeacherCount" resultType="java.lang.Integer">
          select count(*) from doc_patent
-       where `first_author_id` =#{param1}
-        or `second_author_id`=#{param1}
+       where `first_author_work_id` =#{param1}
+        or `second_author_work_id`=#{param1}
         and `status`='4'
         and `del_flag` != 1
     </select>

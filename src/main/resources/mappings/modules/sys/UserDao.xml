@@ -85,6 +85,7 @@
                nicknames,
                user_type           as userType,
                tutor_work_id       as tutorWorkId,
+               tutor_name as tutorName,
                school,
                hire_date           as hireDate,
                student_train_level as studentTrainLevel,
@@ -310,7 +311,7 @@
 
 
     <update id="updateDoct">
-        update  sys_user set `is_master` =1 , `is_doctor`=1 where work_id in
+        update sys_user set `is_master` =1 , `is_doctor`=1 where work_id in
         <foreach collection="list" index="index" item="item"
                  open="(" separator="," close=")">
             #{item}

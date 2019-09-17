@@ -152,12 +152,12 @@ public class DocPaperApi extends BaseApi {
         HSSFSheet sheet = wb.createSheet("论文统计结果");
         String[] excelHeader = {
                 "序号", "论文名称", "ISSN", "分区", "影响因子", "所属学院", "论文种类", "出版日期",
-                "第一作者", "第一作者工号", "第一作者类型", "第二作者", "第二作者工号", "第二作者类型", "入藏号", "作者列表"
+                "第一作者","第一作者中文名", "第一作者工号", "第一作者类型", "第二作者","第二作者中文名", "第二作者工号", "第二作者类型", "入藏号", "作者列表"
         };
         // 单元格列宽
         int[] excelHeaderWidth = {
                 40, 300, 150, 150, 150, 200, 120, 200,
-                160, 150, 120, 160, 150, 120, 250, 400
+                160, 150,150, 120, 160,150, 150, 120, 250, 400
         };
 
         HSSFRow row = sheet.createRow((int) 0);
@@ -245,6 +245,10 @@ public class DocPaperApi extends BaseApi {
             cell = row.createCell(cellNum++);
             cell.setCellValue(paperList.get(i).getFirstAuthorName());
             cell.setCellStyle(style);
+            //第一作者中文名
+            cell = row.createCell(cellNum++);
+            cell.setCellValue(paperList.get(i).getFirstAuthorCname());
+            cell.setCellStyle(style);
             //第11列：第一作者工号
             cell = row.createCell(cellNum++);
             cell.setCellValue(paperList.get(i).getFirstAuthorId());
@@ -256,6 +260,10 @@ public class DocPaperApi extends BaseApi {
             //第13列：第二作者
             cell = row.createCell(cellNum++);
             cell.setCellValue(paperList.get(i).getSecondAuthorName());
+            cell.setCellStyle(style);
+            //第二作者中文名
+            cell = row.createCell(cellNum++);
+            cell.setCellValue(paperList.get(i).getSecondAuthorCname());
             cell.setCellStyle(style);
             //第14列：第二作者工号
             cell = row.createCell(cellNum++);

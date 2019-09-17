@@ -86,6 +86,9 @@ public class Paper extends DataEntity<Paper> {
     private String firstAuthorType;     // 第一作者类型
     private String secondAuthorType;    // 第二作者类型
 
+    private String firstAuthorCname;
+    private String secondAuthorCname;
+
     /**
 	* 所属期刊 from 期刊表
 	*/
@@ -304,5 +307,21 @@ public class Paper extends DataEntity<Paper> {
 
     public void setSecondAuthorType(String secondAuthorType) {
         this.secondAuthorType = secondAuthorType;
+    }
+
+    public String getFirstAuthorCname() {
+        return firstAuthorCname;
+    }
+
+    public void setFirstAuthorCname(String firstAuthorCname) {
+        this.firstAuthorCname = firstAuthorCname;
+    }
+
+    public String getSecondAuthorCname() {
+        return secondAuthorCname;
+    }
+
+    public void setSecondAuthorCname(String secondAuthorCname) {
+        this.secondAuthorCname = secondAuthorCname;
     }
 }
