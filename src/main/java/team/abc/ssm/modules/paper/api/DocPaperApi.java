@@ -241,10 +241,6 @@ public class DocPaperApi extends BaseApi {
             cell = row.createCell(cellNum++);
             cell.setCellValue(sdf.format(paperList.get(i).getPublishDate()));
             cell.setCellStyle(style);
-            //第10列：第一作者
-            cell = row.createCell(cellNum++);
-            cell.setCellValue(paperList.get(i).getFirstAuthorName());
-            cell.setCellStyle(style);
             //第一作者中文名
             cell = row.createCell(cellNum++);
             cell.setCellValue(paperList.get(i).getFirstAuthorCname());
@@ -256,10 +252,6 @@ public class DocPaperApi extends BaseApi {
             //第12列：第一作者类型
             cell = row.createCell(cellNum++);
             cell.setCellValue(paperList.get(i).getFirstAuthorType());
-            cell.setCellStyle(style);
-            //第13列：第二作者
-            cell = row.createCell(cellNum++);
-            cell.setCellValue(paperList.get(i).getSecondAuthorName());
             cell.setCellStyle(style);
             //第二作者中文名
             cell = row.createCell(cellNum++);

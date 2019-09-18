@@ -176,6 +176,7 @@ public class AuthorService {
             teacher.setFundSum(teacher.getNationFocus()+teacher.getNsfcZDYF()+teacher.getNationInstrument()+teacher.getNsfcKXZX()+teacher.getNsfcZDAXM()
             +teacher.getNsfcZDIANXM()+teacher.getNsfcMSXM()+teacher.getNsfcQNXM()+teacher.getNssfcZDAXM()+teacher.getNssfcYBXM()+teacher.getNssfcQNXM());
             resultList.add(teacher);
+            System.out.println("导出第"+preList.indexOf(teacher)+"个导师");
         }
 
         return resultList;

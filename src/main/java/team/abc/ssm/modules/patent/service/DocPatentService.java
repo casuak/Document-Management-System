@@ -28,7 +28,7 @@ import static team.abc.ssm.common.web.PatentMatchType.*;
 
 @Service
 public class DocPatentService {
-    SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
     @Resource
     private DocPatentMapper docPatentMapper;
