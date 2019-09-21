@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import team.abc.ssm.common.utils.UserUtils;
 import team.abc.ssm.modules.author.entity.SysUser;
+import team.abc.ssm.modules.author.service.AuthorService;
 import team.abc.ssm.modules.doc.dao.FundDao;
 import team.abc.ssm.modules.doc.entity.Fund;
 import team.abc.ssm.modules.doc.entity.StatisticCondition;
@@ -16,6 +17,9 @@ import team.abc.ssm.modules.sys.entity.User;
 public class FundService {
     @Autowired
     private FundDao fundDao;
+
+    @Autowired
+    private AuthorService authorService;
 
     public void init() {
         fundDao.init();
@@ -34,6 +38,15 @@ public class FundService {
     }
 
     public boolean deleteByIds(List<Fund> list) {
+        List<Fund> tempList = fundDao.selectListByIds(list);
+        List<Fund> delList = new ArrayList<>();
+        for(Fund fund:tempList){
+            if("3".equals(fund.getStatus())){
+                delList.add(fund);
+            }
+        }
+        authorService.deleteFundCount(delList);
+
         int count = 0;
         for (Fund tmp : list) {
             if (fundDao.deleteByPrimaryKey(tmp.getId()) == 1) {
@@ -44,6 +57,11 @@ public class FundService {
     }
 
     public void deleteFundByStatus(String status) {
+
+        if("3".equals(status)){
+            List<Fund> funds = fundDao.selectAllByStatus(status);
+            authorService.deleteFundCount(funds);
+        }
         fundDao.deleteFundByStatus(status);
     }
 
@@ -180,6 +198,18 @@ public class FundService {
     }
 
     public void completeFundByStatus(){
+        List<Fund> funds = fundDao.selectAllByStatus("2");
+        authorService.addFundCount(funds);
+
         fundDao.completeFundByStatus();
+    }
+
+    public  void completeFundByChoice(Fund fund){
+        updateFund(fund);
+
+        List<Fund> funds = new ArrayList<>();
+        funds.add(fund);
+        funds=fundDao.selectListByIds(funds);
+        authorService.addFundCount(funds);
     }
 }

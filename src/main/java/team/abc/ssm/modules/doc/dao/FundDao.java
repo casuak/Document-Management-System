@@ -59,4 +59,6 @@ public interface FundDao {
     int getMyPatentNum(Fund fund);
 
     void completeFundByStatus();
+    List<Fund> selectListByStatus(String status);
+    List<Fund> selectListByIds(List<Fund> list);
 }

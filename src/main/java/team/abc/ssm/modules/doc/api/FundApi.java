@@ -315,7 +315,8 @@ public class FundApi extends BaseApi {
     @ResponseBody
     public Object completeFundByChoice(@RequestBody Fund fund){
         fund.setStatus("3");
-        fundService.updateFund(fund);
+        fundService.completeFundByChoice(fund);
+
         return retMsg.Set(MsgType.SUCCESS);
     }
 }

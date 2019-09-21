@@ -317,5 +317,28 @@
         where status='2'
     </update>
 
+    <select id="selectListByStatus" resultMap="BaseResultMap">
+        select * from doc_fund
+        where `status` =#{param1}
+        and del_flag != 1
+    </select>
 
+    <select id="selectListByIds" resultMap="BaseResultMap">
+        select * from doc_fund
+        <choose>
+            <when test="list != null and list.size() != 0">
+                <where>
+                    id in
+                    <foreach collection="list" open="(" close=")" item="item" separator=",">
+                        #{item.id}
+                    </foreach>
+                </where>
+            </when>
+            <otherwise>
+                <where>
+                    1 = 0
+                </where>
+            </otherwise>
+        </choose>
+    </select>
 </mapper>

@@ -60,7 +60,7 @@ var app = new Vue({
             urls: {
                 initFirst: '/api/doc/fund/initFirst',
                 getFundList: '/api/doc/fund/list',
-                deleteFundByIds: '/api/doc/fund/deleteFundByIds',
+                deleteFundByIds: '/api/doc/fund/deleteByIds',
                 deleteFundByStatus: '/api/doc/fund/deleteFundByStatus',
                 initAllFund: '/api/doc/fund/initAllFund',
                 matchUserFund: '/api/doc/fund/matchUserFund',
