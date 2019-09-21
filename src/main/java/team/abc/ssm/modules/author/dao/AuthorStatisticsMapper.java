@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 public interface AuthorStatisticsMapper {
+   /** 1.0版本 */
     List<AuthorStatistics> getAuthorListByPage(AuthorStatistics authorStatistics);
     Integer getAuthorCount(AuthorStatistics authorStatistics);
 
@@ -25,5 +26,9 @@ public interface AuthorStatisticsMapper {
 
     //获取基金数量
     Integer getFundCount(String workId,String type);
+
+    /** 2.0版本*/
+    void doSql(String sql);
+
 
 }

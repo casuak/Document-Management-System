@@ -161,8 +161,8 @@
         select count(*) from doc_patent
         where `second_author_work_id` in
         <foreach collection="idlist" index="index" item="item" open="(" separator="," close=")">
-            #{item}
-        </foreach>
+        #{item}
+    </foreach>
         and `first_author_work_id` = #{teacherId}
         and `status`='4'
         and `del_flag` != 1
@@ -175,5 +175,12 @@
         and `status` ='2'
         and del_flag != 1
         and metric_match =#{param2}
+    </select>
+
+
+
+
+    <select id="doSql"  parameterType="java.lang.String">
+        ${_parameter}
     </select>
 </mapper>

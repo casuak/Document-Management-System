@@ -8,9 +8,14 @@ import team.abc.ssm.modules.author.dao.AuthorStatisticsMapper;
 import team.abc.ssm.modules.author.entity.Author;
 import team.abc.ssm.modules.author.entity.AuthorStatistics;
 import team.abc.ssm.modules.doc.dao.PaperDao;
+import team.abc.ssm.modules.doc.entity.Fund;
+import team.abc.ssm.modules.doc.entity.Paper;
+import team.abc.ssm.modules.doc.entity.Patent;
 import team.abc.ssm.modules.patent.dao.DocPatentMapper;
+import team.abc.ssm.modules.patent.entity.DocPatent;
 import team.abc.ssm.modules.sys.entity.Dict;
 import team.abc.ssm.modules.sys.entity.User;
+import team.abc.ssm.modules.sys.service.UserService;
 
 import java.util.*;
 
@@ -33,6 +38,11 @@ public class AuthorService {
 
     @Autowired
     AuthorStatisticsMapper authorStatisticsMapper;
+
+    @Autowired
+    UserService userService;
+
+    private  List<User> userList = new ArrayList<>();
 
     public int getAuthorListCount(Author author) {
         return authorMapper.getAuthorCount(author);
@@ -96,8 +106,12 @@ public class AuthorService {
     }
 
 
-
-
+    /**
+     * 统计1.0
+     *  @author wh
+     *  @date 9:13 2019/9/10
+     *
+     */
     //获取老师统计列表
     public List<AuthorStatistics> getAuthorStatisticsList(AuthorStatistics authorStatistics){
         //获取老师信息
@@ -225,5 +239,444 @@ public class AuthorService {
         result += authorStatisticsMapper.getPatentTeaFirstCount(params);
 
         return result;
+    }
+
+
+    /**
+     * 统计2.0
+     *  @author wh
+     *  @date 9:13 2019/9/19
+     *
+     */
+    //新增论文
+    public int addPaperCount(List<Paper> paperList){
+        if(userList.size() == 0)
+            userList = userService.getAllUsers();
+
+        String workId="";
+        String resultSql = "";
+
+        for(Paper paper :paperList){
+            workId="";
+            if((paper.getFirstAuthorType().equals("student")&&paper.getSecondAuthorType() == null)||(paper.getFirstAuthorType().equals("student") && paper.getSecondAuthorType().equals("student")) ){
+                //第一作者学生 第二作者学生(或空)   第一作者学生+1 老师+1
+                for(int i=0; i<userList.size();i++){
+                    if(userList.get(i).getWorkId()!= null &&userList.get(i).getWorkId().equals(paper.getFirstAuthorId())){
+                        workId = userList.get(i).getTutorWorkId();
+                        break;
+                    }
+                }
+                if(!workId.equals(""))
+                    resultSql +=getPaperTypeSql(paper,workId,1);
+
+            }else if(paper.getFirstAuthorType()!= null &&paper.getSecondAuthorType()!= null&&paper.getFirstAuthorType().equals("teacher")&& paper.getSecondAuthorType().equals("student")){
+                //第一作者老师 第二作者学生
+                for(int i=0; i<userList.size();i++){
+                    if(userList.get(i).getWorkId()!= null &&userList.get(i).getWorkId().equals(paper.getSecondAuthorId())){
+                        workId = userList.get(i).getTutorWorkId();
+                        break;
+                    }
+                }
+                if(!workId.equals("")) {
+                    if (workId.equals(paper.getFirstAuthorId())) {
+                        //学生在老师名下
+                        resultSql += getPaperTypeSql(paper, paper.getFirstAuthorId(), 1);
+                    } else {
+                        //学生不在老师名下
+                        resultSql += getPaperTypeSql(paper, paper.getFirstAuthorId(), 3);
+                    }
+                }else{
+                    resultSql += getPaperTypeSql(paper, paper.getFirstAuthorId(), 3);
+                }
+            }else if(paper.getFirstAuthorType()!= null &&paper.getSecondAuthorType()!= null&&paper.getFirstAuthorType().equals("student") &&paper.getSecondAuthorType().equals("teacher")){
+                //第一作者学生  第二作者老师
+                for(int i=0; i<userList.size();i++){
+                    if(userList.get(i).getWorkId()!= null &&userList.get(i).getWorkId().equals(paper.getFirstAuthorId())){
+                        workId = userList.get(i).getTutorWorkId();
+                        break;
+                    }
+                }
+                if(!workId.equals("")){
+                    resultSql += getPaperTypeSql(paper, workId, 2);
+                    resultSql += getPaperTypeSql(paper, paper.getSecondAuthorId(), 3);
+                }else{
+                    resultSql += getPaperTypeSql(paper, paper.getSecondAuthorId(), 3);
+                }
+
+
+            }else if(paper.getFirstAuthorType().equals("teacher") &&paper.getSecondAuthorType() == null){
+                //一作导师 二作空
+                resultSql += getPaperTypeSql(paper,paper.getFirstAuthorId(),3);
+            }
+
+        }
+        resultSql=resultSql.substring(0,resultSql.length()-1);
+        authorStatisticsMapper.doSql(resultSql);
+        return 0;
+    }
+    //删除论文
+    public int deletePaperCount(List<Paper> paperList){
+        if(userList.size() == 0)
+            userList = userService.getAllUsers();
+
+        String workId="";
+        String resultSql = "";
+
+        for(Paper paper :paperList){
+            workId="";
+            if((paper.getFirstAuthorType().equals("student")&&paper.getSecondAuthorType() == null)||(paper.getFirstAuthorType().equals("student") && paper.getSecondAuthorType().equals("student")) ){
+                //第一作者学生 第二作者学生(或空)   第一作者学生+1 老师+1
+                for(int i=0; i<userList.size();i++){
+                    if(userList.get(i).getWorkId()!= null &&userList.get(i).getWorkId().equals(paper.getFirstAuthorId())){
+                        workId = userList.get(i).getTutorWorkId();
+                        break;
+                    }
+                }
+                if(!workId.equals(""))
+                    resultSql +=getPaperTypeSql(paper,workId,1);
+
+            }else if(paper.getFirstAuthorType()!= null &&paper.getSecondAuthorType()!= null&&paper.getFirstAuthorType().equals("teacher")&& paper.getSecondAuthorType().equals("student")){
+                //第一作者老师 第二作者学生
+                for(int i=0; i<userList.size();i++){
+                    if(userList.get(i).getWorkId()!= null &&userList.get(i).getWorkId().equals(paper.getSecondAuthorId())){
+                        workId = userList.get(i).getTutorWorkId();
+                        break;
+                    }
+                }
+                if(!workId.equals("")) {
+                    if (workId.equals(paper.getFirstAuthorId())) {
+                        //学生在老师名下
+                        resultSql += getPaperTypeSql(paper, paper.getFirstAuthorId(), 1);
+                    } else {
+                        //学生不在老师名下
+                        resultSql += getPaperTypeSql(paper, paper.getFirstAuthorId(), 3);
+                    }
+                }else{
+                    resultSql += getPaperTypeSql(paper, paper.getFirstAuthorId(), 3);
+                }
+            }else if(paper.getFirstAuthorType()!= null &&paper.getSecondAuthorType()!= null&&paper.getFirstAuthorType().equals("student") &&paper.getSecondAuthorType().equals("teacher")){
+                //第一作者学生  第二作者老师
+                for(int i=0; i<userList.size();i++){
+                    if(userList.get(i).getWorkId()!= null &&userList.get(i).getWorkId().equals(paper.getFirstAuthorId())){
+                        workId = userList.get(i).getTutorWorkId();
+                        break;
+                    }
+                }
+                if(!workId.equals("")){
+                    resultSql += getPaperTypeSql(paper, workId, 2);
+                    resultSql += getPaperTypeSql(paper, paper.getSecondAuthorId(), 3);
+                }else{
+                    resultSql += getPaperTypeSql(paper, paper.getSecondAuthorId(), 3);
+                }
+
+
+            }else if(paper.getFirstAuthorType().equals("teacher") &&paper.getSecondAuthorType() == null){
+                //一作导师 二作空
+                resultSql += getPaperTypeSql(paper,paper.getFirstAuthorId(),3);
+            }
+
+        }
+
+        resultSql = resultSql.replace("+","-");
+        resultSql=resultSql.substring(0,resultSql.length()-1);
+        authorStatisticsMapper.doSql(resultSql);
+        return 0;
+    }
+
+    //新增专利
+    public int addPatentCount(List<DocPatent> patentList){
+        if(userList.size() == 0)
+            userList = userService.getAllUsers();
+        String preTutorSql="update doc_statistics set `tutor_patent`=`tutor_patent`+1 where `work_id`=\"";
+        String preStuSql="update doc_statistics set `stu_patent`=`stu_patent`+1 where `work_id`=\"";
+        String resultSql = "";
+        String workId  ="";
+        for(DocPatent patent:patentList){
+            workId="";
+            if((patent.getFirstAuthorType().equals("student")&&patent.getSecondAuthorType() == null)||(patent.getFirstAuthorType().equals("student") && patent.getSecondAuthorType().equals("student")) ){
+                //第一作者学生 第二作者学生(或空)   第一作者学生+1 老师+1
+                for(int i=0; i<userList.size();i++){
+                    if(userList.get(i).getWorkId().equals(patent.getFirstAuthorWorkId())){
+                        workId = userList.get(i).getTutorWorkId();
+                        break;
+                    }
+                }
+                if(!workId.equals("")){
+                    resultSql+=preTutorSql+workId+"\";";
+                    resultSql+=preStuSql+workId+"\";";
+                }
+
+
+            }else if(patent.getFirstAuthorType()!= null && patent.getSecondAuthorType()!=null&&patent.getFirstAuthorType().equals("teacher")&& patent.getSecondAuthorType().equals("student")){
+                //第一作者老师 第二作者学生
+                for(int i=0; i<userList.size();i++){
+                    if(userList.get(i).getWorkId().equals(patent.getSecondAuthorWorkId())){
+                        workId = userList.get(i).getTutorWorkId();
+                        break;
+                    }
+                }
+                if(!workId.equals("")) {
+                    if (workId.equals(patent.getFirstAuthorWorkId())) {
+                        //学生在老师名下
+                        resultSql+=preTutorSql+patent.getFirstAuthorWorkId()+"\";";
+                        resultSql+=preStuSql+patent.getFirstAuthorWorkId()+"\";";
+                    } else {
+                        //学生不在老师名下
+                        resultSql+=preTutorSql+patent.getFirstAuthorWorkId()+"\";";
+                    }
+                }else{
+                    resultSql+=preTutorSql+patent.getFirstAuthorWorkId()+"\";";
+                }
+            }else if(patent.getFirstAuthorType()!= null && patent.getSecondAuthorType()!=null&&patent.getFirstAuthorType().equals("student") &&patent.getSecondAuthorType().equals("teacher")){
+                //第一作者学生  第二作者老师
+                for(int i=0; i<userList.size();i++){
+                    if(userList.get(i).getWorkId().equals(patent.getFirstAuthorWorkId())){
+                        workId = userList.get(i).getTutorWorkId();
+                        break;
+                    }
+                }
+                if(!workId.equals("")){
+                    resultSql += preStuSql+workId+"\";";
+                    resultSql += preTutorSql+patent.getSecondAuthorWorkId()+"\";";
+                }else{
+                    resultSql += preTutorSql+patent.getSecondAuthorWorkId()+"\";";
+                }
+
+
+            }else if(patent.getFirstAuthorType()!= null &&patent.getFirstAuthorType().equals("teacher") &&patent.getSecondAuthorType() == null){
+                //一作导师 二作空
+                resultSql += preTutorSql+patent.getFirstAuthorWorkId()+"\";";
+            }
+
+
+        }
+        resultSql=resultSql.substring(0,resultSql.length()-1);
+        authorStatisticsMapper.doSql(resultSql);
+        return 0;
+    }
+
+    //删除专利
+    public  int deletePatentCount(List<DocPatent> patentList){
+        if(userList.size() == 0)
+            userList = userService.getAllUsers();
+        String preTutorSql="update doc_statistics set `tutor_patent`=`tutor_patent`+1 where `work_id`=\"";
+        String preStuSql="update doc_statistics set `stu_patent`=`stu_patent`+1 where `work_id`=\"";
+        String resultSql = "";
+        String workId  ="";
+        for(DocPatent patent:patentList){
+            workId="";
+            if((patent.getFirstAuthorType().equals("student")&&patent.getSecondAuthorType() == null)||(patent.getFirstAuthorType().equals("student") && patent.getSecondAuthorType().equals("student")) ){
+                //第一作者学生 第二作者学生(或空)   第一作者学生+1 老师+1
+                for(int i=0; i<userList.size();i++){
+                    if(userList.get(i).getWorkId().equals(patent.getFirstAuthorWorkId())){
+                        workId = userList.get(i).getTutorWorkId();
+                        break;
+                    }
+                }
+                if(!workId.equals("")){
+                    resultSql+=preTutorSql+workId+"\";";
+                    resultSql+=preStuSql+workId+"\";";
+                }
+
+
+            }else if(patent.getFirstAuthorType()!= null && patent.getSecondAuthorType()!=null&&patent.getFirstAuthorType().equals("teacher")&& patent.getSecondAuthorType().equals("student")){
+                //第一作者老师 第二作者学生
+                for(int i=0; i<userList.size();i++){
+                    if(userList.get(i).getWorkId().equals(patent.getSecondAuthorWorkId())){
+                        workId = userList.get(i).getTutorWorkId();
+                        break;
+                    }
+                }
+                if(!workId.equals("")) {
+                    if (workId.equals(patent.getFirstAuthorWorkId())) {
+                        //学生在老师名下
+                        resultSql+=preTutorSql+patent.getFirstAuthorWorkId()+"\";";
+                        resultSql+=preStuSql+patent.getFirstAuthorWorkId()+"\";";
+                    } else {
+                        //学生不在老师名下
+                        resultSql+=preTutorSql+patent.getFirstAuthorWorkId()+"\";";
+                    }
+                }else{
+                    resultSql+=preTutorSql+patent.getFirstAuthorWorkId()+"\";";
+                }
+            }else if(patent.getFirstAuthorType()!= null && patent.getSecondAuthorType()!=null&&patent.getFirstAuthorType().equals("student") &&patent.getSecondAuthorType().equals("teacher")){
+                //第一作者学生  第二作者老师
+                for(int i=0; i<userList.size();i++){
+                    if(userList.get(i).getWorkId().equals(patent.getFirstAuthorWorkId())){
+                        workId = userList.get(i).getTutorWorkId();
+                        break;
+                    }
+                }
+                if(!workId.equals("")){
+                    resultSql += preStuSql+workId+"\";";
+                    resultSql += preTutorSql+patent.getSecondAuthorWorkId()+"\";";
+                }else{
+                    resultSql += preTutorSql+patent.getSecondAuthorWorkId()+"\";";
+                }
+
+
+            }else if(patent.getFirstAuthorType()!= null &&patent.getFirstAuthorType().equals("teacher") &&patent.getSecondAuthorType() == null){
+                //一作导师 二作空
+                resultSql += preTutorSql+patent.getFirstAuthorWorkId()+"\";";
+            }
+
+
+        }
+
+        resultSql = resultSql.replace("+","-");
+        resultSql=resultSql.substring(0,resultSql.length()-1);
+        authorStatisticsMapper.doSql(resultSql);
+        return 0;
+    }
+
+    //增加基金
+    public int addFundCount(List<Fund> fundList){
+        String resultSql = "";
+        String preSqlSum="update doc_statistics set `fund_sum`=`fund_sum`+1 where `work_id`=\"";
+        for(Fund fund:fundList){
+            switch (fund.getMetricMatch()){
+                case "bc66c15317fc45c09103230de7f7120e":
+                    resultSql+="update doc_statistics set `nation_focus`=`nation_focus`+1 where `work_id`=\""+fund.getPersonWorkId()+"\";";
+                    break;
+                case "703386e1860648a6a397a6a24503bdf6":
+                    resultSql+="update doc_statistics set `nsfc_zdyf`=`nsfc_zdyf`+1 where `work_id`=\""+fund.getPersonWorkId()+"\";";
+                    break;
+                case "2163f1d53f5d48f1bee577df1babeac2":
+                    resultSql+="update doc_statistics set `nation_instrument`=`nation_instrument`+1 where `work_id`=\""+fund.getPersonWorkId()+"\";";
+                    break;
+                case "b8d6b2233c1b4ccaa46e19f405d474cc":
+                    resultSql+="update doc_statistics set `nsfc_kxzx`=`nsfc_kxzx`+1 where `work_id`=\""+fund.getPersonWorkId()+"\";";
+                    break;
+                case "9eddd16e476a459d81dd2735e21be83b":
+                    resultSql+="update doc_statistics set `nsfc_zdaxm`=`nsfc_zdaxm`+1 where `work_id`=\""+fund.getPersonWorkId()+"\";";
+                    break;
+                case "9d8689193b584fd1903fe9abcf42877d":
+                    resultSql+="update doc_statistics set `nsfc_zdianxm`=`nsfc_zdianxm`+1 where `work_id`=\""+fund.getPersonWorkId()+"\";";
+                    break;
+                case "a7454d55cfa84120ad404a83049c4476":
+                    resultSql+="update doc_statistics set `nsfc_msxm`=`nsfc_msxm`+1 where `work_id`=\""+fund.getPersonWorkId()+"\";";
+                    break;
+                case "0a541d33521f415a870cbbfe88aaa758":
+                    resultSql+="update doc_statistics set `nsfc_qnxm`=`nsfc_qnxm`+1 where `work_id`=\""+fund.getPersonWorkId()+"\";";
+                    break;
+                case "a7b4fed10c524924b0d7b5c5e3e3fefa":
+                    resultSql+="update doc_statistics set `nssfc_zdaxm`=`nssfc_zdaxm`+1 where `work_id`=\""+fund.getPersonWorkId()+"\";";
+                    break;
+                case "06c377960ec744f2a58b3e320dbea5c6":
+                    resultSql+="update doc_statistics set `nssfc_zdianxm`=`nssfc_zdianxm`+1 where `work_id`=\""+fund.getPersonWorkId()+"\";";
+                    break;
+                case "fcff48a07dda4c73bf3ed525be5115cd":
+                    resultSql+="update doc_statistics set `nssfc_ybxm`=`nssfc_ybxm`+1 where `work_id`=\""+fund.getPersonWorkId()+"\";";
+                    break;
+                case "4d0c8149b3064db69d7b2063bae7c709":
+                    resultSql+="update doc_statistics set `nssfc_qnxm`=`nssfc_qnxm`+1 where `work_id`=\""+fund.getPersonWorkId()+"\";";
+                    break;
+            }
+            resultSql+=preSqlSum+fund.getPersonWorkId()+"\";";
+        }
+        authorStatisticsMapper.doSql(resultSql);
+        return 0;
+    }
+
+    //删除基金
+    public int deleteFundCount(List<Fund> fundList){
+        String resultSql = "";
+        String preSqlSum="update doc_statistics set `fund_sum`=`fund_sum`+1 where `work_id`=\"";
+        for(Fund fund:fundList){
+            switch (fund.getMetricMatch()){
+                case "bc66c15317fc45c09103230de7f7120e":
+                    resultSql+="update doc_statistics set `nation_focus`=`nation_focus`+1 where `work_id`=\""+fund.getPersonWorkId()+"\";";
+                    break;
+                case "703386e1860648a6a397a6a24503bdf6":
+                    resultSql+="update doc_statistics set `nsfc_zdyf`=`nsfc_zdyf`+1 where `work_id`=\""+fund.getPersonWorkId()+"\";";
+                    break;
+                case "2163f1d53f5d48f1bee577df1babeac2":
+                    resultSql+="update doc_statistics set `nation_instrument`=`nation_instrument`+1 where `work_id`=\""+fund.getPersonWorkId()+"\";";
+                    break;
+                case "b8d6b2233c1b4ccaa46e19f405d474cc":
+                    resultSql+="update doc_statistics set `nsfc_kxzx`=`nsfc_kxzx`+1 where `work_id`=\""+fund.getPersonWorkId()+"\";";
+                    break;
+                case "9eddd16e476a459d81dd2735e21be83b":
+                    resultSql+="update doc_statistics set `nsfc_zdaxm`=`nsfc_zdaxm`+1 where `work_id`=\""+fund.getPersonWorkId()+"\";";
+                    break;
+                case "9d8689193b584fd1903fe9abcf42877d":
+                    resultSql+="update doc_statistics set `nsfc_zdianxm`=`nsfc_zdianxm`+1 where `work_id`=\""+fund.getPersonWorkId()+"\";";
+                    break;
+                case "a7454d55cfa84120ad404a83049c4476":
+                    resultSql+="update doc_statistics set `nsfc_msxm`=`nsfc_msxm`+1 where `work_id`=\""+fund.getPersonWorkId()+"\";";
+                    break;
+                case "0a541d33521f415a870cbbfe88aaa758":
+                    resultSql+="update doc_statistics set `nsfc_qnxm`=`nsfc_qnxm`+1 where `work_id`=\""+fund.getPersonWorkId()+"\";";
+                    break;
+                case "a7b4fed10c524924b0d7b5c5e3e3fefa":
+                    resultSql+="update doc_statistics set `nssfc_zdaxm`=`nssfc_zdaxm`+1 where `work_id`=\""+fund.getPersonWorkId()+"\";";
+                    break;
+                case "06c377960ec744f2a58b3e320dbea5c6":
+                    resultSql+="update doc_statistics set `nssfc_zdianxm`=`nssfc_zdianxm`+1 where `work_id`=\""+fund.getPersonWorkId()+"\";";
+                    break;
+                case "fcff48a07dda4c73bf3ed525be5115cd":
+                    resultSql+="update doc_statistics set `nssfc_ybxm`=`nssfc_ybxm`+1 where `work_id`=\""+fund.getPersonWorkId()+"\";";
+                    break;
+                case "4d0c8149b3064db69d7b2063bae7c709":
+                    resultSql+="update doc_statistics set `nssfc_qnxm`=`nssfc_qnxm`+1 where `work_id`=\""+fund.getPersonWorkId()+"\";";
+                    break;
+            }
+            resultSql+=preSqlSum+fund.getPersonWorkId()+"\";";
+        }
+        resultSql = resultSql.replace("+","-");
+        authorStatisticsMapper.doSql(resultSql);
+        return 0;
+    }
+
+    private  String getPaperTypeSql(Paper paper,String workId,int type){
+        String preSqlTutor="";
+        String preSqlTutorSum="update doc_statistics set `tutor_paper_sum`=`tutor_paper_sum`+1 where `work_id`=\"";
+
+        String preSqlStu="";
+        String preSqlStuSum="update doc_statistics set `stu_paper_sum`=`stu_paper_sum`+1 where `work_id`=\"";
+
+        String returnSql="";
+        if(paper.getJournalDivision() != null){
+        switch (paper.getJournalDivision()){
+            case "Q1":
+                preSqlTutor="update doc_statistics set `tutor_q1`=`tutor_q1`+1 where `work_id`=\"";
+                preSqlStu="update doc_statistics set `stu_q1`=`stu_q1`+1 where `work_id`=\"";
+                break;
+            case "Q2":
+                preSqlTutor="update doc_statistics set `tutor_q2`=`tutor_q2`+1 where `work_id`=\"";
+                preSqlStu="update doc_statistics set `stu_q2`=`stu_q2`+1 where `work_id`=\"";
+                break;
+            case "Q3":
+                preSqlTutor="update doc_statistics set `tutor_q3`=`tutor_q3`+1 where `work_id`=\"";
+                preSqlStu="update doc_statistics set `stu_q3`=`stu_q3`+1 where `work_id`=\"";
+                break;
+            case "Q4":
+                preSqlTutor="update doc_statistics set `tutor_q4`=`tutor_q4`+1 where `work_id`=\"";
+                preSqlStu="update doc_statistics set `stu_q4`=`stu_q4`+1 where `work_id`=\"";
+                break;
+            default:break;
+        }
+
+
+        switch (type){
+            case 1: //学生老师 都+1
+                returnSql+= preSqlTutor+workId+"\";";
+                returnSql+= preSqlTutorSum+workId+"\";";
+
+                returnSql+=preSqlStu+workId+"\";";
+                returnSql+=preSqlStuSum+workId+"\";";
+                break;
+            case 2://学生+1
+                returnSql+=preSqlStu+workId+"\";";
+                returnSql+=preSqlStuSum+workId+"\";";
+                break;
+            case 3://老师+1
+                returnSql+= preSqlTutor+workId+"\";";
+                returnSql+= preSqlTutorSum+workId+"\";";
+                break;
+
+         }
+        }
+        return returnSql;
     }
 }

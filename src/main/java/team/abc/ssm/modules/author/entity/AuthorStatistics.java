@@ -14,6 +14,8 @@ public class AuthorStatistics extends DataEntity<AuthorStatistics> {
     String school;//学院
     String major;//学科
     String type; //博导 硕导
+    Integer isMaster; //是否为硕导
+    Integer isDoctor; //是否为博导
 
     List<String> stuList; //老师名下学生列表
 

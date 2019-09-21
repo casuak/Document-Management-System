@@ -49,6 +49,13 @@ public interface UserDao {
 
     //更新用户是博导
     int updateDoct(List<String> userList);
+
+    //向统计表中插入信息
+    int insertIntoStatistics(List<User> userList);
+    int updateDoctSta(List<String> userList);
+    // 删除统计表指定id的用户
+    int deleteStaByIds(List<User> userList);
+
     /**
      * @author zm
      * @date 2019/7/5 14:08

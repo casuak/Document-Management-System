@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import team.abc.ssm.common.persistence.Page;
 import team.abc.ssm.common.utils.PinyinUtils;
+import team.abc.ssm.modules.author.entity.AuthorStatistics;
 import team.abc.ssm.modules.sys.dao.UserDao;
 import team.abc.ssm.modules.sys.entity.User;
 
@@ -80,9 +81,14 @@ public class UserService {
      */
     public void initUser() {
         List<User> updateList = userDao.selectByStatus("0");
-
+        List<User> teacherInitList = new ArrayList<>();
         setUsersNicknamesAndTutorNicknames(updateList);
 
+        for(User user :updateList){
+            if(user.getUserType().equals("teacher"))
+                teacherInitList.add(user);
+        }
+        userDao.insertIntoStatistics(teacherInitList);
         for (User user : updateList) {
             user.setStatus("1");
         }
@@ -102,6 +108,7 @@ public class UserService {
         List<User> saveList = new ArrayList<>();
         List<User> deleteList = new ArrayList<>();
         List<String> upList = new ArrayList<>();
+
         for (User teacher : teacherList) {
             if (teacher.getWorkId() == null || teacher.getWorkId().equals("兼职") || teacher.getWorkId().equals("")) {
                 deleteList.add(teacher);
@@ -118,11 +125,16 @@ public class UserService {
                 upList.add(teacher.getWorkId());
                 deleteList.add(teacher);
             }
-            else saveList.add(teacher);
+            else {
+                saveList.add(teacher);
+            }
         }
 
         userDao.deleteByIds(deleteList);
+        userDao.deleteStaByIds(deleteList);
+
         userDao.updateDoct(upList);
+        userDao.updateDoctSta(upList);
     }
 
     /**

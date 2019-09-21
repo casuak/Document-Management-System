@@ -32,6 +32,9 @@
         <result column="student_degree_type" property="studentDegreeType"/>
         <result column="status" property="status"/>
 
+        <result column="is_master" property="isMaster"/>
+        <result column="is_doctor" property="isDoctor"/>
+
         <association property="tutor" javaType="user">
             <id column="tutor_work_id" property="workId"/>
             <result column="tutor_real_name" property="realName"/>
@@ -317,4 +320,30 @@
             #{item}
         </foreach>
     </update>
+
+    <insert id="insertIntoStatistics">
+        Insert into doc_statistics (`id`,`real_name`,`work_id`,`school`,`major`,`is_master`,`is_doctor`
+        ,`remarks`,`create_user_id`,`create_date`,`modify_date`,`del_flag`,`modify_user_id`) values
+        <foreach collection="list" index="index" item="item" separator="," >
+            (#{item.id},#{item.realName},#{item.workId},#{item.school},#{item.major},#{item.isMaster},#{item.isDoctor},#{item.remarks},
+            #{item.createUserId},#{item.createDate},#{item.modifyDate},#{item.delFlag},#{item.modifyUserId})
+                   </foreach>
+    </insert>
+
+    <update id="updateDoctSta">
+        update doc_statistics set `is_master` =1 , `is_doctor`=1 where work_id in
+        <foreach collection="list" index="index" item="item"
+                 open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </update>
+
+    <delete id="deleteStaByIds" parameterType="team.abc.ssm.modules.sys.entity.User">
+        delete from doc_statistics where id in
+        <foreach collection="list" index="index" item="item"
+                 open="(" separator="," close=")">
+            #{item.id}
+        </foreach>
+    </delete>
+
 </mapper>
