@@ -11,6 +11,7 @@ import team.abc.ssm.common.utils.ExcelUtils;
 import team.abc.ssm.common.utils.IdGen;
 import team.abc.ssm.common.utils.SystemPath;
 import team.abc.ssm.common.utils.UserUtils;
+import team.abc.ssm.modules.sys.entity.User;
 import team.abc.ssm.modules.tool.dao.ColumnMapFieldDao;
 import team.abc.ssm.modules.tool.dao.ExcelTemplateDao;
 import team.abc.ssm.modules.tool.dao.ImportExcelDao;
@@ -302,4 +303,43 @@ public class ExcelTemplateService {
         // 3.进行插入，并返回是否成功
         return importExcelDao.dynamicInsert(dynamicInsertParam) == dynamicInsertParam.getData().size();
     }
+
+
+    public boolean updateUserByExcel(ExcelTemplate _excelTemplate) throws IOException {
+        ExcelTemplate excelTemplate = selectById(_excelTemplate.getId());
+        String tableName = excelTemplate.getTableName();
+        String excelDataName = SystemPath.getRootPath() + SystemPath.getTempDirPath() +
+                _excelTemplate.getExcelDataName();
+        List<User> userList = new ArrayList<>();
+        List<ColumnMapField> columnMapFieldList = excelTemplate.getColumnMapFieldList();
+
+        Sheet sheet = ExcelUtils.getSheet(new File(excelDataName), 0);
+        int workIdIndex=-1,nicknamesIndex=-1;
+        for(ColumnMapField columnMapField:columnMapFieldList){
+            if("work_id".equals(columnMapField.getFieldName())){
+                workIdIndex = columnMapFieldList.indexOf(columnMapField);
+            }
+            if("nicknames".equals(columnMapField.getFieldName())){
+                nicknamesIndex = columnMapFieldList.indexOf(columnMapField);
+            }
+        }
+        for (int rowIndex = 1; rowIndex <= sheet.getLastRowNum(); rowIndex++) {
+            Row excelRow = sheet.getRow(rowIndex);
+            Object cellValue = null;
+            User user = new User();
+            Cell cell = excelRow.getCell(columnMapFieldList.get(workIdIndex).getColumnIndex());
+            cellValue = ExcelUtils.getCellValueByFieldType(cell, columnMapFieldList.get(workIdIndex).getFieldType());
+            user.setWorkId(cellValue.toString());
+
+            cell = excelRow.getCell(columnMapFieldList.get(nicknamesIndex).getColumnIndex());
+            cellValue = ExcelUtils.getCellValueByFieldType(cell, columnMapFieldList.get(nicknamesIndex).getFieldType());
+            user.setNicknames(cellValue.toString());
+            userList.add(user);
+        }
+
+        importExcelDao.updateUserByExcel(userList);
+        importExcelDao.updateUserTutorByExcel(userList);
+        return true;
+    }
+
 }

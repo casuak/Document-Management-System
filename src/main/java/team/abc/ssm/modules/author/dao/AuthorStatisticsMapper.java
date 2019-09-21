@@ -6,8 +6,8 @@ import java.util.Map;
 
 public interface AuthorStatisticsMapper {
    /** 1.0版本 */
-    List<AuthorStatistics> getAuthorListByPage(AuthorStatistics authorStatistics);
-    Integer getAuthorCount(AuthorStatistics authorStatistics);
+    /*List<AuthorStatistics> getAuthorListByPage(AuthorStatistics authorStatistics);
+    Integer getAuthorCount(AuthorStatistics authorStatistics);*/
 
     //获取学生列表
     List<String> getStudentIdListByTeacherId(String teacherId);
@@ -29,6 +29,7 @@ public interface AuthorStatisticsMapper {
 
     /** 2.0版本*/
     void doSql(String sql);
-
+   List<AuthorStatistics> getAuthorListByPage(AuthorStatistics authorStatistics);
+   Integer getAuthorCount(AuthorStatistics authorStatistics);
 
 }

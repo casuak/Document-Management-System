@@ -14,12 +14,40 @@
         <result column="real_name" property="realName"/>
         <result column="school" property="school"/>
         <result column="major" property="major"/>
+        <result column="tutor_q1" property="tutorQ1"/>
+        <result column="tutor_q2" property="tutorQ2"/>
+        <result column="tutor_q3" property="tutorQ3"/>
+        <result column="tutor_q4" property="tutorQ4"/>
+        <result column="tutor_paper_sum" property="tutorPaperSum"/>
+        <result column="stu_q1" property="stuQ1"/>
+        <result column="stu_q2" property="stuQ2"/>
+        <result column="stu_q3" property="stuQ3"/>
+        <result column="stu_q4" property="stuQ4"/>
+        <result column="stu_paper_sum" property="stuPaperSum"/>
+
+        <result column="tutor_patent" property="tutorPatent"/>
+        <result column="stu_patent" property="stuPatent"/>
+
+        <result column="nation_focus"  property="nationFocus"/>
+        <result column="nsfc_zdyf"  property="nsfcZDYF"/>
+        <result column="nation_instrument"  property="nationInstrument"/>
+        <result column="nsfc_kxzx"  property="nsfcKXZX"/>
+        <result column="nsfc_zdaxm"  property="nsfcZDAXM"/>
+        <result column="nsfc_zdianxm"  property="nsfcZDIANXM"/>
+        <result column="nsfc_msxm"  property="nsfcMSXM"/>
+        <result column="nsfc_qnxm"  property="nsfcQNXM"/>
+        <result column="nssfc_zdaxm"  property="nssfcZDAXM"/>
+        <result column="nssfc_zdianxm"  property="nssfcZDIANXM"/>
+        <result column="nssfc_ybxm"  property="nssfcYBXM"/>
+        <result column="nssfc_qnxm"  property="nssfcQNXM"/>
+        <result column="fund_sum"  property="fundSum"/>
+
     </resultMap>
 
 
 
     <select id="getAuthorListByPage" resultMap="authorBean">
-        select * from sys_user
+        select * from doc_statistics
         where `del_flag` != 1
         <if test="realName != null and realName != ''">
             and `real_name` = #{realName,jdbcType=VARCHAR}
@@ -27,9 +55,7 @@
         <if test="workId != '' and workId != null">
             and `work_id` = #{workId}
         </if>
-        <if test=" 1 == 1">
-            and `user_type` = "teacher"
-        </if>
+
         <if test="school != null and school != ''">
             and `school` = #{school}
         </if>
@@ -42,12 +68,15 @@
         <if test='type =="硕士生导师"'>
             and `is_master` =1
         </if>
+        <if test="page.searchKey != '' and page.searchKey != null">
+            order by ${page.searchKey}
+        </if>
         limit #{page.pageStart},#{page.pageSize}
     </select>
 
 
     <select id="getAuthorCount" resultType="java.lang.Integer">
-        select count(*) from sys_user
+        select count(*) from doc_statistics
         where `del_flag` != 1
         <if test="realName != null and realName != ''">
             and `real_name` = #{realName,jdbcType=VARCHAR}
@@ -55,9 +84,7 @@
         <if test="workId != '' and workId != null">
             and `work_id` = #{workId}
         </if>
-        <if test=" 1 == 1">
-            and `user_type` = "teacher"
-        </if>
+
         <if test="school != null and school != ''">
             and `school` = #{school}
         </if>
@@ -176,7 +203,6 @@
         and del_flag != 1
         and metric_match =#{param2}
     </select>
-
 
 
 

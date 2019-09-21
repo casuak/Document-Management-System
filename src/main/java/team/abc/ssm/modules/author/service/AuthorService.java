@@ -113,133 +113,133 @@ public class AuthorService {
      *
      */
     //获取老师统计列表
-    public List<AuthorStatistics> getAuthorStatisticsList(AuthorStatistics authorStatistics){
-        //获取老师信息
-        List<AuthorStatistics>  preList = authorStatisticsMapper.getAuthorListByPage(authorStatistics);
-        List<AuthorStatistics> resultList = new ArrayList<>();
-
-        //遍历每个老师
-        for (int i = 0; i < preList.size(); i++) {
-            AuthorStatistics teacher = preList.get(i);
-            //获取所有该导师所有学生信息
-            teacher.setStuList(authorStatisticsMapper.getStudentIdListByTeacherId(teacher.getWorkId()));
-
-            //获取论文数量信息
-            if(teacher.getStuList().size()>0){
-                Map params = new HashMap();
-
-                params.put("idlist",teacher.getStuList());
-                params.put("type","Q1");
-                teacher.setTutorQ1(authorStatisticsMapper.getPaperTeacherCount(teacher.getWorkId(),"Q1")+authorStatisticsMapper.getPaperBothStuCount(params));
-                teacher.setStuQ1(getStuPaperNum(teacher.getWorkId(),teacher.getStuList(),"Q1"));
-
-                params.remove("type");
-                params.put("type","Q2");
-                teacher.setTutorQ2(authorStatisticsMapper.getPaperTeacherCount(teacher.getWorkId(),"Q2")+authorStatisticsMapper.getPaperBothStuCount(params));
-                teacher.setStuQ2(getStuPaperNum(teacher.getWorkId(),teacher.getStuList(),"Q2"));
-
-                params.remove("type");
-                params.put("type","Q3");
-                teacher.setTutorQ3(authorStatisticsMapper.getPaperTeacherCount(teacher.getWorkId(),"Q3")+authorStatisticsMapper.getPaperBothStuCount(params));
-                teacher.setStuQ3(getStuPaperNum(teacher.getWorkId(),teacher.getStuList(),"Q3"));
-
-                params.remove("type");
-                params.put("type","Q4");
-                teacher.setTutorQ4(authorStatisticsMapper.getPaperTeacherCount(teacher.getWorkId(),"Q4")+authorStatisticsMapper.getPaperBothStuCount(params));
-                teacher.setStuQ4(getStuPaperNum(teacher.getWorkId(),teacher.getStuList(),"Q4"));
-
-
-                teacher.setStuPaperSum(teacher.getStuQ1()+teacher.getStuQ2()+teacher.getStuQ3()+teacher.getStuQ4());
-                teacher.setTutorPaperSum(teacher.getTutorQ1()+teacher.getTutorQ2()+teacher.getTutorQ3()+teacher.getTutorQ4());
-            }else{
-                teacher.setTutorQ1(authorStatisticsMapper.getPaperTeacherCount(teacher.getWorkId(),"Q1"));
-                teacher.setTutorQ2(authorStatisticsMapper.getPaperTeacherCount(teacher.getWorkId(),"Q2"));
-                teacher.setTutorQ3(authorStatisticsMapper.getPaperTeacherCount(teacher.getWorkId(),"Q3"));
-                teacher.setTutorQ4(authorStatisticsMapper.getPaperTeacherCount(teacher.getWorkId(),"Q4"));
-                teacher.setTutorPaperSum(teacher.getTutorQ1()+teacher.getTutorQ2()+teacher.getTutorQ3()+teacher.getTutorQ4());
-
-                teacher.setStuQ1(0);
-                teacher.setStuQ2(0);
-                teacher.setStuQ3(0);
-                teacher.setStuQ4(0);
-                teacher.setStuPaperSum(0);
-            }
-
-
-            //获取专利数量信息
-            if(teacher.getStuList().size()>0) {
-                teacher.setTutorPatent(authorStatisticsMapper.getPatentTeacherCount(teacher.getWorkId())+authorStatisticsMapper.getPatentStuBothCount(teacher.getStuList()));
-                teacher.setStuPatent(getStuPatentNum(teacher.getWorkId(),teacher.getStuList()));
-            }else{
-                teacher.setTutorPatent(authorStatisticsMapper.getPatentTeacherCount(teacher.getWorkId()));
-                teacher.setStuPatent(0);
-            }
-            //获取老师基金信息 TODO
-            teacher.setNationFocus(authorStatisticsMapper.getFundCount(teacher.getWorkId(),"bc66c15317fc45c09103230de7f7120e"));
-            teacher.setNsfcZDYF(authorStatisticsMapper.getFundCount(teacher.getWorkId(),"703386e1860648a6a397a6a24503bdf6"));
-            teacher.setNationInstrument(authorStatisticsMapper.getFundCount(teacher.getWorkId(),"2163f1d53f5d48f1bee577df1babeac2"));
-            teacher.setNsfcKXZX(authorStatisticsMapper.getFundCount(teacher.getWorkId(),"b8d6b2233c1b4ccaa46e19f405d474cc"));
-            teacher.setNsfcZDAXM(authorStatisticsMapper.getFundCount(teacher.getWorkId(),"9eddd16e476a459d81dd2735e21be83b"));
-            teacher.setNsfcZDIANXM(authorStatisticsMapper.getFundCount(teacher.getWorkId(),"9d8689193b584fd1903fe9abcf42877d"));
-            teacher.setNsfcMSXM(authorStatisticsMapper.getFundCount(teacher.getWorkId(),"a7454d55cfa84120ad404a83049c4476"));
-            teacher.setNsfcQNXM(authorStatisticsMapper.getFundCount(teacher.getWorkId(),"0a541d33521f415a870cbbfe88aaa758"));
-            teacher.setNssfcZDAXM(authorStatisticsMapper.getFundCount(teacher.getWorkId(),"a7b4fed10c524924b0d7b5c5e3e3fefa"));
-            teacher.setNssfcZDIANXM(authorStatisticsMapper.getFundCount(teacher.getWorkId(),"06c377960ec744f2a58b3e320dbea5c6"));
-            teacher.setNssfcYBXM(authorStatisticsMapper.getFundCount(teacher.getWorkId(),"fcff48a07dda4c73bf3ed525be5115cd"));
-            teacher.setNssfcQNXM(authorStatisticsMapper.getFundCount(teacher.getWorkId(),"4d0c8149b3064db69d7b2063bae7c709"));
-            teacher.setFundSum(teacher.getNationFocus()+teacher.getNsfcZDYF()+teacher.getNationInstrument()+teacher.getNsfcKXZX()+teacher.getNsfcZDAXM()
-            +teacher.getNsfcZDIANXM()+teacher.getNsfcMSXM()+teacher.getNsfcQNXM()+teacher.getNssfcZDAXM()+teacher.getNssfcYBXM()+teacher.getNssfcQNXM());
-            resultList.add(teacher);
-            System.out.println("导出第"+preList.indexOf(teacher)+"个导师");
-        }
-
-        return resultList;
-    }
-
-    public int getAuthorStatisticsNum(AuthorStatistics authorStatistics){
-        return  authorStatisticsMapper.getAuthorCount(authorStatistics);
-    }
-
-    int getStuPaperNum(String teacherId, List<String> stuList,String type){
-        int result;
-        result = 0;
-        Map params = new HashMap();
-
-        params.put("idlist",stuList);
-        params.put("type",type);
-
-        //一二作都是学生
-        result +=authorStatisticsMapper.getPaperBothStuCount(params);
-
-        //一作学生二作导师
-        result += authorStatisticsMapper.getPaperStuFirstCount(params);
-
-
-        //一作导师 二作学生
-        params.put("teacherId",teacherId);
-        result += authorStatisticsMapper.getPaperTeaFirstCount(params);
-
-        return result;
-    }
-
-    int getStuPatentNum(String teacherId,List<String> stuList){
-        int result;
-        result = 0;
-
-        Map params = new HashMap();
-        params.put("idlist",stuList);
-        params.put("teacherId",teacherId);
-        //一二作都是学生
-        result += authorStatisticsMapper.getPatentStuBothCount(stuList);
-
-        //一作学生二作导师
-        result += authorStatisticsMapper.getPatentStuFirstCount(stuList);
-
-        //一作导师 二作学生
-        result += authorStatisticsMapper.getPatentTeaFirstCount(params);
-
-        return result;
-    }
+//    public List<AuthorStatistics> getAuthorStatisticsList(AuthorStatistics authorStatistics){
+//        //获取老师信息
+//        List<AuthorStatistics>  preList = authorStatisticsMapper.getAuthorListByPage(authorStatistics);
+//        List<AuthorStatistics> resultList = new ArrayList<>();
+//
+//        //遍历每个老师
+//        for (int i = 0; i < preList.size(); i++) {
+//            AuthorStatistics teacher = preList.get(i);
+//            //获取所有该导师所有学生信息
+//            teacher.setStuList(authorStatisticsMapper.getStudentIdListByTeacherId(teacher.getWorkId()));
+//
+//            //获取论文数量信息
+//            if(teacher.getStuList().size()>0){
+//                Map params = new HashMap();
+//
+//                params.put("idlist",teacher.getStuList());
+//                params.put("type","Q1");
+//                teacher.setTutorQ1(authorStatisticsMapper.getPaperTeacherCount(teacher.getWorkId(),"Q1")+authorStatisticsMapper.getPaperBothStuCount(params));
+//                teacher.setStuQ1(getStuPaperNum(teacher.getWorkId(),teacher.getStuList(),"Q1"));
+//
+//                params.remove("type");
+//                params.put("type","Q2");
+//                teacher.setTutorQ2(authorStatisticsMapper.getPaperTeacherCount(teacher.getWorkId(),"Q2")+authorStatisticsMapper.getPaperBothStuCount(params));
+//                teacher.setStuQ2(getStuPaperNum(teacher.getWorkId(),teacher.getStuList(),"Q2"));
+//
+//                params.remove("type");
+//                params.put("type","Q3");
+//                teacher.setTutorQ3(authorStatisticsMapper.getPaperTeacherCount(teacher.getWorkId(),"Q3")+authorStatisticsMapper.getPaperBothStuCount(params));
+//                teacher.setStuQ3(getStuPaperNum(teacher.getWorkId(),teacher.getStuList(),"Q3"));
+//
+//                params.remove("type");
+//                params.put("type","Q4");
+//                teacher.setTutorQ4(authorStatisticsMapper.getPaperTeacherCount(teacher.getWorkId(),"Q4")+authorStatisticsMapper.getPaperBothStuCount(params));
+//                teacher.setStuQ4(getStuPaperNum(teacher.getWorkId(),teacher.getStuList(),"Q4"));
+//
+//
+//                teacher.setStuPaperSum(teacher.getStuQ1()+teacher.getStuQ2()+teacher.getStuQ3()+teacher.getStuQ4());
+//                teacher.setTutorPaperSum(teacher.getTutorQ1()+teacher.getTutorQ2()+teacher.getTutorQ3()+teacher.getTutorQ4());
+//            }else{
+//                teacher.setTutorQ1(authorStatisticsMapper.getPaperTeacherCount(teacher.getWorkId(),"Q1"));
+//                teacher.setTutorQ2(authorStatisticsMapper.getPaperTeacherCount(teacher.getWorkId(),"Q2"));
+//                teacher.setTutorQ3(authorStatisticsMapper.getPaperTeacherCount(teacher.getWorkId(),"Q3"));
+//                teacher.setTutorQ4(authorStatisticsMapper.getPaperTeacherCount(teacher.getWorkId(),"Q4"));
+//                teacher.setTutorPaperSum(teacher.getTutorQ1()+teacher.getTutorQ2()+teacher.getTutorQ3()+teacher.getTutorQ4());
+//
+//                teacher.setStuQ1(0);
+//                teacher.setStuQ2(0);
+//                teacher.setStuQ3(0);
+//                teacher.setStuQ4(0);
+//                teacher.setStuPaperSum(0);
+//            }
+//
+//
+//            //获取专利数量信息
+//            if(teacher.getStuList().size()>0) {
+//                teacher.setTutorPatent(authorStatisticsMapper.getPatentTeacherCount(teacher.getWorkId())+authorStatisticsMapper.getPatentStuBothCount(teacher.getStuList()));
+//                teacher.setStuPatent(getStuPatentNum(teacher.getWorkId(),teacher.getStuList()));
+//            }else{
+//                teacher.setTutorPatent(authorStatisticsMapper.getPatentTeacherCount(teacher.getWorkId()));
+//                teacher.setStuPatent(0);
+//            }
+//            //获取老师基金信息 TODO
+//            teacher.setNationFocus(authorStatisticsMapper.getFundCount(teacher.getWorkId(),"bc66c15317fc45c09103230de7f7120e"));
+//            teacher.setNsfcZDYF(authorStatisticsMapper.getFundCount(teacher.getWorkId(),"703386e1860648a6a397a6a24503bdf6"));
+//            teacher.setNationInstrument(authorStatisticsMapper.getFundCount(teacher.getWorkId(),"2163f1d53f5d48f1bee577df1babeac2"));
+//            teacher.setNsfcKXZX(authorStatisticsMapper.getFundCount(teacher.getWorkId(),"b8d6b2233c1b4ccaa46e19f405d474cc"));
+//            teacher.setNsfcZDAXM(authorStatisticsMapper.getFundCount(teacher.getWorkId(),"9eddd16e476a459d81dd2735e21be83b"));
+//            teacher.setNsfcZDIANXM(authorStatisticsMapper.getFundCount(teacher.getWorkId(),"9d8689193b584fd1903fe9abcf42877d"));
+//            teacher.setNsfcMSXM(authorStatisticsMapper.getFundCount(teacher.getWorkId(),"a7454d55cfa84120ad404a83049c4476"));
+//            teacher.setNsfcQNXM(authorStatisticsMapper.getFundCount(teacher.getWorkId(),"0a541d33521f415a870cbbfe88aaa758"));
+//            teacher.setNssfcZDAXM(authorStatisticsMapper.getFundCount(teacher.getWorkId(),"a7b4fed10c524924b0d7b5c5e3e3fefa"));
+//            teacher.setNssfcZDIANXM(authorStatisticsMapper.getFundCount(teacher.getWorkId(),"06c377960ec744f2a58b3e320dbea5c6"));
+//            teacher.setNssfcYBXM(authorStatisticsMapper.getFundCount(teacher.getWorkId(),"fcff48a07dda4c73bf3ed525be5115cd"));
+//            teacher.setNssfcQNXM(authorStatisticsMapper.getFundCount(teacher.getWorkId(),"4d0c8149b3064db69d7b2063bae7c709"));
+//            teacher.setFundSum(teacher.getNationFocus()+teacher.getNsfcZDYF()+teacher.getNationInstrument()+teacher.getNsfcKXZX()+teacher.getNsfcZDAXM()
+//            +teacher.getNsfcZDIANXM()+teacher.getNsfcMSXM()+teacher.getNsfcQNXM()+teacher.getNssfcZDAXM()+teacher.getNssfcYBXM()+teacher.getNssfcQNXM());
+//            resultList.add(teacher);
+//            System.out.println("导出第"+preList.indexOf(teacher)+"个导师");
+//        }
+//
+//        return resultList;
+//    }
+//
+//    public int getAuthorStatisticsNum(AuthorStatistics authorStatistics){
+//        return  authorStatisticsMapper.getAuthorCount(authorStatistics);
+//    }
+//
+//    int getStuPaperNum(String teacherId, List<String> stuList,String type){
+//        int result;
+//        result = 0;
+//        Map params = new HashMap();
+//
+//        params.put("idlist",stuList);
+//        params.put("type",type);
+//
+//        //一二作都是学生
+//        result +=authorStatisticsMapper.getPaperBothStuCount(params);
+//
+//        //一作学生二作导师
+//        result += authorStatisticsMapper.getPaperStuFirstCount(params);
+//
+//
+//        //一作导师 二作学生
+//        params.put("teacherId",teacherId);
+//        result += authorStatisticsMapper.getPaperTeaFirstCount(params);
+//
+//        return result;
+//    }
+//
+//    int getStuPatentNum(String teacherId,List<String> stuList){
+//        int result;
+//        result = 0;
+//
+//        Map params = new HashMap();
+//        params.put("idlist",stuList);
+//        params.put("teacherId",teacherId);
+//        //一二作都是学生
+//        result += authorStatisticsMapper.getPatentStuBothCount(stuList);
+//
+//        //一作学生二作导师
+//        result += authorStatisticsMapper.getPatentStuFirstCount(stuList);
+//
+//        //一作导师 二作学生
+//        result += authorStatisticsMapper.getPatentTeaFirstCount(params);
+//
+//        return result;
+//    }
 
 
     /**
@@ -248,6 +248,16 @@ public class AuthorService {
      *  @date 9:13 2019/9/19
      *
      */
+    public List<AuthorStatistics> getAuthorStatisticsList(AuthorStatistics authorStatistics){
+
+        return authorStatisticsMapper.getAuthorListByPage(authorStatistics);
+    }
+
+    public int getAuthorStatisticsNum(AuthorStatistics authorStatistics){
+        return  authorStatisticsMapper.getAuthorCount(authorStatistics);
+    }
+
+
     //新增论文
     public int addPaperCount(List<Paper> paperList){
         if(userList.size() == 0)
@@ -396,7 +406,7 @@ public class AuthorService {
             if((patent.getFirstAuthorType().equals("student")&&patent.getSecondAuthorType() == null)||(patent.getFirstAuthorType().equals("student") && patent.getSecondAuthorType().equals("student")) ){
                 //第一作者学生 第二作者学生(或空)   第一作者学生+1 老师+1
                 for(int i=0; i<userList.size();i++){
-                    if(userList.get(i).getWorkId().equals(patent.getFirstAuthorWorkId())){
+                    if(userList.get(i).getWorkId()!= null &&userList.get(i).getWorkId().equals(patent.getFirstAuthorWorkId())){
                         workId = userList.get(i).getTutorWorkId();
                         break;
                     }
@@ -410,7 +420,7 @@ public class AuthorService {
             }else if(patent.getFirstAuthorType()!= null && patent.getSecondAuthorType()!=null&&patent.getFirstAuthorType().equals("teacher")&& patent.getSecondAuthorType().equals("student")){
                 //第一作者老师 第二作者学生
                 for(int i=0; i<userList.size();i++){
-                    if(userList.get(i).getWorkId().equals(patent.getSecondAuthorWorkId())){
+                    if(userList.get(i).getWorkId()!= null &&userList.get(i).getWorkId().equals(patent.getSecondAuthorWorkId())){
                         workId = userList.get(i).getTutorWorkId();
                         break;
                     }
@@ -430,7 +440,7 @@ public class AuthorService {
             }else if(patent.getFirstAuthorType()!= null && patent.getSecondAuthorType()!=null&&patent.getFirstAuthorType().equals("student") &&patent.getSecondAuthorType().equals("teacher")){
                 //第一作者学生  第二作者老师
                 for(int i=0; i<userList.size();i++){
-                    if(userList.get(i).getWorkId().equals(patent.getFirstAuthorWorkId())){
+                    if(userList.get(i).getWorkId()!= null &&userList.get(i).getWorkId().equals(patent.getFirstAuthorWorkId())){
                         workId = userList.get(i).getTutorWorkId();
                         break;
                     }
@@ -468,7 +478,7 @@ public class AuthorService {
             if((patent.getFirstAuthorType().equals("student")&&patent.getSecondAuthorType() == null)||(patent.getFirstAuthorType().equals("student") && patent.getSecondAuthorType().equals("student")) ){
                 //第一作者学生 第二作者学生(或空)   第一作者学生+1 老师+1
                 for(int i=0; i<userList.size();i++){
-                    if(userList.get(i).getWorkId().equals(patent.getFirstAuthorWorkId())){
+                    if(userList.get(i).getWorkId()!= null &&userList.get(i).getWorkId().equals(patent.getFirstAuthorWorkId())){
                         workId = userList.get(i).getTutorWorkId();
                         break;
                     }
@@ -482,7 +492,7 @@ public class AuthorService {
             }else if(patent.getFirstAuthorType()!= null && patent.getSecondAuthorType()!=null&&patent.getFirstAuthorType().equals("teacher")&& patent.getSecondAuthorType().equals("student")){
                 //第一作者老师 第二作者学生
                 for(int i=0; i<userList.size();i++){
-                    if(userList.get(i).getWorkId().equals(patent.getSecondAuthorWorkId())){
+                    if(userList.get(i).getWorkId()!= null &&userList.get(i).getWorkId().equals(patent.getSecondAuthorWorkId())){
                         workId = userList.get(i).getTutorWorkId();
                         break;
                     }
@@ -502,7 +512,7 @@ public class AuthorService {
             }else if(patent.getFirstAuthorType()!= null && patent.getSecondAuthorType()!=null&&patent.getFirstAuthorType().equals("student") &&patent.getSecondAuthorType().equals("teacher")){
                 //第一作者学生  第二作者老师
                 for(int i=0; i<userList.size();i++){
-                    if(userList.get(i).getWorkId().equals(patent.getFirstAuthorWorkId())){
+                    if(userList.get(i).getWorkId()!= null &&userList.get(i).getWorkId().equals(patent.getFirstAuthorWorkId())){
                         workId = userList.get(i).getTutorWorkId();
                         break;
                     }

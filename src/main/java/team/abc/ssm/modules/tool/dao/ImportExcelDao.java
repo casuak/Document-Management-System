@@ -1,6 +1,7 @@
 package team.abc.ssm.modules.tool.dao;
 
 import org.apache.ibatis.annotations.Param;
+import team.abc.ssm.modules.sys.entity.User;
 import team.abc.ssm.modules.tool.entity.ColumnMapField;
 import team.abc.ssm.modules.tool.entity.ExcelTemplate;
 import team.abc.ssm.modules.tool.entity.normal.DynamicInsertParam;
@@ -23,4 +24,8 @@ public interface ImportExcelDao {
     // 获取table中的某2列的所有行的数据(用于形成键值映射)
     // tableName(String), fkCurrentField(String), fkReplaceField(String)
     List<Map<String, Object>> selectListByTwoField(ColumnMapField columnMapField);
+
+
+    void  updateUserByExcel(List<User> users);
+    void  updateUserTutorByExcel(List<User> users);
 }

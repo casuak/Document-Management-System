@@ -547,6 +547,7 @@
             //判断有没有选中：
             if (app.selectionList.length === 0) {
                 //1：全部转到成功
+                app.loading.table = true;
                 ajaxPost("/api/patent/convertToCompleteAll", null,
                     function success(res) {
                         app.loading.table = false;

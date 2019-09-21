@@ -9,7 +9,8 @@ let app = new Vue({
         urls: {
             selectAllExcelTemplate: '/api/tool/excelTemplate/selectAll',
             downloadExcelTemplate: '/api/tool/excelTemplate/downloadExcelTemplate',
-            importExcelToTable: '/api/tool/excelTemplate/importExcelToTable'
+            importExcelToTable: '/api/tool/excelTemplate/importExcelToTable',
+            updateUserByExcel:'/api/tool/excelTemplate/updateUserByExcel'
         },
         excelTemplateList: [],
         defaultFileList: [],
@@ -80,7 +81,11 @@ let app = new Vue({
             this.formData.excelDataName = this.tmpFileName;
             this.loading.importing = true;
             let app = this;
-            ajaxPostJSON(this.urls.importExcelToTable, this.formData, function (d) {
+            let url=this.urls.importExcelToTable;
+            if(app.formData.excelName ==="更新用户信息"){
+                url=thisapp.urls.updateUserByExcel;
+            }
+            ajaxPostJSON(url, this.formData, function (d) {
                 app.loading.importing = false;
                 window.parent.parent.app.showMessage('导入成功');
             },function(d){
