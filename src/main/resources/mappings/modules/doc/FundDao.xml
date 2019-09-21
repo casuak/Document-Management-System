@@ -159,7 +159,8 @@
         project_year=#{projectYear},
         project_name=#{projectName},
         modify_date=#{modifyDate},
-        modify_user_id=#{modifyUserId}
+        modify_user_id=#{modifyUserId},
+        status=#{status}
         where id=#{id}
     </update>
 
@@ -309,6 +310,12 @@
             </if>
         </where>
     </select>
+
+    <update id="completeFundByStatus">
+        update doc_fund
+        set status='3'
+        where status='2'
+    </update>
 
 
 </mapper>

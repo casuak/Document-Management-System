@@ -57,4 +57,6 @@ public interface FundDao {
 
     List<Fund> selectMyPatentListByPage(Fund fund);
     int getMyPatentNum(Fund fund);
+
+    void completeFundByStatus();
 }

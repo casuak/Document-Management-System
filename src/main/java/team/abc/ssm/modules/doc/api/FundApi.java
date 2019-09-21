@@ -303,4 +303,19 @@ public class FundApi extends BaseApi {
         fundService.delete(list);
         return retMsg.Set(MsgType.SUCCESS);
     }
+
+    @RequestMapping(value = "completeFundByStatus",method = RequestMethod.POST)
+    @ResponseBody
+    public Object completeFundByStatus(){
+        fundService.completeFundByStatus();
+        return retMsg.Set(MsgType.SUCCESS);
+    }
+
+    @RequestMapping(value = "completeFundByChoice",method = RequestMethod.POST)
+    @ResponseBody
+    public Object completeFundByChoice(@RequestBody Fund fund){
+        fund.setStatus("3");
+        fundService.updateFund(fund);
+        return retMsg.Set(MsgType.SUCCESS);
+    }
 }

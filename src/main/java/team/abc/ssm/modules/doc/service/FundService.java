@@ -178,4 +178,8 @@ public class FundService {
             fundDao.deleteByPrimaryKey(f.getId());
         }
     }
+
+    public void completeFundByStatus(){
+        fundDao.completeFundByStatus();
+    }
 }

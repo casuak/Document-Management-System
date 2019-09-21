@@ -24,6 +24,9 @@
             <el-button size="small" type="primary" @click="matchUserFund()" v-if="status === '0'">
                 自动匹配
             </el-button>
+            <el-button size="small" type="primary" @click="completeFundByStatus()" v-if="status === '2'">
+                全部完成
+            </el-button>
         </span>
 
         <span style="float: right;margin-right: 10px;">
@@ -60,8 +63,12 @@
                            @click="showMatchDialog(scope.row);" v-if="status === '1'">
                     <span>手动匹配</span>
                 </el-button>
+                <el-button type="primary" size="mini" style="position:relative;bottom: 1px;"
+                           @click="complete(scope.row);" v-if="status === '2'">
+                    <span>转入完成</span>
+                </el-button>
                 <el-button type="warning" size="mini" style="position:relative;bottom: 1px;margin-left: 6px;"
-                           @click="showUpdateDialog(scope.row)" v-if="status === '2'">
+                           @click="showUpdateDialog(scope.row)" v-if="status === '3'">
                     <span>编辑</span>
                 </el-button>
                 <el-button type="danger" size="mini" style="position:relative;bottom: 1px;margin-left: 6px;"

@@ -42,6 +42,10 @@ var app = new Vue({
                 {
                     value: '2',
                     label: '3.2 匹配成功'
+                },
+                {
+                    value:'3',
+                    label:'4.匹配完成'
                 }
             ],
             fundList: [],
@@ -62,7 +66,9 @@ var app = new Vue({
                 matchUserFund: '/api/doc/fund/matchUserFund',
                 updateFund: '/api/doc/fund/updateFund',
                 searchForMatch: '/api/doc/fund/searchForMatch',
-                matchFund: '/api/doc/fund/matchFund'
+                matchFund: '/api/doc/fund/matchFund',
+                completeFundByStatus:'/api/doc/fund/completeFundByStatus',
+                completeFundByChoice:'/api/doc/fund/completeFundByChoice'
             },
             updateDialog: defaultUpdateDialog,
             matchDialog: defaultMatchDialog
@@ -245,6 +251,27 @@ function matchFund(v) {
         clearMatchDialog();
         getFundList();
     });
+}
+
+//全部完成
+function completeFundByStatus(){
+    window.parent.app.showConfirm(() => {
+        app.loading.table = true;
+    ajaxPost(app.urls.completeFundByStatus, null, function (d) {
+        app.loading.table = false;
+        app.status = '3';
+        getFundList();
+    })
+});
+}
+
+//选择完成
+function complete(v){
+    app.loading.table=true;
+    ajaxPostJSON(app.urls.completeFundByChoice,v,function () {
+        app.loading.table=false;
+        getFundList();
+    })
 }
 
 window.onload = function () {
