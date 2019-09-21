@@ -10,6 +10,9 @@
         <result column="author_list" jdbcType="VARCHAR" property="authorList"/>
         <result column="first_author_name" jdbcType="VARCHAR" property="firstAuthorName"/>
         <result column="second_author_name" jdbcType="VARCHAR" property="secondAuthorName"/>
+        <result column="first_author_type" jdbcType="VARCHAR" property="firstAuthorType"/>
+        <result column="second_author_type" jdbcType="VARCHAR" property="secondAuthorType"/>
+        <result column="journal_division" jdbcType="VARCHAR" property="journalDivision"/>
         <result column="first_author_id" jdbcType="VARCHAR" property="firstAuthorId"/>
         <result column="second_author_id" jdbcType="VARCHAR" property="secondAuthorId"/>
         <result column="status" jdbcType="VARCHAR" property="status"/>
@@ -800,6 +803,24 @@
             </otherwise>
         </choose>
     </delete>
+    <select id="selectDeleteListByIds" parameterType="paper" resultMap="BaseResultMap">
+       select * from doc_paper
+        <choose>
+            <when test="list != null and list.size() != 0">
+                <where>
+                    id in
+                    <foreach collection="list" open="(" close=")" item="item" separator=",">
+                        #{item.id}
+                    </foreach>
+                </where>
+            </when>
+            <otherwise>
+                <where>
+                    1 = 0
+                </where>
+            </otherwise>
+        </choose>
+    </select>
 
     <delete id="convertToSuccessByIds" parameterType="paper">
         update doc_paper set status = '2'
@@ -825,6 +846,11 @@
         from doc_paper
         where status = #{0}
     </delete>
+    <select id="selectByStatus" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select *
+        from doc_paper
+         where status = #{0}
+    </select>
 
     <update id="selectAuthor">
         update doc_paper a set

@@ -30,4 +30,38 @@
         select ${fkCurrentField}, ${fkReplaceField}
         from ${fkTableName}
     </select>
+
+
+    <update id="updateUserByExcel" parameterType="list">
+    update sys_user
+    <trim prefix="set" suffixOverrides=",">
+        <trim prefix="nicknames=case" suffix="end,">
+            <foreach collection="list" item="item" index="index">
+                <if test="item.nicknames!=null">
+                    when work_id=#{item.workId} then #{item.nicknames}
+                </if>
+            </foreach>
+        </trim>
+    </trim>
+    where
+    <foreach collection="list" separator="or" item="item" index="index">
+        `work_id`=#{item.workId}
+    </foreach>
+</update>
+    <update id="updateUserTutorByExcel" parameterType="list">
+        update sys_user
+        <trim prefix="set" suffixOverrides=",">
+            <trim prefix="tutor_nicknames=case" suffix="end,">
+                <foreach collection="list" item="item" index="index">
+                    <if test="item.nicknames!=null">
+                        when tutor_work_id=#{item.workId} then #{item.nicknames}
+                    </if>
+                </foreach>
+            </trim>
+        </trim>
+        where
+        <foreach collection="list" separator="or" item="item" index="index">
+            `tutor_work_id`=#{item.workId}
+        </foreach>
+    </update>
 </mapper>

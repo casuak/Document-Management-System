@@ -41,10 +41,12 @@ public interface PaperDao {
     List<Paper> selectAll();
 
     int deleteListByIds(List<Paper> paperList);
+    List<Paper> selectDeleteListByIds(List<Paper> paperList);
 
     int convertToSuccessByIds(List<Paper> paperList);
 
     int deleteByStatus(String status);
+    List<Paper> selectByStatus(String status);
 
     int selectAuthor(
             @Param("paperId") String paperId,

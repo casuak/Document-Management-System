@@ -164,4 +164,17 @@ public class ExcelTemplateApi extends BaseApi {
             return retMsg.Set(MsgType.ERROR);
         }
     }
+
+    @RequestMapping(value = "updateUserByExcel", method = RequestMethod.POST)
+    @ResponseBody
+    public Object updateUserByExcel(@RequestBody ExcelTemplate excelTemplate) {
+        try {
+            excelTemplateService.updateUserByExcel(excelTemplate);
+            return retMsg.Set(MsgType.SUCCESS);
+        } catch (IOException e) {
+            return retMsg.Set(MsgType.ERROR);
+        }
+    }
+
+
 }

@@ -77,6 +77,12 @@ public class User extends DataEntity<User> {
     private String studentDegreeType; // 学生学位类型（学术型、专业学位）
     @Column(name = "status")
     private String status; // 状态 0 - 未初始化，1 - 初始化完成
+    @Column (name = "is_master")
+    private Integer isMaster; //是否为硕导
+    @Column(name = "is_doctor")
+    private Integer isDoctor; //是否为博导
+
+
 
     @Transient
     private User tutor; // 学生导师的详细信息

@@ -183,6 +183,7 @@
                           height="calc(100% - 35px)"
                           v-loading="table.authorTable.loading"
                           class="scroll-bar"
+                          @sort-change='sortChange'
                 <%-- :default-sort = "{prop: 'paperAmount', order: 'descending'}"--%>
                 <%--style="margin-top: 0;width: 100%;overflow-y: hidden;"--%>
                 <%--@selection-change="onSelectionChange_entity"--%>
@@ -200,7 +201,6 @@
                             prop="school"
                             header-align="center"
                             align="center"
-                            sortable
                             width="195"
                             fixed="left"
                             label="管理所在学院">
@@ -219,7 +219,6 @@
                                 prop="major"
                                 header-align="center"
                                 align="center"
-                                sortable
                                 fixed="left"
                                 width="195"
                                 label="学科一">
@@ -244,8 +243,9 @@
                             prop="tutorPaperSum"
                             header-align="center"
                             align="center"
-                            width="50"
-                            label="合计">
+                            width="75"
+                            sortable='custom'
+                            label="总计">
                     </el-table-column>
                         <el-table-column
                                 prop="tutorQ1"
@@ -284,7 +284,8 @@
                                 prop="stuPaperSum"
                                 header-align="center"
                                 align="center"
-                                width="50"
+                                width="75"
+                                sortable='custom'
                                 label="合计">
                         </el-table-column>
                         <el-table-column
@@ -325,14 +326,16 @@
                                 prop="tutorPatent"
                                 header-align="center"
                                 align="center"
-                                width="50"
+                                width="75"
+                                sortable='custom'
                                 label="导师">
                         </el-table-column>
                         <el-table-column
                                 prop="stuPatent"
                                 header-align="center"
                                 align="center"
-                                width="50"
+                                width="75"
+                                sortable='custom'
                                 label="学生">
                         </el-table-column>
                         </el-table-column>
@@ -344,7 +347,8 @@
                                 prop="fundSum"
                                 header-align="center"
                                 align="center"
-                                width="50"
+                                width="150"
+                                sortable='custom'
                                 label="合计">
                         </el-table-column>
                         <el-table-column
@@ -633,6 +637,47 @@
             options: {},
         },
         methods: {
+            //当排序发生变化时
+            sortChange:function(o){
+                let column=o["column"];
+                let prop=o["prop"];
+                let order=o["order"];
+                let app=this;
+                let oorder="";
+                let col="";
+                console.log(column,prop,order);
+                if(prop == null) {
+                    app.table.authorTable.params.searchKey = "";
+                }
+                else{
+                    if(order === "descending") {
+                        oorder = "DESC"
+                    }else{
+                        oorder ="ASC"
+                    }
+                  switch (prop) {
+                      case "tutorPaperSum":
+                          col="tutor_paper_sum";
+                          break;
+                      case "stuPaperSum" :
+                          col="stu_paper_sum";
+                          break;
+                      case "tutorPatent":
+                          col="tutor_patent";
+                          break;
+                      case "stuPatent":
+                          col="stu_patent";
+                          break;
+                      case "fundSum":
+                          col = "fund_sum";
+                          break;
+                  }
+                    app.table.authorTable.params.searchKey=col+" "+oorder;
+
+                }
+                console.log( app.table.authorTable.params.searchKey);
+                authorSearch();
+            },
             handleCheckAllChange(val) {
                 this.doc.checkedDoc = val ? docOptions : [];
                 this.doc.isIndeterminate = false;

@@ -12,7 +12,9 @@ import team.abc.ssm.common.web.FirstAuMatchType;
 import team.abc.ssm.common.web.PatentMatchType;
 import team.abc.ssm.common.web.SecondAuMatchType;
 import team.abc.ssm.modules.author.dao.SysUserMapper;
+import team.abc.ssm.modules.author.entity.AuthorStatistics;
 import team.abc.ssm.modules.author.entity.SysUser;
+import team.abc.ssm.modules.author.service.AuthorService;
 import team.abc.ssm.modules.author.service.SysUserService;
 import team.abc.ssm.modules.doc.entity.StatisticCondition;
 import team.abc.ssm.modules.patent.dao.DocPatentMapper;
@@ -42,6 +44,9 @@ public class DocPatentService {
 
     @Autowired
     private SysUserService sysUserService;
+
+    @Autowired
+    private AuthorService authorService;
 
     public int deleteByPrimaryKey(String id) {
         return docPatentMapper.deleteByPrimaryKey(id);
@@ -760,6 +765,16 @@ public class DocPatentService {
 
     @Transactional(rollbackFor = Exception.class)
     public boolean deleteListByIds(List<DocPatent> patentList) {
+        patentList=docPatentMapper.selectConvertToCompleteByIds(patentList);
+        List<DocPatent> deleteList = new ArrayList<>();
+        for (DocPatent tmpPatent : patentList) {
+           if(MATCH_FINISHED.toString().equals(tmpPatent.getStatus())){
+               deleteList.add(tmpPatent);
+           }
+        }
+        if(deleteList.size()>0)
+        authorService.deletePatentCount(deleteList);
+
         int count = 0;
         for (DocPatent tmpPatent : patentList) {
             if (docPatentMapper.deleteByPrimaryKey(tmpPatent.getId()) == 1) {
@@ -770,6 +785,10 @@ public class DocPatentService {
     }
 
     public boolean deleteByStatus(String status) {
+        if(MATCH_FINISHED.toString().equals(status)){
+            List<DocPatent> patents = docPatentMapper.selectAllByStatus(status);
+            authorService.deletePatentCount(patents);
+        }
         docPatentMapper.deleteByStatus(status);
         return true;
     }
@@ -779,17 +798,33 @@ public class DocPatentService {
     }
 
     public boolean convertToSuccessByIds(List<DocPatent> patentList) {
+        patentList=docPatentMapper.selectConvertToCompleteByIds(patentList);
+        List<DocPatent> deleteList = new ArrayList<>();
+        for (DocPatent tmpPatent : patentList) {
+            if(MATCH_FINISHED.toString().equals(tmpPatent.getStatus())){
+                deleteList.add(tmpPatent);
+            }
+        }
+        if(deleteList.size()>0)
+            authorService.deletePatentCount(deleteList);
+
+
         int count = docPatentMapper.convertToSuccessByIds(patentList);
         return count == patentList.size();
     }
 
     public boolean convertToCompleteAll() {
         List<DocPatent> matchSucPatents = docPatentMapper.selectAllByStatus(MATCH_SUCCESS.toString());
+        //统计
+        authorService.addPatentCount(matchSucPatents);
         int count = docPatentMapper.convertToCompleteByIds(matchSucPatents);
         return count == matchSucPatents.size();
     }
 
     public boolean convertToCompleteByIds(List<DocPatent> patentList) {
+        List<DocPatent> docPatents = docPatentMapper.selectConvertToCompleteByIds(patentList);
+        authorService.addPatentCount(docPatents);
+
         int count = docPatentMapper.convertToCompleteByIds(patentList);
         return count == patentList.size();
     }

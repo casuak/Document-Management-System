@@ -6,6 +6,8 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.util.*;
 
+import team.abc.ssm.modules.author.entity.AuthorStatistics;
+import team.abc.ssm.modules.author.service.AuthorService;
 import team.abc.ssm.modules.doc.dao.JournalDao;
 import team.abc.ssm.modules.doc.dao.PaperDao;
 import team.abc.ssm.modules.doc.entity.DanweiNicknames;
@@ -28,6 +30,9 @@ public class PaperService {
 
     @Autowired
     private JournalDao journalDao;
+
+    @Autowired
+    private AuthorService authorService;
 
     public int deleteByPrimaryKey(String id) {
         return paperDao.deleteByPrimaryKey(id);
@@ -212,6 +217,16 @@ public class PaperService {
     }
 
     public boolean deleteListByIds(List<Paper> paperList) {
+        paperList = paperDao.selectDeleteListByIds(paperList);
+        List<Paper> finishList = new ArrayList<>();
+        for(Paper paper:paperList){
+            if("3".equals(paper.getStatus())){
+                finishList.add(paper);
+            }
+        }
+        if(finishList.size()>0)
+        authorService.deletePaperCount(finishList);
+
         int count = paperDao.deleteListByIds(paperList);
         return count == paperList.size();
     }
@@ -222,7 +237,13 @@ public class PaperService {
     }
 
     public void completeAll() {
+        Paper paper = new Paper();
+        paper.setStatus("2");
+        List<Paper> result =paperDao.selectListByStatus(paper);
+        authorService.addPaperCount(result);
+
         paperDao.completeAll();
+
     }
 
     private void setPaperDanweiCn(Paper paper, User user) {
@@ -634,7 +655,11 @@ public class PaperService {
     }
 
     public boolean deleteByStatus(String status) {
-        paperDao.deleteByStatus(status);
+        if("3".equals(status)){
+            List<Paper> papers = paperDao.selectByStatus(status);
+            authorService.deletePaperCount(papers);
+        }
+         paperDao.deleteByStatus(status);
         return true;
     }
 
