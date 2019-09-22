@@ -205,7 +205,7 @@
         select count(*) from doc_fund
         <where>
             <if test="1 == 1">
-                status = '2'
+                status = '3'
             </if>
             <if test="param1 != null and param1 != ''">
                 and school = #{param1}
@@ -284,7 +284,7 @@
         select * from doc_fund
         <where>
             <if test="1 == 1">
-                status='2'
+                status='3'
             </if>
             <if test="id != null and id != ''">
                 and person_id=#{id}
@@ -300,7 +300,7 @@
         select count(*) from doc_fund
         <where>
             <if test="1 == 1">
-                status='2'
+                status='3'
             </if>
             <if test="id != null and id != ''">
                 and person_id=#{id}
