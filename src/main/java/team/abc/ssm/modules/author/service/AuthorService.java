@@ -260,6 +260,7 @@ public class AuthorService {
 
     //新增论文
     public int addPaperCount(List<Paper> paperList){
+        if(paperList.size() ==0 ) return -1;
         if(userList.size() == 0)
             userList = userService.getAllUsers();
 
@@ -326,6 +327,7 @@ public class AuthorService {
     }
     //删除论文
     public int deletePaperCount(List<Paper> paperList){
+        if(paperList.size() ==0 ) return -1;
         if(userList.size() == 0)
             userList = userService.getAllUsers();
 
@@ -395,6 +397,7 @@ public class AuthorService {
 
     //新增专利
     public int addPatentCount(List<DocPatent> patentList){
+        if(patentList.size() == 0) return -1;
         if(userList.size() == 0)
             userList = userService.getAllUsers();
         String preTutorSql="update doc_statistics set `tutor_patent`=`tutor_patent`+1 where `work_id`=\"";
@@ -467,6 +470,7 @@ public class AuthorService {
 
     //删除专利
     public  int deletePatentCount(List<DocPatent> patentList){
+        if(patentList.size() == 0) return -1;
         if(userList.size() == 0)
             userList = userService.getAllUsers();
         String preTutorSql="update doc_statistics set `tutor_patent`=`tutor_patent`+1 where `work_id`=\"";
@@ -541,6 +545,7 @@ public class AuthorService {
 
     //增加基金
     public int addFundCount(List<Fund> fundList){
+        if(fundList.size() == 0) return -1;
         String resultSql = "";
         String preSqlSum="update doc_statistics set `fund_sum`=`fund_sum`+1 where `work_id`=\"";
         for(Fund fund:fundList){
@@ -590,6 +595,7 @@ public class AuthorService {
 
     //删除基金
     public int deleteFundCount(List<Fund> fundList){
+        if(fundList.size() == 0) return -1;
         String resultSql = "";
         String preSqlSum="update doc_statistics set `fund_sum`=`fund_sum`+1 where `work_id`=\"";
         for(Fund fund:fundList){
