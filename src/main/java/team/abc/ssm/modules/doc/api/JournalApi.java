@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import springfox.documentation.spring.web.PropertySourcedMapping;
 import team.abc.ssm.common.persistence.Page;
 import team.abc.ssm.common.web.BaseApi;
 import team.abc.ssm.common.web.MsgType;
@@ -40,6 +41,13 @@ public class JournalApi extends BaseApi {
     @ResponseBody
     public Object deleteAll() {
         journalService.deleteAll();
+        return retMsg.Set(MsgType.SUCCESS);
+    }
+
+    @RequestMapping(value = "updateJournal",method = RequestMethod.POST)
+    @ResponseBody
+    public Object updateJournal(@RequestBody Journal journal){
+        journalService.updateJournal(journal);
         return retMsg.Set(MsgType.SUCCESS);
     }
 }

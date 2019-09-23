@@ -15,4 +15,6 @@ public interface JournalDao {
     int deleteByIds(List<Journal> list);
 
     int deleteAll();
+
+    void updateJournal(Journal journal);
 }

@@ -1,3 +1,16 @@
+var defaultUpdateDialog = {
+    visible: false,
+    loading: false,
+    data: {
+        id: '',
+        journalTitle:'',
+        journalDivision:'',
+        journalYear:'',
+        impactFactor:'',
+        issn:''
+    }
+};
+
 app = new Vue({
     el: '#app',
     data: {
@@ -5,7 +18,8 @@ app = new Vue({
         urls: {
             getJournalList: '/api/doc/journal/list',
             deleteListByIds: '/api/doc/journal/deleteByIds',
-            deleteAll: '/api/doc/journal/deleteAll'
+            deleteAll: '/api/doc/journal/deleteAll',
+            updateJournal:'/api/doc/journal/updateJournal'
         },
         table: {
             loading: false,
@@ -19,8 +33,25 @@ app = new Vue({
                 total: 0
             }
         },
-        dialog: {},
-        options: {}
+        updateDialog: defaultUpdateDialog,
+        journalDivisionList:[
+            {
+                value:'Q1',
+                label:'Q1'
+            },
+            {
+                value:'Q2',
+                label:'Q2'
+            },
+            {
+                value:'Q3',
+                label:'Q3'
+            },
+            {
+                value:'Q4',
+                label:'Q4'
+            }
+        ]
     },
     methods: {
         refreshTable: function () {
@@ -99,6 +130,49 @@ app = new Vue({
         formatYear: function(timestamp){
             let date = new Date(timestamp);
             return date.Format("yyyy");
+        },
+        //清空对话框
+        clearUpdateDialog: function () {
+            this.updateDialog.data.id = '';
+            this.updateDialog.data.journalDivision = '';
+            this.updateDialog.data.journalTitle = '';
+            this.updateDialog.data.journalYear = '';
+            this.updateDialog.data.impactFactor = '';
+            this.updateDialog.data.issn = '';
+        },
+        //显示对话框
+        showUpdateDialog: function (v) {
+            this.clearUpdateDialog();
+
+            this.updateDialog.data.id = v['id'];
+            this.updateDialog.data.journalDivision = v['journalDivision'];
+            this.updateDialog.data.journalTitle = v['journalTitle'];
+            this.updateDialog.data.journalYear = v['journalYear'];
+            this.updateDialog.data.impactFactor = v['impactFactor'];
+            this.updateDialog.data.issn = v['issn'];
+
+            this.updateDialog.visible = true;
+        },
+        //更新信息
+        updateJournal:function () {
+            let data = {
+                id: this.updateDialog.data.id,
+                journalDivision: this.updateDialog.data.journalDivision,
+                journalTitle: this.updateDialog.data.journalTitle,
+                journalYear: this.updateDialog.data.journalYear,
+                impactFactor: this.updateDialog.data.impactFactor,
+                issn: this.updateDialog.data.issn
+            };
+            app.updateDialog.loading = true;
+            ajaxPostJSON(app.urls.updateJournal, data, function (d) {
+                app.updateDialog.loading = false;
+                app.updateDialog.visible = false;
+                app.$message({
+                    message: "操作成功",
+                    type: "success"
+                });
+                app.refreshTable();
+            });
         }
     },
     mounted: function(){

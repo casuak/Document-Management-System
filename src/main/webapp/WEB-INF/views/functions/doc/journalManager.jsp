@@ -47,6 +47,7 @@
             </template>
         </el-table-column>
         <el-table-column label="影响因子" width="200" prop="impactFactor" align="center"></el-table-column>
+        <el-table-column label="ISSN" width="200" prop="issn" align="center"></el-table-column>
         <el-table-column></el-table-column>
         <el-table-column label="操作" width="190" header-align="center" align="center">
             <template slot-scope="scope">
@@ -54,6 +55,10 @@
                 <%--@click="openDialog_updateEntity(scope.row)">--%>
                 <%--<span>编辑</span>--%>
                 <%--</el-button>--%>
+                <el-button type="warning" size="mini" style="position:relative;bottom: 1px;margin-left: 6px;"
+                           @click="showUpdateDialog(scope.row)">
+                    <span>修改</span>
+                </el-button>
                 <el-button type="danger" size="mini" style="position:relative;bottom: 1px;margin-left: 6px;"
                            @click="deleteByIds([{id: scope.row.id}])">
                     <span>删除</span>
@@ -72,6 +77,41 @@
                    :total="table.params.total"
                    layout="total, sizes, prev, pager, next, jumper">
     </el-pagination>
+
+    <%-- 更新对话框 --%>
+    <el-dialog title="更新信息" :visible.sync="updateDialog.visible">
+        <el-form>
+            <el-form-item label="期刊名" :required="true">
+                <el-input v-model="updateDialog.data.journalTitle"></el-input>
+            </el-form-item>
+            <el-form-item label="分区" :required="true">
+                <el-select v-model="updateDialog.data.journalDivision" size="small" style="margin-right: 10px;">
+                    <el-option v-for="journalDivision in journalDivisionList"
+                               :label="journalDivision.label"
+                               :value="journalDivision.value"
+                               :key="journalDivision.value"></el-option>
+                </el-select>
+            </el-form-item>
+            <el-form-item label="年份" :required="true">
+                <el-date-picker
+                        v-model="updateDialog.data.journalYear"
+                        type="year"
+                        placeholder="选择年">
+                </el-date-picker>
+            </el-form-item>
+            <el-form-item label="影响因子" :required="true">
+                <el-input v-model="updateDialog.data.impactFactor"></el-input>
+            </el-form-item>
+            <el-form-item label="ISSN" :required="true">
+                <el-input v-model="updateDialog.data.issn"></el-input>
+            </el-form-item>
+        </el-form>
+
+        <div slot="footer">
+            <el-button size="medium" @click="updateDialog.visible=false;clearUpdateDialog();">取消</el-button>
+            <el-button size="medium" type="primary" style="margin-left: 10px;" @click="updateJournal()">提交</el-button>
+        </div>
+    </el-dialog>
 </div>
 <%@include file="/WEB-INF/views/include/blankScript.jsp" %>
 <script src="/static/js/functions/doc/journalManager.js"></script>
