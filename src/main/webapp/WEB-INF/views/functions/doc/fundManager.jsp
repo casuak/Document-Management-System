@@ -36,7 +36,7 @@
                            :value="status.value"
                            :key="status.value"></el-option>
             </el-select>
-            <el-input size="small" placeholder="请输入项目名搜索相关专利" suffix-icon="el-icon-search"
+            <el-input size="small" placeholder="请输入项目名称" suffix-icon="el-icon-search"
                       style="width: 250px;margin-right: 10px;" v-model="page.searchKey"
                       @keyup.enter.native="getFundList()">
             </el-input>
@@ -57,7 +57,7 @@
         <el-table-column label="年份" width="100" prop="projectYear" align="center"></el-table-column>
         <el-table-column label="项目名称" width="700" prop="projectName" align="center"></el-table-column>
         <el-table-column label="金额（万元)" width="100" prop="projectMoney" align="center"></el-table-column>
-        <el-table-column label="操作"  header-align="center" align="center">
+        <el-table-column label="操作" width="250" header-align="center" align="center">
             <template slot-scope="scope">
                 <el-button type="primary" size="mini" style="position:relative;bottom: 1px;"
                            @click="showMatchDialog(scope.row);" v-if="status === '1'">
@@ -68,8 +68,12 @@
                     <span>转入完成</span>
                 </el-button>
                 <el-button type="warning" size="mini" style="position:relative;bottom: 1px;margin-left: 6px;"
-                           @click="showUpdateDialog(scope.row)" v-if="status === '3'">
+                           @click="showUpdateDialog(scope.row)" v-if="status === '2'">
                     <span>编辑</span>
+                </el-button>
+                <el-button type="warning" size="mini" style="position:relative;bottom: 1px;margin-left: 6px;"
+                           @click="uncomplete(scope.row);" v-if="status === '3'">
+                    <span>回滚状态</span>
                 </el-button>
                 <el-button type="danger" size="mini" style="position:relative;bottom: 1px;margin-left: 6px;"
                            @click="deleteFundByIds([{id: scope.row.id}])">

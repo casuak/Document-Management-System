@@ -68,7 +68,8 @@ var app = new Vue({
                 searchForMatch: '/api/doc/fund/searchForMatch',
                 matchFund: '/api/doc/fund/matchFund',
                 completeFundByStatus:'/api/doc/fund/completeFundByStatus',
-                completeFundByChoice:'/api/doc/fund/completeFundByChoice'
+                completeFundByChoice:'/api/doc/fund/completeFundByChoice',
+                uncompleteFundByChoice:'/api/doc/fund/uncompleteFundByChoice'
             },
             updateDialog: defaultUpdateDialog,
             matchDialog: defaultMatchDialog
@@ -176,8 +177,7 @@ function updateFund() {
         id: app.updateDialog.data.id,
         projectYear: app.updateDialog.data.projectYear,
         projectName: app.updateDialog.data.projectName,
-        projectMoney: app.updateDialog.data.projectMoney,
-
+        projectMoney: app.updateDialog.data.projectMoney
     };
     app.loading.table = true;
     ajaxPostJSON(app.urls.updateFund, data, function (d) {
@@ -272,6 +272,17 @@ function complete(v){
         app.loading.table=false;
         getFundList();
     })
+}
+
+//回滚状态
+function uncomplete(v){
+    window.parent.app.showConfirm(() => {
+        app.loading.table = true;
+    ajaxPostJSON(app.urls.uncompleteFundByChoice, v, function () {
+        app.loading.table = false;
+        getFundList();
+    })
+});
 }
 
 window.onload = function () {

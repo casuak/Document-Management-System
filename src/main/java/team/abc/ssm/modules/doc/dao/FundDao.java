@@ -61,4 +61,6 @@ public interface FundDao {
     void completeFundByStatus();
     List<Fund> selectListByStatus(String status);
     List<Fund> selectListByIds(List<Fund> list);
+
+    void updateFundStatus(Fund fund);
 }

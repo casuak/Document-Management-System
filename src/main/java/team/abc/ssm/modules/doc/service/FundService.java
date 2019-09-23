@@ -199,13 +199,22 @@ public class FundService {
 
     public void completeFundByStatus(){
         List<Fund> funds = fundDao.selectAllByStatus("2");
-        authorService.addFundCount(funds);
+        authorService.addFundCount(funds);//todo bug
 
         fundDao.completeFundByStatus();
     }
 
-    public  void completeFundByChoice(Fund fund){
-        updateFund(fund);
+    private void updateFundStatus(Fund fund){
+        User userNow = UserUtils.getCurrentUser();
+        Date dateNow = new Date();
+        fund.setModifyDate(dateNow);
+        fund.setModifyUserId(userNow.getId());
+
+        fundDao.updateFundStatus(fund);
+    }
+
+    public void completeFundByChoice(Fund fund){
+        updateFundStatus(fund);
 
         List<Fund> funds = new ArrayList<>();
         funds.add(fund);

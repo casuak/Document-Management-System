@@ -319,4 +319,13 @@ public class FundApi extends BaseApi {
 
         return retMsg.Set(MsgType.SUCCESS);
     }
+
+    @RequestMapping(value = "uncompleteFundByChoice",method = RequestMethod.POST)
+    @ResponseBody
+    public Object uncompleteFundByChoice(@RequestBody Fund fund){
+        fund.setStatus("2");
+        fundService.completeFundByChoice(fund);
+
+        return retMsg.Set(MsgType.SUCCESS);
+    }
 }
