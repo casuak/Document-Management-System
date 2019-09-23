@@ -18,11 +18,13 @@
         <result column="tutor_q2" property="tutorQ2"/>
         <result column="tutor_q3" property="tutorQ3"/>
         <result column="tutor_q4" property="tutorQ4"/>
+        <result column="tutor_other" property="tutorOther"/>
         <result column="tutor_paper_sum" property="tutorPaperSum"/>
         <result column="stu_q1" property="stuQ1"/>
         <result column="stu_q2" property="stuQ2"/>
         <result column="stu_q3" property="stuQ3"/>
         <result column="stu_q4" property="stuQ4"/>
+        <result column="stu_other" property="stuOther"/>
         <result column="stu_paper_sum" property="stuPaperSum"/>
 
         <result column="tutor_patent" property="tutorPatent"/>

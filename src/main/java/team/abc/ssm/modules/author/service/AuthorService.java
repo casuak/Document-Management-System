@@ -652,27 +652,31 @@ public class AuthorService {
         String preSqlStuSum="update doc_statistics set `stu_paper_sum`=`stu_paper_sum`+1 where `work_id`=\"";
 
         String returnSql="";
-        if(paper.getJournalDivision() != null){
-        switch (paper.getJournalDivision()){
-            case "Q1":
-                preSqlTutor="update doc_statistics set `tutor_q1`=`tutor_q1`+1 where `work_id`=\"";
-                preSqlStu="update doc_statistics set `stu_q1`=`stu_q1`+1 where `work_id`=\"";
-                break;
-            case "Q2":
-                preSqlTutor="update doc_statistics set `tutor_q2`=`tutor_q2`+1 where `work_id`=\"";
-                preSqlStu="update doc_statistics set `stu_q2`=`stu_q2`+1 where `work_id`=\"";
-                break;
-            case "Q3":
-                preSqlTutor="update doc_statistics set `tutor_q3`=`tutor_q3`+1 where `work_id`=\"";
-                preSqlStu="update doc_statistics set `stu_q3`=`stu_q3`+1 where `work_id`=\"";
-                break;
-            case "Q4":
-                preSqlTutor="update doc_statistics set `tutor_q4`=`tutor_q4`+1 where `work_id`=\"";
-                preSqlStu="update doc_statistics set `stu_q4`=`stu_q4`+1 where `work_id`=\"";
-                break;
-            default:break;
+        if(paper.getJournalDivision() != null) {
+            switch (paper.getJournalDivision()) {
+                case "Q1":
+                    preSqlTutor = "update doc_statistics set `tutor_q1`=`tutor_q1`+1 where `work_id`=\"";
+                    preSqlStu = "update doc_statistics set `stu_q1`=`stu_q1`+1 where `work_id`=\"";
+                    break;
+                case "Q2":
+                    preSqlTutor = "update doc_statistics set `tutor_q2`=`tutor_q2`+1 where `work_id`=\"";
+                    preSqlStu = "update doc_statistics set `stu_q2`=`stu_q2`+1 where `work_id`=\"";
+                    break;
+                case "Q3":
+                    preSqlTutor = "update doc_statistics set `tutor_q3`=`tutor_q3`+1 where `work_id`=\"";
+                    preSqlStu = "update doc_statistics set `stu_q3`=`stu_q3`+1 where `work_id`=\"";
+                    break;
+                case "Q4":
+                    preSqlTutor = "update doc_statistics set `tutor_q4`=`tutor_q4`+1 where `work_id`=\"";
+                    preSqlStu = "update doc_statistics set `stu_q4`=`stu_q4`+1 where `work_id`=\"";
+                    break;
+                default:
+                    break;
+            }
+        }else{
+            preSqlTutor = "update doc_statistics set `tutor_other`=`tutor_other`+1 where `work_id`=\"";
+            preSqlStu = "update doc_statistics set `stu_other`=`stu_other`+1 where `work_id`=\"";
         }
-
 
         switch (type){
             case 1: //学生老师 都+1
@@ -692,7 +696,7 @@ public class AuthorService {
                 break;
 
          }
-        }
+
         return returnSql;
     }
 }

@@ -275,6 +275,15 @@
                                 width="50"
                                 label="Q4">
                         </el-table-column>
+                            <el-table-column
+                                    prop="tutorOther"
+                                    header-align="center"
+                                    align="center"
+                                    width="50"
+                                    label="其他">
+                            </el-table-column>
+
+
                         </el-table-column>
                         <el-table-column
                                 header-align="center"
@@ -316,6 +325,15 @@
                                 width="50"
                                 label="Q4">
                         </el-table-column>
+
+                            <el-table-column
+                                    prop="stuOther"
+                                    header-align="center"
+                                    align="center"
+                                    width="50"
+                                    label="其他">
+                            </el-table-column>
+
                         </el-table-column>
                         </el-table-column>
                         <el-table-column

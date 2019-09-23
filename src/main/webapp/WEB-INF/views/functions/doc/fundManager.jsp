@@ -51,13 +51,13 @@
               @selection-change="selectionList=$event" stripe
               width="100%">
         <el-table-column type="selection" width="40"></el-table-column>
-        <el-table-column label="指标名称" width="150" prop="metricName" align="center"></el-table-column>
+        <el-table-column label="指标名称" width="250" prop="metricName" align="center"></el-table-column>
         <el-table-column label="姓名" width="80" prop="personName" align="center"></el-table-column>
         <el-table-column label="工号" width="150" prop="personWorkId" align="center"></el-table-column>
         <el-table-column label="年份" width="100" prop="projectYear" align="center"></el-table-column>
-        <el-table-column label="项目名称" width="600" prop="projectName" align="center"></el-table-column>
+        <el-table-column label="项目名称" width="700" prop="projectName" align="center"></el-table-column>
         <el-table-column label="金额（万元)" width="100" prop="projectMoney" align="center"></el-table-column>
-        <el-table-column label="操作" width="190" header-align="center" align="center">
+        <el-table-column label="操作"  header-align="center" align="center">
             <template slot-scope="scope">
                 <el-button type="primary" size="mini" style="position:relative;bottom: 1px;"
                            @click="showMatchDialog(scope.row);" v-if="status === '1'">

@@ -20,6 +20,7 @@ import team.abc.ssm.modules.doc.entity.StatisticCondition;
 import team.abc.ssm.modules.patent.dao.DocPatentMapper;
 import team.abc.ssm.modules.patent.entity.DocPatent;
 import team.abc.ssm.modules.patent.entity.MapUserPatent;
+import team.abc.ssm.modules.sys.dao.UserDao;
 import team.abc.ssm.modules.sys.entity.User;
 
 import java.text.ParseException;
@@ -47,6 +48,12 @@ public class DocPatentService {
 
     @Autowired
     private AuthorService authorService;
+
+    @Autowired
+    private UserDao userDao;
+
+    private  List<User> userList=new ArrayList<>();
+
 
     public int deleteByPrimaryKey(String id) {
         return docPatentMapper.deleteByPrimaryKey(id);
@@ -893,6 +900,8 @@ public class DocPatentService {
         //0.专利的已完成状态是4
         statisticCondition.setStatus("4");
 
+        if(userList.size() == 0 )
+            userList=userDao.selectAll();
         int totalNum;
         int studentPatentNum = 0,teacherPatentNum = 0,doctorPatentNum = 0;
         Map<String,Integer> statisticsResMap = new HashMap<>();
@@ -907,10 +916,20 @@ public class DocPatentService {
             }else if ("doctor".equals(tmpPatent.getFirstAuthorType())){
                 doctorPatentNum++;
             }
+
             if("teacher".equals(tmpPatent.getSecondAuthorType())){
                 teacherPatentNum ++;
             }else if ("student".equals(tmpPatent.getSecondAuthorType())){
-                studentPatentNum++;
+                String teacherId=null;
+                for(User user:userList){
+                    if(tmpPatent.getSecondAuthorWorkId().equals(user.getWorkId())){
+                        teacherId = user.getTutorWorkId();
+                        break;
+                    }
+                }
+                if(!teacherId.equals("")&&teacherId!= null &&teacherId.equals(tmpPatent.getFirstAuthorWorkId())){
+                    studentPatentNum++;
+                }
             }else if ("doctor".equals(tmpPatent.getSecondAuthorType())){
                 doctorPatentNum++;
             }

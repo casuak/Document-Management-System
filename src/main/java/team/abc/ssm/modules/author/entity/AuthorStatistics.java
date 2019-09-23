@@ -23,12 +23,14 @@ public class AuthorStatistics extends DataEntity<AuthorStatistics> {
     Integer tutorQ2;//导师Q2论文数量
     Integer tutorQ3;//导师Q3论文数量
     Integer tutorQ4;//导师Q4论文数量
+    Integer tutorOther;//导师其他论文数量
     Integer tutorPaperSum;//导师论文数量
 
     Integer stuQ1;//学生Q1论文数量
     Integer stuQ2;//学生Q2论文数量
     Integer stuQ3;//学生Q3论文数量
     Integer stuQ4;//学生Q4论文数量
+    Integer stuOther;//学生其他论文数量
     Integer stuPaperSum;//学生论文数量
 
     Integer tutorPatent;//老师专利数量

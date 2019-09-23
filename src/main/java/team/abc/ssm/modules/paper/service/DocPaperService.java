@@ -1,12 +1,17 @@
 package team.abc.ssm.modules.paper.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 
 import team.abc.ssm.modules.doc.entity.StatisticCondition;
 import team.abc.ssm.modules.paper.entity.DocPaper;
 import team.abc.ssm.modules.paper.mapper.DocPaperMapper;
+import team.abc.ssm.modules.sys.dao.UserDao;
+import team.abc.ssm.modules.sys.entity.User;
+import team.abc.ssm.modules.sys.service.UserService;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,9 +22,16 @@ public class DocPaperService{
     @Resource
     private DocPaperMapper docPaperMapper;
 
+    @Autowired
+    private UserDao userDao;
+
+    private  List<User> userList=new ArrayList<>();
+
     public Map<String,Integer> doPaperStatistics(StatisticCondition statisticCondition){
         //0.论文的已完成状态是3
         statisticCondition.setStatus("3");
+        if(userList.size() == 0 )
+        userList=userDao.selectAll();
 
         int totalNum = 0;
         int studentPaperNum = 0,teacherPaperNum = 0,doctorPaperNum = 0;
@@ -33,16 +45,22 @@ public class DocPaperService{
                 studentPaperNum++;
             } else if ("teacher".equals(docPaper.getFirstAuthorType())) {
                 teacherPaperNum++;
-            } else if ("doctor".equals(docPaper.getFirstAuthorType())) {
-                doctorPaperNum++;
             }
 
             if ("student".equals(docPaper.getSecondAuthorType())) {
-                studentPaperNum++;
+                String teacherId=null;
+                for(User user:userList){
+                    if(docPaper.getSecondAuthorId().equals(user.getWorkId())){
+                        teacherId = user.getTutorWorkId();
+                        break;
+                    }
+                }
+                if(!teacherId.equals("")&&teacherId!= null &&teacherId.equals(docPaper.getFirstAuthorId())){
+                    studentPaperNum++;
+                }
+
             } else if ("teacher".equals(docPaper.getSecondAuthorType())) {
                 teacherPaperNum++;
-            } else if ("doctor".equals(docPaper.getSecondAuthorType())) {
-                doctorPaperNum++;
             }
         }
         statisticsResMap.put("studentPaper",studentPaperNum);

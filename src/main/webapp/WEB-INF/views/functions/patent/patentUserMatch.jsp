@@ -167,7 +167,7 @@
         </el-table-column>
 
         <el-table-column label="第一发明人" width="332" align="center"
-                         v-if="['0','1', '2', '3', '4'].contains(status)">
+                         v-if="['0','1', '2', '3'].contains(status)">
             <template slot-scope="{row}">
                 <%--如果有patent的firstAuthorId信息(证明当前已经匹配到这个人)--%>
                 <span v-if="row.firstAuthorId != null && row.firstAuthorId !== ''"
@@ -196,7 +196,7 @@
             </template>
         </el-table-column>
         <el-table-column label="第二发明人" width="332" align="center"
-                         v-if="['0','1', '2', '3', '4'].contains(status)">
+                         v-if="['0','1', '2', '3'].contains(status)">
             <template slot-scope="{row}">
                 <span v-if="row.secondAuthorId !== null && row.secondAuthorId !== ''"
                       style="display: flex;align-items: center;justify-content: space-between">
