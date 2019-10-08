@@ -40,8 +40,8 @@ public class FundService {
     public boolean deleteByIds(List<Fund> list) {
         List<Fund> tempList = fundDao.selectListByIds(list);
         List<Fund> delList = new ArrayList<>();
-        for(Fund fund:tempList){
-            if("3".equals(fund.getStatus())){
+        for (Fund fund : tempList) {
+            if ("3".equals(fund.getStatus())) {
                 delList.add(fund);
             }
         }
@@ -58,7 +58,7 @@ public class FundService {
 
     public void deleteFundByStatus(String status) {
 
-        if("3".equals(status)){
+        if ("3".equals(status)) {
             List<Fund> funds = fundDao.selectAllByStatus(status);
             authorService.deleteFundCount(funds);
         }
@@ -158,8 +158,23 @@ public class FundService {
 
         String school = statisticCondition.getInstitute();
         String metric = statisticCondition.getFundType();
+        int startYear = -1;
+        int endYear = -1;
+        //有日期筛选
+        if (statisticCondition.getStartDate() != null) {
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(statisticCondition.getStartDate());
+            startYear = calendar.get(Calendar.YEAR);
+        }
+        if (statisticCondition.getEndDate() != null) {
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(statisticCondition.getEndDate());
+            endYear = calendar.get(Calendar.YEAR);
+        }
 
-        Integer totalNum = fundDao.getTotal(school, metric);
+        System.out.println(">>>>>out:"+startYear+" "+endYear);
+
+        Integer totalNum = fundDao.getTotal(school, metric, startYear, endYear);
         statisticsResMap.put("studentFund", 0);
         statisticsResMap.put("teacherFund", totalNum);
         statisticsResMap.put("doctorFund", 0);
@@ -167,44 +182,44 @@ public class FundService {
         return statisticsResMap;
     }
 
-    public List<String> getFundTypeList(){
+    public List<String> getFundTypeList() {
         return fundDao.getFundTypeList();
     }
 
-    public List<Fund> selectListByPageWithStatisticCondition(StatisticCondition condition){
+    public List<Fund> selectListByPageWithStatisticCondition(StatisticCondition condition) {
         return fundDao.selectListByPageWithStatisticCondition(condition);
     }
 
-    public int selectNumWithStatisticCondition(StatisticCondition condition){
+    public int selectNumWithStatisticCondition(StatisticCondition condition) {
         return fundDao.selectNumWithStatisticCondition(condition);
     }
 
-    public void deleteListByIds(List<Fund> list){
+    public void deleteListByIds(List<Fund> list) {
         fundDao.deleteListByIds(list);
     }
 
-    public List<Fund> selectMyPatentListByPage(Fund fund){
+    public List<Fund> selectMyPatentListByPage(Fund fund) {
         return fundDao.selectMyPatentListByPage(fund);
     }
 
-    public int getMyPatentNum(Fund fund){
+    public int getMyPatentNum(Fund fund) {
         return fundDao.getMyPatentNum(fund);
     }
 
-    public void delete(List<Fund> list){
+    public void delete(List<Fund> list) {
         for (Fund f : list) {
             fundDao.deleteByPrimaryKey(f.getId());
         }
     }
 
-    public void completeFundByStatus(){
+    public void completeFundByStatus() {
         List<Fund> funds = fundDao.selectAllByStatus("2");
         authorService.addFundCount(funds);//todo bug
 
         fundDao.completeFundByStatus();
     }
 
-    private void updateFundStatus(Fund fund){
+    private void updateFundStatus(Fund fund) {
         User userNow = UserUtils.getCurrentUser();
         Date dateNow = new Date();
         fund.setModifyDate(dateNow);
@@ -213,12 +228,12 @@ public class FundService {
         fundDao.updateFundStatus(fund);
     }
 
-    public void completeFundByChoice(Fund fund){
+    public void completeFundByChoice(Fund fund) {
         updateFundStatus(fund);
 
         List<Fund> funds = new ArrayList<>();
         funds.add(fund);
-        funds=fundDao.selectListByIds(funds);
+        funds = fundDao.selectListByIds(funds);
         authorService.addFundCount(funds);
     }
 }

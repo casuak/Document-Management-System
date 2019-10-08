@@ -46,7 +46,7 @@ public interface FundDao {
 
     String findSchool(String id);
 
-    int getTotal(String school, String matric);
+    int getTotal(String school, String matric, int startYear, int endYear);
 
     List<String> getFundTypeList();
 
