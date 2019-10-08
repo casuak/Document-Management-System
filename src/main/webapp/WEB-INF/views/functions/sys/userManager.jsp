@@ -92,10 +92,11 @@
     </el-pagination>
     <%-- 添加或编辑窗口 --%>
     <el-dialog :title="dialog.insertOrUpdate.status == 'insert' ? '添加用户' : '编辑用户'"
-               :visible.sync="dialog.insertOrUpdate.visible" @close="resetForm('form_insertOrUpdate')">
+               :visible.sync="dialog.insertOrUpdate.visible" @close="resetDialog()">
         <el-form label-position="left" label-width="80px" style="padding: 0 100px;"
                  :model="dialog.insertOrUpdate.formData" :rules="dialog.insertOrUpdate.rules"
-                 ref="form_insertOrUpdate" v-loading="dialog.insertOrUpdate.loading" status-icon>
+                 ref="form_insertOrUpdate" label-width="100px"
+                 v-loading="dialog.insertOrUpdate.loading" status-icon>
             <el-form-item label="用户名" :prop="dialog.insertOrUpdate.status == 'insert' ? 'username' : null"
                           class="is-required">
                 <el-input v-model="dialog.insertOrUpdate.formData.username"
@@ -110,9 +111,41 @@
                                :label="userType.label" :value="userType.value"></el-option>
                 </el-select>
             </el-form-item>
+            <el-form-item label="姓名" prop="realName">
+                <el-input v-model="dialog.insertOrUpdate.formData.realName"></el-input>
+            </el-form-item>
+            <el-form-item label="别名" prop="nicknames">
+                <el-input v-model="dialog.insertOrUpdate.formData.nicknames"></el-input>
+            </el-form-item>
+            <el-form-item label="学院" prop="school">
+                <el-select v-model="dialog.insertOrUpdate.formData.school" placeholder="请选择">
+                    <el-option v-for="school in dialog.insertOrUpdate.schoolList" :key="school"
+                               :label="school" :value="school"></el-option>
+                </el-select>
+            </el-form-item>
+            <el-form-item label="学科" prop="major">
+                <el-select v-model="dialog.insertOrUpdate.formData.major" placeholder="请选择">
+                    <el-option v-for="major in dialog.insertOrUpdate.majorList" :key="major"
+                               :label="major" :value="major"></el-option>
+                </el-select>
+            </el-form-item>
+            <el-form-item label="硕士生导师" prop="isMaster">
+                <el-switch v-model="dialog.insertOrUpdate.formData.isMaster"
+                           active-color="#13ce66" inactive-color="#ff4949"
+                           active-value="1" inactive-value="0"
+                           :disabled="dialog.insertOrUpdate.formData.userType !== 'teacher'">
+                </el-switch>
+            </el-form-item>
+            <el-form-item label="博士生导师" prop="isDoctor">
+                <el-switch v-model="dialog.insertOrUpdate.formData.isDoctor"
+                           active-color="#13ce66" inactive-color="#ff4949"
+                           active-value="1" inactive-value="0"
+                           :disabled="dialog.insertOrUpdate.formData.userType !== 'teacher'">
+                </el-switch>
+            </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
-            <el-button size="medium" @click="dialog.insertOrUpdate.visible=false">取 消</el-button>
+            <el-button size="medium" @click="dialog.insertOrUpdate.visible=false;resetDialog()">取 消</el-button>
             <el-button v-if="dialog.insertOrUpdate.status == 'insert'"
                        size="medium" type="primary" @click="insertOrUpdate()" style="margin-left: 10px;">提 交
             </el-button>

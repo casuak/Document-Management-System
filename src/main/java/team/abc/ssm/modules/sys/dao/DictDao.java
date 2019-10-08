@@ -20,4 +20,7 @@ public interface DictDao {
     List<Dict> selectParentList(Dict dict);
 
     String selectNameEnById(@Param("dictId") String dictId);
+
+    List<String> getSchoolList();
+    List<String> getMajorList();
 }

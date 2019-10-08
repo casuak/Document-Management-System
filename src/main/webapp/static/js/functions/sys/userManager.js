@@ -8,7 +8,9 @@ let app = new Vue({
             deleteUserList: '/api/sys/user/deleteList',
             getAllRoleList: '/api/sys/role/selectAllList',
             updateUserRole: '/api/sys/map/userRole/update',
-            initUser: '/api/sys/user/initUser'
+            initUser: '/api/sys/user/initUser',
+            getSchoolList: '/api/sys/user/getSchoolList',
+            getMajorList: '/api/sys/user/getMajorList'
         },
         fullScreenLoading: false,
         table: {
@@ -33,6 +35,12 @@ let app = new Vue({
                     username: '',
                     password: '',
                     userType: '',
+                    realName: '',
+                    nicknames: '',
+                    isMaster: '',
+                    isDoctor: '',
+                    school: '',
+                    major: ''
                 },
                 rules: {
                     username: [
@@ -52,7 +60,9 @@ let app = new Vue({
                     {label: '管理员', value: 'admin'},
                     {label: '教师', value: 'teacher'},
                     {label: '学生', value: 'student'}
-                ]
+                ],
+                schoolList: [],
+                majorList: []
             },
             mapRole: {
                 visible: false,
@@ -109,6 +119,9 @@ let app = new Vue({
                 app.table.loading = false;
                 app.table.data = d.data.resultList;
                 app.table.params.total = d.data.total;
+            },function () {
+                app.table.loading = false;
+                window.parent.app.showMessage('查找失败！', 'error');
             });
         },
         // 重置表单
@@ -147,8 +160,8 @@ let app = new Vue({
                 ajaxPostJSON(app.urls.deleteUserList, data, function (d) {
                     app.fullScreenLoading = false;
                     window.parent.app.showMessage('删除成功！', 'success');
-                    if (app.table.data.length === 1 && app.table.params.pageIndex > 0)
-                        app.table.params.pageIndex -= 1;
+                    // if (app.table.data.length === 1 && app.table.params.pageIndex > 0)
+                    //     app.table.params.pageIndex -= 1;
                     app.getUserList();
                 })
             }).catch(() => {
@@ -219,6 +232,7 @@ let app = new Vue({
                     return false;
                 }
             });
+            // let data = this.dialog.insertOrUpdate.formData;
         },
         // 翻译
         translateUserType: function (en) {
@@ -241,7 +255,7 @@ let app = new Vue({
                 })
             });
         },
-        translateStatus: function(status){
+        translateStatus: function (status) {
             let cn = '';
             switch (status) {
                 case '0':
@@ -255,6 +269,18 @@ let app = new Vue({
                     break;
             }
             return cn;
+        },
+        resetDialog:function () {
+            this.dialog.insertOrUpdate.formData.id = '';
+            this.dialog.insertOrUpdate.formData.username = '';
+            this.dialog.insertOrUpdate.formData.password = '';
+            this.dialog.insertOrUpdate.formData.userType = '';
+            this.dialog.insertOrUpdate.formData.realName = '';
+            this.dialog.insertOrUpdate.formData.nicknames = '';
+            this.dialog.insertOrUpdate.formData.isMaster = '';
+            this.dialog.insertOrUpdate.formData.isDoctor = '';
+            this.dialog.insertOrUpdate.formData.school = '';
+            this.dialog.insertOrUpdate.formData.major = '';
         }
     },
     mounted: function () {
@@ -263,10 +289,23 @@ let app = new Vue({
         let app = this;
         app.fullScreenLoading = true;
         ajaxPost(this.urls.getAllRoleList, data, function (d) {
-            app.fullScreenLoading = false;
             app.roleTree = d.data;
             app.getUserList();
         });
+
+        //获取学院列表
+        ajaxPost(this.urls.getSchoolList, null, function (d) {
+            d.data.forEach(function (v) {
+                app.dialog.insertOrUpdate.schoolList.push(v);
+            })
+        });
+        //获取学科列表
+        ajaxPost(this.urls.getMajorList, null, function (d) {
+            d.data.forEach(function (v) {
+                app.dialog.insertOrUpdate.majorList.push(v);
+            })
+        });
+        app.fullScreenLoading = false;
     }
 });
 

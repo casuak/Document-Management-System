@@ -212,7 +212,16 @@
                               modify_user_id,
                               create_date,
                               modify_date,
-                              del_flag)
+                              del_flag,
+                              user_type,
+                              real_name,
+                              nicknames,
+                              is_master,
+                              is_doctor,
+                              school,
+                              major,
+                              work_id,
+                              status)
         values (#{username},
                 #{password},
                 #{id},
@@ -221,13 +230,31 @@
                 #{modifyUserId},
                 #{createDate},
                 #{modifyDate},
-                #{delFlag})
+                #{delFlag},
+                #{userType},
+                #{realName},
+                #{nicknames},
+                #{isMaster},
+                #{isDoctor},
+                #{school},
+                #{major},
+                #{username},
+                '0')
     </insert>
 
     <!-- 更新指定id用户的信息 -->
     <update id="update" parameterType="team.abc.ssm.modules.sys.entity.User">
         update sys_user
-        set `password` = #{password}
+        set `password` = #{password},
+            user_type=#{userType},
+            real_name=#{realName},
+            nicknames=#{nicknames},
+            is_master=#{isMaster},
+            is_doctor=#{isDoctor},
+            school=#{school},
+            major=#{major},
+            modify_date=#{modifyDate},
+            modify_user_id=#{modifyUserId}
         where id = #{id}
     </update>
 

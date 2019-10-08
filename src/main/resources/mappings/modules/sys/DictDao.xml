@@ -125,4 +125,16 @@
         where id = #{dictId,jdbcType=VARCHAR}
     </select>
 
+    <select id="getSchoolList" resultType="java.lang.String">
+        select name_cn
+        from docmanager.sys_dict
+        where type_id='88689d82828b45ba85d00ec34c1878fb'
+    </select>
+
+    <select id="getMajorList" resultType="java.lang.String">
+        select name_cn
+        from docmanager.sys_dict
+        where type_id='a1808a4adb4543e4b908d4280ee8ba30'
+    </select>
+
 </mapper>

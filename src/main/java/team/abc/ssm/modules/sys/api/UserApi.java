@@ -10,6 +10,7 @@ import team.abc.ssm.common.utils.UserUtils;
 import team.abc.ssm.common.web.BaseApi;
 import team.abc.ssm.common.web.MsgType;
 import team.abc.ssm.modules.sys.entity.User;
+import team.abc.ssm.modules.sys.service.DictService;
 import team.abc.ssm.modules.sys.service.UserService;
 import team.abc.ssm.modules.sys.service.map.UserRoleService;
 
@@ -33,6 +34,9 @@ public class UserApi extends BaseApi {
 
     @Autowired
     private UserRoleService userRoleService;
+
+    @Autowired
+    private DictService dictService;
 
     @RequestMapping(value = "put", method = RequestMethod.POST)
     @ResponseBody
@@ -100,5 +104,17 @@ public class UserApi extends BaseApi {
     @ResponseBody
     public Object selectUserListByPage(@RequestBody User user){
         return retMsg.Set(MsgType.SUCCESS, userService.selectUserListByPage(user));
+    }
+
+    @RequestMapping(value = "getSchoolList",method = RequestMethod.POST)
+    @ResponseBody
+    public Object getSchoolList(){
+        return retMsg.Set(MsgType.SUCCESS,dictService.getSchoolList());
+    }
+
+    @RequestMapping(value = "getMajorList",method = RequestMethod.POST)
+    @ResponseBody
+    public Object getMajorList(){
+        return retMsg.Set(MsgType.SUCCESS,dictService.getMajorList());
     }
 }

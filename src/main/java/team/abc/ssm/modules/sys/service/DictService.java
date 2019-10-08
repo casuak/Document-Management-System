@@ -39,7 +39,15 @@ public class DictService {
         return dictDao.selectParentList(dict);
     }
 
-    public String getDictNameEnById(String dictId){
+    public String getDictNameEnById(String dictId) {
         return dictDao.selectNameEnById(dictId);
+    }
+
+    public List<String> getSchoolList() {
+        return dictDao.getSchoolList();
+    }
+
+    public List<String> getMajorList() {
+        return dictDao.getMajorList();
     }
 }

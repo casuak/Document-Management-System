@@ -72,6 +72,7 @@ public class UserService {
      * @return 成功与否
      */
     public boolean update(User user) {
+        user.preUpdate();
         int count = userDao.update(user);
         return count == 1;
     }
