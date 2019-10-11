@@ -7,6 +7,7 @@ import team.abc.ssm.modules.author.entity.SysUser;
 import team.abc.ssm.modules.doc.entity.Fund;
 import team.abc.ssm.modules.doc.entity.StatisticCondition;
 import team.abc.ssm.modules.sys.entity.Dict;
+import team.abc.ssm.modules.sys.entity.User;
 
 public interface FundDao {
     void init();
@@ -27,12 +28,20 @@ public interface FundDao {
             @Param("projectName") String projectName,
             @Param("delFlag") boolean delFlag);
 
+    @Deprecated
     int updateByPrimaryKeySelective(Fund fund);
+    int updateListByPrimaryKeySelective(List<Fund> list);
 
+    @Deprecated
     int findUserByWorkId(String workId);
+    List<User> getAllUsers();
 
+    List<Dict> getAllFundType();
+
+    @Deprecated
     String findUserName(String workId);
 
+    @Deprecated
     String findPersonId(String workId);
 
     int updateFund(Fund fund);

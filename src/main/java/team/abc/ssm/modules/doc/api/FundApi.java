@@ -20,6 +20,7 @@ import org.springframework.web.servlet.ModelAndView;
 import team.abc.ssm.common.persistence.Page;
 import team.abc.ssm.common.web.AjaxMessage;
 import team.abc.ssm.common.web.BaseApi;
+import team.abc.ssm.common.web.FundMatchType;
 import team.abc.ssm.common.web.MsgType;
 import team.abc.ssm.modules.author.entity.SysUser;
 import team.abc.ssm.modules.author.service.AuthorService;
@@ -108,6 +109,10 @@ public class FundApi extends BaseApi {
         return findById;
     }
 
+    /*
+     * @Description 手动匹配
+     * @author zch
+     */
     @RequestMapping(value = "matchFund", method = RequestMethod.POST)
     @ResponseBody
     public Object matchFund(@RequestBody Fund fund) {
@@ -314,7 +319,7 @@ public class FundApi extends BaseApi {
     @RequestMapping(value = "completeFundByChoice",method = RequestMethod.POST)
     @ResponseBody
     public Object completeFundByChoice(@RequestBody Fund fund){
-        fund.setStatus("3");
+        fund.setStatus(FundMatchType.FINISHED.toString());
         fundService.completeFundByChoice(fund);
 
         return retMsg.Set(MsgType.SUCCESS);
@@ -323,7 +328,7 @@ public class FundApi extends BaseApi {
     @RequestMapping(value = "uncompleteFundByChoice",method = RequestMethod.POST)
     @ResponseBody
     public Object uncompleteFundByChoice(@RequestBody Fund fund){
-        fund.setStatus("2");
+        fund.setStatus(FundMatchType.MATCH_SUCCEEDED.toString());
         fundService.completeFundByChoice(fund);
 
         return retMsg.Set(MsgType.SUCCESS);

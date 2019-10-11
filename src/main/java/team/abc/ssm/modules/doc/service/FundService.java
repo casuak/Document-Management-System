@@ -12,6 +12,7 @@ import team.abc.ssm.modules.doc.entity.Fund;
 import team.abc.ssm.modules.doc.entity.StatisticCondition;
 import team.abc.ssm.modules.sys.entity.Dict;
 import team.abc.ssm.modules.sys.entity.User;
+import team.abc.ssm.common.web.FundMatchType;
 
 @Service
 public class FundService {
@@ -66,59 +67,157 @@ public class FundService {
     }
 
     public void initFund() {
+//        User userNow = UserUtils.getCurrentUser();
+//        Date dateNow = new Date();
+//        List<Fund> fundList = fundDao.selectAllByStatus(FundMatchType.UNINITIALIZED.toString());
+//
+//        for (Fund f : fundList) {
+//            //查找重复
+//            if (fundDao.selectByStatusAndMetricNameAndProjectNameAndDelFlag("2", f.getMetricName(), f.getProjectName(), false) != 0) {
+//                //重复的直接删除
+//                fundDao.deleteByPrimaryKey(f.getId());
+//                continue;
+//            }
+//
+//            //更新信息
+//            f.setStatus("0");//设置为未匹配
+//            f.setModifyDate(dateNow);
+//            f.setCreateUserId(userNow.getId());
+//
+//            //更新至数据库
+//            fundDao.updateByPrimaryKeySelective(f);
+//        }
+
         User userNow = UserUtils.getCurrentUser();
         Date dateNow = new Date();
-        List<Fund> fundList = fundDao.selectAllByStatus("-1");
+        List<Fund> fundList = fundDao.selectAllByStatus(FundMatchType.UNINITIALIZED.toString());
+        List<Fund> completed = fundDao.selectAllByStatus(FundMatchType.FINISHED.toString());
+        List<Fund> toDelete = new ArrayList<>();
+        List<Fund> toComplete = new ArrayList<>();
 
         for (Fund f : fundList) {
             //查找重复
-            if (fundDao.selectByStatusAndMetricNameAndProjectNameAndDelFlag("2", f.getMetricName(), f.getProjectName(), false) != 0) {
-                //重复的直接删除
-                fundDao.deleteByPrimaryKey(f.getId());
+            if (completed.contains(f)) {
+                //添加到删除列表
+                toDelete.add(f);
                 continue;
             }
 
             //更新信息
-            f.setStatus("0");//设置为未匹配
+            f.setStatus(FundMatchType.UNMATCHED.toString());
             f.setModifyDate(dateNow);
-            f.setCreateUserId(userNow.getId());
+            f.setModifyUserId(userNow.getId());
 
-            //更新至数据库
-            fundDao.updateByPrimaryKeySelective(f);
+            //添加到更新列表
+            toComplete.add(f);
         }
+
+        if(!toDelete.isEmpty())
+            fundDao.deleteListByIds(toDelete);
+        if(!toComplete.isEmpty())
+            fundDao.updateListByPrimaryKeySelective(toComplete);
     }
 
     public void matchUserFund() {
+//        User userNow = UserUtils.getCurrentUser();
+//        Date dateNow = new Date();
+//        List<Fund> fundList = fundDao.selectAllByStatus(FundMatchType.UNMATCHED.toString());
+//
+//        for (Fund f : fundList) {
+//            f.setMetricMatch(fundDao.findMetricDict(f.getMetricName()));
+//
+//            //工号不存在或不唯一
+//            if (fundDao.findUserByWorkId(f.getPersonWorkId()) != 1) {
+//                f.setStatus("1");
+//                f.setModifyUserId(userNow.getId());
+//                f.setModifyDate(dateNow);
+//                fundDao.updateByPrimaryKeySelective(f);
+//                continue;
+//            }
+//
+//            //与提供的姓名匹配，成功
+//            if (fundDao.findUserName(f.getPersonWorkId()).equals(f.getPersonName())) {
+//                f.setStatus("2");
+//                f.setPersonId(fundDao.findPersonId(f.getPersonWorkId()));
+//                f.setSchool(fundDao.findSchool(f.getPersonId()));
+//            }
+//            //否则失败
+//            else
+//                f.setStatus("1");
+//
+//            f.setModifyUserId(userNow.getId());
+//            f.setModifyDate(dateNow);
+//            fundDao.updateByPrimaryKeySelective(f);
+//        }
         User userNow = UserUtils.getCurrentUser();
         Date dateNow = new Date();
-        List<Fund> fundList = fundDao.selectAllByStatus("0");
+        List<Fund> fundList = fundDao.selectAllByStatus(FundMatchType.UNMATCHED.toString());
+        List<User> allUsers = fundDao.getAllUsers();
+        List<Dict> allFundType = fundDao.getAllFundType();
+        List<String> allUserId = new ArrayList<>();
+        List<Fund> toFail = new ArrayList<>();
+        List<Fund> toSuccess = new ArrayList<>();
+
+        for (User u : allUsers) {
+            allUserId.add(u.getWorkId());
+            System.out.println("##########"+u.getWorkId());
+        }
+
 
         for (Fund f : fundList) {
-            f.setMetricMatch(fundDao.findMetricDict(f.getMetricName()));
+            for(Dict d:allFundType){
+                if(d.getNameCn().equals(f.getMetricName())){
+                    f.setMetricMatch(d.getId());
+                    break;
+                }
+            }
 
-            //工号不存在或不唯一
-            if (fundDao.findUserByWorkId(f.getPersonWorkId()) != 1) {
-                f.setStatus("1");
+            if (!allUserId.contains(f.getPersonWorkId())) {//工号不存在
+                System.out.println(">>>>>>>>>>>>>>>>>>>>>>not exist");
+                f.setStatus(FundMatchType.MATCH_FAILED.toString());
                 f.setModifyUserId(userNow.getId());
                 f.setModifyDate(dateNow);
-                fundDao.updateByPrimaryKeySelective(f);
+                toFail.add(f);
                 continue;
             }
 
-            //与提供的姓名匹配，成功
-            if (fundDao.findUserName(f.getPersonWorkId()).equals(f.getPersonName())) {
-                f.setStatus("2");
-                f.setPersonId(fundDao.findPersonId(f.getPersonWorkId()));
-                f.setSchool(fundDao.findSchool(f.getPersonId()));
-            }
-            //否则失败
-            else
-                f.setStatus("1");
+            User user = null;
 
-            f.setModifyUserId(userNow.getId());
-            f.setModifyDate(dateNow);
-            fundDao.updateByPrimaryKeySelective(f);
+            for (User u : allUsers) {
+                if (u.getWorkId().equals(f.getPersonWorkId())) {
+                    user = u;
+                    break;
+                }
+            }
+
+            if (user == null) {
+                System.out.println(">>>>>>>>>>>>>>>>>>>>>>null");
+                f.setStatus(FundMatchType.MATCH_FAILED.toString());
+                f.setModifyUserId(userNow.getId());
+                f.setModifyDate(dateNow);
+                toFail.add(f);
+            } else {
+                if (!user.getRealName().equals(f.getPersonName())) {//姓名不匹配
+                    System.out.println(">>>>>>>>>>>>>>>>>>>>>>not match");
+                    f.setStatus(FundMatchType.MATCH_FAILED.toString());
+                    f.setModifyUserId(userNow.getId());
+                    f.setModifyDate(dateNow);
+                    toFail.add(f);
+                } else {
+                    f.setStatus(FundMatchType.MATCH_SUCCEEDED.toString());
+                    f.setModifyUserId(userNow.getId());
+                    f.setModifyDate(dateNow);
+                    f.setSchool(user.getSchool());
+                    f.setPersonId(user.getId());
+                    toSuccess.add(f);
+                }
+            }
         }
+
+        if(!toFail.isEmpty())
+            fundDao.updateListByPrimaryKeySelective(toFail);
+        if(!toSuccess.isEmpty())
+            fundDao.updateListByPrimaryKeySelective(toSuccess);
     }
 
     public boolean updateFund(Fund fund) {
@@ -147,7 +246,7 @@ public class FundService {
         Date dateNow = new Date();
         fund.setModifyDate(dateNow);
         fund.setModifyUserId(userNow.getId());
-        fund.setStatus("2");
+        fund.setStatus(FundMatchType.MATCH_SUCCEEDED.toString());
         fund.setSchool(fundDao.findSchool(fund.getPersonId()));
 
         return fundDao.matchFund(fund) == 1;
@@ -172,7 +271,7 @@ public class FundService {
             endYear = calendar.get(Calendar.YEAR);
         }
 
-        System.out.println(">>>>>out:"+startYear+" "+endYear);
+        System.out.println(">>>>>out:" + startYear + " " + endYear);
 
         Integer totalNum = fundDao.getTotal(school, metric, startYear, endYear);
         statisticsResMap.put("studentFund", 0);
@@ -213,8 +312,8 @@ public class FundService {
     }
 
     public void completeFundByStatus() {
-        List<Fund> funds = fundDao.selectAllByStatus("2");
-        authorService.addFundCount(funds);//todo bug
+        List<Fund> funds = fundDao.selectAllByStatus(FundMatchType.MATCH_SUCCEEDED.toString());
+        authorService.addFundCount(funds);
 
         fundDao.completeFundByStatus();
     }
