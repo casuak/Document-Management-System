@@ -42,7 +42,7 @@ public class FundService {
         List<Fund> tempList = fundDao.selectListByIds(list);
         List<Fund> delList = new ArrayList<>();
         for (Fund fund : tempList) {
-            if ("3".equals(fund.getStatus())) {
+            if (FundMatchType.FINISHED.toString().equals(fund.getStatus())) {
                 delList.add(fund);
             }
         }
@@ -59,7 +59,7 @@ public class FundService {
 
     public void deleteFundByStatus(String status) {
 
-        if ("3".equals(status)) {
+        if (FundMatchType.FINISHED.toString().equals(status)) {
             List<Fund> funds = fundDao.selectAllByStatus(status);
             authorService.deleteFundCount(funds);
         }
@@ -96,12 +96,19 @@ public class FundService {
         List<Fund> toComplete = new ArrayList<>();
 
         for (Fund f : fundList) {
+            boolean flag = false;
             //查找重复
-            if (completed.contains(f)) {
-                //添加到删除列表
-                toDelete.add(f);
-                continue;
+            for (Fund c : completed) {
+                if (c.getPersonWorkId().equals(f.getPersonWorkId())
+                        && c.getProjectName().equals(f.getProjectName())) {
+                    //添加到删除列表
+                    toDelete.add(f);
+                    flag = true;
+                    break;
+                }
             }
+            if (flag)
+                continue;
 
             //更新信息
             f.setStatus(FundMatchType.UNMATCHED.toString());
@@ -112,9 +119,9 @@ public class FundService {
             toComplete.add(f);
         }
 
-        if(!toDelete.isEmpty())
+        if (!toDelete.isEmpty())
             fundDao.deleteListByIds(toDelete);
-        if(!toComplete.isEmpty())
+        if (!toComplete.isEmpty())
             fundDao.updateListByPrimaryKeySelective(toComplete);
     }
 
@@ -160,13 +167,13 @@ public class FundService {
 
         for (User u : allUsers) {
             allUserId.add(u.getWorkId());
-            System.out.println("##########"+u.getWorkId());
+            System.out.println("##########" + u.getWorkId());
         }
 
 
         for (Fund f : fundList) {
-            for(Dict d:allFundType){
-                if(d.getNameCn().equals(f.getMetricName())){
+            for (Dict d : allFundType) {
+                if (d.getNameCn().equals(f.getMetricName())) {
                     f.setMetricMatch(d.getId());
                     break;
                 }
@@ -214,9 +221,9 @@ public class FundService {
             }
         }
 
-        if(!toFail.isEmpty())
+        if (!toFail.isEmpty())
             fundDao.updateListByPrimaryKeySelective(toFail);
-        if(!toSuccess.isEmpty())
+        if (!toSuccess.isEmpty())
             fundDao.updateListByPrimaryKeySelective(toSuccess);
     }
 

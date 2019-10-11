@@ -149,7 +149,7 @@ public class FundApi extends BaseApi {
     @ResponseBody
     public Object selectAllFundByPage(@RequestBody StatisticCondition condition) {
         //1.设置待查询的List的状态为：已完成
-        condition.setStatus("3");
+        condition.setStatus(FundMatchType.FINISHED.toString());
         //2.分页查询
         List<Fund> fundList = fundService.selectListByPageWithStatisticCondition(condition);
         //3.查询总数目
@@ -187,7 +187,7 @@ public class FundApi extends BaseApi {
         pages.setPageSize(99999);
         StatisticCondition statisticCondition = new StatisticCondition();
         //1.设置待导出的论文List的状态为：已完成
-        statisticCondition.setStatus("3");
+        statisticCondition.setStatus(FundMatchType.FINISHED.toString());
         statisticCondition.setPage(pages);
         //3.设置其他的查询筛选条件
         statisticCondition.setFundType(fundType);
