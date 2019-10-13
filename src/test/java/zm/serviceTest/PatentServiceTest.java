@@ -111,7 +111,7 @@ public class PatentServiceTest {
             String patentId = "105b77dd59fe49dcb0a4ccbb70847c27";
             DocPatent tmpPatent = patentMapper.selectByPrimaryKey(patentId);
 
-            patentService.authorMatch(tmpPatent);
+//            patentService.authorMatch(tmpPatent);
             tmpPatent = patentMapper.selectByPrimaryKey(patentId);
 
             System.out.println(tmpPatent);

@@ -172,6 +172,12 @@ public class SysUser implements Cloneable {
     @Transient
     private List<SysUser> myTeachers;
 
+    @Transient
+    private SysUser myTeacher;
+
+    @Transient
+    private SysUser myStudent;
+
     @Override
     public Object clone() {
         SysUser tmpUser = null;

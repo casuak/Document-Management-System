@@ -107,4 +107,6 @@ public interface DocPatentMapper {
     List<DocPatent> selectAllByPageWithStatisticCondition(StatisticCondition statisticCondition);
 
     int selectNumWithStatisticCondition(StatisticCondition statisticCondition);
+
+    int updateDocPatentBatch(List<DocPatent> patentsForUpdate);
 }

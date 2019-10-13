@@ -633,4 +633,87 @@
             where res.patent_subject = #{subject,jdbcType=VARCHAR}
         </if>
     </select>
+    <update id="updateDocPatentBatch">
+        <foreach collection="list" item="item" index="index" open="" close="" separator=";">
+            update doc_patent
+            <set>
+                <if test="item.patentName != null">
+                    patent_name = #{item.patentName,jdbcType=VARCHAR},
+                </if>
+                <if test="item.patentType != null">
+                    patent_type = #{item.patentType,jdbcType=VARCHAR},
+                </if>
+                <if test="item.patentRightPerson != null">
+                    patent_right_person = #{item.patentRightPerson,jdbcType=VARCHAR},
+                </if>
+                <if test="item.patentNumber != null">
+                    patent_number = #{item.patentNumber,jdbcType=VARCHAR},
+                </if>
+                <if test="item.patentAuthorizationDate != null">
+                    patent_authorization_date = #{item.patentAuthorizationDate,jdbcType=TIMESTAMP},
+                </if>
+                <if test="item.patentAuthorizationDateString != null">
+                    patent_authorization_date_string = #{item.patentAuthorizationDateString,jdbcType=VARCHAR},
+                </if>
+                <if test="item.institute != null">
+                    institute = #{item.institute,jdbcType=VARCHAR},
+                </if>
+                <if test="item.authorList != null">
+                    author_list = #{item.authorList,jdbcType=VARCHAR},
+                </if>
+                <if test="item.firstAuthorName != null">
+                    first_author_name = #{item.firstAuthorName,jdbcType=VARCHAR},
+                </if>
+                <if test="item.secondAuthorName != null">
+                    second_author_name = #{item.secondAuthorName,jdbcType=VARCHAR},
+                </if>
+                <if test="item.firstAuthorId != null">
+                    first_author_id = #{item.firstAuthorId,jdbcType=VARCHAR},
+                </if>
+                <if test="item.secondAuthorId != null">
+                    second_author_id = #{item.secondAuthorId,jdbcType=VARCHAR},
+                </if>
+                <if test="item.firstAuthorWorkId != null ">
+                    first_author_work_id = #{item.firstAuthorWorkId,jdbcType=VARCHAR},
+                </if>
+                <if test="item.secondAuthorWorkId != null ">
+                    second_author_work_id = #{item.secondAuthorWorkId,jdbcType=VARCHAR},
+                </if>
+                <if test="item.remarks != null">
+                    remarks = #{item.remarks,jdbcType=VARCHAR},
+                </if>
+                <if test="item.createUserId != null">
+                    create_user_id = #{item.createUserId,jdbcType=VARCHAR},
+                </if>
+                <if test="item.createDate != null">
+                    create_date = #{item.createDate,jdbcType=TIMESTAMP},
+                </if>
+                <if test="item.modifyUserId != null">
+                    modify_user_id = #{item.modifyUserId,jdbcType=VARCHAR},
+                </if>
+                <if test="item.modifyDate != null">
+                    modify_date = #{item.modifyDate,jdbcType=TIMESTAMP},
+                </if>
+                <if test="item.status != null">
+                    `status` = #{item.status,jdbcType=VARCHAR},
+                </if>
+                <if test="item.status1 != null">
+                    status_1 = #{item.status1,jdbcType=VARCHAR},
+                </if>
+                <if test="item.status2 != null">
+                    status_2 = #{item.status2,jdbcType=VARCHAR},
+                </if>
+                <if test="item.delFlag != null">
+                    del_flag = #{item.delFlag,jdbcType=BOOLEAN},
+                </if>
+                <if test="item.firstAuthorType != null and item.firstAuthorType != ''">
+                    first_author_type = #{item.firstAuthorType,jdbcType=VARCHAR},
+                </if>
+                <if test="item.secondAuthorType != null and item.secondAuthorType != ''">
+                    second_author_type = #{item.secondAuthorType,jdbcType=VARCHAR}
+                </if>
+            </set>
+            where id = #{item.id,jdbcType=VARCHAR}
+        </foreach>
+    </update>
 </mapper>
