@@ -141,8 +141,54 @@
         where id = #{id,jdbcType=VARCHAR}
     </update>
 
+    <update id="updateListByPrimaryKeySelective">
+        <choose>
+            <when test="list != null and list.size() != 0">
+                <foreach collection="list" open="" close="" item="item" separator=";">
+                    update doc_fund
+                    <set>
+                        <if test="item.metricMatch != null and item.metricMatch != ''">
+                            metric_match=#{item.metricMatch},
+                        </if>
+                        <if test="item.status != null and item.status != ''">
+                            `status`=#{item.status},
+                        </if>
+                        <if test="item.personId != null and item.personId != ''">
+                            person_id=#{item.personId},
+                        </if>
+                        <if test="item.school != null and item.school != ''">
+                            school=#{item.school},
+                        </if>
+                        <if test="item.modifyDate != null">
+                            modify_date=#{item.modifyDate},
+                        </if>
+                        <if test="item.modifyUserId != null and item.modifyUserId != ''">
+                            modify_user_id=#{item.modifyUserId},
+                        </if>
+                    </set>
+                    where id=#{item.id}
+                </foreach>
+            </when>
+            <otherwise>
+                1=1
+            </otherwise>
+        </choose>
+    </update>
+
     <select id="findUserByWorkId" resultType="int">
         select count(*) from sys_user where work_id=#{workId,jdbcType=VARCHAR};
+    </select>
+
+    <resultMap id="userBean" type="team.abc.ssm.modules.sys.entity.User">
+        <id column="id" jdbcType="VARCHAR" property="id"/>
+        <result column="real_name" jdbcType="VARCHAR" property="realName"/>
+        <result column="work_id" jdbcType="VARCHAR" property="workId"/>
+        <result column="school" jdbcType="VARCHAR" property="school"/>
+        <result column="title" jdbcType="VARCHAR" property="title"/>
+    </resultMap>
+
+    <select id="getAllUsers" resultMap="userBean">
+        select * from sys_user where del_flag = 0 and user_type='teacher'
     </select>
 
     <select id="findUserName" resultType="java.lang.String">
@@ -351,4 +397,8 @@
             status=#{status}
         where id=#{id}
     </update>
+
+    <select id="getAllFundType" resultMap="dict">
+        select * from sys_dict where type_id='5ec73e3619aa4f34ae4c32aa7b02d9ed'
+    </select>
 </mapper>

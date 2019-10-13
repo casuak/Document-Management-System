@@ -20,6 +20,7 @@ import org.springframework.web.servlet.ModelAndView;
 import team.abc.ssm.common.persistence.Page;
 import team.abc.ssm.common.web.AjaxMessage;
 import team.abc.ssm.common.web.BaseApi;
+import team.abc.ssm.common.web.FundMatchType;
 import team.abc.ssm.common.web.MsgType;
 import team.abc.ssm.modules.author.entity.SysUser;
 import team.abc.ssm.modules.author.service.AuthorService;
@@ -108,6 +109,10 @@ public class FundApi extends BaseApi {
         return findById;
     }
 
+    /*
+     * @Description 手动匹配
+     * @author zch
+     */
     @RequestMapping(value = "matchFund", method = RequestMethod.POST)
     @ResponseBody
     public Object matchFund(@RequestBody Fund fund) {
@@ -144,7 +149,7 @@ public class FundApi extends BaseApi {
     @ResponseBody
     public Object selectAllFundByPage(@RequestBody StatisticCondition condition) {
         //1.设置待查询的List的状态为：已完成
-        condition.setStatus("3");
+        condition.setStatus(FundMatchType.FINISHED.toString());
         //2.分页查询
         List<Fund> fundList = fundService.selectListByPageWithStatisticCondition(condition);
         //3.查询总数目
@@ -182,7 +187,7 @@ public class FundApi extends BaseApi {
         pages.setPageSize(99999);
         StatisticCondition statisticCondition = new StatisticCondition();
         //1.设置待导出的论文List的状态为：已完成
-        statisticCondition.setStatus("3");
+        statisticCondition.setStatus(FundMatchType.FINISHED.toString());
         statisticCondition.setPage(pages);
         //3.设置其他的查询筛选条件
         statisticCondition.setFundType(fundType);
@@ -314,7 +319,7 @@ public class FundApi extends BaseApi {
     @RequestMapping(value = "completeFundByChoice",method = RequestMethod.POST)
     @ResponseBody
     public Object completeFundByChoice(@RequestBody Fund fund){
-        fund.setStatus("3");
+        fund.setStatus(FundMatchType.FINISHED.toString());
         fundService.completeFundByChoice(fund);
 
         return retMsg.Set(MsgType.SUCCESS);
@@ -323,7 +328,7 @@ public class FundApi extends BaseApi {
     @RequestMapping(value = "uncompleteFundByChoice",method = RequestMethod.POST)
     @ResponseBody
     public Object uncompleteFundByChoice(@RequestBody Fund fund){
-        fund.setStatus("2");
+        fund.setStatus(FundMatchType.MATCH_SUCCEEDED.toString());
         fundService.completeFundByChoice(fund);
 
         return retMsg.Set(MsgType.SUCCESS);
