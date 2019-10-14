@@ -463,7 +463,14 @@
     </select>
 
     <select id="selectTheWholeUser" resultMap="BaseResultMap">
-        select *
+        select
+            id,
+            real_name,
+            work_id,
+            user_type,
+            tutor_work_id,
+            school,
+            major
         from docmanager.sys_user
     </select>
 </mapper>

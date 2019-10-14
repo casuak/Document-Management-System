@@ -418,6 +418,7 @@
         window.parent.app.showConfirm(() => {
             app.loading.table = true;
             ajaxPost(app.urls.initAllPatent, null, function (d) {
+                console.log("初始化专利");
                 app.loading.table = false;
                 app.status = '0';
                 getPatentList();
