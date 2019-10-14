@@ -47,28 +47,35 @@ public class DocPaperService{
                 teacherPaperNum++;
             }
 
-            if ("student".equals(docPaper.getSecondAuthorType())) {
-                String teacherId=null;
-                for(User user:userList){
-                    if(docPaper.getSecondAuthorId().equals(user.getWorkId())){
-                        teacherId = user.getTutorWorkId();
-                        break;
-                    }
+        if ("student".equals(docPaper.getSecondAuthorType())) {
+            String teacherId=null;
+            for(User user:userList){
+                if(docPaper.getSecondAuthorId().equals(user.getWorkId())){
+                    teacherId = user.getTutorWorkId();
+                    break;
                 }
-                if(!teacherId.equals("")&&teacherId!= null &&teacherId.equals(docPaper.getFirstAuthorId())){
-                    studentPaperNum++;
-                }
-
-            } else if ("teacher".equals(docPaper.getSecondAuthorType())) {
-                teacherPaperNum++;
             }
+            if(!teacherId.equals("")&&teacherId!= null &&teacherId.equals(docPaper.getFirstAuthorId())){
+                studentPaperNum++;
+            }
+
+        } else if ("teacher".equals(docPaper.getSecondAuthorType())) {
+            teacherPaperNum++;
         }
+
+        if("student".equals(docPaper.getFirstAuthorType())&&docPaper.getSecondAuthorType() == null){
+            teacherPaperNum++;
+        }
+        if("student".equals(docPaper.getFirstAuthorType())&&"student".equals(docPaper.getSecondAuthorType())){
+            teacherPaperNum++;
+        }
+    }
         statisticsResMap.put("studentPaper",studentPaperNum);
         statisticsResMap.put("teacherPaper",teacherPaperNum);
         statisticsResMap.put("doctorPaper",doctorPaperNum);
         statisticsResMap.put("totalPaper",totalNum);
         return statisticsResMap;
-    }
+}
 
 
     /*-------------- autoMadeService --------------*/
@@ -77,22 +84,22 @@ public class DocPaperService{
         return docPaperMapper.deleteByPrimaryKey(id);
     }
 
-    
+
     public int insert(DocPaper record) {
         return docPaperMapper.insert(record);
     }
 
-    
+
     public int insertSelective(DocPaper record) {
         return docPaperMapper.insertSelective(record);
     }
 
-    
+
     public DocPaper selectByPrimaryKey(String id) {
         return docPaperMapper.selectByPrimaryKey(id);
     }
 
-    
+
     public int updateByPrimaryKeySelective(DocPaper record) {
         return docPaperMapper.updateByPrimaryKeySelective(record);
     }

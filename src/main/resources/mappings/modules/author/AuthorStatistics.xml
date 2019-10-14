@@ -35,6 +35,7 @@
         <result column="nation_instrument"  property="nationInstrument"/>
         <result column="nsfc_kxzx"  property="nsfcKXZX"/>
         <result column="nsfc_zdaxm"  property="nsfcZDAXM"/>
+        <result column="nation_research" property="nationResearch"/>
         <result column="nsfc_zdianxm"  property="nsfcZDIANXM"/>
         <result column="nsfc_msxm"  property="nsfcMSXM"/>
         <result column="nsfc_qnxm"  property="nsfcQNXM"/>
@@ -210,5 +211,100 @@
 
     <select id="doSql"  parameterType="java.lang.String">
         ${_parameter}
+    </select>
+
+    <select id="selectCountBySchool" parameterType="java.lang.String" resultType="team.abc.ssm.modules.author.entity.AuthorStatistics">
+        select 	count(*) as "totalNum",
+				 IFNULL(sum(tutor_q1),0) as "tutorQ1" ,
+			 IFNULL(sum(tutor_q2),0) as "tutorQ2",
+			 IFNULL(sum(tutor_q3),0) as "tutorQ3",
+			 IFNULL(sum(tutor_q4),0)  as "tutorQ4",
+				IFNULL(sum(tutor_paper_sum),0) as "tutorPaperSum",
+				IFNULL(sum(stu_q1),0) as "stuQ1",
+				IFNULL(sum(stu_q2),0) as "stuQ2",
+				IFNULL(sum(stu_q3),0) as "stuQ3",
+				IFNULL(sum(stu_q4),0) as "stuQ4",
+				IFNULL(sum(stu_paper_sum),0) as "stuPaperSum",
+				IFNULL(sum(tutor_patent),0) as "tutorPatent",
+				IFNULL(sum(stu_patent),0) as "stuPatent",
+				IFNULL(sum(nation_focus),0) as "nationFocus",
+				IFNULL(sum(nation_instrument),0) as "nationInstrument",
+				IFNULL(sum(nsfc_zdyf),0) as "nsfcZDYF",
+				IFNULL(sum(nsfc_kxzx),0) as "nsfcKXZX",
+				IFNULL(sum(nation_research),0) as "nationResearch",
+				IFNULL(sum(nsfc_zdaxm),0) as "nsfcZDAXM",
+				IFNULL(sum(nsfc_zdianxm),0) as "nsfcZDIANXM",
+				IFNULL(sum(nsfc_msxm),0) as "nsfcMSXM",
+				IFNULL(sum(nsfc_qnxm),0) as "nsfcQNXM",
+				IFNULL(sum(nssfc_zdaxm),0) as "nssfcZDAXM",
+				IFNULL(sum(nssfc_zdianxm),0) as "nssfcZDIANXM",
+				IFNULL(sum(nssfc_ybxm),0) as "nssfcYBXM",
+				IFNULL(sum(nssfc_qnxm),0) as "nssfcQNXM",
+				IFNULL(sum(fund_sum),0) as "fundSum"
+			 from doc_statistics where `school` = #{param1}
+			 and del_flag != 1
+    </select>
+
+    <select id="selectCountByMajor" parameterType="java.lang.String" resultType="team.abc.ssm.modules.author.entity.AuthorStatistics">
+            select 	count(*) as "totalNum",
+				 IFNULL(sum(tutor_q1),0) as "tutorQ1" ,
+			 IFNULL(sum(tutor_q2),0) as "tutorQ2",
+			 IFNULL(sum(tutor_q3),0) as "tutorQ3",
+			 IFNULL(sum(tutor_q4),0)  as "tutorQ4",
+				IFNULL(sum(tutor_paper_sum),0) as "tutorPaperSum",
+				IFNULL(sum(stu_q1),0) as "stuQ1",
+				IFNULL(sum(stu_q2),0) as "stuQ2",
+				IFNULL(sum(stu_q3),0) as "stuQ3",
+				IFNULL(sum(stu_q4),0) as "stuQ4",
+				IFNULL(sum(stu_paper_sum),0) as "stuPaperSum",
+				IFNULL(sum(tutor_patent),0) as "tutorPatent",
+				IFNULL(sum(stu_patent),0) as "stuPatent",
+				IFNULL(sum(nation_focus),0) as "nationFocus",
+				IFNULL(sum(nation_instrument),0) as "nationInstrument",
+				IFNULL(sum(nsfc_zdyf),0) as "nsfcZDYF",
+				IFNULL(sum(nsfc_kxzx),0) as "nsfcKXZX",
+				IFNULL(sum(nation_research),0) as "nationResearch",
+				IFNULL(sum(nsfc_zdaxm),0) as "nsfcZDAXM",
+				IFNULL(sum(nsfc_zdianxm),0) as "nsfcZDIANXM",
+				IFNULL(sum(nsfc_msxm),0) as "nsfcMSXM",
+				IFNULL(sum(nsfc_qnxm),0) as "nsfcQNXM",
+				IFNULL(sum(nssfc_zdaxm),0) as "nssfcZDAXM",
+				IFNULL(sum(nssfc_zdianxm),0) as "nssfcZDIANXM",
+				IFNULL(sum(nssfc_ybxm),0) as "nssfcYBXM",
+				IFNULL(sum(nssfc_qnxm),0) as "nssfcQNXM",
+				IFNULL(sum(fund_sum),0) as "fundSum"
+			 from doc_statistics where `major` = #{param1}
+			 and del_flag != 1
+    </select>
+
+    <select id="selectSchoolList" parameterType="team.abc.ssm.modules.author.entity.AuthorStatistics" resultType="java.lang.String" >
+      select name_cn from sys_dict where type_id="88689d82828b45ba85d00ec34c1878fb" and del_flag!=1
+        <if test="page.searchKey !='' and page.searchKey !=null">
+            and `name_cn`=#{page.searchKey}
+        </if>
+      limit #{page.pageStart},#{page.pageSize}
+    </select>
+
+    <select id="selectMajorList" parameterType="team.abc.ssm.modules.author.entity.AuthorStatistics" resultType="java.lang.String">
+        select name_cn from sys_dict where type_id="a1808a4adb4543e4b908d4280ee8ba30" and del_flag!=1
+        <if test="page.searchKey !='' and page.searchKey !=null">
+            and `name_cn`=#{page.searchKey}
+        </if>
+        limit #{page.pageStart},#{page.pageSize}
+    </select>
+
+
+    <select id="selectSchoolListCount" parameterType="team.abc.ssm.modules.author.entity.AuthorStatistics" resultType="java.lang.Integer" >
+      select count(*) from sys_dict where type_id="88689d82828b45ba85d00ec34c1878fb" and del_flag!=1
+        <if test="page.searchKey !='' and page.searchKey !=null">
+            and `name_cn`=#{page.searchKey}
+        </if>
+    </select>
+
+    <select id="selectMajorListCount" parameterType="team.abc.ssm.modules.author.entity.AuthorStatistics" resultType="java.lang.Integer">
+        select count(*) from sys_dict where type_id="a1808a4adb4543e4b908d4280ee8ba30" and del_flag!=1
+        <if test="page.searchKey !='' and page.searchKey !=null">
+            and `name_cn`=#{page.searchKey}
+        </if>
     </select>
 </mapper>

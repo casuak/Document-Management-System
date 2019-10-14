@@ -699,4 +699,55 @@ public class AuthorService {
 
         return returnSql;
     }
+
+    public List<AuthorStatistics> getAuthorStatisticsBySchool(AuthorStatistics authorStatistics){
+        List<String> schoolList = authorStatisticsMapper.selectSchoolList(authorStatistics);
+        List<AuthorStatistics> resultList = new ArrayList<>();
+        for(String school:schoolList){
+            AuthorStatistics tmp =  authorStatisticsMapper.selectCountBySchool(school);
+            tmp.setSchool(school);
+            if(tmp.getTotalNum()>0){
+            tmp.setTutorAverage(1.0*tmp.getTutorPaperSum()/tmp.getTotalNum());
+            tmp.setStuAverage(1.0*tmp.getStuPaperSum()/tmp.getTotalNum());
+            tmp.setTutorPatentAverage(1.0*tmp.getTutorPatent()/tmp.getTotalNum());
+            tmp.setStuPatentAverage(1.0*tmp.getStuPatent()/tmp.getTotalNum());
+            }else{
+                tmp.setTutorAverage(0);
+                tmp.setStuAverage(0);
+                tmp.setTutorPatentAverage(0);
+                tmp.setStuPatentAverage(0);
+            }
+            resultList.add(tmp);
+        }
+        return resultList;
+    }
+
+    public List<AuthorStatistics> getAuthorStatisticsByMajor(AuthorStatistics authorStatistics){
+        List<String> majorList = authorStatisticsMapper.selectMajorList(authorStatistics);
+        List<AuthorStatistics> resultList = new ArrayList<>();
+        for(String major:majorList){
+            AuthorStatistics tmp =  authorStatisticsMapper.selectCountByMajor(major);
+            tmp.setMajor(major);
+            if(tmp.getTotalNum()>0){
+                tmp.setTutorAverage(1.0*tmp.getTutorPaperSum()/tmp.getTotalNum());
+                tmp.setStuAverage(1.0*tmp.getStuPaperSum()/tmp.getTotalNum());
+                tmp.setTutorPatentAverage(1.0*tmp.getTutorPatent()/tmp.getTotalNum());
+                tmp.setStuPatentAverage(1.0*tmp.getStuPatent()/tmp.getTotalNum());
+            }else{
+                tmp.setTutorAverage(0);
+                tmp.setStuAverage(0);
+                tmp.setTutorPatentAverage(0);
+                tmp.setStuPatentAverage(0);
+            }
+            resultList.add(tmp);
+        }
+        return resultList;
+    }
+
+    public int getAuthorStatisticsCountBySchool(AuthorStatistics authorStatistics){
+        return authorStatisticsMapper.selectSchoolListCount(authorStatistics);
+    }
+    public int getAuthorStatisticsCountByMajor(AuthorStatistics authorStatistics){
+        return authorStatisticsMapper.selectMajorListCount(authorStatistics);
+    }
 }

@@ -933,6 +933,13 @@ public class DocPatentService {
             }else if ("doctor".equals(tmpPatent.getSecondAuthorType())){
                 doctorPatentNum++;
             }
+
+            if("student".equals(tmpPatent.getFirstAuthorType())&&tmpPatent.getSecondAuthorType() == null){
+                teacherPatentNum++;
+            }
+            if("student".equals(tmpPatent.getFirstAuthorType())&&"student".equals(tmpPatent.getSecondAuthorType())){
+                teacherPatentNum++;
+            }
         }
         statisticsResMap.put("studentPatent",studentPatentNum);
         statisticsResMap.put("teacherPatent",teacherPatentNum);
