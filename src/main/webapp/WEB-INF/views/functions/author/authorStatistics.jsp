@@ -704,7 +704,7 @@
                             header-align="center"
                             align="center"
                             width="150"
-                            label="">
+                            label="合计">
                     </el-table-column>
                     <el-table-column
                             prop="nationFocus"
