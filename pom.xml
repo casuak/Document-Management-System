@@ -16,10 +16,6 @@
                     <source>8</source>
                     <target>8</target>
                 </configuration>
-                <configurationn>
-                    <source>8</source>
-                    <target>8</target>
-                </configurationn>
             </plugin>
 
             <!--mybatis自动生成插件-->
