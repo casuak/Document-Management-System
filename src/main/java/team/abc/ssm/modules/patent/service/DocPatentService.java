@@ -166,11 +166,8 @@ public class DocPatentService {
             rightPersonFlag = false;
 
             //0.看数据库中是有重复的专利
-            if (docPatentMapper.selectByStatusAndPatentNumberAndDelFlag(MATCH_FINISHED.toString(),
+            if (docPatentMapper.selectByPatentNumToCheckMuti(
                     tmpPatent.getPatentNumber(), false) != 0) {
-                tmpPatent.setStatus(IMPORT_REPEAT.toString());
-                tmpPatent.setModifyUserId(userNow.getId());
-                tmpPatent.setModifyDate(dateNow);
                 //重复的直接删除
                 docPatentMapper.deleteByPrimaryKey(tmpPatent.getId());
                 continue;

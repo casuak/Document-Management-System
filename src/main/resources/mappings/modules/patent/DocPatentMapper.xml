@@ -716,4 +716,10 @@
             where id = #{item.id,jdbcType=VARCHAR}
         </foreach>
     </update>
+    <select id="selectByPatentNumToCheckMuti" resultType="int">
+        select count(*)
+        from doc_patent
+        where patent_number=#{patentNumber,jdbcType=VARCHAR} and
+        del_flag=#{delFlag,jdbcType=BOOLEAN}
+    </select>
 </mapper>

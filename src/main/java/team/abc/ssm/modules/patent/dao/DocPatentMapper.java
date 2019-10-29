@@ -51,6 +51,11 @@ public interface DocPatentMapper {
             @Param("patentNumber")String patentNumber,
             @Param("delFlag")Boolean delFlag);
 
+    int selectByPatentNumToCheckMuti(
+            @Param("patentNumber")String patentNumber,
+             @Param("delFlag")Boolean delFlag
+    );
+
     int selectStudentPatent(Author tmpAuthor);
 
     int selectTeacherPatent(Author tmpAuthor);
