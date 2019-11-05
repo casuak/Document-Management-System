@@ -13,6 +13,7 @@ import team.abc.ssm.modules.doc.entity.Paper;
 import team.abc.ssm.modules.doc.entity.Patent;
 import team.abc.ssm.modules.patent.dao.DocPatentMapper;
 import team.abc.ssm.modules.patent.entity.DocPatent;
+import team.abc.ssm.modules.sys.dao.UserDao;
 import team.abc.ssm.modules.sys.entity.Dict;
 import team.abc.ssm.modules.sys.entity.User;
 import team.abc.ssm.modules.sys.service.UserService;
@@ -38,6 +39,9 @@ public class AuthorService {
 
     @Autowired
     AuthorStatisticsMapper authorStatisticsMapper;
+
+    @Autowired
+    UserDao userDao;
 
     @Autowired
     UserService userService;
@@ -266,62 +270,82 @@ public class AuthorService {
 
         String workId="";
         String resultSql = "";
+        String insertSql="";
+
+        int year = -1;
+        Calendar c = Calendar.getInstance();
+        User tmpUser = null;
 
         for(Paper paper :paperList){
             workId="";
+            c.setTime(paper.getPublishDate());
+            year = c.get(Calendar.YEAR);
+
             if((paper.getFirstAuthorType().equals("student")&&paper.getSecondAuthorType() == null)||(paper.getFirstAuthorType().equals("student") && paper.getSecondAuthorType().equals("student")) ){
                 //第一作者学生 第二作者学生(或空)   第一作者学生+1 老师+1
-                for(int i=0; i<userList.size();i++){
-                    if(userList.get(i).getWorkId()!= null &&userList.get(i).getWorkId().equals(paper.getFirstAuthorId())){
-                        workId = userList.get(i).getTutorWorkId();
-                        break;
-                    }
-                }
+                tmpUser = getUser(paper.getFirstAuthorId());
+                workId = tmpUser != null ? tmpUser.getTutorWorkId() : "";
+
                 if(!workId.equals(""))
-                    resultSql +=getPaperTypeSql(paper,workId,1);
+                    resultSql += getPaperTypeSql(paper,workId,1);
+                    insertSql += getInsertTutorSql(tmpUser,year);
 
             }else if(paper.getFirstAuthorType()!= null &&paper.getSecondAuthorType()!= null&&paper.getFirstAuthorType().equals("teacher")&& paper.getSecondAuthorType().equals("student")){
                 //第一作者老师 第二作者学生
-                for(int i=0; i<userList.size();i++){
-                    if(userList.get(i).getWorkId()!= null &&userList.get(i).getWorkId().equals(paper.getSecondAuthorId())){
-                        workId = userList.get(i).getTutorWorkId();
-                        break;
-                    }
-                }
+                tmpUser = getUser(paper.getSecondAuthorId());
+                workId = tmpUser != null ? tmpUser.getTutorWorkId() : "";
+
                 if(!workId.equals("")) {
                     if (workId.equals(paper.getFirstAuthorId())) {
                         //学生在老师名下
                         resultSql += getPaperTypeSql(paper, paper.getFirstAuthorId(), 1);
+                        insertSql += getInsertTutorSql(tmpUser,year);
+
                     } else {
                         //学生不在老师名下
                         resultSql += getPaperTypeSql(paper, paper.getFirstAuthorId(), 3);
                     }
                 }else{
                     resultSql += getPaperTypeSql(paper, paper.getFirstAuthorId(), 3);
+                    tmpUser = getUser(paper.getFirstAuthorId());
+                    insertSql += getInsertTutorSql(tmpUser,year);
                 }
             }else if(paper.getFirstAuthorType()!= null &&paper.getSecondAuthorType()!= null&&paper.getFirstAuthorType().equals("student") &&paper.getSecondAuthorType().equals("teacher")){
                 //第一作者学生  第二作者老师
-                for(int i=0; i<userList.size();i++){
-                    if(userList.get(i).getWorkId()!= null &&userList.get(i).getWorkId().equals(paper.getFirstAuthorId())){
-                        workId = userList.get(i).getTutorWorkId();
-                        break;
-                    }
-                }
+
+                tmpUser = getUser(paper.getFirstAuthorId());
+                workId = tmpUser != null ? tmpUser.getTutorWorkId() : "";
+
                 if(!workId.equals("")){
                     resultSql += getPaperTypeSql(paper, workId, 2);
+                    insertSql += getInsertTutorSql(tmpUser,year);
                     resultSql += getPaperTypeSql(paper, paper.getSecondAuthorId(), 3);
+
+                    tmpUser = getUser(paper.getSecondAuthorId());
+                    insertSql += getInsertTutorSql(tmpUser,year);
                 }else{
                     resultSql += getPaperTypeSql(paper, paper.getSecondAuthorId(), 3);
+
+                    tmpUser = getUser(paper.getSecondAuthorId());
+                    insertSql += getInsertTutorSql(tmpUser,year);
                 }
 
 
             }else if(paper.getFirstAuthorType().equals("teacher") &&paper.getSecondAuthorType() == null){
                 //一作导师 二作空
                 resultSql += getPaperTypeSql(paper,paper.getFirstAuthorId(),3);
+
+                tmpUser = getUser(paper.getFirstAuthorId());
+                insertSql += getInsertTutorSql(tmpUser,year);
             }
 
         }
-        resultSql=resultSql.substring(0,resultSql.length()-1);
+        resultSql = resultSql.substring(0,resultSql.length()-1);
+        insertSql = insertSql.substring(0,insertSql.length()-1);
+        authorStatisticsMapper.doSql(resultSql);
+        authorStatisticsMapper.doSql(insertSql);
+
+        resultSql = resultSql.replace("doc_statistics","doc_statistics_year");
         authorStatisticsMapper.doSql(resultSql);
         return 0;
     }
@@ -333,28 +357,21 @@ public class AuthorService {
 
         String workId="";
         String resultSql = "";
+        User tmpUser;
 
         for(Paper paper :paperList){
             workId="";
             if((paper.getFirstAuthorType().equals("student")&&paper.getSecondAuthorType() == null)||(paper.getFirstAuthorType().equals("student") && paper.getSecondAuthorType().equals("student")) ){
                 //第一作者学生 第二作者学生(或空)   第一作者学生+1 老师+1
-                for(int i=0; i<userList.size();i++){
-                    if(userList.get(i).getWorkId()!= null &&userList.get(i).getWorkId().equals(paper.getFirstAuthorId())){
-                        workId = userList.get(i).getTutorWorkId();
-                        break;
-                    }
-                }
+                tmpUser = getUser(paper.getFirstAuthorId());
+                workId = tmpUser != null ? tmpUser.getTutorWorkId() : "";
                 if(!workId.equals(""))
                     resultSql +=getPaperTypeSql(paper,workId,1);
 
             }else if(paper.getFirstAuthorType()!= null &&paper.getSecondAuthorType()!= null&&paper.getFirstAuthorType().equals("teacher")&& paper.getSecondAuthorType().equals("student")){
                 //第一作者老师 第二作者学生
-                for(int i=0; i<userList.size();i++){
-                    if(userList.get(i).getWorkId()!= null &&userList.get(i).getWorkId().equals(paper.getSecondAuthorId())){
-                        workId = userList.get(i).getTutorWorkId();
-                        break;
-                    }
-                }
+                tmpUser = getUser(paper.getSecondAuthorId());
+                workId = tmpUser != null ? tmpUser.getTutorWorkId() : "";
                 if(!workId.equals("")) {
                     if (workId.equals(paper.getFirstAuthorId())) {
                         //学生在老师名下
@@ -368,12 +385,8 @@ public class AuthorService {
                 }
             }else if(paper.getFirstAuthorType()!= null &&paper.getSecondAuthorType()!= null&&paper.getFirstAuthorType().equals("student") &&paper.getSecondAuthorType().equals("teacher")){
                 //第一作者学生  第二作者老师
-                for(int i=0; i<userList.size();i++){
-                    if(userList.get(i).getWorkId()!= null &&userList.get(i).getWorkId().equals(paper.getFirstAuthorId())){
-                        workId = userList.get(i).getTutorWorkId();
-                        break;
-                    }
-                }
+                tmpUser = getUser(paper.getFirstAuthorId());
+                workId = tmpUser != null ? tmpUser.getTutorWorkId() : "";
                 if(!workId.equals("")){
                     resultSql += getPaperTypeSql(paper, workId, 2);
                     resultSql += getPaperTypeSql(paper, paper.getSecondAuthorId(), 3);
@@ -392,6 +405,9 @@ public class AuthorService {
         resultSql = resultSql.replace("+","-");
         resultSql=resultSql.substring(0,resultSql.length()-1);
         authorStatisticsMapper.doSql(resultSql);
+
+        resultSql = resultSql.replace("doc_statistics","doc_statistics_year");
+        authorStatisticsMapper.doSql(resultSql);
         return 0;
     }
 
@@ -400,58 +416,68 @@ public class AuthorService {
         if(patentList.size() == 0) return -1;
         if(userList.size() == 0)
             userList = userService.getAllUsers();
+
         String preTutorSql="update doc_statistics set `tutor_patent`=`tutor_patent`+1 where `work_id`=\"";
         String preStuSql="update doc_statistics set `stu_patent`=`stu_patent`+1 where `work_id`=\"";
         String resultSql = "";
         String workId  ="";
+
+        String insertSql="";
+        int year = -1;
+        Calendar c = Calendar.getInstance();
+        User tmpUser = null;
+
         for(DocPatent patent:patentList){
             workId="";
+            c.setTime(patent.getPatentAuthorizationDate());
+            year = c.get(Calendar.YEAR);
+
             if((patent.getFirstAuthorType().equals("student")&&patent.getSecondAuthorType() == null)||(patent.getFirstAuthorType().equals("student") && patent.getSecondAuthorType().equals("student")) ){
                 //第一作者学生 第二作者学生(或空)   第一作者学生+1 老师+1
-                for(int i=0; i<userList.size();i++){
-                    if(userList.get(i).getWorkId()!= null &&userList.get(i).getWorkId().equals(patent.getFirstAuthorWorkId())){
-                        workId = userList.get(i).getTutorWorkId();
-                        break;
-                    }
-                }
+                tmpUser = getUser(patent.getFirstAuthorWorkId());
+                workId = tmpUser != null ? tmpUser.getTutorWorkId() : "";
                 if(!workId.equals("")){
                     resultSql+=preTutorSql+workId+"\";";
                     resultSql+=preStuSql+workId+"\";";
+                    insertSql += getInsertTutorSql(tmpUser,year);
                 }
-
-
             }else if(patent.getFirstAuthorType()!= null && patent.getSecondAuthorType()!=null&&patent.getFirstAuthorType().equals("teacher")&& patent.getSecondAuthorType().equals("student")){
                 //第一作者老师 第二作者学生
-                for(int i=0; i<userList.size();i++){
-                    if(userList.get(i).getWorkId()!= null &&userList.get(i).getWorkId().equals(patent.getSecondAuthorWorkId())){
-                        workId = userList.get(i).getTutorWorkId();
-                        break;
-                    }
-                }
+                tmpUser = getUser(patent.getSecondAuthorWorkId());
+                workId = tmpUser != null ? tmpUser.getTutorWorkId() : "";
                 if(!workId.equals("")) {
                     if (workId.equals(patent.getFirstAuthorWorkId())) {
                         //学生在老师名下
                         resultSql+=preTutorSql+patent.getFirstAuthorWorkId()+"\";";
                         resultSql+=preStuSql+patent.getFirstAuthorWorkId()+"\";";
+                        insertSql += getInsertTutorSql(tmpUser,year);
+
+                        tmpUser = getUser(patent.getFirstAuthorWorkId());
+                        insertSql += getInsertTutorSql(tmpUser,year);
                     } else {
                         //学生不在老师名下
                         resultSql+=preTutorSql+patent.getFirstAuthorWorkId()+"\";";
+
+                        tmpUser = getUser(patent.getFirstAuthorWorkId());
+                        insertSql += getInsertTutorSql(tmpUser,year);
                     }
                 }else{
+                    tmpUser = getUser(patent.getFirstAuthorWorkId());
+                    insertSql += getInsertTutorSql(tmpUser,year);
                     resultSql+=preTutorSql+patent.getFirstAuthorWorkId()+"\";";
                 }
             }else if(patent.getFirstAuthorType()!= null && patent.getSecondAuthorType()!=null&&patent.getFirstAuthorType().equals("student") &&patent.getSecondAuthorType().equals("teacher")){
                 //第一作者学生  第二作者老师
-                for(int i=0; i<userList.size();i++){
-                    if(userList.get(i).getWorkId()!= null &&userList.get(i).getWorkId().equals(patent.getFirstAuthorWorkId())){
-                        workId = userList.get(i).getTutorWorkId();
-                        break;
-                    }
-                }
+                tmpUser = getUser(patent.getFirstAuthorWorkId());
+                workId = tmpUser != null ? tmpUser.getTutorWorkId() : "";
+
                 if(!workId.equals("")){
                     resultSql += preStuSql+workId+"\";";
                     resultSql += preTutorSql+patent.getSecondAuthorWorkId()+"\";";
+                    insertSql += getInsertTutorSql(tmpUser,year);
                 }else{
+                    tmpUser = getUser(patent.getSecondAuthorWorkId());
+                    insertSql += getInsertTutorSql(tmpUser,year);
                     resultSql += preTutorSql+patent.getSecondAuthorWorkId()+"\";";
                 }
 
@@ -459,11 +485,19 @@ public class AuthorService {
             }else if(patent.getFirstAuthorType()!= null &&patent.getFirstAuthorType().equals("teacher") &&patent.getSecondAuthorType() == null){
                 //一作导师 二作空
                 resultSql += preTutorSql+patent.getFirstAuthorWorkId()+"\";";
+                tmpUser = getUser(patent.getFirstAuthorWorkId());
+                insertSql += getInsertTutorSql(tmpUser,year);
             }
 
 
         }
-        resultSql=resultSql.substring(0,resultSql.length()-1);
+        resultSql = resultSql.substring(0,resultSql.length()-1);
+        insertSql = insertSql.substring(0,insertSql.length()-1);
+
+        authorStatisticsMapper.doSql(resultSql);
+        authorStatisticsMapper.doSql(insertSql);
+
+        resultSql = resultSql.replace("doc_statistics","doc_statistics_year");
         authorStatisticsMapper.doSql(resultSql);
         return 0;
     }
@@ -477,30 +511,22 @@ public class AuthorService {
         String preStuSql="update doc_statistics set `stu_patent`=`stu_patent`+1 where `work_id`=\"";
         String resultSql = "";
         String workId  ="";
+
+        User tmpUser;
         for(DocPatent patent:patentList){
             workId="";
             if((patent.getFirstAuthorType().equals("student")&&patent.getSecondAuthorType() == null)||(patent.getFirstAuthorType().equals("student") && patent.getSecondAuthorType().equals("student")) ){
                 //第一作者学生 第二作者学生(或空)   第一作者学生+1 老师+1
-                for(int i=0; i<userList.size();i++){
-                    if(userList.get(i).getWorkId()!= null &&userList.get(i).getWorkId().equals(patent.getFirstAuthorWorkId())){
-                        workId = userList.get(i).getTutorWorkId();
-                        break;
-                    }
-                }
+                tmpUser = getUser(patent.getFirstAuthorWorkId());
+                workId = tmpUser != null ? tmpUser.getTutorWorkId() : "";
                 if(!workId.equals("")){
                     resultSql+=preTutorSql+workId+"\";";
                     resultSql+=preStuSql+workId+"\";";
                 }
-
-
             }else if(patent.getFirstAuthorType()!= null && patent.getSecondAuthorType()!=null&&patent.getFirstAuthorType().equals("teacher")&& patent.getSecondAuthorType().equals("student")){
                 //第一作者老师 第二作者学生
-                for(int i=0; i<userList.size();i++){
-                    if(userList.get(i).getWorkId()!= null &&userList.get(i).getWorkId().equals(patent.getSecondAuthorWorkId())){
-                        workId = userList.get(i).getTutorWorkId();
-                        break;
-                    }
-                }
+                tmpUser = getUser(patent.getSecondAuthorWorkId());
+                workId = tmpUser != null ? tmpUser.getTutorWorkId() : "";
                 if(!workId.equals("")) {
                     if (workId.equals(patent.getFirstAuthorWorkId())) {
                         //学生在老师名下
@@ -515,12 +541,9 @@ public class AuthorService {
                 }
             }else if(patent.getFirstAuthorType()!= null && patent.getSecondAuthorType()!=null&&patent.getFirstAuthorType().equals("student") &&patent.getSecondAuthorType().equals("teacher")){
                 //第一作者学生  第二作者老师
-                for(int i=0; i<userList.size();i++){
-                    if(userList.get(i).getWorkId()!= null &&userList.get(i).getWorkId().equals(patent.getFirstAuthorWorkId())){
-                        workId = userList.get(i).getTutorWorkId();
-                        break;
-                    }
-                }
+
+                tmpUser = getUser(patent.getFirstAuthorWorkId());
+                workId = tmpUser != null ? tmpUser.getTutorWorkId() : "";
                 if(!workId.equals("")){
                     resultSql += preStuSql+workId+"\";";
                     resultSql += preTutorSql+patent.getSecondAuthorWorkId()+"\";";
@@ -540,6 +563,9 @@ public class AuthorService {
         resultSql = resultSql.replace("+","-");
         resultSql=resultSql.substring(0,resultSql.length()-1);
         authorStatisticsMapper.doSql(resultSql);
+
+        resultSql = resultSql.replace("doc_statistics","doc_statistics_year");
+        authorStatisticsMapper.doSql(resultSql);
         return 0;
     }
 
@@ -548,7 +574,15 @@ public class AuthorService {
         if(fundList.size() == 0) return -1;
         String resultSql = "";
         String preSqlSum="update doc_statistics set `fund_sum`=`fund_sum`+1 where `work_id`=\"";
+
+        String insertSql="";
+        int year = -1;
+        User tmpUser = null;
+
         for(Fund fund:fundList){
+            year = fund.getProjectYear();
+            tmpUser = getUser(fund.getPersonWorkId());
+            insertSql+=getInsertTutorSql(tmpUser,year);
             switch (fund.getMetricMatch()){
                 case "bc66c15317fc45c09103230de7f7120e":
                     resultSql+="update doc_statistics set `nation_focus`=`nation_focus`+1 where `work_id`=\""+fund.getPersonWorkId()+"\";";
@@ -589,6 +623,10 @@ public class AuthorService {
             }
             resultSql+=preSqlSum+fund.getPersonWorkId()+"\";";
         }
+        authorStatisticsMapper.doSql(resultSql);
+        authorStatisticsMapper.doSql(insertSql);
+
+        resultSql = resultSql.replace("doc_statistics","doc_statistics_year");
         authorStatisticsMapper.doSql(resultSql);
         return 0;
     }
@@ -641,7 +679,46 @@ public class AuthorService {
         }
         resultSql = resultSql.replace("+","-");
         authorStatisticsMapper.doSql(resultSql);
+
+        resultSql = resultSql.replace("doc_statistics","doc_statistics_year");
+        authorStatisticsMapper.doSql(resultSql);
         return 0;
+    }
+
+    public void deleteStaUserById(List<User> users){
+        userDao.deleteByIds(users);
+    }
+
+    private User getUser(String workId){
+        for(int i=0; i<userList.size();i++){
+            if(userList.get(i).getWorkId()!= null &&userList.get(i).getWorkId().equals(workId)){
+                return userList.get(i);
+            }
+        }
+        return null;
+    }
+
+    private String getInsertTutorSql(User user,int year){
+        if(user == null) return "";
+        String preSql="Insert into doc_statistics_year (`id`,`real_name`,`work_id`,`school`,`major`,`year`,`is_master`,`is_doctor`" +
+                "        ,`remarks`,`create_user_id`,`create_date`,`modify_date`,`modify_user_id`) select ";
+        preSql+="\""+user.getId()+"\",";
+        preSql+="\""+user.getRealName()+"\",";
+        preSql+="\""+user.getWorkId()+"\",";
+        preSql+="\""+user.getSchool()+"\",";
+        preSql+="\""+user.getMajor()+"\",";
+        preSql+="\""+year+"\",";
+        preSql+=user.getIsMaster()+",";
+        preSql+=user.getIsDoctor()+",";
+        preSql+="\""+user.getCreateUserId()+"\",";
+        preSql+="\""+user.getCreateDate()+"\",";
+        preSql+="\""+user.getModifyDate()+"\",";
+        preSql+="\""+user.getModifyUserId()+"\"";
+        preSql+=" from dual WHERE NOT EXISTS (select * from doc_statistics_year where `work_id`=";
+        preSql+="\""+user.getWorkId()+"\"";
+        preSql+=" and `year`= ";
+        preSql+= year +");";
+        return preSql;
     }
 
     private  String getPaperTypeSql(Paper paper,String workId,int type){

@@ -4,13 +4,13 @@ let app = new Vue({
         activeTabName: 'tab0',
         tabList: [
             {
-                src: '/functions/tool/importExcel/templateManager',
-                label: '模板管理',
+                src: '/functions/tool/importExcel/importData',
+                label: '数据导入',
                 name: 'tab0',
             },
             {
-                src: '/functions/tool/importExcel/importData',
-                label: '数据导入',
+                src: '/functions/tool/importExcel/templateManager',
+                label: '模板管理',
                 name: 'tab1',
             },
         ]

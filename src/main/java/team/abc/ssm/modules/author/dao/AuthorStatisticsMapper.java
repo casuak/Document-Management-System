@@ -2,6 +2,8 @@ package team.abc.ssm.modules.author.dao;
 
 import team.abc.ssm.modules.author.entity.Author;
 import team.abc.ssm.modules.author.entity.AuthorStatistics;
+import team.abc.ssm.modules.sys.entity.User;
+
 import java.util.List;
 import java.util.Map;
 
@@ -39,4 +41,7 @@ public interface AuthorStatisticsMapper {
     Integer selectMajorListCount(AuthorStatistics authorStatistics);
    AuthorStatistics selectCountByMajor(String major);
    AuthorStatistics selectCountBySchool(String school);
+
+
+   Integer insertUser(User user);
 }

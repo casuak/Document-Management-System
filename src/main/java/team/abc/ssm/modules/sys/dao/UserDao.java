@@ -53,6 +53,7 @@ public interface UserDao {
     //向统计表中插入信息
     int insertIntoStatistics(List<User> userList);
     int updateDoctSta(List<String> userList);
+
     // 删除统计表指定id的用户
     int deleteStaByIds(List<User> userList);
 
