@@ -373,4 +373,11 @@
         </foreach>
     </delete>
 
+    <delete id="deleteStaYearByIds" parameterType="team.abc.ssm.modules.sys.entity.User">
+        delete from doc_statistics where id in
+        <foreach collection="list" index="index" item="item"
+                 open="(" separator="," close=")">
+            #{item.id}
+        </foreach>
+    </delete>
 </mapper>

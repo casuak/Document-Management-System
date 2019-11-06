@@ -142,7 +142,8 @@ public class AuthorApi extends BaseApi {
         List<AuthorStatistics> authorList = authorService.getAuthorStatisticsList(authorStatistics);
         //设置返回的authorList信息
         data.setResultList(authorList);
-        int authorNum = authorService.getAuthorStatisticsNum(authorStatistics);
+        //int authorNum = authorService.getAuthorStatisticsNum(authorStatistics);
+        int authorNum = authorList.size();
         //设置查询出的作者总数
         data.setTotal(authorNum);
         return retMsg.Set(MsgType.SUCCESS, data, "getAuthorListByPage-ok");
@@ -158,7 +159,7 @@ public class AuthorApi extends BaseApi {
         //设置返回的authorList信息
         data.setResultList(authorList);
         //设置查询出的作者总数
-        data.setTotal(authorService.getAuthorStatisticsCountByMajor(authorStatistics));
+        data.setTotal(authorList.size());
         return retMsg.Set(MsgType.SUCCESS, data, "getAuthorListByMajor-ok");
     }
     //按照学院统计
@@ -172,7 +173,7 @@ public class AuthorApi extends BaseApi {
         //设置返回的authorList信息
         data.setResultList(authorList);
         //设置查询出的作者总数
-        data.setTotal(authorService.getAuthorStatisticsCountBySchool(authorStatistics));
+        data.setTotal(authorList.size());
         return retMsg.Set(MsgType.SUCCESS, data, "getAuthorListBySchool-ok");
     }
 
@@ -183,11 +184,12 @@ public class AuthorApi extends BaseApi {
             @RequestParam("school") String school,
             @RequestParam("major") String major,
             @RequestParam("type") String type,
+            @RequestParam("startYear")Integer startYear,
+            @RequestParam("endYear")Integer endYear,
             HttpServletRequest httpServletRequest,
             HttpServletResponse httpServletResponse
     ) throws IOException, ParseException {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-
 
         if(school .equals("undefined")) school="";
         if(major.equals("undefined")) major="";

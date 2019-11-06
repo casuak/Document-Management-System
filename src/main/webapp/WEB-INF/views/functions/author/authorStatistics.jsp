@@ -94,6 +94,7 @@
 <div id="app" v-cloak style="background: white;height: 100%;">
 
     <el-tabs v-model="activeName" @tab-click="handleTabClick" style="margin-left:5px;margin-top:5px;height: 100%;" type="border-card">
+
         <el-tab-pane id="first" label="导师统计" name="first" >
             <el-container >
                 <el-header height="auto">
@@ -123,7 +124,7 @@
 
 
                             <div class="commonInputSection">
-                                <span class="inputSpanText">导师类型: </span>
+                                <span class="inputSpanText">&nbsp;&nbsp;&nbsp;导师类型: </span>
                                 <div class="commonInput">
                                     <el-select v-model="optionView.commonSelect.type"
                                                filterable
@@ -173,6 +174,27 @@
                                     </el-select>
                                 </div>
                             </div>
+                            <div class="commonInputSection" style="margin-top: 5px;margin-left: 25px;width: 530px">
+                                <span class="inputSpanText">年份区间: </span>
+                                <div class="commonInput" style="margin-left: 10px">
+                               <el-date-picker
+                                        v-model="optionView.commonSelect.startYear"
+                                        type="year"
+                                        format="yyyy 年 "
+                                        value-format="yyyy"
+                                        placeholder="选择起始年份">
+                                </el-date-picker>
+                                    <span class="inputSpanText" style="float: none;">至</span>
+                                    <el-date-picker
+                                            v-model="optionView.commonSelect.endYear"
+                                            type="year"
+                                            format="yyyy 年 "
+                                            value-format="yyyy"
+                                            placeholder="选择结束年份">
+                                    </el-date-picker>
+                                </div>
+                            </div>
+
                             <div class="commonInputSection" style="margin-top: 5px;margin-left: 20px">
                                 <el-button type="primary" size="small" @click="searchClick">查询导师
                                 </el-button>
@@ -501,6 +523,26 @@
                                 </el-select>
                             </div>
                         </div>
+                        <div class="commonInputSection" style="margin-top: 5px;margin-left: 25px;width: 530px">
+                            <span class="inputSpanText">年份区间: </span>
+                            <div class="commonInput" style="margin-left: 10px">
+                                <el-date-picker
+                                        v-model="optionView.school.startYear"
+                                        type="year"
+                                        format="yyyy 年 "
+                                        value-format="yyyy"
+                                        placeholder="选择起始年份">
+                                </el-date-picker>
+                                <span class="inputSpanText" style="float: none;">至</span>
+                                <el-date-picker
+                                        v-model="optionView.school.endYear"
+                                        type="year"
+                                        format="yyyy 年 "
+                                        value-format="yyyy"
+                                        placeholder="选择结束年份">
+                                </el-date-picker>
+                            </div>
+                        </div>
                         <div class="commonInputSection" style="margin-top: 5px;margin-left: 20px">
                             <el-button type="primary" size="small" @click="searchSchoolClick">查询学院
                             </el-button>
@@ -519,6 +561,7 @@
                       height="calc(100% - 135px)"
                       v-loading="table.schoolTable.loading"
                       class="scroll-bar"
+                      @sort-change='schoolSortChange'
             <%-- :default-sort = "{prop: 'paperAmount', order: 'descending'}"--%>
             <%--style="margin-top: 0;width: 100%;overflow-y: hidden;"--%>
             <%--@selection-change="onSelectionChange_entity"--%>
@@ -832,6 +875,27 @@
                                 </el-select>
                             </div>
                         </div>
+                        <div class="commonInputSection" style="margin-top: 5px;margin-left: 25px;width: 530px">
+                            <span class="inputSpanText">年份区间: </span>
+                            <div class="commonInput" style="margin-left: 10px">
+                                <el-date-picker
+                                        v-model="optionView.major.startYear"
+                                        type="year"
+                                        format="yyyy 年 "
+                                        value-format="yyyy"
+                                        placeholder="选择起始年份">
+                                </el-date-picker>
+                                <span class="inputSpanText" style="float: none;">至</span>
+                                <el-date-picker
+                                        v-model="optionView.major.endYear"
+                                        type="year"
+                                        format="yyyy 年 "
+                                        value-format="yyyy"
+                                        placeholder="选择结束年份">
+                                </el-date-picker>
+                            </div>
+                        </div>
+
                         <div class="commonInputSection" style="margin-top: 5px;margin-left: 20px">
                             <el-button type="primary" size="small" @click="searchMajorClick">查询学科
                             </el-button>
@@ -850,6 +914,7 @@
                       height="calc(100% - 135px)"
                       v-loading="table.majorTable.loading"
                       class="scroll-bar"
+                      @sort-change='majorSortChange'
             <%-- :default-sort = "{prop: 'paperAmount', order: 'descending'}"--%>
             <%--style="margin-top: 0;width: 100%;overflow-y: hidden;"--%>
             <%--@selection-change="onSelectionChange_entity"--%>
@@ -1238,7 +1303,9 @@
                     workId: "",
                     publishDate: "",
                     subject: "",
-                    organization: ""
+                    organization: "",
+                    startYear:"",
+                    endYear:""
                 },
                 paper: {
                     show: false,
@@ -1265,10 +1332,14 @@
                     copyType: ""
                 },
                 school:{
-                    school:""
+                    school:"",
+                    startYear:"",
+                    endYear:""
                 },
                 major:{
-                    major:""
+                    major:"",
+                    startYear:"",
+                    endYear:""
                 }
             },
             //fullScreenLoading: false,
@@ -1290,6 +1361,7 @@
                 authorTable: {
                     loading: false,
                     data: [],
+                    allData:[],
                     selectionList: [],
                     params: {
                         pageIndex: 1,
@@ -1302,6 +1374,7 @@
                 schoolTable:{
                     loading: false,
                     data: [],
+                    allData:[],
                     selectionList: [],
                     params: {
                         pageIndex: 1,
@@ -1314,6 +1387,7 @@
                 majorTable:{
                     loading: false,
                     data: [],
+                    allData:[],
                     selectionList: [],
                     params: {
                         pageIndex: 1,
@@ -1403,6 +1477,86 @@
                 console.log( app.table.authorTable.params.searchKey);
                 authorSearch();
             },
+            majorSortChange:function(o){
+                let column=o["column"];
+                let prop=o["prop"];
+                let order=o["order"];
+                let app=this;
+                let oorder="";
+                let col="";
+                console.log(column,prop,order);
+                if(prop == null) {
+                    app.table.majorTable.params.searchKey = "";
+                }
+                else{
+                    if(order === "descending") {
+                        oorder = "DESC"
+                    }else{
+                        oorder ="ASC"
+                    }
+                    switch (prop) {
+                        case "tutorPaperSum":
+                            col="tutor_paper_sum";
+                            break;
+                        case "stuPaperSum" :
+                            col="stu_paper_sum";
+                            break;
+                        case "tutorPatent":
+                            col="tutor_patent";
+                            break;
+                        case "stuPatent":
+                            col="stu_patent";
+                            break;
+                        case "fundSum":
+                            col = "fund_sum";
+                            break;
+                    }
+                    app.table.majorTable.params.searchKey=col+" "+oorder;
+
+                }
+                console.log( app.table.majorTable.params.searchKey);
+                majorSearch();
+            },
+            schoolSortChange:function(o){
+                let column=o["column"];
+                let prop=o["prop"];
+                let order=o["order"];
+                let app=this;
+                let oorder="";
+                let col="";
+                console.log(column,prop,order);
+                if(prop == null) {
+                    app.table.schoolTable.params.searchKey = "";
+                }
+                else{
+                    if(order === "descending") {
+                        oorder = "DESC"
+                    }else{
+                        oorder ="ASC"
+                    }
+                    switch (prop) {
+                        case "tutorPaperSum":
+                            col="tutor_paper_sum";
+                            break;
+                        case "stuPaperSum" :
+                            col="stu_paper_sum";
+                            break;
+                        case "tutorPatent":
+                            col="tutor_patent";
+                            break;
+                        case "stuPatent":
+                            col="stu_patent";
+                            break;
+                        case "fundSum":
+                            col = "fund_sum";
+                            break;
+                    }
+                    app.table.schoolTable.params.searchKey=col+" "+oorder;
+
+                }
+                console.log( app.table.schoolTable.params.searchKey);
+                schoolSearch();
+            },
             handleCheckAllChange(val) {
                 this.doc.checkedDoc = val ? docOptions : [];
                 this.doc.isIndeterminate = false;
@@ -1461,35 +1615,41 @@
             authorPageSizeChange: function (newSize) {
                 console.log("处理pageSize变化");
                 app.table.authorTable.params.pageSize = newSize;
-                authorSearch();
+                changePageSize(1);
+                //authorSearch();
             },
             // 处理pageIndex变化
             authorPageIndexChange: function (newIndex) {
                 console.log("处理pageIndex变化");
                 app.table.authorTable.params.pageIndex = newIndex;
-                authorSearch();
+                changePageSize(1);
+                //authorSearch();
             },
             schoolPageSizeChange: function (newSize) {
                 console.log("处理pageSize变化");
                 app.table.schoolTable.params.pageSize = newSize;
-                schoolSearch();
+                changePageSize(2);
+                //authorSearch();
             },
             // 处理pageIndex变化
             schoolPageIndexChange: function (newIndex) {
                 console.log("处理pageIndex变化");
                 app.table.schoolTable.params.pageIndex = newIndex;
-                schoolSearch();
+                changePageSize(2);
+                //authorSearch();
             },
             majorPageSizeChange: function (newSize) {
                 console.log("处理pageSize变化");
                 app.table.majorTable.params.pageSize = newSize;
-                majorSearch();
+                changePageSize(3);
+                //authorSearch();
             },
             // 处理pageIndex变化
             majorPageIndexChange: function (newIndex) {
                 console.log("处理pageIndex变化");
                 app.table.majorTable.params.pageIndex = newIndex;
-                majorSearch();
+                changePageSize(3);
+                //authorSearch();
             },
 
             // 重置表单
@@ -1498,12 +1658,15 @@
             // },
             exportStatisticResult() {
                 let app = this;
+                console.log(app.optionView.commonSelect.startYear);
                 window.location.href = "/author/exportStatisticsList?" +
                     "realName=" + app.optionView.commonSelect.realName +
                     "&workId=" + app.optionView.commonSelect.workId +
                     "&school=" + app.optionView.commonSelect.school+
                     "&major=" +app.optionView.commonSelect.major+
-                        "&type=" +app.optionView.commonSelect.type
+                        "&type=" +app.optionView.commonSelect.type+
+                    "&startYear=" +app.optionView.commonSelect.startYear+
+                    "&endYear=" +app.optionView.commonSelect.endYear
             },
             exportStatisticMajorResult() {
                 let app = this;
@@ -1604,17 +1767,22 @@
             school: app.optionView.commonSelect.school,
 
             type:app.optionView.commonSelect.type,
+
+            startYear:parseInt(app.optionView.commonSelect.startYear),
+            endYear:parseInt(app.optionView.commonSelect.endYear),
             //分页信息
             page: app.table.authorTable.params,
         };
+        console.log(app.optionView.commonSelect.startYear);
         setTimeout(function () {
             ajaxPostJSON("/author/getAuthorStatisticsByPage", author,
                 function success(res) {
                     if (res.code === 'success') {
                         console.log(res.data.resultList);
-                        app.table.authorTable.data = res.data.resultList;
+                        app.table.authorTable.allData = res.data.resultList;
                         app.table.authorTable.params.total = res.data.total;
-                        app.table.authorTable.loading = false;
+                        //app.table.authorTable.loading = false;
+                        changePageSize(1);
                     }
                 }, null, false
             );
@@ -1632,8 +1800,10 @@
             //待查作者学科名
             major: app.optionView.commonSelect.major,
             //待查作者机构名称
-            school: app.optionView.commonSelect.school,
+            school: app.optionView.school.school,
             type:app.optionView.commonSelect.type,
+            startYear:parseInt(app.optionView.school.startYear),
+            endYear:parseInt(app.optionView.school.endYear),
             //分页信息
             page: app.table.schoolTable.params,
         };
@@ -1642,9 +1812,9 @@
                 function success(res) {
                     if (res.code === 'success') {
                         console.log(res.data.resultList);
-                        app.table.schoolTable.data = res.data.resultList;
+                        app.table.schoolTable.allData = res.data.resultList;
                         app.table.schoolTable.params.total = res.data.total;
-                        app.table.schoolTable.loading = false;
+                        changePageSize(2);
                     }
                 }, null, false
             );
@@ -1659,11 +1829,14 @@
             //待查作者工号
             workId: app.optionView.commonSelect.workId,
             //待查作者学科名
-            major: app.optionView.commonSelect.major,
+            major: app.optionView.major.major,
             //待查作者机构名称
             school: app.optionView.commonSelect.school,
 
             type:app.optionView.commonSelect.type,
+
+            startYear:parseInt(app.optionView.major.startYear),
+            endYear:parseInt(app.optionView.major.endYear),
             //分页信息
             page: app.table.majorTable.params,
         };
@@ -1672,15 +1845,42 @@
                 function success(res) {
                     if (res.code === 'success') {
                         console.log(res.data.resultList);
-                        app.table.majorTable.data = res.data.resultList;
+                        app.table.majorTable.allData = res.data.resultList;
                         app.table.majorTable.params.total = res.data.total;
-                        app.table.majorTable.loading = false;
+                        changePageSize(3);
                     }
                 }, null, false
             );
         }, 200)
     }
 
+    function changePageSize(type) {
+        if(type === 1){
+            let index = (app.table.authorTable.params.pageIndex - 1)*app.table.authorTable.params.pageSize;
+            app.table.authorTable.data=[];
+            for(let i=index;i<=(index+app.table.authorTable.params.pageSize-1)&&i<app.table.authorTable.allData.length;i++){
+                app.table.authorTable.data.push(app.table.authorTable.allData[i]);
+            }
+            app.table.authorTable.loading = false;
+        }
+        if(type === 2){
+            let index = (app.table.schoolTable.params.pageIndex - 1)*app.table.schoolTable.params.pageSize;
+            app.table.schoolTable.data=[];
+            for(let i=index;i<=(index+app.table.schoolTable.params.pageSize-1)&&i<app.table.schoolTable.allData.length;i++){
+                app.table.schoolTable.data.push(app.table.schoolTable.allData[i]);
+            }
+            app.table.schoolTable.loading = false;
+        }
+        if(type === 3){
+            let index = (app.table.majorTable.params.pageIndex - 1)*app.table.majorTable.params.pageSize;
+            app.table.majorTable.data=[];
+            for(let i=index;i<=(index+app.table.majorTable.params.pageSize-1)&&i<app.table.majorTable.allData.length;i++){
+                app.table.majorTable.data.push(app.table.majorTable.allData[i]);
+            }
+            app.table.majorTable.loading = false;
+        }
+    }
+    
     //选择对应筛选框视图:
     function optionViewSelect() {
         app.optionView.paper.show = false;

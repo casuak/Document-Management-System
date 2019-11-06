@@ -58,4 +58,6 @@ public class AuthorStatistics extends DataEntity<AuthorStatistics> {
     Integer fundSum;  //基金总数量
 
     Integer totalNum; //符合条件人的数量
+    Integer startYear;//查询起始时间
+    Integer endYear;//查询结束时间
 }

@@ -48,35 +48,35 @@
     </resultMap>
 
 
+    <!--————————————1.0————————————————————-->
 
-    <select id="getAuthorListByPage" resultMap="authorBean">
-        select * from doc_statistics
-        where `del_flag` != 1
-        <if test="realName != null and realName != ''">
-            and `real_name` = #{realName,jdbcType=VARCHAR}
-        </if>
-        <if test="workId != '' and workId != null">
-            and `work_id` = #{workId}
-        </if>
+    <!--<select id="getAuthorListByPage" resultMap="authorBean">-->
+        <!--select * from doc_statistics-->
+        <!--where `del_flag` != 1-->
+        <!--<if test="realName != null and realName != ''">-->
+            <!--and `real_name` = #{realName,jdbcType=VARCHAR}-->
+        <!--</if>-->
+        <!--<if test="workId != '' and workId != null">-->
+            <!--and `work_id` = #{workId}-->
+        <!--</if>-->
 
-        <if test="school != null and school != ''">
-            and `school` = #{school}
-        </if>
-        <if test="major != null and major != ''">
-            and `major` = #{major}
-        </if>
-        <if test='type =="博士生导师"'>
-          and `is_doctor` =1
-        </if>
-        <if test='type =="硕士生导师"'>
-            and `is_master` =1
-        </if>
-        <if test="page.searchKey != '' and page.searchKey != null">
-            order by ${page.searchKey}
-        </if>
-        limit #{page.pageStart},#{page.pageSize}
-    </select>
-
+        <!--<if test="school != null and school != ''">-->
+            <!--and `school` = #{school}-->
+        <!--</if>-->
+        <!--<if test="major != null and major != ''">-->
+            <!--and `major` = #{major}-->
+        <!--</if>-->
+        <!--<if test='type =="博士生导师"'>-->
+          <!--and `is_doctor` =1-->
+        <!--</if>-->
+        <!--<if test='type =="硕士生导师"'>-->
+            <!--and `is_master` =1-->
+        <!--</if>-->
+        <!--<if test="page.searchKey != '' and page.searchKey != null">-->
+            <!--order by ${page.searchKey}-->
+        <!--</if>-->
+        <!--limit #{page.pageStart},#{page.pageSize}-->
+    <!--</select>-->
 
     <select id="getAuthorCount" resultType="java.lang.Integer">
         select count(*) from doc_statistics
@@ -102,6 +102,9 @@
         </if>
 
     </select>
+
+
+
 
     <select id="getStudentIdListByTeacherId" parameterType="java.lang.String" resultType="java.lang.String">
       select `work_id` from sys_user where `tutor_work_id`=#{param1} and del_flag!=1
@@ -207,12 +210,6 @@
         and metric_match =#{param2}
     </select>
 
-
-
-    <select id="doSql"  parameterType="java.lang.String">
-        ${_parameter}
-    </select>
-
     <select id="selectCountBySchool" parameterType="java.lang.String" resultType="team.abc.ssm.modules.author.entity.AuthorStatistics">
         select 	count(*) as "totalNum",
 				 IFNULL(sum(tutor_q1),0) as "tutorQ1" ,
@@ -278,11 +275,11 @@
     </select>
 
     <select id="selectSchoolList" parameterType="team.abc.ssm.modules.author.entity.AuthorStatistics" resultType="java.lang.String" >
-      select name_cn from sys_dict where type_id="88689d82828b45ba85d00ec34c1878fb" and del_flag!=1
+        select name_cn from sys_dict where type_id="88689d82828b45ba85d00ec34c1878fb" and del_flag!=1
         <if test="page.searchKey !='' and page.searchKey !=null">
             and `name_cn`=#{page.searchKey}
         </if>
-      limit #{page.pageStart},#{page.pageSize}
+        limit #{page.pageStart},#{page.pageSize}
     </select>
 
     <select id="selectMajorList" parameterType="team.abc.ssm.modules.author.entity.AuthorStatistics" resultType="java.lang.String">
@@ -295,7 +292,7 @@
 
 
     <select id="selectSchoolListCount" parameterType="team.abc.ssm.modules.author.entity.AuthorStatistics" resultType="java.lang.Integer" >
-      select count(*) from sys_dict where type_id="88689d82828b45ba85d00ec34c1878fb" and del_flag!=1
+        select count(*) from sys_dict where type_id="88689d82828b45ba85d00ec34c1878fb" and del_flag!=1
         <if test="page.searchKey !='' and page.searchKey !=null">
             and `name_cn`=#{page.searchKey}
         </if>
@@ -305,6 +302,188 @@
         select count(*) from sys_dict where type_id="a1808a4adb4543e4b908d4280ee8ba30" and del_flag!=1
         <if test="page.searchKey !='' and page.searchKey !=null">
             and `name_cn`=#{page.searchKey}
+        </if>
+    </select>
+
+    <!--————————————2.0————————————————————-->
+    <select id="doSql"  parameterType="java.lang.String">
+        ${_parameter}
+    </select>
+    <select id="getAuthorListByPage"  parameterType="team.abc.ssm.modules.author.entity.AuthorStatistics" resultMap="authorBean">
+        select  id,remarks,
+        create_user_id,modify_user_id,
+        create_date,modify_date,del_flag,
+        work_id,real_name,school,major,
+        sum(tutor_q1) as "tutor_q1",
+        sum(tutor_q2) as "tutor_q2",
+        sum(tutor_q3) as "tutor_q3",
+        sum(tutor_q4) as "tutor_q4",
+        sum(tutor_other) as "tutor_other",
+        sum(tutor_paper_sum) as "tutor_paper_sum",
+        sum(stu_q1) as "stu_q1",
+        sum(stu_q2) as "stu_q2",
+        sum(stu_q3) as "stu_q3",
+        sum(stu_q4) as "stu_q4",
+        sum(stu_other) as "stu_other",
+        sum(stu_paper_sum) as "stu_paper_sum",
+        sum(tutor_patent) as "tutor_patent",
+        sum(stu_patent) as "stu_patent",
+        sum(nation_focus) as "nation_focus",
+        sum(nsfc_zdyf) as "nsfc_zdyf",
+        sum(nation_instrument) as "nation_instrument",
+        sum(nsfc_kxzx) as "nsfc_kxzx",
+        sum(nsfc_zdaxm) as "nsfc_zdaxm",
+        sum(nation_research) as "nation_research",
+        sum(nsfc_zdianxm) as "nsfc_zdianxm",
+        sum(nsfc_msxm) as "nsfc_msxm",
+        sum(nsfc_qnxm) as "nsfc_qnxm",
+        sum(nssfc_zdaxm) as "nssfc_zdaxm",
+        sum(nssfc_zdianxm) as "nssfc_zdianxm",
+        sum(nssfc_ybxm) as "nssfc_ybxm",
+        sum(nssfc_qnxm) as "nssfc_qnxm",
+        sum(fund_sum) as "fund_sum"
+        from doc_statistics_year
+        <where>
+            <if test="1 == 1">
+                `del_flag` != 1
+            </if>
+            <if test="realName != null and realName != ''">
+                and `real_name` = #{realName,jdbcType=VARCHAR}
+            </if>
+            <if test="workId != '' and workId != null">
+                and `work_id` = #{workId}
+            </if>
+            <if test="school != null and school != ''">
+                and `school` = #{school}
+            </if>
+            <if test="major != null and major != ''">
+                and `major` = #{major}
+            </if>
+            <if test='type =="博士生导师"'>
+                and `is_doctor` =1
+            </if>
+            <if test='type =="硕士生导师"'>
+                and `is_master` =1
+            </if>
+            <if test='startYear != 0 and startYear != null'>
+                and `year` &gt;= #{startYear}
+            </if>
+            <if test='endYear != 0 and endYear != null'>
+                and `year` &lt;= #{endYear}
+            </if>
+        </where>
+        GROUP BY work_id
+        <if test="page.searchKey != '' and page.searchKey != null">
+            order by ${page.searchKey}
+        </if>
+    </select>
+    <select id="getAuthorListBySchool"  parameterType="team.abc.ssm.modules.author.entity.AuthorStatistics" resultMap="authorBean">
+         select
+                `school`,
+				count(*) as "totalNum",
+				sum(tutor_q1) as "tutor_q1",
+				sum(tutor_q2) as "tutor_q2",
+				sum(tutor_q3) as "tutor_q3",
+				sum(tutor_q4) as "tutor_q4",
+				sum(tutor_other) as "tutor_other",
+				sum(tutor_paper_sum) as "tutor_paper_sum",
+				sum(stu_q1) as "stu_q1",
+				sum(stu_q2) as "stu_q2",
+				sum(stu_q3) as "stu_q3",
+				sum(stu_q4) as "stu_q4",
+				sum(stu_other) as "stu_other",
+				sum(stu_paper_sum) as "stu_paper_sum",
+				sum(tutor_patent) as "tutor_patent",
+				sum(stu_patent) as "stu_patent",
+			 	sum(nation_focus) as "nation_focus",
+				sum(nsfc_zdyf) as "nsfc_zdyf",
+				sum(nation_instrument) as "nation_instrument",
+				sum(nsfc_kxzx) as "nsfc_kxzx",
+				sum(nsfc_zdaxm) as "nsfc_zdaxm",
+				sum(nation_research) as "nation_research",
+				sum(nsfc_zdianxm) as "nsfc_zdianxm",
+				sum(nsfc_msxm) as "nsfc_msxm",
+				sum(nsfc_qnxm) as "nsfc_qnxm",
+				sum(nssfc_zdaxm) as "nssfc_zdaxm",
+				sum(nssfc_zdianxm) as "nssfc_zdianxm",
+				sum(nssfc_ybxm) as "nssfc_ybxm",
+				sum(nssfc_qnxm) as "nssfc_qnxm",
+				sum(fund_sum) as "fund_sum"
+			 from doc_statistics_year
+        <where>
+            <if test="1 == 1">
+                `del_flag` != 1
+            </if>
+
+            <if test="school != null and school != ''">
+                and `school` = #{school}
+            </if>
+
+            <if test='startYear != 0 and startYear != null'>
+                and `year` &gt;= #{startYear}
+            </if>
+            <if test='endYear != 0 and endYear != null'>
+                and `year` &lt;= #{endYear}
+            </if>
+        </where>
+        GROUP BY school
+        <if test="page.searchKey != '' and page.searchKey != null">
+            order by ${page.searchKey}
+        </if>
+
+    </select>
+    <select id="getAuthorListByMajor"  parameterType="team.abc.ssm.modules.author.entity.AuthorStatistics" resultMap="authorBean">
+        select
+        `major`,
+        count(*) as "totalNum",
+        sum(tutor_q1) as "tutor_q1",
+        sum(tutor_q2) as "tutor_q2",
+        sum(tutor_q3) as "tutor_q3",
+        sum(tutor_q4) as "tutor_q4",
+        sum(tutor_other) as "tutor_other",
+        sum(tutor_paper_sum) as "tutor_paper_sum",
+        sum(stu_q1) as "stu_q1",
+        sum(stu_q2) as "stu_q2",
+        sum(stu_q3) as "stu_q3",
+        sum(stu_q4) as "stu_q4",
+        sum(stu_other) as "stu_other",
+        sum(stu_paper_sum) as "stu_paper_sum",
+        sum(tutor_patent) as "tutor_patent",
+        sum(stu_patent) as "stu_patent",
+        sum(nation_focus) as "nation_focus",
+        sum(nsfc_zdyf) as "nsfc_zdyf",
+        sum(nation_instrument) as "nation_instrument",
+        sum(nsfc_kxzx) as "nsfc_kxzx",
+        sum(nsfc_zdaxm) as "nsfc_zdaxm",
+        sum(nation_research) as "nation_research",
+        sum(nsfc_zdianxm) as "nsfc_zdianxm",
+        sum(nsfc_msxm) as "nsfc_msxm",
+        sum(nsfc_qnxm) as "nsfc_qnxm",
+        sum(nssfc_zdaxm) as "nssfc_zdaxm",
+        sum(nssfc_zdianxm) as "nssfc_zdianxm",
+        sum(nssfc_ybxm) as "nssfc_ybxm",
+        sum(nssfc_qnxm) as "nssfc_qnxm",
+        sum(fund_sum) as "fund_sum"
+        from doc_statistics_year
+        <where>
+            <if test="1 == 1">
+                `del_flag` != 1
+            </if>
+
+            <if test="school != null and school != ''">
+                and `school` = #{school}
+            </if>
+
+            <if test='startYear != 0 and startYear != null'>
+                and `year` &gt;= #{startYear}
+            </if>
+            <if test='endYear != 0 and endYear != null'>
+                and `year` &lt;= #{endYear}
+            </if>
+        </where>
+        GROUP BY major
+        <if test="page.searchKey != '' and page.searchKey != null">
+            order by ${page.searchKey}
         </if>
     </select>
 </mapper>

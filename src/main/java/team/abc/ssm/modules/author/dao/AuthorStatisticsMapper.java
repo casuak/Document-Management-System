@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 public interface AuthorStatisticsMapper {
-   /** 1.0版本 */
+    /****************** 2.0版本************************/
     /*List<AuthorStatistics> getAuthorListByPage(AuthorStatistics authorStatistics);
     Integer getAuthorCount(AuthorStatistics authorStatistics);*/
 
@@ -30,18 +30,20 @@ public interface AuthorStatisticsMapper {
     //获取基金数量
     Integer getFundCount(String workId,String type);
 
-    /** 2.0版本*/
+    List<String> selectSchoolList(AuthorStatistics authorStatistics);
+    List<String> selectMajorList(AuthorStatistics authorStatistics);
+    Integer selectSchoolListCount(AuthorStatistics authorStatistics);
+    Integer selectMajorListCount(AuthorStatistics authorStatistics);
+    AuthorStatistics selectCountByMajor(String major);
+    AuthorStatistics selectCountBySchool(String school);
+    /****************** 2.0版本************************/
     void doSql(String sql);
    List<AuthorStatistics> getAuthorListByPage(AuthorStatistics authorStatistics);
    Integer getAuthorCount(AuthorStatistics authorStatistics);
 
-   List<String> selectSchoolList(AuthorStatistics authorStatistics);
-    List<String> selectMajorList(AuthorStatistics authorStatistics);
-    Integer selectSchoolListCount(AuthorStatistics authorStatistics);
-    Integer selectMajorListCount(AuthorStatistics authorStatistics);
-   AuthorStatistics selectCountByMajor(String major);
-   AuthorStatistics selectCountBySchool(String school);
+   List<AuthorStatistics> getAuthorListBySchool(AuthorStatistics authorStatistics);
+    List<AuthorStatistics> getAuthorListByMajor(AuthorStatistics authorStatistics);
 
 
-   Integer insertUser(User user);
+
 }

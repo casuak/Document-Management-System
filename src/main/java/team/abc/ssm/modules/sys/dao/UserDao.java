@@ -56,6 +56,7 @@ public interface UserDao {
 
     // 删除统计表指定id的用户
     int deleteStaByIds(List<User> userList);
+    int deleteStaYearByIds(List<User> userList);
 
     /**
      * @author zm

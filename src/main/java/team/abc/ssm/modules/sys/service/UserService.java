@@ -166,6 +166,7 @@ public class UserService {
 
     public boolean deleteUserByIds(List<User> userList) {
         userDao.deleteStaByIds(userList);
+        userDao.deleteStaYearByIds(userList);
         if (userList.size() == 0) return true;
         int count = userDao.deleteByIds(userList);
         return count == userList.size();

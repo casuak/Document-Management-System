@@ -18,6 +18,8 @@ import team.abc.ssm.modules.sys.entity.Dict;
 import team.abc.ssm.modules.sys.entity.User;
 import team.abc.ssm.modules.sys.service.UserService;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -699,6 +701,11 @@ public class AuthorService {
     }
 
     private String getInsertTutorSql(User user,int year){
+
+        Date date = new Date();
+        DateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+        String str = format.format(date);
+
         if(user == null) return "";
         String preSql="Insert into doc_statistics_year (`id`,`real_name`,`work_id`,`school`,`major`,`year`,`is_master`,`is_doctor`" +
                 "        ,`remarks`,`create_user_id`,`create_date`,`modify_date`,`modify_user_id`) select ";
@@ -707,12 +714,13 @@ public class AuthorService {
         preSql+="\""+user.getWorkId()+"\",";
         preSql+="\""+user.getSchool()+"\",";
         preSql+="\""+user.getMajor()+"\",";
-        preSql+="\""+year+"\",";
+        preSql+= year+",";
         preSql+=user.getIsMaster()+",";
         preSql+=user.getIsDoctor()+",";
+        preSql+="\""+user.getRemarks()+"\",";
         preSql+="\""+user.getCreateUserId()+"\",";
-        preSql+="\""+user.getCreateDate()+"\",";
-        preSql+="\""+user.getModifyDate()+"\",";
+        preSql+="\""+str+"\",";
+        preSql+="\""+str+"\",";
         preSql+="\""+user.getModifyUserId()+"\"";
         preSql+=" from dual WHERE NOT EXISTS (select * from doc_statistics_year where `work_id`=";
         preSql+="\""+user.getWorkId()+"\"";
@@ -778,11 +786,8 @@ public class AuthorService {
     }
 
     public List<AuthorStatistics> getAuthorStatisticsBySchool(AuthorStatistics authorStatistics){
-        List<String> schoolList = authorStatisticsMapper.selectSchoolList(authorStatistics);
-        List<AuthorStatistics> resultList = new ArrayList<>();
-        for(String school:schoolList){
-            AuthorStatistics tmp =  authorStatisticsMapper.selectCountBySchool(school);
-            tmp.setSchool(school);
+        List<AuthorStatistics> resultList = authorStatisticsMapper.getAuthorListBySchool(authorStatistics);
+        for(AuthorStatistics tmp:resultList){
             if(tmp.getTotalNum()>0){
             tmp.setTutorAverage(1.0*tmp.getTutorPaperSum()/tmp.getTotalNum());
             tmp.setStuAverage(1.0*tmp.getStuPaperSum()/tmp.getTotalNum());
@@ -794,17 +799,14 @@ public class AuthorService {
                 tmp.setTutorPatentAverage(0);
                 tmp.setStuPatentAverage(0);
             }
-            resultList.add(tmp);
         }
         return resultList;
     }
 
     public List<AuthorStatistics> getAuthorStatisticsByMajor(AuthorStatistics authorStatistics){
-        List<String> majorList = authorStatisticsMapper.selectMajorList(authorStatistics);
-        List<AuthorStatistics> resultList = new ArrayList<>();
-        for(String major:majorList){
-            AuthorStatistics tmp =  authorStatisticsMapper.selectCountByMajor(major);
-            tmp.setMajor(major);
+        List<AuthorStatistics> resultList = authorStatisticsMapper.getAuthorListByMajor(authorStatistics);
+
+        for(AuthorStatistics tmp:resultList){
             if(tmp.getTotalNum()>0){
                 tmp.setTutorAverage(1.0*tmp.getTutorPaperSum()/tmp.getTotalNum());
                 tmp.setStuAverage(1.0*tmp.getStuPaperSum()/tmp.getTotalNum());
@@ -816,7 +818,6 @@ public class AuthorService {
                 tmp.setTutorPatentAverage(0);
                 tmp.setStuPatentAverage(0);
             }
-            resultList.add(tmp);
         }
         return resultList;
     }
