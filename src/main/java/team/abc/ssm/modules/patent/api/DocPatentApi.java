@@ -123,6 +123,7 @@ public class DocPatentApi extends BaseApi {
             matchResult = patentService.patentUserMatch();
         } catch (Exception e){
             e.printStackTrace();
+            return retMsg.Set(MsgType.ERROR);
         }
         return retMsg.Set(MsgType.SUCCESS,matchResult);
     }

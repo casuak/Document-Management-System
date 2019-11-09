@@ -39,7 +39,8 @@
         id, patent_name, patent_type, patent_right_person, patent_number, patent_authorization_date,
         patent_authorization_date_string, institute, author_list, first_author_name, second_author_name,
         first_author_id, second_author_id, remarks, create_user_id, create_date, modify_user_id,
-        modify_date, `status`, status_1, status_2, del_flag,first_author_type,first_author_work_id,second_author_type,second_author_work_id
+        modify_date, `status`, status_1, status_2,
+        del_flag,first_author_type,first_author_work_id,second_author_type,second_author_work_id
     </sql>
     <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
         <!--@mbg.generated-->
@@ -334,16 +335,16 @@
         c.real_name as first_author_name,
         d.real_name as second_author_name
         from (
-            select * from doc_patent
-            <where>
-                <if test="status != null and status != ''">
-                    status = #{status}
-                </if>
-                <if test="page.searchKey != null and page.searchKey != ''">
-                    and patent_name like concat('%',#{page.searchKey} ,'%')
-                </if>
-            </where>
-            limit #{page.pageStart} ,#{page.pageSize}
+        select * from doc_patent
+        <where>
+            <if test="status != null and status != ''">
+                status = #{status}
+            </if>
+            <if test="page.searchKey != null and page.searchKey != ''">
+                and patent_name like concat('%',#{page.searchKey} ,'%')
+            </if>
+        </where>
+        limit #{page.pageStart} ,#{page.pageSize}
         ) as a
         left join sys_dict b on b.id = a.patent_type
         left join sys_user c on c.id = a.first_author_id
@@ -426,7 +427,8 @@
             </otherwise>
         </choose>
     </update>
-    <select id="selectConvertToCompleteByIds" parameterType="team.abc.ssm.modules.patent.entity.DocPatent" resultMap="BaseResultMap">
+    <select id="selectConvertToCompleteByIds" parameterType="team.abc.ssm.modules.patent.entity.DocPatent"
+            resultMap="BaseResultMap">
         select * from doc_patent
         <choose>
             <when test="list != null and list.size() != 0">
@@ -494,20 +496,20 @@
         b.real_name as first_author_name,
         c.real_name as second_author_name
         from (
-            select * from (
-                select * from docmanager.doc_patent
-                where first_author_work_id = #{id,jdbcType=VARCHAR}
-                or second_author_work_id = #{id,jdbcType=VARCHAR}
-            ) as tmp
-            <where>
-                <if test="status != null and status != ''">
-                    and status = #{status}
-                </if>
-                <if test="page.searchKey != null and page.searchKey != ''">
-                    and patent_name like concat('%',#{page.searchKey} ,'%')
-                </if>
-            </where>
-            limit #{page.pageStart} ,#{page.pageSize}
+        select * from (
+        select * from docmanager.doc_patent
+        where first_author_work_id = #{id,jdbcType=VARCHAR}
+        or second_author_work_id = #{id,jdbcType=VARCHAR}
+        ) as tmp
+        <where>
+            <if test="status != null and status != ''">
+                and status = #{status}
+            </if>
+            <if test="page.searchKey != null and page.searchKey != ''">
+                and patent_name like concat('%',#{page.searchKey} ,'%')
+            </if>
+        </where>
+        limit #{page.pageStart} ,#{page.pageSize}
         ) as a
         left join sys_user b on b.work_id = a.first_author_work_id
         left join sys_user c on c.work_id = a.second_author_work_id
@@ -518,19 +520,19 @@
             resultMap="BaseResultMap">
         select *
         from (
-            select *
-            from docmanager.doc_patent dp
-            where dp.status = #{status,jdbcType=VARCHAR}
-            <if test="patentType != null and patentType != ''">
-                and dp.patent_type = #{patentType,jdbcType=VARCHAR}
-            </if>
-            <if test="institute != null and institute != ''">
-                and dp.institute = #{institute,jdbcType=VARCHAR}
-            </if>
-            <if test="endDate != null">
-                and dp.patent_authorization_date &gt;= #{startDate,jdbcType=TIMESTAMP}
-                and dp.patent_authorization_date &lt;= #{endDate,jdbcType=TIMESTAMP}
-            </if>
+        select *
+        from docmanager.doc_patent dp
+        where dp.status = #{status,jdbcType=VARCHAR}
+        <if test="patentType != null and patentType != ''">
+            and dp.patent_type = #{patentType,jdbcType=VARCHAR}
+        </if>
+        <if test="institute != null and institute != ''">
+            and dp.institute = #{institute,jdbcType=VARCHAR}
+        </if>
+        <if test="endDate != null">
+            and dp.patent_authorization_date &gt;= #{startDate,jdbcType=TIMESTAMP}
+            and dp.patent_authorization_date &lt;= #{endDate,jdbcType=TIMESTAMP}
+        </if>
         ) as a
         <if test="subject != null and subject != ''">
             left join docmanager.sys_user b on b.work_id = a.first_author_work_id
@@ -548,41 +550,41 @@
 
     <select id="selectAllByPageWithStatisticCondition" resultMap="BaseResultMap" parameterType="StatisticCondition">
         select * from (
-            select dp.*
-            <if test="subject != null and subject != ''">
-                ,b.major as patent_subject
+        select dp.*
+        <if test="subject != null and subject != ''">
+            ,b.major as patent_subject
+        </if>
+        from docmanager.doc_patent as dp
+        <if test="subject != null and subject != ''">
+            left join sys_user b on b.work_id = dp.first_author_work_id
+        </if>
+        <where>
+            <if test="firstAuthorWorkId != null and firstAuthorWorkId != ''">
+                dp.first_author_work_id = #{firstAuthorWorkId,jdbcType=VARCHAR}
             </if>
-            from docmanager.doc_patent as dp
-            <if test="subject != null and subject != ''">
-                left join sys_user b on b.work_id = dp.first_author_work_id
+            <if test="secondAuthorWorkId != null and secondAuthorWorkId != ''">
+                and dp.second_author_work_id = #{secondAuthorWorkId,jdbcType=VARCHAR}
             </if>
-            <where>
-                <if test="firstAuthorWorkId != null and firstAuthorWorkId != ''">
-                    dp.first_author_work_id = #{firstAuthorWorkId,jdbcType=VARCHAR}
-                </if>
-                <if test="secondAuthorWorkId != null and secondAuthorWorkId != ''">
-                    and dp.second_author_work_id = #{secondAuthorWorkId,jdbcType=VARCHAR}
-                </if>
-                <if test="patentName != null and patentName != ''">
-                    and dp.patent_name like contact('%', #{patentName,jdbcType=VARCHAR}, '%')
-                </if>
-                <if test="patentNumber != null and patentNumber != ''">
-                    and dp.patent_number = #{patentNumber,jdbcType=VARCHAR}
-                </if>
-                <if test="institute != null and institute != ''">
-                    and dp.institute = #{institute,jdbcType=VARCHAR}
-                </if>
-                <if test="patentType != null and patentType != ''">
-                    and dp.patent_type = #{patentType,jdbcType=VARCHAR}
-                </if>
-                <if test="startDate != null and endDate != null">
-                    and dp.patent_authorization_date &gt;= #{startDate,jdbcType=TIMESTAMP}
-                    and dp.patent_authorization_date &lt;= #{endDate,jdbcType=TIMESTAMP}
-                </if>
-                <if test="status != null and status != ''">
-                    and dp.status = #{status,jdbcType=VARCHAR}
-                </if>
-            </where>
+            <if test="patentName != null and patentName != ''">
+                and dp.patent_name like contact('%', #{patentName,jdbcType=VARCHAR}, '%')
+            </if>
+            <if test="patentNumber != null and patentNumber != ''">
+                and dp.patent_number = #{patentNumber,jdbcType=VARCHAR}
+            </if>
+            <if test="institute != null and institute != ''">
+                and dp.institute = #{institute,jdbcType=VARCHAR}
+            </if>
+            <if test="patentType != null and patentType != ''">
+                and dp.patent_type = #{patentType,jdbcType=VARCHAR}
+            </if>
+            <if test="startDate != null and endDate != null">
+                and dp.patent_authorization_date &gt;= #{startDate,jdbcType=TIMESTAMP}
+                and dp.patent_authorization_date &lt;= #{endDate,jdbcType=TIMESTAMP}
+            </if>
+            <if test="status != null and status != ''">
+                and dp.status = #{status,jdbcType=VARCHAR}
+            </if>
+        </where>
         )as res
         <if test="subject != null and subject != ''">
             where res.patent_subject = #{subject,jdbcType=VARCHAR}
@@ -593,41 +595,41 @@
     </select>
     <select id="selectNumWithStatisticCondition" resultType="int">
         select count(*) from (
-            select dp.*
-            <if test="subject != null and subject != ''">
-                ,b.major as patent_subject
+        select dp.*
+        <if test="subject != null and subject != ''">
+            ,b.major as patent_subject
+        </if>
+        from docmanager.doc_patent as dp
+        <if test="subject != null and subject != ''">
+            left join sys_user b on b.work_id = dp.first_author_work_id
+        </if>
+        <where>
+            <if test="firstAuthorWorkId != null and firstAuthorWorkId != ''">
+                dp.first_author_work_id = #{firstAuthorWorkId,jdbcType=VARCHAR}
             </if>
-            from docmanager.doc_patent as dp
-            <if test="subject != null and subject != ''">
-                left join sys_user b on b.work_id = dp.first_author_work_id
+            <if test="secondAuthorWorkId != null and secondAuthorWorkId != ''">
+                and dp.second_author_work_id = #{secondAuthorWorkId,jdbcType=VARCHAR}
             </if>
-            <where>
-                <if test="firstAuthorWorkId != null and firstAuthorWorkId != ''">
-                    dp.first_author_work_id = #{firstAuthorWorkId,jdbcType=VARCHAR}
-                </if>
-                <if test="secondAuthorWorkId != null and secondAuthorWorkId != ''">
-                    and dp.second_author_work_id = #{secondAuthorWorkId,jdbcType=VARCHAR}
-                </if>
-                <if test="patentName != null and patentName != ''">
-                    and dp.patent_name like contact('%', #{patentName,jdbcType=VARCHAR}, '%')
-                </if>
-                <if test="patentNumber != null and patentNumber != ''">
-                    and dp.patent_number = #{patentNumber,jdbcType=VARCHAR}
-                </if>
-                <if test="patentType != null and patentType != ''">
-                    and dp.patent_type = #{patentType,jdbcType=VARCHAR}
-                </if>
-                <if test="institute != null and institute != ''">
-                    and dp.institute = #{institute,jdbcType=VARCHAR}
-                </if>
-                <if test="startDate != null and endDate != null">
-                    and dp.patent_authorization_date &gt;= #{startDate,jdbcType=TIMESTAMP}
-                    and dp.patent_authorization_date &lt;= #{endDate,jdbcType=TIMESTAMP}
-                </if>
-                <if test="status != null and status != ''">
-                    and dp.status = #{status,jdbcType=VARCHAR}
-                </if>
-            </where>
+            <if test="patentName != null and patentName != ''">
+                and dp.patent_name like contact('%', #{patentName,jdbcType=VARCHAR}, '%')
+            </if>
+            <if test="patentNumber != null and patentNumber != ''">
+                and dp.patent_number = #{patentNumber,jdbcType=VARCHAR}
+            </if>
+            <if test="patentType != null and patentType != ''">
+                and dp.patent_type = #{patentType,jdbcType=VARCHAR}
+            </if>
+            <if test="institute != null and institute != ''">
+                and dp.institute = #{institute,jdbcType=VARCHAR}
+            </if>
+            <if test="startDate != null and endDate != null">
+                and dp.patent_authorization_date &gt;= #{startDate,jdbcType=TIMESTAMP}
+                and dp.patent_authorization_date &lt;= #{endDate,jdbcType=TIMESTAMP}
+            </if>
+            <if test="status != null and status != ''">
+                and dp.status = #{status,jdbcType=VARCHAR}
+            </if>
+        </where>
         )as res
         <if test="subject != null and subject != ''">
             where res.patent_subject = #{subject,jdbcType=VARCHAR}
@@ -722,4 +724,28 @@
         where patent_number=#{patentNumber,jdbcType=VARCHAR} and
         del_flag=#{delFlag,jdbcType=BOOLEAN}
     </select>
+
+    <!--zch添加-->
+    <select id="getAllPatent" resultType="java.lang.String">
+        select doc_patent.patent_number from doc_patent where `del_flag` = 0 and `status` = '4'
+    </select>
+
+    <delete id="deleteListByIds">
+        delete from doc_patent
+        <choose>
+            <when test="list != null and list.size() != 0">
+                <where>
+                    id in
+                    <foreach collection="list" open="(" close=")" item="item" separator=",">
+                        #{item.id}
+                    </foreach>
+                </where>
+            </when>
+            <otherwise>
+                <where>
+                    1 = 0
+                </where>
+            </otherwise>
+        </choose>
+    </delete>
 </mapper>

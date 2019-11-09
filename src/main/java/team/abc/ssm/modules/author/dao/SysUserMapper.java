@@ -30,4 +30,6 @@ public interface SysUserMapper {
     List<SysUser> selectListByPage(SysUser sysUser);
 
     List<SysUser> selectTheWholeUser();
+
+    List<SysUser> getAllUser();
 }
