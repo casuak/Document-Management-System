@@ -17,6 +17,7 @@ import team.abc.ssm.modules.author.service.AuthorService;
 import team.abc.ssm.modules.author.service.SysUserService;
 import team.abc.ssm.modules.doc.entity.StatisticCondition;
 import team.abc.ssm.modules.patent.dao.DocPatentMapper;
+import team.abc.ssm.modules.patent.dao.MapUserPatentMapper;
 import team.abc.ssm.modules.patent.entity.DocPatent;
 import team.abc.ssm.modules.patent.entity.MapUserPatent;
 import team.abc.ssm.modules.sys.dao.UserDao;
@@ -30,7 +31,7 @@ import static team.abc.ssm.common.web.PatentMatchType.*;
 
 @Service
 public class DocPatentService {
-    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+    private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
     @Resource
     private DocPatentMapper docPatentMapper;
@@ -52,6 +53,8 @@ public class DocPatentService {
     private UserDao userDao;
 
     private List<User> userList = new ArrayList<>();
+
+    private List<SysUser> allUsers = null;
 
     public int deleteByPrimaryKey(String id) {
         return docPatentMapper.deleteByPrimaryKey(id);
@@ -85,7 +88,7 @@ public class DocPatentService {
     /*-------------- auto maded --------------*/
 
     //专利统计详情页面的条件查询
-    public List<DocPatent> selectListByPageWithStatisticCondition(StatisticCondition statisticCondition){
+    public List<DocPatent> selectListByPageWithStatisticCondition(StatisticCondition statisticCondition) {
         return docPatentMapper.selectAllByPageWithStatisticCondition(statisticCondition);
     }
 
@@ -128,12 +131,23 @@ public class DocPatentService {
      * 统计发明人的所属学院，决策出最优的patent的学院(前提是第一作者不确定)
      **/
     public String getInstitute(String[] authorNames) {
+        if (allUsers == null || allUsers.size() == 0)
+            allUsers = sysUserMapper.getAllUser();
+
         Map<String, Integer> instituteMap = new HashMap<>();
         String theInstitute = null;
         int maxWeight = 0;
 
         for (String authorName : authorNames) {
-            List<SysUser> tmpSysUsers = sysUserMapper.selectAllByRealName(authorName);
+//            modified by zch
+//            List<SysUser> tmpSysUsers = sysUserMapper.selectAllByRealName(authorName);
+            List<SysUser> tmpSysUsers = new ArrayList<>();
+            for (SysUser u : allUsers) {
+                if (u.getRealName() == null)
+                    continue;
+                if (u.getRealName().equals(authorName))
+                    tmpSysUsers.add(u);
+            }
             if (tmpSysUsers == null || tmpSysUsers.size() == 0) {
                 //如果sys_user表中没有这个用户
                 continue;
@@ -171,15 +185,20 @@ public class DocPatentService {
 
         //0.获取所有status是-1(未初始化)的专利项目
         List<DocPatent> patentList = docPatentMapper.selectAllByStatus("-1");
+        List<String> allPatent = docPatentMapper.getAllPatent();
+        List<DocPatent> toDelete = new ArrayList<>();
+        List<DocPatent> toUpdate = new ArrayList<>();
 
         for (DocPatent tmpPatent : patentList) {
             rightPersonFlag = false;
 
             //0.看数据库中是有重复的专利
-            if (docPatentMapper.selectByPatentNumToCheckMuti(
-                    tmpPatent.getPatentNumber(), false) != 0) {
+//            if (docPatentMapper.selectByPatentNumToCheckMuti(
+//                    tmpPatent.getPatentNumber(), false) != 0)
+            if (!allPatent.isEmpty() && allPatent.contains(tmpPatent.getPatentNumber())) {
                 //重复的直接删除
-                docPatentMapper.deleteByPrimaryKey(tmpPatent.getId());
+                //docPatentMapper.deleteByPrimaryKey(tmpPatent.getId());
+                toDelete.add(tmpPatent);
                 continue;
             }
 
@@ -199,7 +218,8 @@ public class DocPatentService {
                 tmpPatent.setStatus(PatentMatchType.FILTRATED.toString());
                 tmpPatent.setModifyUserId(userNow.getId());
                 tmpPatent.setModifyDate(dateNow);
-                docPatentMapper.updateByPrimaryKeySelective(tmpPatent);
+                //docPatentMapper.updateByPrimaryKeySelective(tmpPatent);
+                toUpdate.add(tmpPatent);
                 continue;
             }
             if (tmpPatent.getAuthorList() == null) {
@@ -207,7 +227,8 @@ public class DocPatentService {
                 tmpPatent.setStatus(PatentMatchType.AUTHOR_MISSED.toString());
                 tmpPatent.setModifyUserId(userNow.getId());
                 tmpPatent.setModifyDate(dateNow);
-                docPatentMapper.updateByPrimaryKeySelective(tmpPatent);
+                //docPatentMapper.updateByPrimaryKeySelective(tmpPatent);
+                toUpdate.add(tmpPatent);
             } else {
                 //3.2authorList不为空
                 String[] authorArray = tmpPatent.getAuthorList().split("[, ;]");
@@ -230,8 +251,15 @@ public class DocPatentService {
                 tmpPatent.setModifyDate(dateNow);
                 tmpPatent.setModifyUserId(userNow.getId());
                 //8.mapper层更新
-                docPatentMapper.updateByPrimaryKeySelective(tmpPatent);
+                //docPatentMapper.updateByPrimaryKeySelective(tmpPatent);
+                toUpdate.add(tmpPatent);
             }
+        }
+        if (!toDelete.isEmpty()) {
+            docPatentMapper.deleteListByIds(toDelete);
+        }
+        if (!toUpdate.isEmpty()) {
+            docPatentMapper.updateDocPatentBatch(toUpdate);
         }
     }
 
@@ -240,6 +268,9 @@ public class DocPatentService {
      * 第一作者唯一的处理：
      **/
     public DocPatent firstAuthorUnique(DocPatent docPatent) {
+        if (allUsers == null || allUsers.size() == 0)
+            allUsers = sysUserMapper.getAllUser();
+
         //2.2 此时唯一确定第一作者
         docPatent.setFirstAuthor(docPatent.getFirstAuthorList().get(0));
         docPatent.setFirstAuthorId(docPatent.getFirstAuthor().getId());
@@ -258,9 +289,19 @@ public class DocPatentService {
             //2.2.2 有第二作者
             if ("teacher".equals(docPatent.getFirstAuthor().getUserType())) {
                 //2.2.2.1 第一作者是导师(唯一)
-                docPatent.setSecondAuthorList(sysUserMapper.selectByRealNameAndUserType(
-                        docPatent.getSecondAuthorName(),
-                        "student"));
+//                modified by zch
+//                docPatent.setSecondAuthorList(sysUserMapper.selectByRealNameAndUserType(
+//                        docPatent.getSecondAuthorName(),
+//                        "student"));
+                List<SysUser> secondAuthorList = new ArrayList<>();
+                for (SysUser u : allUsers) {
+                    if (u.getRealName() == null || u.getUserType() == null)
+                        continue;
+                    if (u.getRealName().equals(docPatent.getSecondAuthorName())
+                            && u.getUserType().equals("student"))
+                        secondAuthorList.add(u);
+                }
+                docPatent.setSecondAuthorList(secondAuthorList);
                 if (docPatent.getSecondAuthorList() == null || docPatent.getSecondAuthorList().size() == 0) {
                     //2.2.2.1.1 第二作者无匹配
                     docPatent.setStatuses(
@@ -382,7 +423,17 @@ public class DocPatentService {
                             FirstAuMatchType.MATCH_SUCCESS,
                             SecondAuMatchType.JUDGE_NEEDED);
                 } else {
-                    SysUser theTutor = sysUserMapper.selectByWorkId(docPatent.getFirstAuthor().getTutorWorkId());
+//                    modified by zch
+//                    SysUser theTutor = sysUserMapper.selectByWorkId(docPatent.getFirstAuthor().getTutorWorkId());
+                    SysUser theTutor = null;
+                    for (SysUser u : allUsers) {
+                        if (u.getWorkId() == null)
+                            continue;
+                        if (u.getWorkId().equals(docPatent.getFirstAuthor().getTutorWorkId())) {
+                            theTutor = u;
+                            break;
+                        }
+                    }
                     /*String[] authorArray = docPatent.getAuthorList().split("[, ;]");
                     if (theTutor != null) {
                         for (int i = 1; i < authorArray.length; i++) {
@@ -446,11 +497,23 @@ public class DocPatentService {
      **/
     @Transactional(rollbackFor = Exception.class)
     public String authorMatch(DocPatent docPatent) {
+        if (allUsers == null || allUsers.size() == 0)
+            allUsers = sysUserMapper.getAllUser();
+
         User userNow = UserUtils.getCurrentUser();
         Date dateNow = new Date();
         String tmpInstitute;
 
-        docPatent.setFirstAuthorList(sysUserMapper.selectByRealName(docPatent.getFirstAuthorName()));
+//        modified by zch
+//        docPatent.setFirstAuthorList(sysUserMapper.selectByRealName(docPatent.getFirstAuthorName()));
+        List<SysUser> firstAuthorList = new ArrayList<>();
+        for (SysUser u : allUsers) {
+            if (u.getRealName() == null)
+                continue;
+            if (u.getRealName().equals(docPatent.getFirstAuthorName()))
+                firstAuthorList.add(u);
+        }
+        docPatent.setFirstAuthorList(firstAuthorList);
 
         if (docPatent.getFirstAuthorList() == null || docPatent.getFirstAuthorList().size() == 0) {
             //2.1
@@ -463,8 +526,18 @@ public class DocPatentService {
             } else {
                 //2.3 第一作者有多个,利用学院来判定
                 tmpInstitute = getInstitute(docPatent.getAuthorList().split("[, ;]"));
-                docPatent.setFirstAuthorList(sysUserMapper.selectByRealNameAndSchool(
-                        docPatent.getFirstAuthorName(), tmpInstitute));
+//                modified by zch
+//                docPatent.setFirstAuthorList(sysUserMapper.selectByRealNameAndSchool(
+//                        docPatent.getFirstAuthorName(), tmpInstitute));
+                firstAuthorList.clear();
+                for (SysUser u : allUsers) {
+                    if (u.getRealName() == null || u.getSchool() == null)
+                        continue;
+                    if (u.getRealName().equals(docPatent.getFirstAuthorName())
+                            && u.getSchool().equals(tmpInstitute))
+                        firstAuthorList.add(u);
+                }
+                docPatent.setFirstAuthorList(firstAuthorList);
 
                 if (docPatent.getFirstAuthorList().size() == 0) {
                     //利用学院的信息筛选之后的第一作者数量是0
@@ -557,7 +630,17 @@ public class DocPatentService {
                                 int correctTutorNameCount = 0;
                                 for (SysUser tmpStudent : studentList) {
                                     if (tmpStudent.getTutorWorkId() != null && !"".equals(tmpStudent.getTutorWorkId())) {
-                                        SysUser tmpTutor = sysUserMapper.selectByWorkId(tmpStudent.getTutorWorkId());
+//                                        modified by zch
+//                                        SysUser tmpTutor = sysUserMapper.selectByWorkId(tmpStudent.getTutorWorkId());
+                                        SysUser tmpTutor = null;
+                                        for (SysUser u : allUsers) {
+                                            if (u.getWorkId() == null)
+                                                continue;
+                                            if (u.getWorkId().equals(tmpStudent.getTutorWorkId())) {
+                                                tmpTutor = u;
+                                                break;
+                                            }
+                                        }
                                         if (tmpTutor != null) {
                                             if (tmpTutor.getRealName().equals(docPatent.getFirstAuthorName())) {
                                                 correctTutorNameCount++;
@@ -586,8 +669,20 @@ public class DocPatentService {
                                     /*------ 7.17 new add start------*/
                                     docPatent.setSecondAuthorWorkId(resStudentList.get(0).getWorkId());
                                     /*------ 7.17 new add finish------*/
-                                    docPatent.setFirstAuthor(sysUserMapper.selectByWorkId(
-                                            resStudentList.get(0).getTutorWorkId()));
+//                                    modified by zch
+//                                    docPatent.setFirstAuthor(sysUserMapper.selectByWorkId(
+//                                            resStudentList.get(0).getTutorWorkId()));
+                                    SysUser firstAuthor = null;
+                                    for (SysUser u : allUsers) {
+                                        if (u.getWorkId() == null)
+                                            continue;
+                                        if (u.getWorkId().equals(resStudentList.get(0).getTutorWorkId())) {
+                                            firstAuthor = u;
+                                            break;
+                                        }
+                                    }
+                                    docPatent.setFirstAuthor(firstAuthor);
+
                                     docPatent.setFirstAuthorId(docPatent.getFirstAuthor().getId());
                                     docPatent.setFirstAuthorType(docPatent.getFirstAuthor().getUserType());
 
@@ -612,7 +707,18 @@ public class DocPatentService {
                                 }
                                 List<SysUser> tmpStudentList = new ArrayList<>();
                                 tmpStudentList.add(tmpStudent);
-                                SysUser tmpTeacher = sysUserMapper.selectByWorkId(tmpStudent.getTutorWorkId());
+//                                modified by zch
+//                                SysUser tmpTeacher = sysUserMapper.selectByWorkId(tmpStudent.getTutorWorkId());
+                                SysUser tmpTeacher = null;
+                                for (SysUser u : allUsers) {
+                                    if (u.getWorkId() == null)
+                                        continue;
+                                    if (u.getWorkId().equals(tmpStudent.getTutorWorkId())) {
+                                        tmpTeacher = u;
+                                        break;
+                                    }
+                                }
+
                                 if (tmpTeacher == null) {
                                     continue;
                                 }
@@ -890,15 +996,15 @@ public class DocPatentService {
         return docPatentMapper.selectMyPatentNum(myWorkId);
     }
 
-    public Map<String,Integer> doPatentStatistics(StatisticCondition statisticCondition){
+    public Map<String, Integer> doPatentStatistics(StatisticCondition statisticCondition) {
         //0.专利的已完成状态是4
         statisticCondition.setStatus("4");
 
         if (userList.size() == 0)
             userList = userDao.selectAll();
         int totalNum;
-        int studentPatentNum = 0,teacherPatentNum = 0,doctorPatentNum = 0;
-        Map<String,Integer> statisticsResMap = new HashMap<>();
+        int studentPatentNum = 0, teacherPatentNum = 0, doctorPatentNum = 0;
+        Map<String, Integer> statisticsResMap = new HashMap<>();
 
         List<DocPatent> patentList = docPatentMapper.getStatisticNumOfPatent(statisticCondition);
         totalNum = patentList.size();
@@ -928,21 +1034,23 @@ public class DocPatentService {
                 doctorPatentNum++;
             }
 
-            if("student".equals(tmpPatent.getFirstAuthorType())&&tmpPatent.getSecondAuthorType() == null){
+            if ("student".equals(tmpPatent.getFirstAuthorType()) && tmpPatent.getSecondAuthorType() == null) {
                 teacherPatentNum++;
             }
-            if("student".equals(tmpPatent.getFirstAuthorType())&&"student".equals(tmpPatent.getSecondAuthorType())){
+            if ("student".equals(tmpPatent.getFirstAuthorType()) && "student".equals(tmpPatent.getSecondAuthorType())) {
                 teacherPatentNum++;
             }
         }
-        statisticsResMap.put("studentPatent",studentPatentNum);
-        statisticsResMap.put("teacherPatent",teacherPatentNum);
-        statisticsResMap.put("doctorPatent",doctorPatentNum);
-        statisticsResMap.put("totalPatent",totalNum);
+        statisticsResMap.put("studentPatent", studentPatentNum);
+        statisticsResMap.put("teacherPatent", teacherPatentNum);
+        statisticsResMap.put("doctorPatent", doctorPatentNum);
+        statisticsResMap.put("totalPatent", totalNum);
         return statisticsResMap;
     }
 
-    /** 获取所有专利类型 */
+    /**
+     * 获取所有专利类型
+     */
     public List<String> getAllPatentType() {
         return docPatentMapper.selectAllPatentType();
     }

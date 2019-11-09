@@ -114,4 +114,8 @@ public interface DocPatentMapper {
     int selectNumWithStatisticCondition(StatisticCondition statisticCondition);
 
     int updateDocPatentBatch(List<DocPatent> patentsForUpdate);
+
+    List<String> getAllPatent();
+
+    int deleteListByIds(List<DocPatent> list);
 }
