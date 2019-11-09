@@ -687,9 +687,7 @@ public class AuthorService {
         return 0;
     }
 
-    public void deleteStaUserById(List<User> users){
-        userDao.deleteByIds(users);
-    }
+
 
     private User getUser(String workId){
         for(int i=0; i<userList.size();i++){

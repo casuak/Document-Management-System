@@ -1513,9 +1513,11 @@
                     }
                     app.table.majorTable.params.searchKey=col+" "+oorder;
 
+
                 }
                 console.log( app.table.majorTable.params.searchKey);
                 majorSearch();
+
             },
             schoolSortChange:function(o){
                 let column=o["column"];
@@ -1733,9 +1735,9 @@
     function  searchSchoolClick() {
         app.table.schoolTable.params = {
             pageIndex: 1,
-            pageSize: app.table.authorTable.params.pageSize,
+            pageSize: app.table.schoolTable.params.pageSize,
             pageSizes: [5, 10, 20, 40],
-            searchKey: app.optionView.school.school,
+            searchKey: app.table.schoolTable.params.searchKey,
             total: 100,
         };
         console.log(app.table.schoolTable.params);
@@ -1744,9 +1746,9 @@
     function searchMajorClick() {
         app.table.majorTable.params = {
             pageIndex: 1,
-            pageSize: app.table.authorTable.params.pageSize,
+            pageSize: app.table.majorTable.params.pageSize,
             pageSizes: [5, 10, 20, 40],
-            searchKey: app.optionView.major.major,
+            searchKey:  app.table.majorTable.params.searchKey,
             total: 100,
         };
         majorSearch();
