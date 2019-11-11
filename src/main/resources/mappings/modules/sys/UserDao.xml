@@ -221,7 +221,12 @@
                               school,
                               major,
                               work_id,
-                              status)
+                              status,
+                              student_degree_type,
+                              student_train_level,
+                              tutor_name,
+                              tutor_nicknames,
+                              tutor_work_id)
         values (#{username},
                 #{password},
                 #{id},
@@ -239,7 +244,12 @@
                 #{school},
                 #{major},
                 #{username},
-                '0')
+                '0',
+                #{studentDegreeType},
+                #{studentTrainLevel},
+                #{tutorName},
+                #{tutorNicknames},
+                #{tutorWorkId})
     </insert>
 
     <!-- 更新指定id用户的信息 -->

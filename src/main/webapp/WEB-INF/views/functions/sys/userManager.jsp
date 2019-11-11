@@ -129,19 +129,46 @@
                                :label="major" :value="major"></el-option>
                 </el-select>
             </el-form-item>
-            <el-form-item label="硕士生导师" prop="isMaster">
+            <el-form-item label="硕导" prop="isMaster" v-if="dialog.insertOrUpdate.formData.userType == 'teacher'">
                 <el-switch v-model="dialog.insertOrUpdate.formData.isMaster"
                            active-color="#13ce66" inactive-color="#ff4949"
                            active-value="1" inactive-value="0"
                            :disabled="dialog.insertOrUpdate.formData.userType !== 'teacher'">
                 </el-switch>
             </el-form-item>
-            <el-form-item label="博士生导师" prop="isDoctor">
+            <el-form-item label="博导" prop="isDoctor" v-if="dialog.insertOrUpdate.formData.userType == 'teacher'">
                 <el-switch v-model="dialog.insertOrUpdate.formData.isDoctor"
                            active-color="#13ce66" inactive-color="#ff4949"
                            active-value="1" inactive-value="0"
                            :disabled="dialog.insertOrUpdate.formData.userType !== 'teacher'">
                 </el-switch>
+            </el-form-item>
+            <el-form-item label="培养层次" prop="studentTrainLevel" v-if="dialog.insertOrUpdate.formData.userType == 'student'">
+                <el-switch v-model="dialog.insertOrUpdate.formData.studentTrainLevel"
+                           active-text="硕士" inactive-text="博士"
+                           active-value="硕士" inactive-value="博士"
+                           :disabled="dialog.insertOrUpdate.formData.userType !== 'student'">
+                </el-switch>
+            </el-form-item>
+            <el-form-item label="学位类型" prop="studentDegreeType" v-if="dialog.insertOrUpdate.formData.userType == 'student'">
+                <el-switch v-model="dialog.insertOrUpdate.formData.studentDegreeType"
+                           active-text="专业学位" inactive-text="学术型"
+                           active-value="专业学位" inactive-value="学术型"
+                           :disabled="dialog.insertOrUpdate.formData.userType !== 'student'">
+                </el-switch>
+            </el-form-item>
+            <el-form-item label="导师姓名" prop="tutorName"
+                          v-if="dialog.insertOrUpdate.formData.userType == 'student'"
+                          :required="app.dialog.insertOrUpdate.status === 'insert'">
+                <el-input v-model="dialog.insertOrUpdate.formData.tutorName"></el-input>
+            </el-form-item>
+            <el-form-item label="导师工号" prop="tutorWorkId"
+                          v-if="dialog.insertOrUpdate.formData.userType == 'student'"
+                          :required="app.dialog.insertOrUpdate.status === 'insert'">
+                <el-input v-model="dialog.insertOrUpdate.formData.tutorWorkId"></el-input>
+            </el-form-item>
+            <el-form-item label="导师别名" prop="tutorNicknames" v-if="dialog.insertOrUpdate.formData.userType == 'student'">
+                <el-input v-model="dialog.insertOrUpdate.formData.tutorNicknames"></el-input>
             </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">

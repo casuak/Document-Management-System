@@ -40,7 +40,12 @@ let app = new Vue({
                     isMaster: '',
                     isDoctor: '',
                     school: '',
-                    major: ''
+                    major: '',
+                    studentTrainLevel: '',
+                    studentDegreeType: '',
+                    tutorWorkId: '',
+                    tutorName: '',
+                    tutorNicknames: ''
                 },
                 rules: {
                     username: [
@@ -119,7 +124,7 @@ let app = new Vue({
                 app.table.loading = false;
                 app.table.data = d.data.resultList;
                 app.table.params.total = d.data.total;
-            },function () {
+            }, function () {
                 app.table.loading = false;
                 window.parent.app.showMessage('查找失败！', 'error');
             });
@@ -211,6 +216,10 @@ let app = new Vue({
         insertOrUpdate: function () {
             this.$refs['form_insertOrUpdate'].validate((valid) => {
                 if (valid) {
+                    // this.dialog.insertOrUpdate.formData.tutorName = this.dialog.insertOrUpdate.tutor.realName;
+                    // this.dialog.insertOrUpdate.formData.tutorNicknames = this.dialog.insertOrUpdate.tutor.nicknames;
+                    // this.dialog.insertOrUpdate.formData.tutorWorkId = this.dialog.insertOrUpdate.tutor.workId;
+
                     let data = this.dialog.insertOrUpdate.formData;
                     let app = this;
                     let url = app.dialog.insertOrUpdate.status === 'insert' ? app.urls.putUser : app.urls.updateUser;
@@ -270,7 +279,7 @@ let app = new Vue({
             }
             return cn;
         },
-        resetDialog:function () {
+        resetDialog: function () {
             this.dialog.insertOrUpdate.formData.id = '';
             this.dialog.insertOrUpdate.formData.username = '';
             this.dialog.insertOrUpdate.formData.password = '';
@@ -281,6 +290,11 @@ let app = new Vue({
             this.dialog.insertOrUpdate.formData.isDoctor = '';
             this.dialog.insertOrUpdate.formData.school = '';
             this.dialog.insertOrUpdate.formData.major = '';
+            this.dialog.insertOrUpdate.formData.studentDegreeType = '';
+            this.dialog.insertOrUpdate.formData.studentTrainLevel = '';
+            this.dialog.insertOrUpdate.formData.tutorWorkId = '';
+            this.dialog.insertOrUpdate.formData.tutorNicknames = '';
+            this.dialog.insertOrUpdate.formData.tutorName = '';
         }
     },
     mounted: function () {

@@ -85,11 +85,12 @@ public class UserService {
         List<User> teacherInitList = new ArrayList<>();
         setUsersNicknamesAndTutorNicknames(updateList);
 
-        for(User user :updateList){
-            if(user.getUserType().equals("teacher"))
+        for (User user : updateList) {
+            if (user.getUserType().equals("teacher"))
                 teacherInitList.add(user);
         }
-        userDao.insertIntoStatistics(teacherInitList);
+        if (teacherInitList.size() > 0)
+            userDao.insertIntoStatistics(teacherInitList);
         for (User user : updateList) {
             user.setStatus("1");
         }
@@ -125,17 +126,20 @@ public class UserService {
             if (repeat) {
                 upList.add(teacher.getWorkId());
                 deleteList.add(teacher);
-            }
-            else {
+            } else {
                 saveList.add(teacher);
             }
         }
 
-        userDao.deleteByIds(deleteList);
-        userDao.deleteStaByIds(deleteList);
+        if(deleteList.size()>0){
+            userDao.deleteByIds(deleteList);
+            userDao.deleteStaByIds(deleteList);
+        }
 
-        userDao.updateDoct(upList);
-        userDao.updateDoctSta(upList);
+        if(upList.size()>0){
+            userDao.updateDoct(upList);
+            userDao.updateDoctSta(upList);
+        }
     }
 
     /**
