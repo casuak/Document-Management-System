@@ -12,6 +12,8 @@ public interface ExcelTemplateDao {
 
     List<ExcelTemplate> selectListByPage(ExcelTemplate excelTemplate);
 
+    List<ExcelTemplate> selectListByIds(List<ExcelTemplate> excelTemplateList);
+
     int selectSearchCount(ExcelTemplate excelTemplate);
 
     int deleteListByIds(List<ExcelTemplate> excelTemplateList);

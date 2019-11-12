@@ -122,6 +122,11 @@ public class ExcelTemplateService {
     }
 
     public boolean deleteListByIds(List<ExcelTemplate> excelTemplateList) {
+        List<ExcelTemplate> deleteList = excelTemplateDao.selectListByIds(excelTemplateList);
+        for (ExcelTemplate template : deleteList){
+            String filePath = SystemPath.getRootPath() + SystemPath.getExcelTemplatePath() + template.getExcelName();
+            FileUtils.deleteQuietly(new File(filePath));
+        }
         excelTemplateDao.deleteListByIds(excelTemplateList);
         return true;
     }
