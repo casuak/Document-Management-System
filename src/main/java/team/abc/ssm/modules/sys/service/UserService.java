@@ -85,6 +85,26 @@ public class UserService {
         List<User> teacherInitList = new ArrayList<>();
         setUsersNicknamesAndTutorNicknames(updateList);
 
+        /* zch add "batch update" begin*/
+        if (updateList == null || updateList.size() == 0)
+            return;//没有需要修改的直接返回，加快速度
+        List<User> existList = userDao.selectByStatus("1");
+        List<String> newUserNames = new ArrayList<>();
+        List<User> toDelete = new ArrayList<>();
+        for (User u : updateList) {
+            newUserNames.add(u.getUsername());
+        }
+        for (User u : existList) {
+            if (newUserNames.contains(u.getUsername())) {
+                toDelete.add(u);
+            }
+        }
+        if (toDelete.size() > 0) {
+            userDao.deleteByIds(toDelete);
+            System.out.println("###################delete " + toDelete.size() + " entries");
+        }
+        /* zch add "batch update" end*/
+
         for (User user : updateList) {
             if (user.getUserType().equals("teacher"))
                 teacherInitList.add(user);
@@ -131,12 +151,12 @@ public class UserService {
             }
         }
 
-        if(deleteList.size()>0){
+        if (deleteList.size() > 0) {
             userDao.deleteByIds(deleteList);
             userDao.deleteStaByIds(deleteList);
         }
 
-        if(upList.size()>0){
+        if (upList.size() > 0) {
             userDao.updateDoct(upList);
             userDao.updateDoctSta(upList);
         }

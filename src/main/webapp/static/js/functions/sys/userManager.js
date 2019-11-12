@@ -263,8 +263,12 @@ let app = new Vue({
             let app = this;
             window.parent.app.showConfirm(() => {
                 app.fullScreenLoading = true;
-                ajaxPost(app.urls.initUser, null, function (d) {
+                ajaxPost(app.urls.initUser, null, function () {
                     app.fullScreenLoading = false;
+                    window.parent.app.showMessage('初始化成功！', 'success');
+                }, function (d) {
+                    app.fullScreenLoading = false;
+                    window.parent.app.showMessage('操作失败，请重试\n' + d.message, 'error');
                 })
             });
         },

@@ -129,14 +129,14 @@
                                :label="major" :value="major"></el-option>
                 </el-select>
             </el-form-item>
-            <el-form-item label="硕导" prop="isMaster" v-if="dialog.insertOrUpdate.formData.userType == 'teacher'">
+            <el-form-item label="硕导资格" prop="isMaster" v-if="dialog.insertOrUpdate.formData.userType == 'teacher'">
                 <el-switch v-model="dialog.insertOrUpdate.formData.isMaster"
                            active-color="#13ce66" inactive-color="#ff4949"
                            active-value="1" inactive-value="0"
                            :disabled="dialog.insertOrUpdate.formData.userType !== 'teacher'">
                 </el-switch>
             </el-form-item>
-            <el-form-item label="博导" prop="isDoctor" v-if="dialog.insertOrUpdate.formData.userType == 'teacher'">
+            <el-form-item label="博导资格" prop="isDoctor" v-if="dialog.insertOrUpdate.formData.userType == 'teacher'">
                 <el-switch v-model="dialog.insertOrUpdate.formData.isDoctor"
                            active-color="#13ce66" inactive-color="#ff4949"
                            active-value="1" inactive-value="0"
