@@ -65,6 +65,14 @@
         limit #{page.pageStart}, #{page.pageSize}
     </select>
 
+    <select id="selectListByIds" parameterType="ExcelTemplate" resultMap="excelTemplateBean">
+        select a.* from excel_template a
+        where id in
+        <foreach collection="list" item="item" open="(" separator="," close=")">
+            #{item.id}
+        </foreach>
+    </select>
+
     <select id="selectSearchCount" parameterType="ExcelTemplate" resultType="int">
         select
         count(*)

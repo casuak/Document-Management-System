@@ -153,12 +153,12 @@ public class UserService {
 
         if (deleteList.size() > 0) {
             userDao.deleteByIds(deleteList);
-            userDao.deleteStaByIds(deleteList);
+            //userDao.deleteStaByIds(deleteList);
         }
 
         if (upList.size() > 0) {
             userDao.updateDoct(upList);
-            userDao.updateDoctSta(upList);
+            //userDao.updateDoctSta(upList);
         }
     }
 

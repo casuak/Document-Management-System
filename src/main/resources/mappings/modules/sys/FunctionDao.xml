@@ -91,12 +91,19 @@
     </delete>
 
     <update id="updateIndex" parameterType="team.abc.ssm.modules.sys.entity.Function">
-        update sys_function set `index` =
-        case id
-        <foreach collection="list" item="item">
-            when #{item.id} then #{item.index}
-        </foreach>
-        end
+        update sys_function
+        <trim prefix="set" suffixOverrides=",">
+            <trim prefix="`index` = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    when id = #{item.id} then #{item.index}
+                </foreach>
+            </trim>
+            <trim prefix="parent_id = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    when id = #{item.id} then #{item.parentId}
+                </foreach>
+            </trim>
+        </trim>
         where id in
         <foreach collection="list" item="item" open="(" separator="," close=")">
             #{item.id}
