@@ -243,6 +243,9 @@ public class DocPaperApi extends BaseApi {
             cell.setCellStyle(style);
             //第一作者中文名
             cell = row.createCell(cellNum++);
+            cell.setCellValue(paperList.get(i).getFirstAuthorName());
+            cell.setCellStyle(style);
+            cell = row.createCell(cellNum++);
             cell.setCellValue(paperList.get(i).getFirstAuthorCname());
             cell.setCellStyle(style);
             //第11列：第一作者工号
@@ -254,6 +257,9 @@ public class DocPaperApi extends BaseApi {
             cell.setCellValue(paperList.get(i).getFirstAuthorType());
             cell.setCellStyle(style);
             //第二作者中文名
+            cell = row.createCell(cellNum++);
+            cell.setCellValue(paperList.get(i).getSecondAuthorName());
+            cell.setCellStyle(style);
             cell = row.createCell(cellNum++);
             cell.setCellValue(paperList.get(i).getSecondAuthorCname());
             cell.setCellStyle(style);

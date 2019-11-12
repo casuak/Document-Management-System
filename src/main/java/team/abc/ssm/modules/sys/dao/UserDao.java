@@ -1,6 +1,7 @@
 package team.abc.ssm.modules.sys.dao;
 
 import org.apache.ibatis.annotations.Select;
+import team.abc.ssm.modules.author.entity.AuthorStatistics;
 import team.abc.ssm.modules.author.entity.SysUser;
 import team.abc.ssm.modules.sys.entity.User;
 
@@ -26,7 +27,7 @@ public interface UserDao {
 
     // 分页 + 搜索(模糊匹配用户名)获取用户列表（无角色信息）
     List<User> selectByPage(User user);
-
+    List<User> selectByAuthorStatistics(AuthorStatistics authorStatistics);
     // 复杂搜索（包含分页）获取用户id列表(用于论文用户匹配)
     List<User> selectListByPage2(User user);
     // 复杂搜索（不包含分页）的结果总条数

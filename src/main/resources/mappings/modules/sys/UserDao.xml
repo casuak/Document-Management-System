@@ -118,6 +118,32 @@
         limit #{page.pageStart}, #{page.pageSize}
     </select>
 
+    <select id="selectByAuthorStatistics" parameterType="team.abc.ssm.modules.sys.entity.User" resultMap="userBean">
+        select * from sys_user
+        <where>
+            <if test="workId !=null and workId != ''">
+                and `work_id`=#{workId}
+            </if>
+            <if test="realName !=null and realName != ''">
+                and `realName`=#{realName}
+            </if>
+            <if test="school !=null and school != ''">
+                and `school`=#{school}
+            </if>
+            <if test="major !=null and major != ''">
+                and `major`=#{major}
+            </if>
+            <if test="isMaster !=null and isMaster != ''">
+                and `isMaster`=#{isMaster}
+            </if>
+            <if test="isDoctor !=null and isDoctor != ''">
+                and `isDoctor`=#{isDoctor}
+            </if>
+            <if test="1 == 1">
+                and `user_type`="teacher"
+            </if>
+        </where>
+    </select>
     <!-- 可选条件：分页、别名模糊搜索、用户类型筛选 -->
     <select id="selectListByPage2" parameterType="user" resultMap="userBean">
         select

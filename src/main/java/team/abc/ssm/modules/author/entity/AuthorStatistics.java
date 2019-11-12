@@ -3,6 +3,7 @@ package team.abc.ssm.modules.author.entity;
 import java.util.List;
 import lombok.Data;
 import team.abc.ssm.common.persistence.DataEntity;
+import team.abc.ssm.modules.sys.entity.User;
 
 import java.beans.IntrospectionException;
 
@@ -60,4 +61,52 @@ public class AuthorStatistics extends DataEntity<AuthorStatistics> {
     Integer totalNum; //符合条件人的数量
     Integer startYear;//查询起始时间
     Integer endYear;//查询结束时间
+
+    public AuthorStatistics(User user){
+        this.setRealName(user.getRealName());
+        this.setWorkId(user.getWorkId());
+        this.setMajor(user.getMajor());
+        this.setSchool(user.getSchool());
+        this.setType(user.getTutorType());
+        this.setIsDoctor(user.getIsDoctor());
+        this.setIsMaster(user.getIsDoctor());
+
+        this.setTutorQ1(0);
+        this.setTutorQ2(0);
+        this.setTutorQ3(0);
+        this.setTutorQ4(0);
+        this.setTutorOther(0);
+        this.setTutorPaperSum(0);
+        this.setTutorAverage(0);
+
+        this.setStuQ1(0);
+        this.setStuQ2(0);
+        this.setStuQ3(0);
+        this.setStuQ4(0);
+        this.setStuOther(0);
+        this.setStuAverage(0);
+        this.setStuPaperSum(0);
+
+        this.setStuPatent(0);
+        this.setStuPatentAverage(0);
+        this.setTutorPatent(0);
+        this.setTutorPatentAverage(0);
+
+        this.setFundSum(0);
+        this.setNationInstrument(0);
+        this.setNationFocus(0);
+        this.setNationResearch(0);
+        this.setNsfcQNXM(0);
+        this.setNsfcMSXM(0);
+        this.setNsfcZDIANXM(0);
+        this.setNsfcZDAXM(0);
+        this.setNsfcKXZX(0);
+        this.setNsfcZDYF(0);
+        this.setNssfcZDIANXM(0);
+        this.setNssfcQNXM(0);
+        this.setNssfcZDAXM(0);
+        this.setNssfcYBXM(0);
+    }
+
+    public  AuthorStatistics(){}
 }
