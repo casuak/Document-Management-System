@@ -41,7 +41,11 @@ public class UserApi extends BaseApi {
     @RequestMapping(value = "put", method = RequestMethod.POST)
     @ResponseBody
     public Object put(@RequestBody User user) {
-        return userService.addUser(user) ? retMsg.Set(MsgType.SUCCESS) : retMsg.Set(MsgType.ERROR);
+        if(userService.addUser(user)){
+            userService.initUser();
+            return retMsg.Set(MsgType.SUCCESS);
+        }
+        return retMsg.Set(MsgType.ERROR);
     }
 
     @RequestMapping(value = "deleteList", method = RequestMethod.POST)

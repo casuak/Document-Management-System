@@ -205,12 +205,16 @@ let app = new Vue({
         openInsert: function () {
             this.dialog.insertOrUpdate.visible = true;
             this.dialog.insertOrUpdate.status = 'insert';
+            this.resetDialog();
         },
         // 打开编辑用户窗口
         openUpdate: function (user) {
             this.dialog.insertOrUpdate.visible = true;
             this.dialog.insertOrUpdate.status = 'update';
             this.dialog.insertOrUpdate.formData = copy(user);
+            this.dialog.insertOrUpdate.formData.isDoctor = user.isDoctor.toString();
+            this.dialog.insertOrUpdate.formData.isMaster = user.isMaster.toString();
+            console.log(this.dialog.insertOrUpdate.formData.isMaster);
         },
         // 添加或编辑用户信息
         insertOrUpdate: function () {
