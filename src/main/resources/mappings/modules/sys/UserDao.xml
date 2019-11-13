@@ -125,7 +125,7 @@
                 and `work_id`=#{workId}
             </if>
             <if test="realName !=null and realName != ''">
-                and `realName`=#{realName}
+                and `real_name`=#{realName}
             </if>
             <if test="school !=null and school != ''">
                 and `school`=#{school}
@@ -133,11 +133,11 @@
             <if test="major !=null and major != ''">
                 and `major`=#{major}
             </if>
-            <if test="isMaster !=null and isMaster != ''">
-                and `isMaster`=#{isMaster}
+            <if test="type == '硕士生导师'">
+                and `is_master`=1
             </if>
-            <if test="isDoctor !=null and isDoctor != ''">
-                and `isDoctor`=#{isDoctor}
+            <if test="type == '博士生导师'">
+                and `is_doctor`=1
             </if>
             <if test="1 == 1">
                 and `user_type`="teacher"

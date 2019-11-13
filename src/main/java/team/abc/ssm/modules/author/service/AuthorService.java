@@ -468,8 +468,8 @@ public class AuthorService {
                 tmpUser = getUser(patent.getFirstAuthorWorkId());
                 workId = tmpUser != null ? tmpUser.getTutorWorkId() : "";
                 if(!workId.equals("")){
-                    resultSql+=preTutorSql+workId+"\" and `year` ="+year;
-                    resultSql+=preStuSql+workId+"\"and `year` ="+year;
+                    resultSql+=preTutorSql+workId+"\" and `year` ="+year+";";
+                    resultSql+=preStuSql+workId+"\"and `year` ="+year+";";
                     insertSql += getInsertTutorSql(tmpUser,year);
                 }
             }else if(patent.getFirstAuthorType()!= null && patent.getSecondAuthorType()!=null&&patent.getFirstAuthorType().equals("teacher")&& patent.getSecondAuthorType().equals("student")){
@@ -479,22 +479,22 @@ public class AuthorService {
                 if(!workId.equals("")) {
                     if (workId.equals(patent.getFirstAuthorWorkId())) {
                         //学生在老师名下
-                        resultSql+=preTutorSql+patent.getFirstAuthorWorkId()+"\"and `year` ="+year;
-                        resultSql+=preStuSql+patent.getFirstAuthorWorkId()+"\"and `year` ="+year;
+                        resultSql+=preTutorSql+patent.getFirstAuthorWorkId()+"\"and `year` ="+year+";";
+                        resultSql+=preStuSql+patent.getFirstAuthorWorkId()+"\"and `year` ="+year+";";
                         insertSql += getInsertTutorSql(tmpUser,year);
 
                         tmpUser = getUser(patent.getFirstAuthorWorkId());
                         insertSql += getInsertTutorSql(tmpUser,year);
                     } else {
                         //学生不在老师名下
-                        resultSql+=preTutorSql+patent.getFirstAuthorWorkId()+"\"and `year` ="+year;
+                        resultSql+=preTutorSql+patent.getFirstAuthorWorkId()+"\"and `year` ="+year+";";
                         tmpUser = getUser(patent.getFirstAuthorWorkId());
                         insertSql += getInsertTutorSql(tmpUser,year);
                     }
                 }else{
                     tmpUser = getUser(patent.getFirstAuthorWorkId());
                     insertSql += getInsertTutorSql(tmpUser,year);
-                    resultSql+=preTutorSql+patent.getFirstAuthorWorkId()+"\"and `year` ="+year;
+                    resultSql+=preTutorSql+patent.getFirstAuthorWorkId()+"\"and `year` ="+year+";";
                 }
             }else if(patent.getFirstAuthorType()!= null && patent.getSecondAuthorType()!=null&&patent.getFirstAuthorType().equals("student") &&patent.getSecondAuthorType().equals("teacher")){
                 //第一作者学生  第二作者老师
@@ -502,19 +502,19 @@ public class AuthorService {
                 workId = tmpUser != null ? tmpUser.getTutorWorkId() : "";
 
                 if(!workId.equals("")){
-                    resultSql += preStuSql+workId+"\"and `year` ="+year;
-                    resultSql += preTutorSql+patent.getSecondAuthorWorkId()+"\"and `year` ="+year;
+                    resultSql += preStuSql+workId+"\"and `year` ="+year+";";
+                    resultSql += preTutorSql+patent.getSecondAuthorWorkId()+"\"and `year` ="+year+";";
                     insertSql += getInsertTutorSql(tmpUser,year);
                 }else{
                     tmpUser = getUser(patent.getSecondAuthorWorkId());
                     insertSql += getInsertTutorSql(tmpUser,year);
-                    resultSql += preTutorSql+patent.getSecondAuthorWorkId()+"\"and `year` ="+year;
+                    resultSql += preTutorSql+patent.getSecondAuthorWorkId()+"\"and `year` ="+year+";";
                 }
 
 
             }else if(patent.getFirstAuthorType()!= null &&patent.getFirstAuthorType().equals("teacher") &&patent.getSecondAuthorType() == null){
                 //一作导师 二作空
-                resultSql += preTutorSql+patent.getFirstAuthorWorkId()+"\"and `year` ="+year;
+                resultSql += preTutorSql+patent.getFirstAuthorWorkId()+"\"and `year` ="+year+";";
                 tmpUser = getUser(patent.getFirstAuthorWorkId());
                 insertSql += getInsertTutorSql(tmpUser,year);
             }
@@ -547,6 +547,7 @@ public class AuthorService {
         User tmpUser;
         for(DocPatent patent:patentList){
             workId="";
+            c.setTime(patent.getPatentAuthorizationDate());
             year = c.get(Calendar.YEAR);
             if(year ==0 ) continue;
             if((patent.getFirstAuthorType().equals("student")&&patent.getSecondAuthorType() == null)||(patent.getFirstAuthorType().equals("student") && patent.getSecondAuthorType().equals("student")) ){
@@ -554,8 +555,8 @@ public class AuthorService {
                 tmpUser = getUser(patent.getFirstAuthorWorkId());
                 workId = tmpUser != null ? tmpUser.getTutorWorkId() : "";
                 if(!workId.equals("")){
-                    resultSql+=preTutorSql+workId+"\" and `year` ="+year;
-                    resultSql+=preStuSql+workId+"\" and `year` ="+year;
+                    resultSql+=preTutorSql+workId+"\" and `year` ="+year+";";
+                    resultSql+=preStuSql+workId+"\" and `year` ="+year+";";
                 }
             }else if(patent.getFirstAuthorType()!= null && patent.getSecondAuthorType()!=null&&patent.getFirstAuthorType().equals("teacher")&& patent.getSecondAuthorType().equals("student")){
                 //第一作者老师 第二作者学生
@@ -564,14 +565,14 @@ public class AuthorService {
                 if(!workId.equals("")) {
                     if (workId.equals(patent.getFirstAuthorWorkId())) {
                         //学生在老师名下
-                        resultSql+=preTutorSql+patent.getFirstAuthorWorkId()+"\" and `year` ="+year;
-                        resultSql+=preStuSql+patent.getFirstAuthorWorkId()+"\" and `year` ="+year;
+                        resultSql+=preTutorSql+patent.getFirstAuthorWorkId()+"\" and `year` ="+year+";";
+                        resultSql+=preStuSql+patent.getFirstAuthorWorkId()+"\" and `year` ="+year+";";
                     } else {
                         //学生不在老师名下
-                        resultSql+=preTutorSql+patent.getFirstAuthorWorkId()+"\" and `year` ="+year;
+                        resultSql+=preTutorSql+patent.getFirstAuthorWorkId()+"\" and `year` ="+year+";";
                     }
                 }else{
-                    resultSql+=preTutorSql+patent.getFirstAuthorWorkId()+"\" and `year` ="+year;
+                    resultSql+=preTutorSql+patent.getFirstAuthorWorkId()+"\" and `year` ="+year+";";
                 }
             }else if(patent.getFirstAuthorType()!= null && patent.getSecondAuthorType()!=null&&patent.getFirstAuthorType().equals("student") &&patent.getSecondAuthorType().equals("teacher")){
                 //第一作者学生  第二作者老师
@@ -579,16 +580,16 @@ public class AuthorService {
                 tmpUser = getUser(patent.getFirstAuthorWorkId());
                 workId = tmpUser != null ? tmpUser.getTutorWorkId() : "";
                 if(!workId.equals("")){
-                    resultSql += preStuSql+workId+"\" and `year` ="+year;
-                    resultSql += preTutorSql+patent.getSecondAuthorWorkId()+"\" and `year` ="+year;
+                    resultSql += preStuSql+workId+"\" and `year` ="+year+";";
+                    resultSql += preTutorSql+patent.getSecondAuthorWorkId()+"\" and `year` ="+year+";";
                 }else{
-                    resultSql += preTutorSql+patent.getSecondAuthorWorkId()+"\" and `year` ="+year;
+                    resultSql += preTutorSql+patent.getSecondAuthorWorkId()+"\" and `year` ="+year+";";
                 }
 
 
             }else if(patent.getFirstAuthorType()!= null &&patent.getFirstAuthorType().equals("teacher") &&patent.getSecondAuthorType() == null){
                 //一作导师 二作空
-                resultSql += preTutorSql+patent.getFirstAuthorWorkId()+"\" and `year` ="+year;
+                resultSql += preTutorSql+patent.getFirstAuthorWorkId()+"\" and `year` ="+year+";";
             }
 
 
@@ -619,43 +620,43 @@ public class AuthorService {
             insertSql+=getInsertTutorSql(tmpUser,year);
             switch (fund.getMetricMatch()){
                 case "bc66c15317fc45c09103230de7f7120e":
-                    resultSql+="update doc_statistics set `nation_focus`=`nation_focus`+1 where `work_id`=\""+fund.getPersonWorkId()+"\" and `year` ="+year;
+                    resultSql+="update doc_statistics set `nation_focus`=`nation_focus`+1 where `work_id`=\""+fund.getPersonWorkId()+"\" and `year` ="+year+";";
                     break;
                 case "703386e1860648a6a397a6a24503bdf6":
-                    resultSql+="update doc_statistics set `nsfc_zdyf`=`nsfc_zdyf`+1 where `work_id`=\""+fund.getPersonWorkId()+"\" and `year` ="+year;
+                    resultSql+="update doc_statistics set `nsfc_zdyf`=`nsfc_zdyf`+1 where `work_id`=\""+fund.getPersonWorkId()+"\" and `year` ="+year+";";
                     break;
                 case "2163f1d53f5d48f1bee577df1babeac2":
-                    resultSql+="update doc_statistics set `nation_instrument`=`nation_instrument`+1 where `work_id`=\""+fund.getPersonWorkId()+"\" and `year` ="+year;
+                    resultSql+="update doc_statistics set `nation_instrument`=`nation_instrument`+1 where `work_id`=\""+fund.getPersonWorkId()+"\" and `year` ="+year+";";
                     break;
                 case "b8d6b2233c1b4ccaa46e19f405d474cc":
-                    resultSql+="update doc_statistics set `nsfc_kxzx`=`nsfc_kxzx`+1 where `work_id`=\""+fund.getPersonWorkId()+"\" and `year` ="+year;
+                    resultSql+="update doc_statistics set `nsfc_kxzx`=`nsfc_kxzx`+1 where `work_id`=\""+fund.getPersonWorkId()+"\" and `year` ="+year+";";
                     break;
                 case "9eddd16e476a459d81dd2735e21be83b":
-                    resultSql+="update doc_statistics set `nsfc_zdaxm`=`nsfc_zdaxm`+1 where `work_id`=\""+fund.getPersonWorkId()+"\" and `year` ="+year;
+                    resultSql+="update doc_statistics set `nsfc_zdaxm`=`nsfc_zdaxm`+1 where `work_id`=\""+fund.getPersonWorkId()+"\" and `year` ="+year+";";
                     break;
                 case "9d8689193b584fd1903fe9abcf42877d":
-                    resultSql+="update doc_statistics set `nsfc_zdianxm`=`nsfc_zdianxm`+1 where `work_id`=\""+fund.getPersonWorkId()+"\" and `year` ="+year;
+                    resultSql+="update doc_statistics set `nsfc_zdianxm`=`nsfc_zdianxm`+1 where `work_id`=\""+fund.getPersonWorkId()+"\" and `year` ="+year+";";
                     break;
                 case "a7454d55cfa84120ad404a83049c4476":
-                    resultSql+="update doc_statistics set `nsfc_msxm`=`nsfc_msxm`+1 where `work_id`=\""+fund.getPersonWorkId()+"\" and `year` ="+year;
+                    resultSql+="update doc_statistics set `nsfc_msxm`=`nsfc_msxm`+1 where `work_id`=\""+fund.getPersonWorkId()+"\" and `year` ="+year+";";
                     break;
                 case "0a541d33521f415a870cbbfe88aaa758":
-                    resultSql+="update doc_statistics set `nsfc_qnxm`=`nsfc_qnxm`+1 where `work_id`=\""+fund.getPersonWorkId()+"\" and `year` ="+year;
+                    resultSql+="update doc_statistics set `nsfc_qnxm`=`nsfc_qnxm`+1 where `work_id`=\""+fund.getPersonWorkId()+"\" and `year` ="+year+";";
                     break;
                 case "a7b4fed10c524924b0d7b5c5e3e3fefa":
-                    resultSql+="update doc_statistics set `nssfc_zdaxm`=`nssfc_zdaxm`+1 where `work_id`=\""+fund.getPersonWorkId()+"\" and `year` ="+year;
+                    resultSql+="update doc_statistics set `nssfc_zdaxm`=`nssfc_zdaxm`+1 where `work_id`=\""+fund.getPersonWorkId()+"\" and `year` ="+year+";";
                     break;
                 case "06c377960ec744f2a58b3e320dbea5c6":
-                    resultSql+="update doc_statistics set `nssfc_zdianxm`=`nssfc_zdianxm`+1 where `work_id`=\""+fund.getPersonWorkId()+"\" and `year` ="+year;
+                    resultSql+="update doc_statistics set `nssfc_zdianxm`=`nssfc_zdianxm`+1 where `work_id`=\""+fund.getPersonWorkId()+"\" and `year` ="+year+";";
                     break;
                 case "fcff48a07dda4c73bf3ed525be5115cd":
-                    resultSql+="update doc_statistics set `nssfc_ybxm`=`nssfc_ybxm`+1 where `work_id`=\""+fund.getPersonWorkId()+"\" and `year` ="+year;
+                    resultSql+="update doc_statistics set `nssfc_ybxm`=`nssfc_ybxm`+1 where `work_id`=\""+fund.getPersonWorkId()+"\" and `year` ="+year+";";
                     break;
                 case "4d0c8149b3064db69d7b2063bae7c709":
-                    resultSql+="update doc_statistics set `nssfc_qnxm`=`nssfc_qnxm`+1 where `work_id`=\""+fund.getPersonWorkId()+"\" and `year` ="+year;
+                    resultSql+="update doc_statistics set `nssfc_qnxm`=`nssfc_qnxm`+1 where `work_id`=\""+fund.getPersonWorkId()+"\" and `year` ="+year+";";
                     break;
             }
-            resultSql+=preSqlSum+fund.getPersonWorkId()+"\";";
+            resultSql+=preSqlSum+fund.getPersonWorkId()+"\" and `year` ="+year+"; ";
         }
         //authorStatisticsMapper.doSql(resultSql);
         authorStatisticsMapper.doSql(insertSql);
@@ -670,49 +671,57 @@ public class AuthorService {
         if(fundList.size() == 0) return -1;
         String resultSql = "";
         String preSqlSum="update doc_statistics set `fund_sum`=`fund_sum`+1 where `work_id`=\"";
+
+        String insertSql="";
+        int year = -1;
+        User tmpUser = null;
+
         for(Fund fund:fundList){
+            year = fund.getProjectYear();
+            tmpUser = getUser(fund.getPersonWorkId());
+            insertSql+=getInsertTutorSql(tmpUser,year);
             switch (fund.getMetricMatch()){
                 case "bc66c15317fc45c09103230de7f7120e":
-                    resultSql+="update doc_statistics set `nation_focus`=`nation_focus`+1 where `work_id`=\""+fund.getPersonWorkId()+"\";";
+                    resultSql+="update doc_statistics set `nation_focus`=`nation_focus`+1 where `work_id`=\""+fund.getPersonWorkId()+"\" and `year` ="+year+";";
                     break;
                 case "703386e1860648a6a397a6a24503bdf6":
-                    resultSql+="update doc_statistics set `nsfc_zdyf`=`nsfc_zdyf`+1 where `work_id`=\""+fund.getPersonWorkId()+"\";";
+                    resultSql+="update doc_statistics set `nsfc_zdyf`=`nsfc_zdyf`+1 where `work_id`=\""+fund.getPersonWorkId()+"\" and `year` ="+year+";";
                     break;
                 case "2163f1d53f5d48f1bee577df1babeac2":
-                    resultSql+="update doc_statistics set `nation_instrument`=`nation_instrument`+1 where `work_id`=\""+fund.getPersonWorkId()+"\";";
+                    resultSql+="update doc_statistics set `nation_instrument`=`nation_instrument`+1 where `work_id`=\""+fund.getPersonWorkId()+"\" and `year` ="+year+";";
                     break;
                 case "b8d6b2233c1b4ccaa46e19f405d474cc":
-                    resultSql+="update doc_statistics set `nsfc_kxzx`=`nsfc_kxzx`+1 where `work_id`=\""+fund.getPersonWorkId()+"\";";
+                    resultSql+="update doc_statistics set `nsfc_kxzx`=`nsfc_kxzx`+1 where `work_id`=\""+fund.getPersonWorkId()+"\" and `year` ="+year+";";
                     break;
                 case "9eddd16e476a459d81dd2735e21be83b":
-                    resultSql+="update doc_statistics set `nsfc_zdaxm`=`nsfc_zdaxm`+1 where `work_id`=\""+fund.getPersonWorkId()+"\";";
+                    resultSql+="update doc_statistics set `nsfc_zdaxm`=`nsfc_zdaxm`+1 where `work_id`=\""+fund.getPersonWorkId()+"\" and `year` ="+year+";";
                     break;
                 case "9d8689193b584fd1903fe9abcf42877d":
-                    resultSql+="update doc_statistics set `nsfc_zdianxm`=`nsfc_zdianxm`+1 where `work_id`=\""+fund.getPersonWorkId()+"\";";
+                    resultSql+="update doc_statistics set `nsfc_zdianxm`=`nsfc_zdianxm`+1 where `work_id`=\""+fund.getPersonWorkId()+"\" and `year` ="+year+";";
                     break;
                 case "a7454d55cfa84120ad404a83049c4476":
-                    resultSql+="update doc_statistics set `nsfc_msxm`=`nsfc_msxm`+1 where `work_id`=\""+fund.getPersonWorkId()+"\";";
+                    resultSql+="update doc_statistics set `nsfc_msxm`=`nsfc_msxm`+1 where `work_id`=\""+fund.getPersonWorkId()+"\" and `year` ="+year+";";
                     break;
                 case "0a541d33521f415a870cbbfe88aaa758":
-                    resultSql+="update doc_statistics set `nsfc_qnxm`=`nsfc_qnxm`+1 where `work_id`=\""+fund.getPersonWorkId()+"\";";
+                    resultSql+="update doc_statistics set `nsfc_qnxm`=`nsfc_qnxm`+1 where `work_id`=\""+fund.getPersonWorkId()+"\" and `year` ="+year+";";
                     break;
                 case "a7b4fed10c524924b0d7b5c5e3e3fefa":
-                    resultSql+="update doc_statistics set `nssfc_zdaxm`=`nssfc_zdaxm`+1 where `work_id`=\""+fund.getPersonWorkId()+"\";";
+                    resultSql+="update doc_statistics set `nssfc_zdaxm`=`nssfc_zdaxm`+1 where `work_id`=\""+fund.getPersonWorkId()+"\" and `year` ="+year+";";
                     break;
                 case "06c377960ec744f2a58b3e320dbea5c6":
-                    resultSql+="update doc_statistics set `nssfc_zdianxm`=`nssfc_zdianxm`+1 where `work_id`=\""+fund.getPersonWorkId()+"\";";
+                    resultSql+="update doc_statistics set `nssfc_zdianxm`=`nssfc_zdianxm`+1 where `work_id`=\""+fund.getPersonWorkId()+"\" and `year` ="+year+";";
                     break;
                 case "fcff48a07dda4c73bf3ed525be5115cd":
-                    resultSql+="update doc_statistics set `nssfc_ybxm`=`nssfc_ybxm`+1 where `work_id`=\""+fund.getPersonWorkId()+"\";";
+                    resultSql+="update doc_statistics set `nssfc_ybxm`=`nssfc_ybxm`+1 where `work_id`=\""+fund.getPersonWorkId()+"\" and `year` ="+year+";";
                     break;
                 case "4d0c8149b3064db69d7b2063bae7c709":
-                    resultSql+="update doc_statistics set `nssfc_qnxm`=`nssfc_qnxm`+1 where `work_id`=\""+fund.getPersonWorkId()+"\";";
+                    resultSql+="update doc_statistics set `nssfc_qnxm`=`nssfc_qnxm`+1 where `work_id`=\""+fund.getPersonWorkId()+"\" and `year` ="+year+";";
                     break;
             }
-            resultSql+=preSqlSum+fund.getPersonWorkId()+"\";";
+            resultSql+=preSqlSum+fund.getPersonWorkId()+"\"and `year` ="+year+"; ";
         }
+
         resultSql = resultSql.replace("+","-");
-        authorStatisticsMapper.doSql(resultSql);
 
         resultSql = resultSql.replace("doc_statistics","doc_statistics_year");
         authorStatisticsMapper.doSql(resultSql);
@@ -722,6 +731,8 @@ public class AuthorService {
 
 
     private User getUser(String workId){
+        if(userList.size() ==0)
+            userList = userService.getAllUsers();
         for(int i=0; i<userList.size();i++){
             if(userList.get(i).getWorkId()!= null &&userList.get(i).getWorkId().equals(workId)){
                 return userList.get(i);
