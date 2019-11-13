@@ -1,4 +1,4 @@
-let app = new Vue({
+app = new Vue({
     el: '#app',
     data: {
         formData: { // 与后端ExcelTemplate相对应
@@ -16,7 +16,8 @@ let app = new Vue({
         defaultFileList: [],
         tmpFileName: '', // 当前上传的文件存储在服务器的临时文件夹上的名字
         loading: {
-            importing: false
+            importing: false,
+            fullScreen: false
         }
     },
     methods: {
@@ -40,10 +41,10 @@ let app = new Vue({
             let excelTemplate = {
                 enable: true
             };
-            this.fullScreenLoading = true;
+            this.loading.fullScreen = true;
             let app = this;
             ajaxPostJSON(this.urls.selectAllExcelTemplate, excelTemplate, function (d) {
-                app.fullScreenLoading = false;
+                app.loading.fullScreen = false;
                 app.excelTemplateList = d.data;
             })
         },

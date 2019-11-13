@@ -108,9 +108,6 @@
                 </span>
             </template>
         </el-table-column>
-        <%--<el-table-column label="ISSN" width="150" prop="ISSN" align="center"></el-table-column>--%>
-        <%--<el-table-column label="入藏号" width="300" prop="storeNum" align="center"></el-table-column>--%>
-        <%--<el-table-column label="论文种类" width="150" prop="docTypeValue" align="center"></el-table-column>--%>
         <el-table-column label="单位名称" width="200" header-align="center" align="center">
             <template slot-scope="{row}">
                 <el-Tooltip open-delay="500" effect="dark" :content="row.danwei" placement="top">
@@ -120,19 +117,22 @@
                 </el-Tooltip>
             </template>
         </el-table-column>
+        <el-table-column label="影响因子" width="100" prop="impactFactor" align="center"></el-table-column>
+        <el-table-column label="分区" width="100" prop="journalDivision" align="center"></el-table-column>
         <el-table-column label="发布日期" width="150" prop="publishDate" align="center">
             <template slot-scope="{row}">
                 {{ row.publishDate === null ? '' : (new Date(row.publishDate)).Format("yyyy-MM-dd") }}
             </template>
         </el-table-column>
-        <el-table-column label="影响因子" width="100" prop="impactFactor" align="center"></el-table-column>
-        <el-table-column label="分区" width="100" prop="journalDivision" align="center"></el-table-column>
         <el-table-column label="PY" width="100" prop="_PY" align="center"></el-table-column>
         <el-table-column label="PD" width="100" prop="_PD" align="center">
             <template slot-scope="{row}">
                 {{ row._PD === null ? '' : (new Date(row._PD)).Format("MM-dd") }}
             </template>
         </el-table-column>
+        <el-table-column label="入藏号" width="300" prop="storeNum" align="center"></el-table-column>
+        <el-table-column label="ISSN" width="150" prop="ISSN" align="center"></el-table-column>
+        <el-table-column label="论文种类" width="150" prop="docType" align="center"></el-table-column>
         <el-table-column ></el-table-column>
         <el-table-column label="操作" width="160" header-align="center" align="center" fixed="right">
             <template slot-scope="{row}">

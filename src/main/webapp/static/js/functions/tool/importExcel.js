@@ -17,8 +17,9 @@ let app = new Vue({
     },
     methods: {
         tabClick: function (tab) {
-            if (tab.name === 'tab1' && document.getElementById('tab1') != null) {
-                document.getElementById('tab1').contentWindow.location.reload(true);
+            if (tab.name === 'tab0') {
+                // document.getElementById('tab0').contentWindow.location.reload(true);
+                document.getElementById('tab0').contentWindow.app.selectExcelTemplateByEnabled();
             }
         }
     }

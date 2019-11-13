@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="/static/css/functions/tool/importExcel/importData.css"/>
 </head>
 <body>
-<div id="app" v-cloak>
+<div id="app" v-cloak v-loading="loading.fullScreen">
     <el-form ref="form" :model="formData" label-width="150px" style="padding: 34px 24px;" size="small"
              label-position="left">
         <el-form-item label="选择模板">
