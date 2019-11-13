@@ -858,10 +858,12 @@
             <if test="authorIndex == 1">
                 a.first_author_id = #{authorWorkId}
                 , first_author_type = (select b.user_type from sys_user b where b.work_id = #{authorWorkId})
+                , first_author_cname = (select b.real_name from sys_user b where b.work_id = #{authorWorkId})
             </if>
             <if test="authorIndex == 2">
-                and second_author_id = #{authorWorkId}
+                and a.second_author_id = #{authorWorkId}
                 , second_author_type = (select b.user_type from sys_user b where b.work_id = #{authorWorkId})
+                , second_author_cname = (select b.real_name from sys_user b where b.work_id = #{authorWorkId})
             </if>
         </trim>
         where a.id = #{paperId}
