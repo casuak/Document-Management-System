@@ -301,6 +301,14 @@ public class FundService {
     }
 
     public void deleteListByIds(List<Fund> list) {
+        List<Fund> tempList = fundDao.selectListByIds(list);
+        List<Fund> delList = new ArrayList<>();
+        for (Fund fund : tempList) {
+            if (FundMatchType.FINISHED.toString().equals(fund.getStatus())) {
+                delList.add(fund);
+            }
+        }
+        authorService.deleteFundCount(delList);
         fundDao.deleteListByIds(list);
     }
 
@@ -313,6 +321,14 @@ public class FundService {
     }
 
     public void delete(List<Fund> list) {
+        List<Fund> tempList = fundDao.selectListByIds(list);
+        List<Fund> delList = new ArrayList<>();
+        for (Fund fund : tempList) {
+            if (FundMatchType.FINISHED.toString().equals(fund.getStatus())) {
+                delList.add(fund);
+            }
+        }
+        authorService.deleteFundCount(delList);
         for (Fund f : list) {
             fundDao.deleteByPrimaryKey(f.getId());
         }
