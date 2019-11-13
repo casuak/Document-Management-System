@@ -24,7 +24,7 @@
         </span>
         <span style="float: right;margin-right: 10px;">
             <el-select v-model="table.params.userType" size="small" style="margin-right: 10px;"
-                       @change="getUserList()" clearable placeholder="请选择用户类型">
+                       @change="table.params.pageIndex=1;getUserList()" clearable placeholder="请选择用户类型">
                 <el-option v-for="userType in options.userType" :label="userType.label"
                            :value="userType.value" :key="userType.value"></el-option>
             </el-select>

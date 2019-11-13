@@ -24,7 +24,8 @@
             </el-button>
         </span>
         <span style="float: right;margin-right: 10px;">
-            <el-select v-model="table.entity.condition.typeId" size="small" @change="refreshTable_entity()" clearable
+            <el-select v-model="table.entity.condition.typeId" size="small"
+                       @change="table.entity.params.pageIndex=1;refreshTable_entity()" clearable
                        filterable placeholder="选择字典类型">
                 <el-option v-for="(item, index) in options.dictType" :key="item.id" :label="item.nameCn"
                            :value="item.id"></el-option>

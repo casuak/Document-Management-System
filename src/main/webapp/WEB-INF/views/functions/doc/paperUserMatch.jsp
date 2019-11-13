@@ -29,7 +29,7 @@
             </el-button>
         </span>
         <span style="float: right;margin-right: 10px;">
-            <el-select v-model="status" size="small" style="margin-right: 10px;" @change="getPaperList()">
+            <el-select v-model="status" size="small" style="margin-right: 10px;" @change="page.pageIndex=1;getPaperList()">
                 <el-option v-for="status in statusList" :label="status.label"
                            :value="status.value" :key="status.value"></el-option>
             </el-select>
