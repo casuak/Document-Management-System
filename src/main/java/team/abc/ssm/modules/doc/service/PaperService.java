@@ -219,13 +219,13 @@ public class PaperService {
     public boolean deleteListByIds(List<Paper> paperList) {
         paperList = paperDao.selectDeleteListByIds(paperList);
         List<Paper> finishList = new ArrayList<>();
-        for(Paper paper:paperList){
-            if("3".equals(paper.getStatus())){
+        for (Paper paper : paperList) {
+            if ("3".equals(paper.getStatus())) {
                 finishList.add(paper);
             }
         }
-        if(finishList.size()>0)
-        authorService.deletePaperCount(finishList);
+        if (finishList.size() > 0)
+            authorService.deletePaperCount(finishList);
 
         int count = paperDao.deleteListByIds(paperList);
         return count == paperList.size();
@@ -239,7 +239,7 @@ public class PaperService {
     public void completeAll() {
         Paper paper = new Paper();
         paper.setStatus("2");
-        List<Paper> result =paperDao.selectListByStatus(paper);
+        List<Paper> result = paperDao.selectListByStatus(paper);
         authorService.addPaperCount(result);
 
         paperDao.completeAll();
@@ -636,7 +636,7 @@ public class PaperService {
     // 2学生同一人判断
     private User getRightStudent(User s1, User s2, Date publishDate) {
         // 首先判断两人是否为同一人
-        if (!s1.getRealName().equals(s2.getRealName()))
+        if (!s1.getRealName().equals(s2.getRealName())) // 真名是否相同
             return null;
         if (s1.getHireDate() == null || s2.getHireDate() == null) return null;
         if (s1.getHireDate().after(s2.getHireDate())) {
@@ -647,6 +647,9 @@ public class PaperService {
         if (s1.getStudentTrainLevel().equals("硕士") && s2.getStudentTrainLevel().equals("博士")) ;
         else return null;
         // 确定人
+        // 当论文日期不为空时，如果论文的发表晚于博士的入职时间，则归为博士，早于，则归于硕士
+        // 论文日期为空时，判断不了
+        if (publishDate == null) return null;
         if (publishDate.after(s2.getHireDate())) {
             return s2;
         } else {
@@ -655,11 +658,11 @@ public class PaperService {
     }
 
     public boolean deleteByStatus(String status) {
-        if("3".equals(status)){
+        if ("3".equals(status)) {
             List<Paper> papers = paperDao.selectByStatus(status);
             authorService.deletePaperCount(papers);
         }
-         paperDao.deleteByStatus(status);
+        paperDao.deleteByStatus(status);
         return true;
     }
 
