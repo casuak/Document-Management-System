@@ -61,4 +61,10 @@
             modify_date=#{modifyDate}
         where id=#{id}
     </update>
+    <select id="getImpactFactor" resultType="double">
+        select doc_journal.impact_factor from doc_journal where issn = #{ISSN} and del_flag=0
+    </select>
+    <select id="getDivision" resultType="java.lang.String">
+        select doc_journal.journal_division from doc_journal where  issn = #{ISSN} and del_flag=0
+    </select>
 </mapper>

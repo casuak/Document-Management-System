@@ -780,6 +780,10 @@
         </where>
     </select>
 
+    <select id="selectPaperListByStatus" resultMap="BaseResultMap">
+        select * from doc_paper where status = #{status}
+    </select>
+
     <select id="selectAll" resultMap="BaseResultMap">
         select *
         from doc_paper
@@ -803,8 +807,28 @@
             </otherwise>
         </choose>
     </delete>
+
+    <delete id="deleteList">
+        delete from doc_paper
+        <choose>
+            <when test="list != null and list.size() != 0">
+                <where>
+                    store_num in
+                    <foreach collection="list" open="(" close=")" item="item" separator=",">
+                        #{item.storeNum}
+                    </foreach>
+                </where>
+            </when>
+            <otherwise>
+                <where>
+                    1 = 0
+                </where>
+            </otherwise>
+        </choose>
+    </delete>
+
     <select id="selectDeleteListByIds" parameterType="paper" resultMap="BaseResultMap">
-       select * from doc_paper
+        select * from doc_paper
         <choose>
             <when test="list != null and list.size() != 0">
                 <where>
@@ -904,4 +928,5 @@
               and b.work_id = a.first_author_id
         )
     </select>
+
 </mapper>

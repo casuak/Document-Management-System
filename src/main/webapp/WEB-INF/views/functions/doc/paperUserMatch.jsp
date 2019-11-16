@@ -27,6 +27,9 @@
             <el-button size="small" type="primary" @click="completePapers()" v-if="status === '2'">
                 全部完成
             </el-button>
+            <el-button size="small" type="primary" @click="completeImportPaper()" v-if="status === '4'">
+                全部完成
+            </el-button>
         </span>
         <span style="float: right;margin-right: 10px;">
             <el-select v-model="status" size="small" style="margin-right: 10px;" @change="page.pageIndex=1;getPaperList()">
@@ -47,6 +50,7 @@
               style="width: 100%;overflow-y: hidden;margin-top: 10px;" class="scroll-bar"
               @selection-change="selectionList=$event" stripe>
         <el-table-column type="selection" width="40" fixed="left"></el-table-column>
+
         <el-table-column label="论文名" width="100" fixed="left">
             <template slot-scope="{row}">
                 <el-Tooltip open-delay="500" effect="dark" :content="row.paperName" placement="top">
@@ -56,6 +60,7 @@
                 </el-Tooltip>
             </template>
         </el-table-column>
+
         <el-table-column label="作者列表" width="200" fixed="left">
             <template slot-scope="{row}">
                 <el-Tooltip open-delay="500" effect="dark" :content="row.authorList" placement="top">
@@ -65,7 +70,9 @@
                 </el-Tooltip>
             </template>
         </el-table-column>
+
         <el-table-column label="单位名称（中文）" width="150" prop="danweiCN" fixed="left"></el-table-column>
+
         <el-table-column label="第一匹配作者" width="300" align="center"
                          v-if="['1', '2', '3'].contains(status)">
             <template slot-scope="{row}">
@@ -87,6 +94,12 @@
                 </span>
             </template>
         </el-table-column>
+        <el-table-column label="第一匹配作者" width="300" align="center" v-if="status == '4'">
+            <template slot-scope="{row}">
+                {{row.firstAuthorCname}}
+            </template>
+        </el-table-column>
+
         <el-table-column label="第二匹配作者" width="300" align="center"
                          v-if="['1', '2', '3'].contains(status)">
             <template slot-scope="{row}">
@@ -108,7 +121,13 @@
                 </span>
             </template>
         </el-table-column>
-        <el-table-column label="单位名称" width="200" header-align="center" align="center">
+        <el-table-column label="第二匹配作者" width="300" align="center" v-if="status == '4'">
+            <template slot-scope="{row}">
+                {{row.secondAuthorCname}}
+            </template>
+        </el-table-column>
+
+        <el-table-column label="单位名称" width="200" header-align="center" align="center" v-if="status !== '4'">
             <template slot-scope="{row}">
                 <el-Tooltip open-delay="500" effect="dark" :content="row.danwei" placement="top">
                     <div style="overflow: hidden;text-overflow: ellipsis;white-space: nowrap;width: 95%;">
@@ -117,29 +136,38 @@
                 </el-Tooltip>
             </template>
         </el-table-column>
-        <el-table-column label="影响因子" width="100" prop="impactFactor" align="center"></el-table-column>
-        <el-table-column label="分区" width="100" prop="journalDivision" align="center"></el-table-column>
+
+        <el-table-column label="影响因子" width="100" prop="impactFactor" align="center" v-if="status !== '4'"></el-table-column>
+
+        <el-table-column label="分区" width="100" prop="journalDivision" align="center" v-if="status !== '4'"></el-table-column>
+
         <el-table-column label="发布日期" width="150" prop="publishDate" align="center">
             <template slot-scope="{row}">
                 {{ row.publishDate === null ? '' : (new Date(row.publishDate)).Format("yyyy-MM-dd") }}
             </template>
         </el-table-column>
-        <el-table-column label="PY" width="100" prop="_PY" align="center"></el-table-column>
-        <el-table-column label="PD" width="100" prop="_PD" align="center">
+
+        <el-table-column label="PY" width="100" prop="_PY" align="center" v-if="status !== '4'"></el-table-column>
+
+        <el-table-column label="PD" width="100" prop="_PD" align="center" v-if="status !== '4'">
             <template slot-scope="{row}">
                 {{ row._PD === null ? '' : (new Date(row._PD)).Format("MM-dd") }}
             </template>
         </el-table-column>
+
         <el-table-column label="入藏号" width="300" prop="storeNum" align="center"></el-table-column>
+
         <el-table-column label="ISSN" width="150" prop="ISSN" align="center"></el-table-column>
+
         <el-table-column label="论文种类" width="150" prop="docType" align="center"></el-table-column>
-        <el-table-column ></el-table-column>
+
         <el-table-column label="操作" width="160" header-align="center" align="center" fixed="right">
             <template slot-scope="{row}">
                 <span style="position:relative;bottom: 1px;">
                     <el-button type="success" size="mini" style="margin-right: 0px;"
                                @click="convertToSuccessByIds([{id:row.id}])"
-                               :disabled="row.status !== '1' && row.status !== '3'">
+                               :disabled="row.status !== '1' && row.status !== '3'"
+                               v-if="status !== '4'">
                     <span>转入成功</span>
                 </el-button>
                 <el-button type="danger" size="mini" style=""

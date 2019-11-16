@@ -670,4 +670,57 @@ public class PaperService {
         paperDao.selectAuthor(paperId, authorIndex, authorWorkId);
         return true;
     }
+
+    public boolean completeImportPaper() {
+        List<Paper> importFromExcel = paperDao.selectPaperListByStatus("4");
+        List<Paper> finished = paperDao.selectPaperListByStatus("3");
+        List<Paper> toDelete = new ArrayList<>();
+        boolean needFilter = true;
+
+        if (importFromExcel == null || importFromExcel.size() == 0)
+            return false;
+
+        if (finished == null || finished.size() == 0)
+            needFilter = false;
+
+        for (Paper p : importFromExcel) {
+            if (needFilter) {
+                String storeNumber = p.getStoreNum();
+                for (Paper f : finished) {
+                    if (f.getStoreNum().equals(storeNumber)) {
+                        toDelete.add(f);
+                    }
+                }
+            }
+
+            if (p.getFirstAuthorType() != null) {
+                String type = p.getFirstAuthorType().equals("学生") ? "student" : "teacher";
+                p.setFirstAuthorType(type);
+            }
+            if (p.getSecondAuthorType() != null) {
+                String type = p.getSecondAuthorType().equals("学生") ? "student" : "teacher";
+                p.setSecondAuthorType(type);
+            }
+
+            String first = p.getFirstAuthorId() == null ? "2" : "0";
+            String second = p.getSecondAuthorId() == null ? "2" : "0";
+            p.setStatus1(first);
+            p.setStatus2(second);
+
+            String ISSN = p.getISSN();
+            p.setImpactFactor(journalDao.getImpactFactor(ISSN));//todo 数据库重复ISSN？
+            p.setJournalDivision(journalDao.getDivision(ISSN));
+
+            p.setStatus("3");
+        }
+
+        if (toDelete.size() > 0){
+            paperDao.deleteListByIds(toDelete);
+        }
+        paperDao.updateBatch(importFromExcel);
+
+        authorService.addPaperCount(importFromExcel);
+
+        return true;
+    }
 }

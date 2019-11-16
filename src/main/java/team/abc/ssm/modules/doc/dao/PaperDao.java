@@ -37,10 +37,12 @@ public interface PaperDao {
     int selectSearchCount(Paper paper);
 
     List<Paper> selectListByStatus(Paper paper);
+    List<Paper> selectPaperListByStatus(String status);
 
     List<Paper> selectAll();
 
     int deleteListByIds(List<Paper> paperList);
+    int deleteList(List<Paper> paperList);
     List<Paper> selectDeleteListByIds(List<Paper> paperList);
 
     int convertToSuccessByIds(List<Paper> paperList);

@@ -1054,4 +1054,62 @@ public class DocPatentService {
     public List<String> getAllPatentType() {
         return docPatentMapper.selectAllPatentType();
     }
+
+    /**
+     * @param
+     * @return void
+     * @Description 将所有手工匹配的专利设为成功
+     * @author zch
+     * @date 2019/11/15 23:35
+     */
+    public boolean completeImportPatent() throws ParseException {
+        List<DocPatent> importFromExcel = docPatentMapper.selectAllByStatus(IMPORT_FROM_EXCEL.toString());
+        List<DocPatent> finished = docPatentMapper.selectAllByStatus(MATCH_FINISHED.toString());
+        List<DocPatent> toDelete = new ArrayList<>();
+        boolean needFilter = true;
+
+        if (finished == null || finished.size() == 0)
+            needFilter = false;
+
+        for (DocPatent p : importFromExcel) {
+            if (needFilter) {
+                String patentNumber = p.getPatentNumber();
+                for (DocPatent f : finished) {
+                    if (f.getPatentNumber().equals(patentNumber)) {
+                        toDelete.add(f);
+                        break;
+                    }
+                }
+            }
+
+            FirstAuMatchType type1;
+            SecondAuMatchType type2;
+            if (p.getFirstAuthorType() != null) {
+                String type = p.getFirstAuthorType().equals("学生") ? "student" : "teacher";
+                p.setFirstAuthorType(type);
+            }
+            if (p.getSecondAuthorType() != null) {
+                String type = p.getSecondAuthorType().equals("学生") ? "student" : "teacher";
+                p.setSecondAuthorType(type);
+            }
+            if (p.getFirstAuthorWorkId() != null) {
+                p.setFirstAuthorId(sysUserMapper.selectByWorkId(p.getFirstAuthorWorkId()).getId());
+                type1 = FirstAuMatchType.MATCH_SUCCESS;
+            } else
+                type1 = FirstAuMatchType.NO_MATCHED;
+            if (p.getSecondAuthorWorkId() != null) {
+                p.setSecondAuthorId(sysUserMapper.selectByWorkId(p.getSecondAuthorWorkId()).getId());
+                type2 = SecondAuMatchType.MATCH_SUCCESS;
+            } else
+                type2 = SecondAuMatchType.NO_MATCHED;
+            p.setStatuses(MATCH_FINISHED, type1, type2);
+            p.setPatentAuthorizationDate(sdf.parse(p.getPatentAuthorizationDateString()));
+        }
+
+        if (toDelete.size() > 0)
+            docPatentMapper.deleteListByIds(toDelete);
+        docPatentMapper.updateDocPatentBatch(importFromExcel);
+        authorService.addPatentCount(importFromExcel);
+        return true;
+    }
 }

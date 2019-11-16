@@ -16,7 +16,8 @@ public enum PatentMatchType {
     MATCH_ERROR("1", "匹配出错"),
     MATCH_SUCCESS("2", "匹配成功"),
     JUDGE_NEEDED("3", "需要人工判断"),
-    MATCH_FINISHED("4", "匹配完成");
+    MATCH_FINISHED("4", "匹配完成"),
+    IMPORT_FROM_EXCEL("5","人工匹配导入完成");
 
     private String code;
 

@@ -96,19 +96,19 @@ public class FundService {
         List<Fund> toComplete = new ArrayList<>();
 
         for (Fund f : fundList) {
-            boolean flag = false;
+            String personWorkId = f.getPersonWorkId();
+            String projectName = f.getProjectName();
+            String metricName = f.getMetricName();
+
             //查找重复
             for (Fund c : completed) {
-                if (c.getPersonWorkId().equals(f.getPersonWorkId())
-                        && c.getProjectName().equals(f.getProjectName())) {
-                    //添加到删除列表
-                    toDelete.add(f);
-                    flag = true;
-                    break;
+                if (c.getPersonWorkId().equals(personWorkId)
+                        && c.getProjectName().equals(projectName)
+                        && c.getMetricName().equals(metricName)) {
+//                    toDelete.add(f);
+                    toDelete.add(c);//更新：放弃原有的
                 }
             }
-            if (flag)
-                continue;
 
             //更新信息
             f.setStatus(FundMatchType.UNMATCHED.toString());
@@ -167,7 +167,7 @@ public class FundService {
 
         for (User u : allUsers) {
             allUserId.add(u.getWorkId());
-            System.out.println("##########" + u.getWorkId());
+//            System.out.println("##########" + u.getWorkId());
         }
 
 
@@ -180,7 +180,7 @@ public class FundService {
             }
 
             if (!allUserId.contains(f.getPersonWorkId())) {//工号不存在
-                System.out.println(">>>>>>>>>>>>>>>>>>>>>>not exist");
+//                System.out.println(">>>>>>>>>>>>>>>>>>>>>>not exist");
                 f.setStatus(FundMatchType.MATCH_FAILED.toString());
                 f.setModifyUserId(userNow.getId());
                 f.setModifyDate(dateNow);
@@ -198,14 +198,14 @@ public class FundService {
             }
 
             if (user == null) {
-                System.out.println(">>>>>>>>>>>>>>>>>>>>>>null");
+//                System.out.println(">>>>>>>>>>>>>>>>>>>>>>null");
                 f.setStatus(FundMatchType.MATCH_FAILED.toString());
                 f.setModifyUserId(userNow.getId());
                 f.setModifyDate(dateNow);
                 toFail.add(f);
             } else {
                 if (!user.getRealName().equals(f.getPersonName())) {//姓名不匹配
-                    System.out.println(">>>>>>>>>>>>>>>>>>>>>>not match");
+//                    System.out.println(">>>>>>>>>>>>>>>>>>>>>>not match");
                     f.setStatus(FundMatchType.MATCH_FAILED.toString());
                     f.setModifyUserId(userNow.getId());
                     f.setModifyDate(dateNow);
@@ -337,7 +337,6 @@ public class FundService {
     public void completeFundByStatus() {
         List<Fund> funds = fundDao.selectAllByStatus(FundMatchType.MATCH_SUCCEEDED.toString());
         authorService.addFundCount(funds);
-
         fundDao.completeFundByStatus();
     }
 

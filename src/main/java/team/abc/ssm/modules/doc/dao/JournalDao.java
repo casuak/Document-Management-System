@@ -17,4 +17,8 @@ public interface JournalDao {
     int deleteAll();
 
     void updateJournal(Journal journal);
+
+    double getImpactFactor(String ISSN);
+
+    String getDivision(String ISSN);
 }

@@ -96,6 +96,9 @@
             <el-button size="small" type="primary" @click="completeAllPatent()" v-if="status === '2'">
                 全部完成
             </el-button>
+            <el-button size="small" type="primary" @click="completeImportPatent()" v-if="status === '5'">
+                全部完成
+            </el-button>
         </span>
         <span style="float: right;margin-right: 10px;">
             <el-select v-model="status" size="small" style="margin-right: 10px;" @change="getPatentList()">
@@ -118,6 +121,7 @@
               style="width: 100%;overflow-y: hidden;margin-top: 10px;" class="scroll-bar"
               @selection-change="selectionList=$event" stripe>
         <el-table-column type="selection" width="40" fixed="left"></el-table-column>
+
         <el-table-column label="专利名" width="346" fixed="left" align="center" v-if="['-3','-2','-1'].contains(status)">
             <template slot-scope="{row}">
                 <el-Tooltip open-delay="500" effect="dark" :content="row.patentName" placement="top">
@@ -136,6 +140,7 @@
                 </el-Tooltip>
             </template>
         </el-table-column>
+
         <el-table-column label="作者列表" width="190" fixed="left" align="center">
             <template slot-scope="{row}">
                 <el-Tooltip open-delay="500" effect="dark" :content="row.authorList" placement="top">
@@ -145,8 +150,9 @@
                 </el-Tooltip>
             </template>
         </el-table-column>
+
         <el-table-column label="所属学院" width="150" prop="institute" fixed="left" align="center"
-                         v-if="status == 4" key="ketInstitute0">
+                         v-if="status == '4' || status == '5'" key="ketInstitute0">
         </el-table-column>
         <el-table-column label="所属学院" width="150" fixed="left" align="center"
                          v-else-if="['1', '2', '3'].contains(status)" key="ketInstitute1">
@@ -157,7 +163,7 @@
                            {{row.institute}}
                        </span>
                        <i-button style="height: 25px;position:relative;left: 4px;"
-                              type="primary" size="small" @click="openInstituteSelect(row)">C</i-button>
+                                 type="primary" size="small" @click="openInstituteSelect(row)">C</i-button>
                    </span>
                 </template>
                 <el-button v-else type="primary" size="small" key="ketInstitute2"
@@ -195,6 +201,12 @@
                 </i-button>
             </template>
         </el-table-column>
+        <el-table-column label="第一发明人" width="332" align="center" v-if="status == '5'">
+            <template slot-scope="{row}">
+                {{row.firstAuthorName}}, {{ row.firstAuthorWorkId }}
+            </template>
+        </el-table-column>
+
         <el-table-column label="第二发明人" width="332" align="center"
                          v-if="['0','1', '2', '3'].contains(status)">
             <template slot-scope="{row}">
@@ -217,11 +229,18 @@
                 </i-button>
             </template>
         </el-table-column>
+        <el-table-column label="第二发明人" width="332" align="center" v-if="status == '5'">
+            <template slot-scope="{row}">
+                {{row.secondAuthorName}}, {{ row.secondAuthorWorkId }}
+            </template>
+        </el-table-column>
+
         <el-table-column label="专利号" width="170" prop="patentNumber" align="center">
             <template slot-scope="{row}">
                 {{ row.patentNumber}}
             </template>
         </el-table-column>
+
         <el-table-column label="专利类别" width="100" prop="patentType" align="center">
             <template slot-scope="{row}">
                 {{ row.patentType}}
@@ -239,7 +258,7 @@
         <el-table-column label="授权公告日" width="150"
                          prop="patentAuthorizationDate"
                          align="center"
-                         v-if="['-1', '-2', '-3'].contains(status)">
+                         v-if="['-1', '-2', '-3', '5'].contains(status)">
             <template slot-scope="{row}">
                 {{ row.patentAuthorizationDateString }}
             </template>
@@ -253,7 +272,12 @@
                 Date(row.patentAuthorizationDate)).Format("yyyy-MM-dd") }}
             </template>
         </el-table-column>
-        <el-table-column></el-table-column>
+        <el-table-column label="备注" width="170" prop="patentNumber" align="center">
+            <template slot-scope="{row}">
+                {{ row.remarks}}
+            </template>
+        </el-table-column>
+
         <el-table-column label="操作" width="160" header-align="center" align="center" fixed="right">
             <template slot-scope="{row}">
                 <span style="position:relative;bottom: 1px;">
@@ -267,7 +291,7 @@
                                style="margin-right: 0;"
                                @click="convertToSuccessByIds([{id:row.id}])"
                                :disabled="!['0','1','3','4'].contains(status)"
-                               v-else>
+                               v-if="status !== '2' && status !=='5'">
                         <span>转入成功</span>
                     </el-button>
                     <el-button type="danger" size="mini" style=""
@@ -357,6 +381,10 @@
                     label: '3.3 需要人工判断'
                 },
                 {
+                    value: '5',
+                    label: '3.4 人工匹配导入完成'
+                },
+                {
                     value: '4',
                     label: '4.  匹配完成'
                 }
@@ -381,7 +409,8 @@
                 patentUserSearch: '/functions/patent/searchUser',
                 setPatentAuthor: '/api/patent/setPatentAuthor',
                 selectDanweiNicknamesAllList: '/api/doc/danweiNicknames/selectAllList',
-                changeInstitute: '/api/patent/changeInstitute'
+                changeInstitute: '/api/patent/changeInstitute',
+                completeImportPatent: '/api/patent/completeImportPatent'
             },
             searchUserDialog: {
                 visible: false,
@@ -605,6 +634,24 @@
             window.parent.app.showMessage('操作成功', 'success');
             getPatentList();
         })
+    }
+
+    //完成导入的匹配好的数据
+    function completeImportPatent() {
+        window.parent.app.showConfirm(function () {
+            app.loading.table = true;
+            ajaxPostJSON(app.urls.completeImportPatent, null, function (d) {
+                app.loading.table = false;
+                window.parent.app.showMessage('操作成功！', 'success');
+                app.status = '4';
+                getPatentList();
+            }, function (d) {
+                app.loading.table = false;
+                window.parent.app.showMessage('操作失败！', 'error');
+                app.status = '4';
+                getPatentList();
+            })
+        });
     }
 
     window.onload = function () {

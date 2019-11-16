@@ -59,7 +59,7 @@ public class PaperApi extends BaseApi {
     // 将所有匹配成功状态的论文转入完成状态
     @RequestMapping(value = "completeAll", method = RequestMethod.POST)
     @ResponseBody
-    public Object completeAll(){
+    public Object completeAll() {
         paperService.completeAll();
         return retMsg.Set(MsgType.SUCCESS);
     }
@@ -72,7 +72,7 @@ public class PaperApi extends BaseApi {
     public Object paperUserMatch() {
         try {
             paperService.paperUserMatch();
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return retMsg.Set(MsgType.SUCCESS);
@@ -99,5 +99,21 @@ public class PaperApi extends BaseApi {
             @RequestParam("authorWorkId") String authorWorkId) {
         paperService.selectAuthor(paperId, authorIndex, authorWorkId);
         return retMsg.Set(MsgType.SUCCESS);
+    }
+
+    /**
+     * @param
+     * @return java.lang.Object
+     * @Description 手工匹配论文
+     * @author zch
+     * @date 2019/11/16 13:31
+     */
+    @RequestMapping(value = "completeImportPaper", method = RequestMethod.POST)
+    @ResponseBody
+    public Object completeImportPaper() {
+        if (paperService.completeImportPaper())
+            return retMsg.Set(MsgType.SUCCESS);
+        else
+            return retMsg.Set(MsgType.ERROR);
     }
 }

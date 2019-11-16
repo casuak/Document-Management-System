@@ -5,7 +5,7 @@ app = new Vue({
             fullScreen: false,
             table: false
         },
-        status: '1',   // current status
+        status: '-1',   // current status
         statusList: [
             {
                 value: '-1',
@@ -26,6 +26,10 @@ app = new Vue({
             {
                 value: '2',
                 label: '3.2 匹配成功'
+            },
+            {
+                value: '4',
+                label: '3.3 人工匹配导入完成'
             },
             {
                 value: '3',
@@ -51,7 +55,8 @@ app = new Vue({
             convertToSuccessByIds: '/api/doc/paper/convertToSuccessByIds',
             searchUser: '/functions/doc/paperUserMatch/searchUser',
             selectAuthor: '/api/doc/paper/selectAuthor',
-            completeAll: '/api/doc/paper/completeAll'
+            completeAll: '/api/doc/paper/completeAll',
+            completeImportPaper: '/api/doc/paper/completeImportPaper'
         },
         searchUserDialog: {
             visible: false,
@@ -174,6 +179,22 @@ app = new Vue({
                         paper.firstAuthorId = null;
                     else
                         paper.secondAuthorId = null;
+                })
+            });
+        },
+        completeImportPaper: function () {
+            window.parent.app.showConfirm(function () {
+                app.loading.table = true;
+                ajaxPostJSON(app.urls.completeImportPaper, null, function (d) {
+                    app.loading.table = false;
+                    window.parent.app.showMessage('操作成功！', 'success');
+                    app.status = '3';
+                    getPatentList();
+                }, function (d) {
+                    app.loading.table = false;
+                    window.parent.app.showMessage('操作失败！', 'error');
+                    app.status = '3';
+                    getPatentList();
                 })
             });
         }

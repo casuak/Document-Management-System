@@ -86,9 +86,9 @@ public class DocPatentApi extends BaseApi {
             @RequestParam("authorIndex") int authorIndex,
             @RequestParam("authorId") String authorId) {
         int res = patentService.setPatentAuthor(patentId, authorIndex, authorId);
-        if (res == 1){
+        if (res == 1) {
             return retMsg.Set(MsgType.SUCCESS);
-        }else {
+        } else {
             return retMsg.Set(MsgType.ERROR);
         }
     }
@@ -121,11 +121,11 @@ public class DocPatentApi extends BaseApi {
         Map<String, Integer> matchResult = new HashMap<>();
         try {
             matchResult = patentService.patentUserMatch();
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return retMsg.Set(MsgType.ERROR);
         }
-        return retMsg.Set(MsgType.SUCCESS,matchResult);
+        return retMsg.Set(MsgType.SUCCESS, matchResult);
     }
 
     /**
@@ -149,15 +149,16 @@ public class DocPatentApi extends BaseApi {
      * @return: java.lang.Object
      * @Description //把专利状态设置成2(匹配成功)___全部已完成匹配的专利
      **/
-    @RequestMapping(value = "convertToCompleteAll",method = RequestMethod.POST)
+    @RequestMapping(value = "convertToCompleteAll", method = RequestMethod.POST)
     @ResponseBody
-    public Object convertToCompleteAll(){
-        if (patentService.convertToCompleteAll()){
+    public Object convertToCompleteAll() {
+        if (patentService.convertToCompleteAll()) {
             return retMsg.Set(MsgType.SUCCESS);
-        }else {
+        } else {
             return retMsg.Set(MsgType.ERROR);
         }
     }
+
     /**
      * @author zm
      * @date 2019/7/5 9:31
@@ -165,10 +166,10 @@ public class DocPatentApi extends BaseApi {
      * @return: java.lang.Object
      * @Description //根据传来的专利list，把专利状态设置成4(匹配完成)，并且插入新的记录在mapUserPatent中。
      **/
-    @RequestMapping(value = "convertToCompleteByIds",method = RequestMethod.POST)
+    @RequestMapping(value = "convertToCompleteByIds", method = RequestMethod.POST)
     @ResponseBody
     public Object convertToCompleteByIds(
-            @RequestBody List<DocPatent> patentList){
+            @RequestBody List<DocPatent> patentList) {
         System.out.println("--------------------------zhuanru wancheng ");
         System.out.println(patentList);
         //更改专利的状态
@@ -182,8 +183,8 @@ public class DocPatentApi extends BaseApi {
     @ResponseBody
     public Object changeInstitute(
             @RequestParam("patentId") String patentId,
-            @RequestParam("institute") String institute){
-        patentService.changeInstitute(patentId,institute);
+            @RequestParam("institute") String institute) {
+        patentService.changeInstitute(patentId, institute);
         return retMsg.Set(MsgType.SUCCESS);
     }
 
@@ -193,20 +194,20 @@ public class DocPatentApi extends BaseApi {
      * @params [sysUser]
      * @return: java.lang.Object
      * @Description //获取当前作者的全部专利(返回分页)
-     *
+     * <p>
      * docPatent.firstAuthorId暂存作者id
      * docPatent.secondAuthorId暂存作者工号
      * docPatent.page存贮所需分页
      **/
-    @RequestMapping(value = "selectMyPatentByPage",method = RequestMethod.POST)
+    @RequestMapping(value = "selectMyPatentByPage", method = RequestMethod.POST)
     @ResponseBody
     public Object selectMyPatentByPage(
-            @RequestBody DocPatent docPatent){
+            @RequestBody DocPatent docPatent) {
         //1.提取暂存在docPatent中的authorId，和authorWorkId信息
         String authorId = docPatent.getFirstAuthorId();
         String authorWorkId = docPatent.getSecondAuthorId();
         //2.获取专利列表
-        List<DocPatent> myPatentList = patentService.selectMyPatentListByPage(authorWorkId,docPatent);
+        List<DocPatent> myPatentList = patentService.selectMyPatentListByPage(authorWorkId, docPatent);
         //3.获取专利总数
         int myPatentNum = patentService.getMyPatentNum(authorWorkId);
         //4.构造返回分页
@@ -216,7 +217,7 @@ public class DocPatentApi extends BaseApi {
         System.out.println("-----专利page----");
         System.out.println(myPatentPage);
         AjaxMessage retMsg = new AjaxMessage();
-        return retMsg.Set(MsgType.SUCCESS,myPatentPage);
+        return retMsg.Set(MsgType.SUCCESS, myPatentPage);
     }
 
     /*查看专利统计详情*/
@@ -242,11 +243,11 @@ public class DocPatentApi extends BaseApi {
         modelAndView.addObject("subjectList", JSONArray.fromObject(subjectList));
         modelAndView.addObject("orgList", JSONArray.fromObject(orgList));
 
-        modelAndView.addObject("subject",subject);
-        modelAndView.addObject("institute",institute);
-        modelAndView.addObject("startDate",startDate);
-        modelAndView.addObject("endDate",endDate);
-        modelAndView.addObject("patentType",patentType);
+        modelAndView.addObject("subject", subject);
+        modelAndView.addObject("institute", institute);
+        modelAndView.addObject("startDate", startDate);
+        modelAndView.addObject("endDate", endDate);
+        modelAndView.addObject("patentType", patentType);
 
         return modelAndView;
     }
@@ -352,7 +353,7 @@ public class DocPatentApi extends BaseApi {
             int cellNum = 0;
             //第一列存的是序号
             HSSFCell cell = row.createCell(cellNum++);
-            cell.setCellValue(i+1);
+            cell.setCellValue(i + 1);
             cell.setCellStyle(style);
             //第2列：专利名称
             cell = row.createCell(cellNum++);
@@ -414,5 +415,14 @@ public class DocPatentApi extends BaseApi {
         wb.write(ouputStream);
         ouputStream.flush();
         ouputStream.close();
+    }
+
+    @RequestMapping(value = "/completeImportPatent", method = RequestMethod.POST)
+    @ResponseBody
+    public Object completeImportPatent() throws ParseException {
+        if (patentService.completeImportPatent())
+            return retMsg.Set(MsgType.SUCCESS);
+        else
+            return retMsg.Set(MsgType.ERROR);
     }
 }
