@@ -86,7 +86,7 @@ public class UserService {
         setUsersNicknamesAndTutorNicknames(updateList);
 
         /* zch add "batch update" begin*/
-        if (updateList == null || updateList.size() == 0)
+        if (updateList.size() == 0)
             return;//没有需要修改的直接返回，加快速度
         List<User> existList = userDao.selectByStatus("1");
         List<String> newUserNames = new ArrayList<>();
@@ -160,6 +160,8 @@ public class UserService {
             userDao.updateDoct(upList);
             //userDao.updateDoctSta(upList);
         }
+
+
     }
 
     /**
@@ -169,14 +171,16 @@ public class UserService {
         // 对所有用户添加nickname
         for (User user : userList) {
             String nicknames = "";
-            nicknames += PinyinUtils.getPinyin2(user.getRealName(), true) + ";";
-            nicknames += PinyinUtils.getPinyin2(user.getRealName(), false) + ";";
+            nicknames += PinyinUtils.getPinyin2(user.getRealName(), true, false) + ";";
+            nicknames += PinyinUtils.getPinyin2(user.getRealName(), false, false) + ";";
+            nicknames += PinyinUtils.getPinyin2(user.getRealName(), true, true) + ";";
             user.setNicknames(nicknames);
             String tutorNicknames = "";
             String tutorName = user.getTutorName();
             if (tutorName != null && !tutorName.equals("")) {
-                tutorNicknames += PinyinUtils.getPinyin2(user.getTutorName(), true) + ";";
-                tutorNicknames += PinyinUtils.getPinyin2(user.getTutorName(), false) + ";";
+                tutorNicknames += PinyinUtils.getPinyin2(user.getTutorName(), true, false) + ";";
+                tutorNicknames += PinyinUtils.getPinyin2(user.getTutorName(), false, false) + ";";
+                tutorNicknames += PinyinUtils.getPinyin2(user.getTutorName(), true, true) + ";";
                 user.setTutorNicknames(tutorNicknames);
             }
         }

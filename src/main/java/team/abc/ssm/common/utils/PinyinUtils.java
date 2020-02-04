@@ -142,11 +142,12 @@ public class PinyinUtils {
 
     @Test
     public static void main(String args[]) {
-        System.out.println(getPinyin2("MANSOOR SHAUKAT KHAN", false));
+        System.out.println(getPinyin2("王昊", false, true));
     }
 
     /**
      * comma: 是否带逗号
+     * rp: 是否简写（用于通讯作者匹配）
      * 例：
      * 输入: 张三
      * 输出: zhang, san
@@ -155,7 +156,7 @@ public class PinyinUtils {
      * 输入: Fred(首字母为英文时直接返回 name.toLowerCase() )
      * 输出: fred
      */
-    public static String getPinyin2(String name, boolean comma) {
+    public static String getPinyin2(String name, boolean comma, boolean rp) {
         if (name == null || name.equals(""))
             return null;
         String result = "";
@@ -167,21 +168,28 @@ public class PinyinUtils {
             isEn = true;
         }
         boolean hasAddComma = false;
+        if (rp)
+            comma = true;
         for (int i = 0; i < name.length(); i++) {
             String s = name.substring(i, i + 1);
             if (isEn) {
-                if (comma && !hasAddComma && s.equals(" ")){
+                if (comma && !hasAddComma && s.equals(" ")) {
                     result += ",";
                     hasAddComma = true;
                 }
                 result += s;
                 continue;
             }
-            result += getPingYin(s);
             if (i == 0) {
+                result += getPingYin(s);
                 if (comma)
                     result += ",";
                 result += " ";
+            } else {
+                if (rp)
+                    result += getPingYin(s).charAt(0);
+                else
+                    result += getPingYin(s);
             }
         }
         return result;
