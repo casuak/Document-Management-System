@@ -152,7 +152,7 @@
         <el-table-column label="操作" fixed="right" width="80" header-align="center" align="center">
             <template slot-scope="{ row }">
                 <el-button type="warning" size="mini" style="position:relative;bottom: 1px;"
-                           @click="selectPatentAuthor(row.id)">
+                           @click="selectPatentAuthor(row.id,row.userType)">
                     <span>选择</span>
                 </el-button>
             </template>
@@ -264,11 +264,12 @@
                 this.$refs[ref].resetFields();
             },
             //选择专利用户
-            selectPatentAuthor : function (id) {
+            selectPatentAuthor : function (id,userType) {
                 let data = {
                     patentId: pageParams.patentId,
                     authorIndex: pageParams.authorIndex,
-                    authorId: id
+                    authorId: id,
+                    userType: userType
                 };
                 let app = this;
                 app.fullScreenLoading = true;

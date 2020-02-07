@@ -901,8 +901,8 @@ public class DocPatentService {
         return true;
     }
 
-    public int setPatentAuthor(String patentId, int authorIndex, String authorId) {
-        return docPatentMapper.setPatentAuthor(patentId, authorIndex, authorId);
+    public int setPatentAuthor(String patentId, int authorIndex, String authorId,String userType) {
+        return docPatentMapper.setPatentAuthor(patentId, authorIndex, authorId,userType);
     }
 
     public boolean convertToSuccessByIds(List<DocPatent> patentList) {

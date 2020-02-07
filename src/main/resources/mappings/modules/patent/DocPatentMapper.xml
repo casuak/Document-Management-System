@@ -375,19 +375,21 @@
         where `status`=#{status,jdbcType=VARCHAR}
     </delete>
 
+
     <update id="setPatentAuthor">
         update doc_patent
         <trim prefix="set" prefixOverrides="and" suffixOverrides=",">
             <if test="authorIndex == 1">
                 and first_author_id = #{authorId,jdbcType=VARCHAR} ,
+                and first_author_type = #{userType,jdbcType=VARCHAR},
             </if>
             <if test="authorIndex ==2">
                 and second_author_id = #{authorId,jdbcType=VARCHAR} ,
+                and second_author_type = #{userType,jdbcType=VARCHAR}.
             </if>
         </trim>
         <where>id = #{patentId,jdbcType=VARCHAR}</where>
     </update>
-
     <update id="convertToSuccessByIds" parameterType="team.abc.ssm.modules.patent.entity.DocPatent">
         update doc_patent
         set status = '2'

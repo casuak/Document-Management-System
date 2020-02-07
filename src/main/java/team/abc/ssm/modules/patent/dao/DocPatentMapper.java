@@ -39,7 +39,9 @@ public interface DocPatentMapper {
     int setPatentAuthor(
             @Param("patentId") String patentId,
             @Param("authorIndex") int authorIndex,
-            @Param("authorId") String authorId);
+            @Param("authorId") String authorId,
+            @Param("userType") String userType);
+
 
     int convertToSuccessByIds(List<DocPatent> patentList);
 
