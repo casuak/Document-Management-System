@@ -1,0 +1,479 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="team.abc.ssm.modules.document.docStatistics.dao.SysUserMapper">
+    <resultMap id="BaseResultMap" type="team.abc.ssm.modules.document.docStatistics.entity.SysUser">
+        <!--@mbg.generated-->
+        <id column="id" jdbcType="VARCHAR" property="id"/>
+        <result column="user_type" jdbcType="VARCHAR" property="userType"/>
+        <result column="username" jdbcType="VARCHAR" property="username"/>
+        <result column="password" jdbcType="VARCHAR" property="password"/>
+        <result column="real_name" jdbcType="VARCHAR" property="realName"/>
+        <result column="nicknames" jdbcType="VARCHAR" property="nicknames"/>
+        <result column="work_id" jdbcType="VARCHAR" property="workId"/>
+        <result column="sex_id" jdbcType="VARCHAR" property="sexId"/>
+        <result column="school" jdbcType="VARCHAR" property="school"/>
+        <result column="major" jdbcType="VARCHAR" property="major"/>
+        <result column="tutor_work_id" jdbcType="VARCHAR" property="tutorWorkId"/>
+        <result column="tutors" jdbcType="VARCHAR" property="tutors"/>
+        <result column="hire_date" jdbcType="TIMESTAMP" property="hireDate"/>
+        <result column="title" jdbcType="VARCHAR" property="title"/>
+        <result column="duty" jdbcType="VARCHAR" property="duty"/>
+        <result column="mobile" jdbcType="VARCHAR" property="mobile"/>
+        <result column="phone" jdbcType="VARCHAR" property="phone"/>
+        <result column="email" jdbcType="VARCHAR" property="email"/>
+        <result column="political_status" jdbcType="VARCHAR" property="politicalStatus"/>
+        <result column="healthy" jdbcType="VARCHAR" property="healthy"/>
+        <result column="birthplace" jdbcType="VARCHAR" property="birthplace"/>
+        <result column="birthday" jdbcType="TIMESTAMP" property="birthday"/>
+        <result column="id_number" jdbcType="VARCHAR" property="idNumber"/>
+        <result column="remarks" jdbcType="VARCHAR" property="remarks"/>
+        <result column="create_user_id" jdbcType="VARCHAR" property="createUserId"/>
+        <result column="create_date" jdbcType="TIMESTAMP" property="createDate"/>
+        <result column="modify_date" jdbcType="TIMESTAMP" property="modifyDate"/>
+        <result column="del_flag" jdbcType="BOOLEAN" property="delFlag"/>
+        <result column="modify_user_id" jdbcType="VARCHAR" property="modifyUserId"/>
+        <result column="tutor_type" jdbcType="VARCHAR" property="tutorType"/>
+        <result column="student_train_level" jdbcType="VARCHAR" property="studentTrainLevel"/>
+        <result column="student_degree_type" jdbcType="VARCHAR" property="studentDegreeType"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        <!--@mbg.generated-->
+        id, user_type, username, `password`, real_name, nicknames, work_id, sex_id, school,
+        major, tutor_work_id, tutors, hire_date, title, duty, mobile, phone, email, political_status,
+        healthy, birthplace, birthday, id_number, remarks, create_user_id, create_date, modify_date,
+        del_flag, modify_user_id, tutor_type, student_train_level, student_degree_type
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+        <!--@mbg.generated-->
+        select
+        <include refid="Base_Column_List"/>
+        from sys_user
+        where id = #{id,jdbcType=VARCHAR}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+        <!--@mbg.generated-->
+        delete from sys_user
+        where id = #{id,jdbcType=VARCHAR}
+    </delete>
+    <insert id="insert" parameterType="team.abc.ssm.modules.document.docStatistics.entity.SysUser">
+        <!--@mbg.generated-->
+        insert into sys_user (id, user_type, username,
+        `password`, real_name, nicknames,
+        work_id, sex_id, school,
+        major, tutor_work_id, tutors,
+        hire_date, title, duty,
+        mobile, phone, email,
+        political_status, healthy, birthplace,
+        birthday, id_number, remarks,
+        create_user_id, create_date, modify_date,
+        del_flag, modify_user_id, tutor_type,
+        student_train_level, student_degree_type)
+        values (#{id,jdbcType=VARCHAR}, #{userType,jdbcType=VARCHAR}, #{username,jdbcType=VARCHAR},
+        #{password,jdbcType=VARCHAR}, #{realName,jdbcType=VARCHAR}, #{nicknames,jdbcType=VARCHAR},
+        #{workId,jdbcType=VARCHAR}, #{sexId,jdbcType=VARCHAR}, #{school,jdbcType=VARCHAR},
+        #{major,jdbcType=VARCHAR}, #{tutorWorkId,jdbcType=VARCHAR}, #{tutors,jdbcType=VARCHAR},
+        #{hireDate,jdbcType=TIMESTAMP}, #{title,jdbcType=VARCHAR}, #{duty,jdbcType=VARCHAR},
+        #{mobile,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR},
+        #{politicalStatus,jdbcType=VARCHAR}, #{healthy,jdbcType=VARCHAR}, #{birthplace,jdbcType=VARCHAR},
+        #{birthday,jdbcType=TIMESTAMP}, #{idNumber,jdbcType=VARCHAR}, #{remarks,jdbcType=VARCHAR},
+        #{createUserId,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}, #{modifyDate,jdbcType=TIMESTAMP},
+        #{delFlag,jdbcType=BOOLEAN}, #{modifyUserId,jdbcType=VARCHAR}, #{tutorType,jdbcType=VARCHAR},
+        #{studentTrainLevel,jdbcType=VARCHAR}, #{studentDegreeType,jdbcType=VARCHAR})
+    </insert>
+    <insert id="insertSelective" parameterType="team.abc.ssm.modules.document.docStatistics.entity.SysUser">
+        <!--@mbg.generated-->
+        insert into sys_user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="userType != null">
+                user_type,
+            </if>
+            <if test="username != null">
+                username,
+            </if>
+            <if test="password != null">
+                `password`,
+            </if>
+            <if test="realName != null">
+                real_name,
+            </if>
+            <if test="nicknames != null">
+                nicknames,
+            </if>
+            <if test="workId != null">
+                work_id,
+            </if>
+            <if test="sexId != null">
+                sex_id,
+            </if>
+            <if test="school != null">
+                school,
+            </if>
+            <if test="major != null">
+                major,
+            </if>
+            <if test="tutorWorkId != null">
+                tutor_work_id,
+            </if>
+            <if test="tutors != null">
+                tutors,
+            </if>
+            <if test="hireDate != null">
+                hire_date,
+            </if>
+            <if test="title != null">
+                title,
+            </if>
+            <if test="duty != null">
+                duty,
+            </if>
+            <if test="mobile != null">
+                mobile,
+            </if>
+            <if test="phone != null">
+                phone,
+            </if>
+            <if test="email != null">
+                email,
+            </if>
+            <if test="politicalStatus != null">
+                political_status,
+            </if>
+            <if test="healthy != null">
+                healthy,
+            </if>
+            <if test="birthplace != null">
+                birthplace,
+            </if>
+            <if test="birthday != null">
+                birthday,
+            </if>
+            <if test="idNumber != null">
+                id_number,
+            </if>
+            <if test="remarks != null">
+                remarks,
+            </if>
+            <if test="createUserId != null">
+                create_user_id,
+            </if>
+            <if test="createDate != null">
+                create_date,
+            </if>
+            <if test="modifyDate != null">
+                modify_date,
+            </if>
+            <if test="delFlag != null">
+                del_flag,
+            </if>
+            <if test="modifyUserId != null">
+                modify_user_id,
+            </if>
+            <if test="tutorType != null">
+                tutor_type,
+            </if>
+            <if test="studentTrainLevel != null">
+                student_train_level,
+            </if>
+            <if test="studentDegreeType != null">
+                student_degree_type,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=VARCHAR},
+            </if>
+            <if test="userType != null">
+                #{userType,jdbcType=VARCHAR},
+            </if>
+            <if test="username != null">
+                #{username,jdbcType=VARCHAR},
+            </if>
+            <if test="password != null">
+                #{password,jdbcType=VARCHAR},
+            </if>
+            <if test="realName != null">
+                #{realName,jdbcType=VARCHAR},
+            </if>
+            <if test="nicknames != null">
+                #{nicknames,jdbcType=VARCHAR},
+            </if>
+            <if test="workId != null">
+                #{workId,jdbcType=VARCHAR},
+            </if>
+            <if test="sexId != null">
+                #{sexId,jdbcType=VARCHAR},
+            </if>
+            <if test="school != null">
+                #{school,jdbcType=VARCHAR},
+            </if>
+            <if test="major != null">
+                #{major,jdbcType=VARCHAR},
+            </if>
+            <if test="tutorWorkId != null">
+                #{tutorWorkId,jdbcType=VARCHAR},
+            </if>
+            <if test="tutors != null">
+                #{tutors,jdbcType=VARCHAR},
+            </if>
+            <if test="hireDate != null">
+                #{hireDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="title != null">
+                #{title,jdbcType=VARCHAR},
+            </if>
+            <if test="duty != null">
+                #{duty,jdbcType=VARCHAR},
+            </if>
+            <if test="mobile != null">
+                #{mobile,jdbcType=VARCHAR},
+            </if>
+            <if test="phone != null">
+                #{phone,jdbcType=VARCHAR},
+            </if>
+            <if test="email != null">
+                #{email,jdbcType=VARCHAR},
+            </if>
+            <if test="politicalStatus != null">
+                #{politicalStatus,jdbcType=VARCHAR},
+            </if>
+            <if test="healthy != null">
+                #{healthy,jdbcType=VARCHAR},
+            </if>
+            <if test="birthplace != null">
+                #{birthplace,jdbcType=VARCHAR},
+            </if>
+            <if test="birthday != null">
+                #{birthday,jdbcType=TIMESTAMP},
+            </if>
+            <if test="idNumber != null">
+                #{idNumber,jdbcType=VARCHAR},
+            </if>
+            <if test="remarks != null">
+                #{remarks,jdbcType=VARCHAR},
+            </if>
+            <if test="createUserId != null">
+                #{createUserId,jdbcType=VARCHAR},
+            </if>
+            <if test="createDate != null">
+                #{createDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modifyDate != null">
+                #{modifyDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="delFlag != null">
+                #{delFlag,jdbcType=BOOLEAN},
+            </if>
+            <if test="modifyUserId != null">
+                #{modifyUserId,jdbcType=VARCHAR},
+            </if>
+            <if test="tutorType != null">
+                #{tutorType,jdbcType=VARCHAR},
+            </if>
+            <if test="studentTrainLevel != null">
+                #{studentTrainLevel,jdbcType=VARCHAR},
+            </if>
+            <if test="studentDegreeType != null">
+                #{studentDegreeType,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="team.abc.ssm.modules.document.docStatistics.entity.SysUser">
+        <!--@mbg.generated-->
+        update sys_user
+        <set>
+            <if test="userType != null">
+                user_type = #{userType,jdbcType=VARCHAR},
+            </if>
+            <if test="username != null">
+                username = #{username,jdbcType=VARCHAR},
+            </if>
+            <if test="password != null">
+                `password` = #{password,jdbcType=VARCHAR},
+            </if>
+            <if test="realName != null">
+                real_name = #{realName,jdbcType=VARCHAR},
+            </if>
+            <if test="nicknames != null">
+                nicknames = #{nicknames,jdbcType=VARCHAR},
+            </if>
+            <if test="workId != null">
+                work_id = #{workId,jdbcType=VARCHAR},
+            </if>
+            <if test="sexId != null">
+                sex_id = #{sexId,jdbcType=VARCHAR},
+            </if>
+            <if test="school != null">
+                school = #{school,jdbcType=VARCHAR},
+            </if>
+            <if test="major != null">
+                major = #{major,jdbcType=VARCHAR},
+            </if>
+            <if test="tutorWorkId != null">
+                tutor_work_id = #{tutorWorkId,jdbcType=VARCHAR},
+            </if>
+            <if test="tutors != null">
+                tutors = #{tutors,jdbcType=VARCHAR},
+            </if>
+            <if test="hireDate != null">
+                hire_date = #{hireDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="title != null">
+                title = #{title,jdbcType=VARCHAR},
+            </if>
+            <if test="duty != null">
+                duty = #{duty,jdbcType=VARCHAR},
+            </if>
+            <if test="mobile != null">
+                mobile = #{mobile,jdbcType=VARCHAR},
+            </if>
+            <if test="phone != null">
+                phone = #{phone,jdbcType=VARCHAR},
+            </if>
+            <if test="email != null">
+                email = #{email,jdbcType=VARCHAR},
+            </if>
+            <if test="politicalStatus != null">
+                political_status = #{politicalStatus,jdbcType=VARCHAR},
+            </if>
+            <if test="healthy != null">
+                healthy = #{healthy,jdbcType=VARCHAR},
+            </if>
+            <if test="birthplace != null">
+                birthplace = #{birthplace,jdbcType=VARCHAR},
+            </if>
+            <if test="birthday != null">
+                birthday = #{birthday,jdbcType=TIMESTAMP},
+            </if>
+            <if test="idNumber != null">
+                id_number = #{idNumber,jdbcType=VARCHAR},
+            </if>
+            <if test="remarks != null">
+                remarks = #{remarks,jdbcType=VARCHAR},
+            </if>
+            <if test="createUserId != null">
+                create_user_id = #{createUserId,jdbcType=VARCHAR},
+            </if>
+            <if test="createDate != null">
+                create_date = #{createDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modifyDate != null">
+                modify_date = #{modifyDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="delFlag != null">
+                del_flag = #{delFlag,jdbcType=BOOLEAN},
+            </if>
+            <if test="modifyUserId != null">
+                modify_user_id = #{modifyUserId,jdbcType=VARCHAR},
+            </if>
+            <if test="tutorType != null">
+                tutor_type = #{tutorType,jdbcType=VARCHAR},
+            </if>
+            <if test="studentTrainLevel != null">
+                student_train_level = #{studentTrainLevel,jdbcType=VARCHAR},
+            </if>
+            <if test="studentDegreeType != null">
+                student_degree_type = #{studentDegreeType,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=VARCHAR}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="team.abc.ssm.modules.document.docStatistics.entity.SysUser">
+        <!--@mbg.generated-->
+        update sys_user
+        set user_type = #{userType,jdbcType=VARCHAR},
+        username = #{username,jdbcType=VARCHAR},
+        `password` = #{password,jdbcType=VARCHAR},
+        real_name = #{realName,jdbcType=VARCHAR},
+        nicknames = #{nicknames,jdbcType=VARCHAR},
+        work_id = #{workId,jdbcType=VARCHAR},
+        sex_id = #{sexId,jdbcType=VARCHAR},
+        school = #{school,jdbcType=VARCHAR},
+        major = #{major,jdbcType=VARCHAR},
+        tutor_work_id = #{tutorWorkId,jdbcType=VARCHAR},
+        tutors = #{tutors,jdbcType=VARCHAR},
+        hire_date = #{hireDate,jdbcType=TIMESTAMP},
+        title = #{title,jdbcType=VARCHAR},
+        duty = #{duty,jdbcType=VARCHAR},
+        mobile = #{mobile,jdbcType=VARCHAR},
+        phone = #{phone,jdbcType=VARCHAR},
+        email = #{email,jdbcType=VARCHAR},
+        political_status = #{politicalStatus,jdbcType=VARCHAR},
+        healthy = #{healthy,jdbcType=VARCHAR},
+        birthplace = #{birthplace,jdbcType=VARCHAR},
+        birthday = #{birthday,jdbcType=TIMESTAMP},
+        id_number = #{idNumber,jdbcType=VARCHAR},
+        remarks = #{remarks,jdbcType=VARCHAR},
+        create_user_id = #{createUserId,jdbcType=VARCHAR},
+        create_date = #{createDate,jdbcType=TIMESTAMP},
+        modify_date = #{modifyDate,jdbcType=TIMESTAMP},
+        del_flag = #{delFlag,jdbcType=BOOLEAN},
+        modify_user_id = #{modifyUserId,jdbcType=VARCHAR},
+        tutor_type = #{tutorType,jdbcType=VARCHAR},
+        student_train_level = #{studentTrainLevel,jdbcType=VARCHAR},
+        student_degree_type = #{studentDegreeType,jdbcType=VARCHAR}
+        where id = #{id,jdbcType=VARCHAR}
+    </update>
+
+    <!--auto generated by MybatisCodeHelper on 2019-06-23-->
+    <select id="selectAllByRealName" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from sys_user
+        where real_name=#{realName,jdbcType=VARCHAR}
+        and del_flag = 0
+    </select>
+
+    <!--auto generated by MybatisCodeHelper on 2019-06-23-->
+    <select id="selectByRealNameAndUserType" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from sys_user
+        where real_name=#{realName,jdbcType=VARCHAR} and user_type=#{userType,jdbcType=VARCHAR}
+        and del_flag = 0
+    </select>
+
+    <!--auto generated by MybatisCodeHelper on 2019-06-23-->
+    <select id="selectByWorkId" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from sys_user
+        where work_id=#{workId,jdbcType=VARCHAR}
+        and del_flag = 0
+        limit 1
+    </select>
+
+    <!--auto generated by MybatisCodeHelper on 2019-06-25-->
+    <select id="selectByRealNameAndSchool" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from sys_user
+        where real_name=#{realName,jdbcType=VARCHAR} and school=#{school,jdbcType=VARCHAR}
+    </select>
+    <select id="selectListByPage" resultMap="BaseResultMap"></select>
+
+    <!--auto generated by MybatisCodeHelper on 2019-07-12-->
+    <select id="selectByRealName" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from sys_user
+        where real_name=#{realName,jdbcType=VARCHAR}
+    </select>
+
+    <select id="selectTheWholeUser" resultMap="BaseResultMap">
+        select
+            id,
+            real_name,
+            work_id,
+            user_type,
+            tutor_work_id,
+            school,
+            major
+        from docmanager.sys_user
+    </select>
+    <select id="getAllUser" resultMap="BaseResultMap">
+        select * from sys_user where del_flag = 0
+    </select>
+</mapper>

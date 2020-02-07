@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="team.abc.ssm.modules.document.journal.dao.JournalDao">
+
+    <resultMap id="journalBean" type="journal">
+        <id column="id" property="id"/>
+
+        <result column="journal_title" property="journalTitle"/>
+        <result column="journal_division" property="journalDivision"/>
+        <result column="journal_year" property="journalYear"/>
+        <result column="impact_factor" property="impactFactor"/>
+        <result column="issn" property="issn"/>
+
+        <result column="remarks" property="remarks"/>
+        <result column="create_user_id" property="createUserId"/>
+        <result column="modify_user_id" property="modifyUserId"/>
+        <result column="create_date" property="createDate"/>
+        <result column="modify_date" property="modifyDate"/>
+        <result column="del_flag" property="delFlag"/>
+    </resultMap>
+
+    <select id="list" parameterType="journal" resultMap="journalBean">
+        select a.*
+        from doc_journal a
+        where a.journal_title like concat('%', #{page.searchKey}, '%')
+        order by a.journal_year, a.journal_division
+        limit #{page.pageStart}, #{page.pageSize}
+    </select>
+
+    <select id="listCount" resultType="int">
+        select count(*)
+        from doc_journal a
+        where a.journal_title like concat('%', #{page.searchKey}, '%')
+    </select>
+
+    <delete id="deleteByIds" parameterType="journal">
+        delete from doc_journal where id in
+        <foreach collection="list" open="(" close=")" separator="," item="item" index="index">
+            #{item.id}
+        </foreach>
+    </delete>
+
+    <delete id="deleteAll">
+        delete
+        from doc_journal
+        where 1 = 1
+    </delete>
+
+    <select id="listAll" resultMap="journalBean">
+        select issn, journal_division, impact_factor from doc_journal
+    </select>
+
+    <update id="updateJournal" parameterType="Journal">
+        update doc_journal
+        set journal_division=#{journalDivision},
+            journal_title=#{journalTitle},
+            impact_factor=#{impactFactor},
+            journal_year=#{journalYear},
+            issn=#{issn},
+            modify_user_id=#{modifyUserId},
+            modify_date=#{modifyDate}
+        where id=#{id}
+    </update>
+    <select id="getImpactFactor" resultType="double">
+        select doc_journal.impact_factor from doc_journal where issn = #{ISSN} and del_flag=0
+    </select>
+    <select id="getDivision" resultType="java.lang.String">
+        select doc_journal.journal_division from doc_journal where  issn = #{ISSN} and del_flag=0
+    </select>
+</mapper>

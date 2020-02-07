@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="team.abc.ssm.modules.document.docStatistics.dao.MapUserPatentMapper">
+  <resultMap id="BaseResultMap" type="team.abc.ssm.modules.document.docStatistics.entity.MapUserPatent">
+    <!--@mbg.generated-->
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="patent_id" jdbcType="VARCHAR" property="patentId" />
+    <result column="author_type" jdbcType="VARCHAR" property="authorType" />
+    <result column="user_id" jdbcType="VARCHAR" property="userId" />
+    <result column="user_work_id" jdbcType="VARCHAR" property="userWorkId" />
+    <result column="remarks" jdbcType="VARCHAR" property="remarks" />
+    <result column="create_user_id" jdbcType="VARCHAR" property="createUserId" />
+    <result column="modify_user_id" jdbcType="VARCHAR" property="modifyUserId" />
+    <result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="modify_date" jdbcType="TIMESTAMP" property="modifyDate" />
+    <result column="del_flag" jdbcType="BOOLEAN" property="delFlag" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    id, patent_id, author_type, user_id, user_work_id, remarks, create_user_id, modify_user_id, 
+    create_date, modify_date, del_flag
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    <!--@mbg.generated-->
+    select 
+    <include refid="Base_Column_List" />
+    from doc_map_user_patent
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    <!--@mbg.generated-->
+    delete from doc_map_user_patent
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="team.abc.ssm.modules.document.docStatistics.entity.MapUserPatent">
+    <!--@mbg.generated-->
+    insert into doc_map_user_patent (id, patent_id, author_type, 
+      user_id, user_work_id, remarks, 
+      create_user_id, modify_user_id, create_date, 
+      modify_date, del_flag)
+    values (#{id,jdbcType=VARCHAR}, #{patentId,jdbcType=VARCHAR}, #{authorType,jdbcType=VARCHAR}, 
+      #{userId,jdbcType=VARCHAR}, #{userWorkId,jdbcType=VARCHAR}, #{remarks,jdbcType=VARCHAR}, 
+      #{createUserId,jdbcType=VARCHAR}, #{modifyUserId,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}, 
+      #{modifyDate,jdbcType=TIMESTAMP}, #{delFlag,jdbcType=BOOLEAN})
+  </insert>
+  <insert id="insertSelective" parameterType="team.abc.ssm.modules.document.docStatistics.entity.MapUserPatent">
+    <!--@mbg.generated-->
+    insert into doc_map_user_patent
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="patentId != null">
+        patent_id,
+      </if>
+      <if test="authorType != null">
+        author_type,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="userWorkId != null">
+        user_work_id,
+      </if>
+      <if test="remarks != null">
+        remarks,
+      </if>
+      <if test="createUserId != null">
+        create_user_id,
+      </if>
+      <if test="modifyUserId != null">
+        modify_user_id,
+      </if>
+      <if test="createDate != null">
+        create_date,
+      </if>
+      <if test="modifyDate != null">
+        modify_date,
+      </if>
+      <if test="delFlag != null">
+        del_flag,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="patentId != null">
+        #{patentId,jdbcType=VARCHAR},
+      </if>
+      <if test="authorType != null">
+        #{authorType,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="userWorkId != null">
+        #{userWorkId,jdbcType=VARCHAR},
+      </if>
+      <if test="remarks != null">
+        #{remarks,jdbcType=VARCHAR},
+      </if>
+      <if test="createUserId != null">
+        #{createUserId,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyUserId != null">
+        #{modifyUserId,jdbcType=VARCHAR},
+      </if>
+      <if test="createDate != null">
+        #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyDate != null">
+        #{modifyDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="delFlag != null">
+        #{delFlag,jdbcType=BOOLEAN},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="team.abc.ssm.modules.document.docStatistics.entity.MapUserPatent">
+    <!--@mbg.generated-->
+    update doc_map_user_patent
+    <set>
+      <if test="patentId != null">
+        patent_id = #{patentId,jdbcType=VARCHAR},
+      </if>
+      <if test="authorType != null">
+        author_type = #{authorType,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="userWorkId != null">
+        user_work_id = #{userWorkId,jdbcType=VARCHAR},
+      </if>
+      <if test="remarks != null">
+        remarks = #{remarks,jdbcType=VARCHAR},
+      </if>
+      <if test="createUserId != null">
+        create_user_id = #{createUserId,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyUserId != null">
+        modify_user_id = #{modifyUserId,jdbcType=VARCHAR},
+      </if>
+      <if test="createDate != null">
+        create_date = #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyDate != null">
+        modify_date = #{modifyDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="delFlag != null">
+        del_flag = #{delFlag,jdbcType=BOOLEAN},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="team.abc.ssm.modules.document.docStatistics.entity.MapUserPatent">
+    <!--@mbg.generated-->
+    update doc_map_user_patent
+    set patent_id = #{patentId,jdbcType=VARCHAR},
+      author_type = #{authorType,jdbcType=VARCHAR},
+      user_id = #{userId,jdbcType=VARCHAR},
+      user_work_id = #{userWorkId,jdbcType=VARCHAR},
+      remarks = #{remarks,jdbcType=VARCHAR},
+      create_user_id = #{createUserId,jdbcType=VARCHAR},
+      modify_user_id = #{modifyUserId,jdbcType=VARCHAR},
+      create_date = #{createDate,jdbcType=TIMESTAMP},
+      modify_date = #{modifyDate,jdbcType=TIMESTAMP},
+      del_flag = #{delFlag,jdbcType=BOOLEAN}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

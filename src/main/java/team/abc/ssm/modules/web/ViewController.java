@@ -1,7 +1,5 @@
 package team.abc.ssm.modules.web;
 
-import net.sf.json.JSONObject;
-import org.apache.http.HttpRequest;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -13,8 +11,8 @@ import org.springframework.web.servlet.ModelAndView;
 import team.abc.ssm.common.web.AjaxMessage;
 import team.abc.ssm.common.web.BaseController;
 import team.abc.ssm.common.web.MsgType;
-import team.abc.ssm.modules.doc.entity.Statistics;
-import team.abc.ssm.modules.doc.service.PaperSearchService;
+import team.abc.ssm.modules.document.docStatistics.entity.Statistics;
+import team.abc.ssm.modules.document.paper.service.PaperSearchService;
 
 import java.util.Date;
 import java.util.Map;
@@ -120,12 +118,12 @@ public class ViewController extends BaseController {
      */
     @RequestMapping(value = "functions/doc/paperManager", method = RequestMethod.GET)
     public String doc_paperManager() {
-        return "functions/doc/paperManager";
+        return "functions/document/paper/paperManager";
     }
 
     @RequestMapping(value = "functions/doc/paperUserMatch", method = RequestMethod.GET)
     public String doc_paperUserMatch() {
-        return "functions/doc/paperUserMatch";
+        return "functions/document/paper/paperUserMatch";
     }
 
     @RequestMapping(value = "functions/doc/paperUserMatch/searchUser", method = RequestMethod.GET)
@@ -136,7 +134,7 @@ public class ViewController extends BaseController {
             @RequestParam("school") String school,
             @RequestParam("publishDate") Long publishDate,
             @RequestParam("workId") String workId) {
-        ModelAndView mv = new ModelAndView("functions/doc/paperUserMatch/searchUser");
+        ModelAndView mv = new ModelAndView("functions/document/paper/searchUser");
         mv.addObject("paperId", paperId);
         mv.addObject("authorIndex", authorIndex);
         mv.addObject("searchKey", searchKey);
@@ -148,12 +146,12 @@ public class ViewController extends BaseController {
 
     @RequestMapping(value = "functions/doc/journalManager", method = RequestMethod.GET)
     public String doc_journalManager(){
-        return "functions/doc/journalManager";
+        return "functions/document/journal/journalManager";
     }
 
     @RequestMapping(value = "functions/doc/fundManager", method = RequestMethod.GET)
     public String doc_fundManager(){
-        return "functions/doc/fundManager";
+        return "functions/document/fund/fundManager";
     }
 
     @RequestMapping(value = "functions/patent/searchUser", method = RequestMethod.GET)
@@ -184,7 +182,7 @@ public class ViewController extends BaseController {
      **/
     @RequestMapping(value = "functions/patent/patentUserMatch",method = RequestMethod.GET)
     public String patentUserMatch(){
-        return "functions/patent/patentUserMatch";
+        return "functions/document/patent/patentUserMatch";
     }
 
     /**

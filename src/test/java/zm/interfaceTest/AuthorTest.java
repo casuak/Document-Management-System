@@ -8,12 +8,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import team.abc.ssm.common.persistence.Page;
-import team.abc.ssm.modules.author.entity.Author;
-import team.abc.ssm.modules.author.service.AuthorService;
-import team.abc.ssm.modules.doc.entity.Paper;
-import team.abc.ssm.modules.doc.entity.Patent;
-import team.abc.ssm.modules.doc.service.PaperSearchService;
-import team.abc.ssm.modules.doc.service.PatentService;
+import team.abc.ssm.modules.document.authorSearch.entity.Author;
+import team.abc.ssm.modules.document.authorSearch.service.AuthorService;
+import team.abc.ssm.modules.document.paper.entity.Paper;
+import team.abc.ssm.modules.document.paper.service.PaperSearchService;
+import team.abc.ssm.modules.document.patent.service.PatentService;
 
 import java.util.List;
 
