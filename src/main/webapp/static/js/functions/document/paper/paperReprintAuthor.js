@@ -11,7 +11,9 @@ let app = new Vue({
             completePaperEntryByStatus: '/api/doc/rp/completePaperEntryByStatus',
             rollBackToSuccessById: '/api/doc/rp/rollBackToSuccessById',
             getEntryList: '/api/doc/rp/getEntryList',
-            submitChange: '/api/doc/rp/submitChange'
+            submitChange: '/api/doc/rp/submitChange',
+            selectEntityListByPage: '/api/sys/user/selectListByPage',
+            selectDanweiNicknamesAllList: '/api/doc/danweiNicknames/selectAllList',
         },
         loading: {
             fullScreen: false,
@@ -60,7 +62,46 @@ let app = new Vue({
             name: '',
             realName: '',
             workId: ''
-        }
+        },
+        selectedEntry: '',
+        searchUserDialog: {
+            visible: false,
+            fullScreenLoading: false,
+            table: {
+                entity: {
+                    data: [],
+                    loading: false,
+                    selectionList: [],
+                    params: {
+                        pageIndex: 1,
+                        pageSize: 10,
+                        pageSizes: [5, 10, 20, 40],
+                        searchKey: '',  // 搜索词
+                        total: 0,       // 总数
+                    }
+                }
+            },
+            filterParams: {
+                userType: '', // 用户类型
+                school: '', // 所属单位
+                workId: '', // 工号/学号
+            },
+            danweiList: []
+        },
+        userTypeList: [
+            {
+                value: 'teacher',
+                label: '导师'
+            },
+            {
+                value: 'student',
+                label: '学生'
+            },
+            {
+                value: 'doctor',
+                label: '博士后'
+            }
+        ]
     },
     methods: {
         getPaperList: function () {
@@ -294,8 +335,85 @@ let app = new Vue({
             };
             this.authorList.push(entry);
             this.handleInsertClose();
-        }
+        },
+        openFindDialog: function (row) {
+            this.searchUserDialog.filterParams.school = this.selectedPaper.danweiCN;
+            this.searchUserDialog.table.entity.params.searchKey = row.authorName;
 
+            let app = this;
+            app.searchUserDialog.table.entity.loading = true;
+            ajaxPostJSON(app.urls.selectDanweiNicknamesAllList, null, function (d) {
+                app.searchUserDialog.danweiList = d.data;
+                app.searchUserDialog.table.entity.loading = false;
+                app.selectEntityListByPage();
+            });
+            this.selectedEntry = row;
+            this.searchUserDialog.visible = true;
+        },
+        handleSearchClose: function () {
+            this.searchUserDialog = {
+                visible: false,
+                fullScreenLoading: false,
+                table: {
+                    entity: {
+                        data: [],
+                        loading: false,
+                        selectionList: [],
+                        params: {
+                            pageIndex: 1,
+                            pageSize: 10,
+                            pageSizes: [5, 10, 20, 40],
+                            searchKey: '',  // 搜索词
+                            total: 0,       // 总数
+                        }
+                    }
+                },
+                filterParams: {
+                    userType: '', // 用户类型
+                    school: '', // 所属单位
+                    workId: '', // 工号/学号
+                },
+                danweiList: []
+            };
+        },
+        selectUser: function (workId, realName) {
+            let app = this;
+            let i = app.authorList.indexOf(app.selectedEntry);
+            console.log(i);
+            app.authorList[i].authorWorkId = workId;
+            app.authorList[i].realName = realName;
+            app.authorList[i].status = '0';
+            app.handleSearchClose();
+        },
+        selectEntityListByPage: function () {
+            let data = this.searchUserDialog.filterParams;
+            data.page = this.searchUserDialog.table.entity.params;
+            let app = this;
+            app.searchUserDialog.table.entity.loading = true;
+            ajaxPostJSON(this.urls.selectEntityListByPage, data, function (d) {
+                app.searchUserDialog.table.entity.loading = false;
+                app.searchUserDialog.table.entity.data = d.data.resultList;
+                app.searchUserDialog.table.entity.params.total = d.data.total;
+            });
+        },
+        // 刷新entity table数据
+        refreshTable_entity: function () {
+            this.selectEntityListByPage();
+        },
+        // 处理选中的行变化
+        onSelectionChange_entity: function (val) {
+            this.searchUserDialog.table.entity.selectionList = val;
+        },
+        // 处理pageSize变化
+        onPageSizeChange_entity: function (newSize) {
+            this.searchUserDialog.table.entity.params.pageSize = newSize;
+            this.refreshTable_entity();
+        },
+        // 处理pageIndex变化
+        onPageIndexChange_entity: function (newIndex) {
+            this.searchUserDialog.table.entity.params.pageIndex = newIndex;
+            this.refreshTable_entity();
+        },
     },
     mounted: function () {
         this.getPaperList();

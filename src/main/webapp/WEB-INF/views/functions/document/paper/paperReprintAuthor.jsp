@@ -231,9 +231,88 @@
     </el-dialog>
 
     <%-- 手动匹配 dialog --%>
-<%--    <el-dialog title="选择作者" :visible.sync="searchUserDialog.visible" class="dialog-searchUser">--%>
-
-<%--    </el-dialog>--%>
+    <el-dialog title="选择作者" :visible.sync="searchUserDialog.visible"
+               class="dialog-searchUser" :before-close="handleSearchClose">
+        <%-- 顶栏 --%>
+        <div style="padding: 0 20px 0 15px;">
+            <span class="button-group" style="margin-bottom: 5px;">
+                <el-select size="small" clearable filterable placeholder="选择学院"
+                           style="width: 150px;margin-right: 10px;"
+                           v-model="searchUserDialog.filterParams.school" @change="refreshTable_entity()">
+                    <el-option v-for="(item, index) in searchUserDialog.danweiList" :key="item.id"
+                               :value="item.name" :label="item.name"></el-option>
+                </el-select>
+            </span>
+            <span style="float: right;margin-right: 10px;">
+            <el-input size="small" placeholder="请输入工号/学号" suffix-icon="el-icon-search"
+                      style="width: 200px;margin-right: 10px;" v-model="searchUserDialog.filterParams.workId"
+                      @keyup.enter.native="searchUserDialog.table.entity.params.pageIndex=1;refreshTable_entity()">
+            </el-input>
+            <el-input size="small" placeholder="请输入作者别名" suffix-icon="el-icon-search"
+                      style="width: 230px;margin-right: 10px;" v-model="searchUserDialog.table.entity.params.searchKey"
+                      @keyup.enter.native="searchUserDialog.table.entity.params.pageIndex=1;refreshTable_entity()">
+            </el-input>
+            <el-button size="small" type="primary" style="position:relative;"
+                       @click="searchUserDialog.table.entity.params.pageIndex=1;refreshTable_entity()">
+                <span>搜索</span>
+            </el-button>
+        </span>
+        </div>
+        <%-- entity表格 --%>
+        <el-table :data="searchUserDialog.table.entity.data"
+                  height="50vh" v-loading="searchUserDialog.table.entity.loading"
+                  style="width: 100%;overflow-y: hidden;margin-top: 10px;" class="scroll-bar"
+                  @selection-change="onSelectionChange_entity" stripe>
+            <el-table-column width="10" fixed="left"></el-table-column>
+            <el-table-column label="姓名" prop="realName" width="70" fixed="left" align="center">
+                <template slot-scope="{row}">
+                    <el-Tooltip open-delay="500" effect="dark" :content="row.realName" placement="top">
+                        <div style="overflow: hidden;text-overflow: ellipsis;white-space: nowrap;width: 95%;">
+                            {{ row.realName }}
+                        </div>
+                    </el-Tooltip>
+                </template>
+            </el-table-column>
+            <el-table-column label="工号" prop="workId" width="100" fixed="left" align="center"></el-table-column>
+            <el-table-column label="别名列表" prop="nicknames" width="170" align="center">
+                <template slot-scope="{row}">
+                    <el-Tooltip open-delay="500" effect="dark" :content="row.nicknames" placement="top">
+                        <div style="overflow: hidden;text-overflow: ellipsis;white-space: nowrap;width: 95%;">
+                            {{ row.nicknames }}
+                        </div>
+                    </el-Tooltip>
+                </template>
+            </el-table-column>
+            <el-table-column label="身份" prop="userType" width="70" align="center"></el-table-column>
+            <el-table-column label="学院" prop="school" width="120" align="center"></el-table-column>
+            <el-table-column label="导师" width="70" prop="tutorName" align="center"></el-table-column>
+            <el-table-column label="导师工号" width="100" prop="tutorWorkId" align="center"></el-table-column>
+            <el-table-column label="学生层次" prop="studentTrainLevel" align="center" width="80"></el-table-column>
+            <el-table-column label="入学/入职时间" align="center" width="110">
+                <template slot-scope="{row}">
+                    {{ row.hireDate === null ? '' : (new Date(row.hireDate)).Format("yyyy-MM-dd") }}
+                </template>
+            </el-table-column>
+            <el-table-column label="操作" fixed="right" width="80" header-align="center" align="center">
+                <template slot-scope="{ row }">
+                    <el-button type="warning" size="mini" style="position:relative;bottom: 1px;"
+                               @click="selectUser(row.workId, row.realName)">
+                        <span>选择</span>
+                    </el-button>
+                </template>
+            </el-table-column>
+        </el-table>
+        <%-- entity分页 --%>
+        <el-pagination style="text-align: center;margin: 8px auto;"
+                       @size-change="onPageSizeChange_entity"
+                       @current-change="onPageIndexChange_entity"
+                       :current-page="searchUserDialog.table.entity.params.pageIndex"
+                       :page-sizes="searchUserDialog.table.entity.params.pageSizes"
+                       :page-size="searchUserDialog.table.entity.params.pageSize"
+                       :total="searchUserDialog.table.entity.params.total"
+                       layout="total, sizes, prev, pager, next, jumper">
+        </el-pagination>
+    </el-dialog>
 
 
 </div>
