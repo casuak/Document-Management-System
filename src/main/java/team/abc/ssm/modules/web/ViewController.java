@@ -126,6 +126,11 @@ public class ViewController extends BaseController {
         return "functions/document/paper/paperUserMatch";
     }
 
+    @RequestMapping(value = "functions/doc/paperReprintAuthor", method = RequestMethod.GET)
+    public String doc_paperReprintAuthor() {
+        return "functions/document/paper/paperReprintAuthor";
+    }
+
     @RequestMapping(value = "functions/doc/paperUserMatch/searchUser", method = RequestMethod.GET)
     public ModelAndView doc_paperUserMatch_searchUser(
             @RequestParam("paperId") String paperId,

@@ -8,69 +8,69 @@ import java.util.Date;
 
 public class Paper extends DataEntity<Paper> {
     /**
-	* 全体作者名列表
-	*/
+     * 全体作者名列表
+     */
     private String authorList;
 
     /**
-	* 第一作者名字（从列表中分割出来，再和用户表匹配）
-	*/
+     * 第一作者名字（从列表中分割出来，再和用户表匹配）
+     */
     private String firstAuthorName;
 
     /**
-	* 第二作者名字（同上）
-	*/
+     * 第二作者名字（同上）
+     */
     private String secondAuthorName;
 
     /**
-	* 第一作者 from 用户表
-	*/
+     * 第一作者 from 用户表
+     */
     private String firstAuthorId;
 
     /**
-	* 第二作者 from 用户表
-	*/
+     * 第二作者 from 用户表
+     */
     private String secondAuthorId;
 
     private User firstAuthor;
     private User secondAuthor;
 
     /**
-	* 总体匹配状态:0:未匹配;1:匹配出错;2:匹配成功;3:匹配完成
-	*/
+     * 总体匹配状态:0:未匹配;1:匹配出错;2:匹配成功;3:匹配完成
+     */
     private String status;
 
     /**
-	* 第一作者匹配状态:0:成功;1:重名;2:无匹配
-	*/
+     * 第一作者匹配状态:0:成功;1:重名;2:无匹配
+     */
     private String status1;
 
     /**
-	* 第二作者匹配状态:0:成功;1:重名;2:无匹配
-	*/
+     * 第二作者匹配状态:0:成功;1:重名;2:无匹配
+     */
     private String status2;
 
     /**
-	* 论文名
-	*/
+     * 论文名
+     */
     private String paperName;
 
     /**
-	* 入藏号
-	*/
+     * 入藏号
+     */
     private String storeNum;
 
     /**
-	* 文献类型 字典id
-	*/
+     * 文献类型 字典id
+     */
     private String docType;
 
     // 值
     private String docTypeValue;
 
     /**
-	* 出版日期
-	*/
+     * 出版日期
+     */
     private Date publishDate;
 
     private Date _PD;
@@ -89,8 +89,8 @@ public class Paper extends DataEntity<Paper> {
     private String secondAuthorCname;
 
     /**
-	* 所属期刊 from 期刊表
-	*/
+     * 所属期刊 from 期刊表
+     */
     @JsonProperty(value = "ISSN")
     private String ISSN;
 
@@ -323,4 +323,43 @@ public class Paper extends DataEntity<Paper> {
     public void setSecondAuthorCname(String secondAuthorCname) {
         this.secondAuthorCname = secondAuthorCname;
     }
+
+    /* zch add 通讯作者匹配 */
+    private String RPImport;
+    private String RPBIT;
+    private String RPStatus;
+    private String matchedAuthor;
+
+    public String getRPImport() {
+        return RPImport;
+    }
+
+    public void setRPImport(String rpImport) {
+        this.RPImport = rpImport;
+    }
+
+    public String getRPBIT() {
+        return RPBIT;
+    }
+
+    public void setRPBIT(String RPBIT) {
+        this.RPBIT = RPBIT;
+    }
+
+    public String getRPStatus() {
+        return RPStatus;
+    }
+
+    public void setRPStatus(String RPStatus) {
+        this.RPStatus = RPStatus;
+    }
+
+    public String getMatchedAuthor() {
+        return matchedAuthor;
+    }
+
+    public void setMatchedAuthor(String matchedAuthor) {
+        this.matchedAuthor = matchedAuthor;
+    }
+    /* zch add end*/
 }

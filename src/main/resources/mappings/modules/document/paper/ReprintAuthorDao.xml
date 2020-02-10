@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="team.abc.ssm.modules.document.paper.dao.ReprintAuthorDao">
+    <resultMap id="PaperEntity" type="team.abc.ssm.modules.document.paper.entity.Paper">
+        <id column="id" jdbcType="VARCHAR" property="id"/>
+        <result column="author_list" jdbcType="VARCHAR" property="authorList"/>
+        <result column="first_author_name" jdbcType="VARCHAR" property="firstAuthorName"/>
+        <result column="second_author_name" jdbcType="VARCHAR" property="secondAuthorName"/>
+        <result column="first_author_type" jdbcType="VARCHAR" property="firstAuthorType"/>
+        <result column="second_author_type" jdbcType="VARCHAR" property="secondAuthorType"/>
+        <result column="journal_division" jdbcType="VARCHAR" property="journalDivision"/>
+        <result column="first_author_id" jdbcType="VARCHAR" property="firstAuthorId"/>
+        <result column="second_author_id" jdbcType="VARCHAR" property="secondAuthorId"/>
+        <result column="status" jdbcType="VARCHAR" property="status"/>
+        <result column="status_1" jdbcType="VARCHAR" property="status1"/>
+        <result column="status_2" jdbcType="VARCHAR" property="status2"/>
+        <result column="paper_name" jdbcType="VARCHAR" property="paperName"/>
+        <result column="store_num" jdbcType="VARCHAR" property="storeNum"/>
+        <result column="doc_type" jdbcType="VARCHAR" property="docType"/>
+        <result column="doc_type_value" property="docTypeValue"/>
+        <result column="publish_date" jdbcType="TIMESTAMP" property="publishDate"/>
+        <result column="ISSN" jdbcType="VARCHAR" property="ISSN"/>
+        <result column="remarks" jdbcType="VARCHAR" property="remarks"/>
+        <result column="create_user_id" jdbcType="VARCHAR" property="createUserId"/>
+        <result column="modify_user_id" jdbcType="VARCHAR" property="modifyUserId"/>
+        <result column="create_date" jdbcType="TIMESTAMP" property="createDate"/>
+        <result column="modify_date" jdbcType="TIMESTAMP" property="modifyDate"/>
+        <result column="del_flag" jdbcType="BOOLEAN" property="delFlag"/>
+        <result column="_PD" property="_PD"/>
+        <result column="_PY" property="_PY"/>
+        <result column="danwei" property="danwei"/>
+        <result column="danwei_cn" property="danweiCN"/>
+        <result column="impact_factor" property="impactFactor"/>
+        <result column="journal_division" property="journalDivision"/>
+        <result column="first_author_cname" property="firstAuthorCname"/>
+        <result column="second_author_cname" property="secondAuthorCname"/>
+        <result column="rp_import" property="RPImport"/>
+        <result column="rp_bit" property="RPBIT"/>
+        <result column="status_rp" property="RPStatus"/>
+    </resultMap>
+
+    <resultMap id="RPMatchEntry" type="team.abc.ssm.modules.document.paper.entity.ReprintAuthorEntry">
+        <id column="id" jdbcType="VARCHAR" property="id"/>
+        <result column="paper" jdbcType="VARCHAR" property="paper"/>
+        <result column="rp_name" jdbcType="VARCHAR" property="authorName"/>
+        <result column="rp_work_id" jdbcType="VARCHAR" property="authorWorkId"/>
+        <result column="real_name" jdbcType="VARCHAR" property="realName"/>
+        <result column="status" jdbcType="VARCHAR" property="status"/>
+        <result column="remarks" jdbcType="VARCHAR" property="remarks"/>
+        <result column="create_user_id" jdbcType="VARCHAR" property="createUserId"/>
+        <result column="modify_user_id" jdbcType="VARCHAR" property="modifyUserId"/>
+        <result column="create_date" jdbcType="TIMESTAMP" property="createDate"/>
+        <result column="modify_date" jdbcType="TIMESTAMP" property="modifyDate"/>
+        <result column="del_flag" jdbcType="BOOLEAN" property="delFlag"/>
+    </resultMap>
+
+    <resultMap id="userBean" type="team.abc.ssm.modules.sys.entity.User">
+        <id column="id" jdbcType="VARCHAR" property="id"/>
+        <result column="nicknames" jdbcType="VARCHAR" property="nicknames"/>
+        <result column="work_id" jdbcType="VARCHAR" property="workId"/>
+        <result column="school" jdbcType="VARCHAR" property="school"/>
+        <result column="real_name" jdbcType="VARCHAR" property="realName"/>
+        <result column="user_type" jdbcType="VARCHAR" property="userType"/>
+    </resultMap>
+
+    <select id="selectListByPage" resultMap="PaperEntity">
+        SELECT * FROM doc_paper
+        <where>
+            status = '3' AND status_rp = #{status}
+            <if test="page.searchKey != null and page.searchKey != ''">
+                AND paper_name LIKE CONCAT('%',#{page.searchKey} ,'%')
+            </if>
+        </where>
+        LIMIT #{page.pageStart} ,#{page.pageSize}
+    </select>
+
+    <select id="selectSearchCount" resultType="int">
+        SELECT COUNT(*) FROM doc_paper
+        <where>
+            status = '3' AND status_rp = #{status}
+            <if test="page.searchKey != null and page.searchKey != ''">
+                AND paper_name LIKE CONCAT('%',#{page.searchKey} ,'%')
+            </if>
+        </where>
+    </select>
+
+    <select id="getPaperByStatus" resultMap="PaperEntity">
+        SELECT id, rp_import, rp_bit, status_rp, first_author_id, second_author_id, danwei_cn
+        FROM doc_paper
+        WHERE status = '3' AND status_rp = #{status}
+    </select>
+
+    <update id="updatePaperById" parameterType="Paper">
+        UPDATE doc_paper
+        SET rp_bit = #{RPBIT}, status_rp = #{RPStatus}
+        WHERE id = #{id}
+    </update>
+
+    <insert id="insertEntry">
+        INSERT INTO doc_paper_rp_user_match
+        VALUES (#{id}, #{paper}, #{authorName}, #{authorWorkId}, #{realName}, #{status}, #{remarks},
+                #{createUserId}, #{modifyUserId}, #{createDate}, #{modifyDate}, #{delFlag})
+    </insert>
+
+    <update id="updateEntryById">
+        UPDATE doc_paper_rp_user_match
+        SET rp_work_id = #{authorWorkId}, real_name=#{realName}, remarks = #{remarks}, status = #{status},
+            modify_date = #{modifyDate}, modify_user_id = #{modifyUserId}
+        WHERE id = #{id}
+    </update>
+
+    <update id="deleteEntryByStatus">
+        UPDATE doc_paper_rp_user_match
+        SET del_flag = 1
+        WHERE status = #{status}
+    </update>
+
+    <update id="deleteEntryById">
+        UPDATE doc_paper_rp_user_match
+        SET del_flag = 1
+        WHERE id = #{id}
+    </update>
+
+    <select id="getAllUsers" resultMap="userBean">
+        SELECT nicknames, work_id, school, real_name FROM sys_user WHERE del_flag = 0
+    </select>
+
+    <update id="deletePaperEntryById">
+        UPDATE doc_paper SET status_rp = '-2' WHERE id = #{id}
+    </update>
+
+    <update id="deletePaperEntryByStatus">
+        UPDATE doc_paper SET status_rp = '-2' WHERE status_rp = #{status}
+    </update>
+
+    <update id="completePaperEntryById">
+        UPDATE doc_paper SET status_rp = '4' WHERE id = #{id}
+    </update>
+
+    <update id="completePaperEntryByStatus">
+        UPDATE doc_paper SET status_rp = '4' WHERE status_rp = #{status}
+    </update>
+
+    <update id="rollBackToSuccessById">
+        UPDATE doc_paper SET status_rp = '1' WHERE id = #{id}
+    </update>
+
+    <select id="getAuthorInfoByPaperId" resultMap="userBean">
+        SELECT work_id, real_name, user_type FROM sys_user WHERE work_id IN
+            (SELECT rp_work_id FROM doc_paper_rp_user_match WHERE paper = #{id} AND doc_paper_rp_user_match.del_flag = 0)
+    </select>
+
+    <select id="getMatchEntryById" resultMap="RPMatchEntry">
+        SELECT * FROM doc_paper_rp_user_match WHERE paper = #{id} AND del_flag = 0
+    </select>
+
+    <update id="deleteEntryByPaperId">
+        UPDATE doc_paper_rp_user_match SET del_flag = 1 WHERE paper = #{paper}
+    </update>
+
+    <update id="updatePaperRPStatusById">
+        UPDATE doc_paper SET status_rp = '1' WHERE id = #{id}
+    </update>
+</mapper>
