@@ -62,7 +62,7 @@ app = new Vue({
             visible: false,
             loading: false,
         },
-        searchUserUrl: ''
+        searchPaperUrl: ''
     },
     methods: {
         deleteByIds: function (ids) {

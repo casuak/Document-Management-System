@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="team.abc.ssm.modules.tutor.paper.dao.TutorPaperMapper">
+    <resultMap id="BaseResultMap" type="team.abc.ssm.modules.tutor.paper.entity.TutorPaper">
+        <!--@mbg.generated-->
+        <id column="id" jdbcType="VARCHAR" property="id"/>
+        <result column="author_list" jdbcType="VARCHAR" property="authorList"/>
+        <result column="first_author_name" jdbcType="VARCHAR" property="firstAuthorName"/>
+        <result column="second_author_name" jdbcType="VARCHAR" property="secondAuthorName"/>
+        <result column="first_author_id" jdbcType="VARCHAR" property="firstAuthorId"/>
+        <result column="second_author_id" jdbcType="VARCHAR" property="secondAuthorId"/>
+        <result column="first_author_school" jdbcType="VARCHAR" property="firstAuthorSchool"/>
+        <result column="second_author_school" jdbcType="VARCHAR" property="secondAuthorSchool"/>
+        <result column="paper_name" jdbcType="VARCHAR" property="paperName"/>
+        <result column="ISSN" jdbcType="VARCHAR" property="issn"/>
+        <result column="store_num" jdbcType="VARCHAR" property="storeNum"/>
+        <result column="doc_type" jdbcType="VARCHAR" property="docType"/>
+        <result column="publish_date" jdbcType="TIMESTAMP" property="publishDate"/>
+        <result column="danwei_cn" jdbcType="VARCHAR" property="danweiCn"/>
+        <result column="danwei" jdbcType="VARCHAR" property="danwei"/>
+        <result column="remarks" jdbcType="VARCHAR" property="remarks"/>
+        <result column="create_user_id" jdbcType="VARCHAR" property="createUserId"/>
+        <result column="modify_user_id" jdbcType="VARCHAR" property="modifyUserId"/>
+        <result column="create_date" jdbcType="TIMESTAMP" property="createDate"/>
+        <result column="modify_date" jdbcType="TIMESTAMP" property="modifyDate"/>
+        <result column="del_flag" jdbcType="BOOLEAN" property="delFlag"/>
+        <result column="_PD" jdbcType="TIMESTAMP" property="pd"/>
+        <result column="_PY" jdbcType="INTEGER" property="py"/>
+        <result column="first_author_type" jdbcType="VARCHAR" property="firstAuthorType"/>
+        <result column="second_author_type" jdbcType="VARCHAR" property="secondAuthorType"/>
+        <result column="paper_subject" jdbcType="VARCHAR" property="subject"/>
+        <result column="journal_division" jdbcType="VARCHAR" property="journalDivision"/>
+        <result column="impact_factor" jdbcType="DOUBLE" property="impactFactor"/>
+        <result column="journal_year" jdbcType="DATE" property="journalYear"/>
+        <result column="first_author_cname" jdbcType="VARCHAR" property="firstAuthorCname"/>
+        <result column="second_author_cname" jdbcType="VARCHAR" property="secondAuthorCname"/>
+    </resultMap>
+
+
+    <resultMap id="ClaimResultMap" type="team.abc.ssm.modules.tutor.paper.entity.ClaimPaper">
+        <!--@mbg.generated-->
+        <id column="id" jdbcType="VARCHAR" property="id"/>
+        <result column="first_author_name" jdbcType="VARCHAR" property="firstAuthorName"/>
+        <result column="second_author_name" jdbcType="VARCHAR" property="secondAuthorName"/>
+        <result column="first_author_work_id" jdbcType="VARCHAR" property="firstAuthorWorkId"/>
+        <result column="second_author_work_id" jdbcType="VARCHAR" property="secondAuthorWorkId"/>
+        <result column="first_author_school" jdbcType="VARCHAR" property="firstAuthorSchool"/>
+        <result column="second_author_school" jdbcType="VARCHAR" property="secondAuthorSchool"/>
+        <result column="remarks" jdbcType="VARCHAR" property="remarks"/>
+        <result column="create_user_id" jdbcType="VARCHAR" property="createUserId"/>
+        <result column="modify_user_id" jdbcType="VARCHAR" property="modifyUserId"/>
+        <result column="create_date" jdbcType="TIMESTAMP" property="createDate"/>
+        <result column="modify_date" jdbcType="TIMESTAMP" property="modifyDate"/>
+        <result column="del_flag" jdbcType="BOOLEAN" property="delFlag"/>
+        <result column="first_author_type" jdbcType="VARCHAR" property="firstAuthorType"/>
+        <result column="second_author_type" jdbcType="VARCHAR" property="secondAuthorType"/>
+        <result column="owner_work_id" jdbcType="VARCHAR" property="ownerWorkId"/>
+        <result column="paper_wos_id" jdbcType="VARCHAR" property="paperWosId"/>
+        <result column="status" jdbcType="VARCHAR" property="status"/>
+        <result column="paper_name" jdbcType="VARCHAR" property="paperName"/>
+    </resultMap>
+
+    <select id="selectTheAuthorPapers"
+            parameterType="team.abc.ssm.modules.tutor.paper.entity.TutorPaper"
+            resultMap="BaseResultMap">
+        select
+        a.*,
+        b.user_type as first_author_type,
+        c.user_type as second_author_type,
+        b.real_name as first_author_name,
+        c.real_name as second_author_name,
+        b.school as first_author_school,
+        c.school as second_author_school
+        from (
+            select * from (
+                select * from docmanager.doc_paper
+                where first_author_id = #{theAuthorWorkId}
+                or second_author_id = #{theAuthorWorkId}
+            ) as tmp
+            <where>
+                tmp.status = '3'
+                <if test="page.searchKey != null and page.searchKey != ''">
+                    and tmp.paper_name like concat('%',#{page.searchKey} ,'%')
+                </if>
+            </where>
+            limit #{page.pageStart} ,#{page.pageSize}
+        ) as a
+        left join sys_user b on b.work_id = a.first_author_id
+        left join sys_user c on c.work_id = a.second_author_id
+    </select>
+
+    <select id="selectTheAuthorPaperNum" resultType="int">
+    select count(*)
+    from (
+        select *
+        from docmanager.doc_paper
+        where first_author_id = #{authorWorkId,jdbcType=VARCHAR}
+        or second_author_id = #{authorWorkId,jdbcType=VARCHAR}
+    ) as tmp
+    where tmp.status = '3'
+    </select>
+
+    <select id="selectPaperByWosId"
+            parameterType="team.abc.ssm.modules.tutor.paper.entity.TutorPaper"
+            resultMap="BaseResultMap">
+        select
+        a.*,
+        b.user_type as first_author_type,
+        c.user_type as second_author_type,
+        b.real_name as first_author_name,
+        c.real_name as second_author_name,
+        b.school as first_author_school,
+        c.school as second_author_school
+        from (
+        select * from docmanager.doc_paper as tmp
+        <where>
+            tmp.status = '3' and tmp.store_num=#{storeNum,jdbcType=VARCHAR}
+        </where>
+        ) as a
+        left join sys_user b on b.work_id = a.first_author_id
+        left join sys_user c on c.work_id = a.second_author_id
+    </select>
+
+    <insert id="tutorClaimPaper" parameterType="team.abc.ssm.modules.tutor.paper.entity.ClaimPaper"
+            >
+    insert into tutor_paper (`id`,`del_flag`,`create_date`,`modify_date`,`create_user_id`,`modify_user_id`,`remarks`,`status`,`paper_wos_id`
+                        ,`first_author_work_id`,`second_author_work_id`,`first_author_type`,`second_author_type`,`first_author_name`,`second_author_name`,`first_author_school`,
+                        `second_author_school`,`owner_work_id`)
+                        values(#{id},#{delFlag},#{createDate},#{modifyDate},#{createUserId},#{modifyUserId},#{remarks},#{status},#{paperWosId}
+                        ,#{firstAuthorWorkId},#{secondAuthorWorkId},#{firstAuthorType},#{secondAuthorType},#{firstAuthorName},#{secondAuthorName},#{firstAuthorSchool},
+                        #{secondAuthorSchool},#{ownerWorkId})
+    </insert>
+
+    <select id="getTutorClaimHistory" parameterType="team.abc.ssm.modules.tutor.paper.entity.ClaimPaper" resultMap="ClaimResultMap">
+        select
+        tutor_paper.`id`,tutor_paper.`del_flag`,tutor_paper.`create_date`,tutor_paper.`modify_date`,tutor_paper.`create_user_id`,
+        tutor_paper.`modify_user_id`,tutor_paper.`remarks`,tutor_paper.`status`,tutor_paper.`paper_wos_id`
+         ,tutor_paper.`first_author_work_id`,tutor_paper.`second_author_work_id`,tutor_paper.`first_author_type`,tutor_paper.`second_author_type`
+         ,tutor_paper.`first_author_name`,tutor_paper.`second_author_name`
+         ,tutor_paper.`first_author_school`, tutor_paper.`second_author_school`,tutor_paper.`owner_work_id`,doc_paper.`paper_name`
+        from tutor_paper
+        left join doc_paper on tutor_paper.`paper_wos_id` = doc_paper.`store_num`
+        <where>
+            <if test="1 == 1">
+                tutor_paper.`del_flag` != 1
+            </if>
+        </where>
+        limit #{page.pageStart},#{page.pageSize}
+    </select>
+
+    <select id="isPaperBeenClaimed" parameterType="team.abc.ssm.modules.tutor.paper.entity.ClaimPaper"
+            resultType="java.lang.Integer">
+        select count(*)
+        from tutor_paper
+        where del_flag !=1
+              and status != -1
+              and paper_wos_id = #{paperWosId}
+    </select>
+
+
+
+
+</mapper>
