@@ -1,5 +1,6 @@
 package team.abc.ssm.modules.tutor.paper.api;
 
+import net.sf.json.JSONArray;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.slf4j.Logger;
@@ -13,9 +14,10 @@ import team.abc.ssm.common.web.BaseApi;
 import team.abc.ssm.common.web.MsgType;
 import team.abc.ssm.modules.document.authorSearch.entity.Author;
 import team.abc.ssm.modules.document.authorSearch.service.AuthorService;
-import team.abc.ssm.modules.document.docStatistics.entity.DocPaper;
-import team.abc.ssm.modules.document.docStatistics.service.DocPaperService;
 import team.abc.ssm.modules.sys.entity.User;
+import team.abc.ssm.modules.tutor.paper.entity.ClaimPaper;
+import team.abc.ssm.modules.tutor.paper.entity.TutorPaper;
+import team.abc.ssm.modules.tutor.paper.service.TutorService;
 
 import java.util.List;
 
@@ -29,38 +31,152 @@ public class TutorApi extends BaseApi {
     private AuthorService authorService;
 
     @Autowired
-    private DocPaperService docPaperService;
+    private TutorService tutorService;
 
-
+     /**
+          * @Description  跳转至导师名下论文页面
+          * @author wh
+          * @date 2020/2/9 14:04
+          */
     @RequestMapping(value = "goTutorPaper",method = RequestMethod.GET)
-    public ModelAndView goAuthorSearch (){
+    public ModelAndView goTutorPaper (){
         Subject subject = SecurityUtils.getSubject();
         User user = (User) subject.getSession().getAttribute("user");
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("functions/tutor/paper");
-        Author authorNow = authorService.getAuthor(user.getWorkId());
+        Author authorNow = authorService.getAuthor(user.getId());
+        modelAndView.addObject("author", authorNow);
+        return modelAndView;
+    }
+    /**
+     * @Description  跳转至查找论文页面
+     * @author wh
+     * @date 2020/2/9 14:04
+     */
+    @RequestMapping(value = "goTutorPaperMatch",method = RequestMethod.GET)
+    public ModelAndView goTutorPaperMatch (){
+        ModelAndView modelAndView = new ModelAndView();
+        //获取机构(学院)类别
+        List<String> orgList = tutorService.getOrgList();
+        modelAndView.addObject("orgList", JSONArray.fromObject(orgList));
+        modelAndView.setViewName("functions/tutor/ClaimPaper");
+        Subject subject = SecurityUtils.getSubject();
+        User user = (User) subject.getSession().getAttribute("user");
+        Author authorNow = authorService.getAuthor(user.getId());
         modelAndView.addObject("author", authorNow);
         return modelAndView;
     }
 
+    /**
+     * @Description  跳转至论文认领历史记录页面
+     * @author wh
+     * @date 2020/2/9 14:04
+     */
+    @RequestMapping(value = "goTutorPaperMatchHistory",method = RequestMethod.GET)
+    public ModelAndView goTutorPaperMatchHistory (){
+        Subject subject = SecurityUtils.getSubject();
+        User user = (User) subject.getSession().getAttribute("user");
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("functions/tutor/ClaimPaperHistory");
+        Author authorNow = authorService.getAuthor(user.getId());
+        modelAndView.addObject("author", authorNow);
+        return modelAndView;
+    }
+
+
+    /**
+     * @Description  跳转至论文认领管理
+     * @author wh
+     * @date 2020/2/9 14:04
+     */
+    @RequestMapping(value = "goPaperClaimManage",method = RequestMethod.GET)
+    public ModelAndView goPaperClaimManage (){
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("functions/tutor/paperClaimManage");
+        return modelAndView;
+    }
+
+    /**
+     * @Description 根据老师workid 查询名下论文
+     * @author wh
+     * @date 2020/2/9 14:04
+     */
     @RequestMapping(value = "selectMyPaperByPage", method = RequestMethod.POST)
     @ResponseBody
     public Object selectMyPaperByPage(
-            @RequestBody DocPaper docPaper
+            @RequestBody TutorPaper tutorPaper
     ) {
         //1.获取当前用户的全部的论文List(根据作者工号，论文状态，以及page分页信息)
-        List<DocPaper> myPaperList = docPaperService.selectMyPaperListByPage(docPaper);
+        List<TutorPaper> myPaperList = tutorService.selectTutorPaperListByPage(tutorPaper);
         //2.获取当前作者论文总数(根据作者工号)
-        int myPaperNum = docPaperService.getMyPaperNum(docPaper.getTheAuthorWorkId());
+        int myPaperNum = tutorService.getTutorPaperNum(tutorPaper.getTheAuthorWorkId());
 
-        Page<DocPaper> paperResPage = new Page<>();
+        Page<TutorPaper> paperResPage = new Page<>();
         paperResPage.setResultList(myPaperList);
         paperResPage.setTotal(myPaperNum);
         return retMsg.Set(MsgType.SUCCESS, paperResPage);
     }
 
 
+    /**
+     * @Description 根据论文wosid查询论文信息
+     * @author wh
+     * @date 2020/2/9 14:04
+     */
+    @RequestMapping(value = "getPaperByWOS", method = RequestMethod.POST)
+    @ResponseBody
+    public Object selectMyPaperByWosId(
+            @RequestBody TutorPaper wosId
+    ) {
+        //1.获取当前用户的全部的论文List(根据作者工号，论文状态，以及page分页信息)
+        List<TutorPaper> myPaperList = tutorService.selectTutorPaperByWosId(wosId.getStoreNum());
 
+        Page<TutorPaper> paperResPage = new Page<>();
+        paperResPage.setResultList(myPaperList);
+        paperResPage.setTotal(myPaperList.size());
+        return retMsg.Set(MsgType.SUCCESS, paperResPage);
+    }
+
+    /**
+     * @Description 教师认领论文接口
+     * @author wh
+     * @date 2020/2/9 14:04
+     */
+    @RequestMapping(value = "tutorClaimPaper", method = RequestMethod.POST)
+    @ResponseBody
+    public Object tutorClaimPaper(
+            @RequestBody ClaimPaper claimPaper
+    ) {
+        claimPaper.preInsert();
+        int n = tutorService.tutorClaimPaper(claimPaper);
+        if(n == 1){
+            return retMsg.Set(MsgType.SUCCESS);
+        }else if( n == -2){
+            return  retMsg.Set(MsgType.ERROR,"该论文已被认领");
+        }else if (n == -1){
+            return retMsg.Set(MsgType.ERROR,"认领失败");
+        }else{
+            return retMsg.Set(MsgType.ERROR,"未知错误");
+        }
+    }
+
+
+    /**
+     * @Description  查找教师认领论文历史记录
+     * @author wh
+     * @date 2020/2/9 14:04
+     */
+    @RequestMapping(value = "getTutorClaimHistory", method = RequestMethod.POST)
+    @ResponseBody
+    public Object getTutorClaimHistory(
+            @RequestBody ClaimPaper claimPaper
+    ) {
+        List<ClaimPaper> claimPapers = tutorService.getTutorClaimHistory(claimPaper);
+        Page<ClaimPaper> paperResPage = new Page<>();
+        paperResPage.setResultList(claimPapers);
+        paperResPage.setTotal(claimPapers.size());
+        return retMsg.Set(MsgType.SUCCESS, paperResPage);
+    }
 
 
 

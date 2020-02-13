@@ -8,7 +8,9 @@ var app = new Vue({
                 insertPaper: '',
                 deletePaperListByIds: '/api/doc/paper/deleteListByIds',
                 updatePaper: '',
-                selectPaperListByPage: '/api/paper/selectMyPaperByPage'
+                selectPaperListByPage: '/api/paper/selectMyPaperByPage',
+                searchPaper:'/tutor/goTutorPaperMatch',
+                searchPaperHistory:'/tutor/goTutorPaperMatchHistory'
             }
         },
         fullScreenLoading: false,
@@ -43,6 +45,18 @@ var app = new Vue({
             },
         },
         options: {},
+        searchPaperDialog: {
+            visible: false,
+            loading: false,
+        },
+        searchPaperUrl:'',
+        searchPaperHistoryDialog:{
+            control:{
+                visible:false,
+                loading:false
+            },
+            url:''
+        }
     },
     methods: {
         /*折叠面板绑定事件*/
@@ -122,7 +136,7 @@ var app = new Vue({
         //获取当前作者的论文List
         selectPaperListByPage: function () {
             let data = {
-                theAuthorWorkId: "${author.workId}",                        //借用authorList来暂存一下authorId
+                theAuthorWorkId: pageParams.workId,                        //借用authorList来暂存一下authorId
                 page: this.table.paperTable.entity.params
             };
             let app = this;
@@ -161,6 +175,17 @@ var app = new Vue({
         onPageIndexChange_paper: function (newIndex) {
             this.table.paperTable.entity.params.pageIndex = newIndex;
             this.refreshTable_paper();
+        },
+        // 打开论文认领页面
+        openSearchUser: function () {
+            this.searchPaperUrl = this.urls.paper.searchPaper;
+            this.searchPaperDialog.visible = true;
+            this.searchPaperDialog.loading = true;
+        },
+        openSearchUserHistory:function () {
+            this.searchPaperHistoryDialog.url = this.urls.paper.searchPaperHistory;
+            this.searchPaperHistoryDialog.control.visible = true;
+            this.searchPaperHistoryDialog.control.loading = true;
         }
     },
     /*加载的时候就执行一次*/
