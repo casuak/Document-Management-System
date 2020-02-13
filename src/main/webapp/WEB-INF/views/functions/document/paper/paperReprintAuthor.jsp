@@ -155,8 +155,8 @@
 
     <%-- 分页 --%>
     <el-pagination style="text-align: center;margin: 9px auto;"
-                   @size-change="page.pageSize=$event;getFundList()"
-                   @current-change="page.pageIndex=$event;getFundList()"
+                   @size-change="page.pageSize=$event;getPaperList()"
+                   @current-change="page.pageIndex=$event;getPaperList()"
                    :current-page="page.pageIndex"
                    :page-sizes="page.pageSizes"
                    :page-size="page.pageSize"
