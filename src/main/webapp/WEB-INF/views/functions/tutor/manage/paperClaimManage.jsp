@@ -243,7 +243,7 @@
                     <el-button type="success" @click="doTutorClaim(row,1)" size="mini" style="position:relative;bottom: 1px;margin-left: 6px;" :disabled="row.status!=0">
                         <span>同意</span>
                     </el-button>
-                    <el-button type="danger"  @click="doTutorClaim(row,-1)" size="mini" style="position:relative;bottom: 1px;margin-left: 6px;" :diabled="row.status!=0">
+                    <el-button type="danger"  @click="doTutorClaim(row,-1)" size="mini" style="position:relative;bottom: 1px;margin-left: 6px;" :disabled="row.status!=0">
                         <span>拒绝</span>
                     </el-button>
                 </template>
