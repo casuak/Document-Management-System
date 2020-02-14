@@ -4,7 +4,6 @@
     <title>test</title>
     <%@include file="/WEB-INF/views/include/blankHead.jsp" %>
     <link rel="stylesheet" href="/static/css/functions/tutor/paper.css"/>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/tableTemplate.css"/>
     <style>
         .el-tabs--border-card > .el-tabs__content {
             padding: 0;
@@ -244,5 +243,5 @@
     let pageParams = {};
     pageParams.workId = '${author.workId}';
 </script>
-<script src="${pageContext.request.contextPath}/static/js/functions/tutor/paper.js"></script>
+<script src="${pageContext.request.contextPath}/static/js/functions/tutor/consult/paper.js"></script>
 </html>

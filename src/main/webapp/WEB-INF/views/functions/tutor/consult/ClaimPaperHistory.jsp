@@ -6,7 +6,6 @@
     <title>ssm</title>
     <%@include file="/WEB-INF/views/include/blankHead.jsp" %>
     <link rel="stylesheet" href="/static/css/functions/tutor/ClaimPaper.css"/>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/tableTemplate.css"/>
 </head>
 <body>
 <div id="app" v-cloak style="background: white;height: 100%;overflow: hidden;" v-loading="fullScreenLoading">
@@ -34,7 +33,7 @@
                   @selection-change="table.entity.selectionList=$event"
                   stripe>
             <el-table-column
-                    prop="paperName"
+                    prop="tutorPaper[0].paperName"
                     width="240"
                     align="center"
                     fixed="left"
@@ -169,6 +168,6 @@
     let pageParams = {};
     pageParams.ownerWorkId = '${workId}';
 </script>
-<script src="/static/js/functions/tutor/ClaimPaperHistory.js"></script>
+<script src="/static/js/functions/tutor/consult/ClaimPaperHistory.js"></script>
 </body>
 </html>

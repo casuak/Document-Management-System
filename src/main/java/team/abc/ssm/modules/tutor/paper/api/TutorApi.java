@@ -43,7 +43,7 @@ public class TutorApi extends BaseApi {
         Subject subject = SecurityUtils.getSubject();
         User user = (User) subject.getSession().getAttribute("user");
         ModelAndView modelAndView = new ModelAndView();
-        modelAndView.setViewName("functions/tutor/paper");
+        modelAndView.setViewName("functions/tutor/consult/paper");
         Author authorNow = authorService.getAuthor(user.getId());
         modelAndView.addObject("author", authorNow);
         return modelAndView;
@@ -59,7 +59,7 @@ public class TutorApi extends BaseApi {
         //获取机构(学院)类别
         List<String> orgList = tutorService.getOrgList();
         modelAndView.addObject("orgList", JSONArray.fromObject(orgList));
-        modelAndView.setViewName("functions/tutor/ClaimPaper");
+        modelAndView.setViewName("functions/tutor/consult/ClaimPaper");
         Subject subject = SecurityUtils.getSubject();
         User user = (User) subject.getSession().getAttribute("user");
         Author authorNow = authorService.getAuthor(user.getId());
@@ -77,7 +77,7 @@ public class TutorApi extends BaseApi {
         Subject subject = SecurityUtils.getSubject();
         User user = (User) subject.getSession().getAttribute("user");
         ModelAndView modelAndView = new ModelAndView();
-        modelAndView.setViewName("functions/tutor/ClaimPaperHistory");
+        modelAndView.setViewName("functions/tutor/consult/ClaimPaperHistory");
         Author authorNow = authorService.getAuthor(user.getId());
         modelAndView.addObject("author", authorNow);
         return modelAndView;
@@ -92,9 +92,35 @@ public class TutorApi extends BaseApi {
     @RequestMapping(value = "goPaperClaimManage",method = RequestMethod.GET)
     public ModelAndView goPaperClaimManage (){
         ModelAndView modelAndView = new ModelAndView();
-        modelAndView.setViewName("functions/tutor/paperClaimManage");
+        modelAndView.setViewName("functions/tutor/manage/paperClaimManage");
         return modelAndView;
     }
+    /**
+     * @Description  跳转至用户查找
+     * @author wh
+     * @date 2020/2/9 14:04
+     */
+
+    @RequestMapping(value = "goSearchUser", method = RequestMethod.GET)
+    public ModelAndView doc_paperUserMatch_searchUser(
+            @RequestParam("paperId") String paperId,
+            @RequestParam("authorIndex") int authorIndex,
+            @RequestParam("searchKey") String searchKey,
+            @RequestParam("school") String school,
+            @RequestParam("publishDate") Long publishDate,
+            @RequestParam("workId") String workId,
+            @RequestParam("paperIndex")String paperIndex) {
+        ModelAndView mv = new ModelAndView("functions/tutor/manage/searchUser");
+        mv.addObject("paperId", paperId);
+        mv.addObject("authorIndex", authorIndex);
+        mv.addObject("searchKey", searchKey);
+        mv.addObject("school", school);
+        mv.addObject("publishDate", publishDate);
+        mv.addObject("workId", workId);
+        mv.addObject("paperIndex", paperIndex);
+        return mv;
+    }
+
 
     /**
      * @Description 根据老师workid 查询名下论文
@@ -179,5 +205,41 @@ public class TutorApi extends BaseApi {
     }
 
 
+    /**
+     * @Description  管理论文认领记录
+     * @author wh
+     * @date 2020/2/9 14:04
+     */
+    @RequestMapping(value = "getTutorClaimManage", method = RequestMethod.POST)
+    @ResponseBody
+    public Object getTutorClaimManage(
+            @RequestBody ClaimPaper claimPaper
+    ) {
+        List<ClaimPaper> claimPapers = tutorService.getTutorClaimHistory(claimPaper);
+        Page<ClaimPaper> paperResPage = new Page<>();
+        paperResPage.setResultList(claimPapers);
+        paperResPage.setTotal(claimPapers.size());
+        return retMsg.Set(MsgType.SUCCESS,paperResPage);
+    }
 
+
+
+    /**
+     * @Description  处理申请更换信息的请求
+     * @author wh
+     * @date 2020/2/9 14:04
+     */
+    @RequestMapping(value = "doTutorClaim", method = RequestMethod.POST)
+    @ResponseBody
+    public Object doTutorClaim(
+            @RequestBody  ClaimPaper claimPaper
+    ) {
+        int n = tutorService.doTutorClaim(claimPaper);
+        if( n == 1){
+            return retMsg.Set(MsgType.SUCCESS);
+        }else {
+            return retMsg.Set(MsgType.ERROR);
+        }
+
+    }
 }

@@ -12,7 +12,6 @@
 
 /* 设置table行高 */
 .el-table__row .cell {
-    height: 45px;
     line-height: 45px;
 }
 

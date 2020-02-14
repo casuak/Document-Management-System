@@ -8,7 +8,8 @@ let app = new Vue({
             // api for entity
             selectEntityListByPage: '/tutor/getTutorClaimHistory',
             selectDanweiNicknamesAllList: '/api/doc/danweiNicknames/selectAllList',
-
+            searchUser:'/tutor/goSearchUser',
+            doPaperClaim:'/tutor/doTutorClaim'
         },
         fullScreenLoading: false,
         table: {
@@ -44,7 +45,15 @@ let app = new Vue({
         ],
         orgOption:[],
         danweiList: [],
-        expands: []
+        expands: [],
+        searchUserDialog: {
+            control: {
+                visible: false,
+                loading: false
+            },
+            url:''
+        },
+
     },
     methods: {
         selectEntityListByPage: function () {
@@ -57,8 +66,9 @@ let app = new Vue({
                 for (let i = 0; i < resList.length; i++) {
                     tmpDate = resList[i].createDate;
                     resList[i].createDate = dateFormat(tmpDate);
+                    tmpDate=resList[i].tutorPaper[0].publishDate;
+                    resList[i].tutorPaper[0].publishDate=dateFormat(tmpDate);
                 }
-                console.log(resList)
                 app.table.entity.loading = false;
                 app.table.entity.data = resList;
                 app.table.entity.params.total = d.data.total;
@@ -85,13 +95,54 @@ let app = new Vue({
         // 重置表单
         resetForm: function (ref) {
             this.$refs[ref].resetFields();
+        },
+        getRowKeys(row) {
+            return row.id;
+        },
+        openSearchUser: function (props, authorIndex, authorName, school) {
+            console.log(props, authorIndex, authorName, school);
+            this.searchUserDialog.url = this.urls.searchUser + "?paperId=" + props.row.tutorPaper[0].id +
+                "&authorIndex=" + authorIndex + '&searchKey=' + authorName + ';'
+                + '&school=' + (school ? school : '')
+                +'&publishDate=' + ReDateFormate(props.row.tutorPaper[0].publishDate)
+                +'&paperIndex='+props.$index
+                + '&workId=';
+            this.searchUserDialog.control.visible = true;
+            this.searchUserDialog.control.loading = true;
+        },
+        clearAuthor: function (paper, authorIndex) {
+            let app = this;
+            window.parent.app.showConfirm(function () {
+                if (authorIndex === 1)
+                    paper.firstAuthorId = null;
+                else
+                    paper.secondAuthorId = null;
+            });
+        },
+        doTutorClaim:function (row,status) {
+            let app = this;
+            app.table.entity.loading = true;
+            let data=row;
+            data.status=status;
+            console.log(data);
+            ajaxPostJSON(this.urls.doPaperClaim, data, function (d) {
+                app.table.entity.loading = false;
+                app.$message({
+                    message:'处理成功！',
+                    type:'success'
+                })
+                app.refreshTable_entity();
+            },function error(d) {
+                app.table.entity.loading = false;
+                app.$message({
+                    message:'处理失败',
+                    type:'error'
+                })
+            })
         }
-
-
     },
     mounted: function () {
-      this.refreshTable_entity();
-      this.filterParams.ownerWorkId=pageParams.ownerWorkId;
+        this.refreshTable_entity();
     }
 });
 
@@ -112,3 +163,29 @@ function add0(m) {
     return m < 10 ? '0' + m : m
 }
 
+/**
+ * @return {number}
+ */
+function ReDateFormate(riqi) {
+// 可以这样做
+    var date = new Date(riqi.replace(/-/g, '/'));
+    return date.getTime();
+}
+
+function setAuthorBySelect(workId,name,school,type,authorIndex,paperIndex) {
+    let tmpData=app.table.entity.data;
+    if (authorIndex === 1) {
+        tmpData[paperIndex].tutorPaper[0].firstAuthorId = workId;
+        tmpData[paperIndex].tutorPaper[0].firstAuthorCname = name;
+        tmpData[paperIndex].tutorPaper[0].firstAuthorSchool = school;
+        tmpData[paperIndex].tutorPaper[0].firstAuthorType = type;
+    } else if (authorIndex === 2) {
+        tmpData[paperIndex].tutorPaper[0].secondAuthorId = workId;
+        tmpData[paperIndex].tutorPaper[0].secondAuthorCname = name;
+        tmpData[paperIndex].tutorPaper[0].secondAuthorSchool = school;
+        tmpData[paperIndex].tutorPaper[0].secondAuthorType = type;
+    }
+    app.table.entity.data=tmpData;
+    console.log( app.table.entity.data)
+    app.searchUserDialog.control.visible = false;
+}

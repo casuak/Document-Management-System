@@ -8,7 +8,7 @@ import java.util.Date;
 
 @Data
 public class TutorPaper extends DataEntity<TutorPaper> {
-    private String id;
+
 
     /**
     * 全体作者名列表

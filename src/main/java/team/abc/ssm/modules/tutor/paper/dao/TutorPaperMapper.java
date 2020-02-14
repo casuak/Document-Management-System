@@ -30,6 +30,16 @@ public interface TutorPaperMapper {
     int tutorClaimPaper(ClaimPaper claimPaper);
 
     /**
+     * 管理员通过认领请求
+     **/
+    int updateClaimStatus(ClaimPaper claimPaper);
+
+    /**TODO 不知道要不要更新英文名字
+     * 更新doc_paper表
+     **/
+    int updatePaperInfo(TutorPaper tutorPaper);
+
+    /**
      * 根据工号查询导师认领论文记录
      **/
     List<ClaimPaper> getTutorClaimHistory(ClaimPaper claimPaper);

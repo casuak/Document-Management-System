@@ -3,6 +3,7 @@ package team.abc.ssm.modules.tutor.paper.entity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import team.abc.ssm.common.persistence.DataEntity;
+import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
@@ -10,11 +11,16 @@ public class ClaimPaper extends DataEntity<ClaimPaper> {
 
     /** 认领的论文wosid **/
     private String paperWosId;
+    /**认领论文在doc_paper中的实体**/
+    private List<TutorPaper> tutorPaper;
+
     /** 认领的论文w名称**/
     private String paperName;
 
     /** 认领老师工号 **/
     private String ownerWorkId;
+    /** 认领老师姓名 **/
+    private String ownerName;
 
     /** 一作姓名 **/
     private String firstAuthorName;

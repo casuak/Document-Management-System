@@ -58,6 +58,7 @@
         <result column="paper_wos_id" jdbcType="VARCHAR" property="paperWosId"/>
         <result column="status" jdbcType="VARCHAR" property="status"/>
         <result column="paper_name" jdbcType="VARCHAR" property="paperName"/>
+        <result column="real_name" jdbcType="VARCHAR" property="ownerName"/>
     </resultMap>
 
     <select id="selectTheAuthorPapers"
@@ -121,8 +122,7 @@
         left join sys_user c on c.work_id = a.second_author_id
     </select>
 
-    <insert id="tutorClaimPaper" parameterType="team.abc.ssm.modules.tutor.paper.entity.ClaimPaper"
-            >
+    <insert id="tutorClaimPaper" parameterType="team.abc.ssm.modules.tutor.paper.entity.ClaimPaper">
     insert into tutor_paper (`id`,`del_flag`,`create_date`,`modify_date`,`create_user_id`,`modify_user_id`,`remarks`,`status`,`paper_wos_id`
                         ,`first_author_work_id`,`second_author_work_id`,`first_author_type`,`second_author_type`,`first_author_name`,`second_author_name`,`first_author_school`,
                         `second_author_school`,`owner_work_id`)
@@ -133,18 +133,29 @@
 
     <select id="getTutorClaimHistory" parameterType="team.abc.ssm.modules.tutor.paper.entity.ClaimPaper" resultMap="ClaimResultMap">
         select
-        tutor_paper.`id`,tutor_paper.`del_flag`,tutor_paper.`create_date`,tutor_paper.`modify_date`,tutor_paper.`create_user_id`,
-        tutor_paper.`modify_user_id`,tutor_paper.`remarks`,tutor_paper.`status`,tutor_paper.`paper_wos_id`
-         ,tutor_paper.`first_author_work_id`,tutor_paper.`second_author_work_id`,tutor_paper.`first_author_type`,tutor_paper.`second_author_type`
-         ,tutor_paper.`first_author_name`,tutor_paper.`second_author_name`
-         ,tutor_paper.`first_author_school`, tutor_paper.`second_author_school`,tutor_paper.`owner_work_id`,doc_paper.`paper_name`
-        from tutor_paper
-        left join doc_paper on tutor_paper.`paper_wos_id` = doc_paper.`store_num`
+        tp.`id`,tp.`del_flag`,tp.`create_date`,tp.`modify_date`,tp.`create_user_id`,
+        tp.`modify_user_id`,tp.`remarks`,tp.`status`,tp.`paper_wos_id`
+         ,tp.`first_author_work_id`,tp.`second_author_work_id`,tp.`first_author_type`,tp.`second_author_type`
+         ,tp.`first_author_name`,tp.`second_author_name`
+         ,tp.`first_author_school`,tp.`second_author_school`,tp.`owner_work_id`,
+         su.`real_name`
+        from tutor_paper as tp
+        left join sys_user  as su on tp.`owner_work_id` = su.`work_id`
         <where>
             <if test="1 == 1">
-                tutor_paper.`del_flag` != 1
+                tp.`del_flag` != 1
+            </if>
+            <if test="status != '' and status != null">
+                tp.`status` = #{status}
+            </if>
+            <if test="ownerWorkId!='' and ownerWorkId!= null">
+                tp.`owner_work_id`=#{ownerWorkId}
             </if>
         </where>
+        order by tp.`create_date` DESC
+        <if test="page.orderBy != null and page.orderBy != ''">
+          ,tp.${page.orderby} ASC
+        </if>
         limit #{page.pageStart},#{page.pageSize}
     </select>
 
@@ -157,7 +168,28 @@
               and paper_wos_id = #{paperWosId}
     </select>
 
+    <update id="updateClaimStatus">
+        update tutor_paper
+        set `status`=#{status}
+        <if test="remarks!='' and remarks != null">
+            ,`remarks`=#{remarks}
+        </if>
+        <where>
+            `id` =#{id}
+        </where>
+    </update>
 
+
+    <update id="updatePaperInfo">
+        update doc_paper
+        set `first_author_type`=#{firstAuthorType},
+            `first_author_cname`=#{firstAuthorCname},
+            `first_author_id`=#{firstAuthorId},
+            `second_author_type`=#{secondAuthorType},
+            `second_author_cname`=#{secondAuthorCname},
+            `second_author_id`=#{secondAuthorId}
+          where `id`=#{id} and `store_num`=#{storeNum}
+    </update>
 
 
 </mapper>

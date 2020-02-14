@@ -6,7 +6,6 @@
     <title>论文认领</title>
     <%@include file="/WEB-INF/views/include/blankHead.jsp" %>
     <link rel="stylesheet" href="/static/css/functions/tutor/ClaimPaper.css"/>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/tableTemplate.css"/>
     <style>
         .row-expand-cover .el-table__expand-column .el-icon{
             visibility:hidden;
@@ -336,8 +335,13 @@
                     let app = this;
                     app.table.entity.loading = true;
                     ajaxPostJSON(this.urls.selectEntityListByPage, data, function (d) {
+                        let resList = d.data.resultList;
+                        for (let i = 0; i < resList.length; i++) {
+                            tmpDate = resList[i].publishDate;
+                            resList[i].publishDate = dateFormat(tmpDate);
+                        }
                         app.table.entity.loading = false;
-                        app.table.entity.data = d.data.resultList;
+                        app.table.entity.data = resList;
                         app.table.entity.params.total = d.data.total;
                     });
                 },
@@ -426,6 +430,26 @@
 
             }
         });
+
+
+        function dateFormat(shijianchuo) {
+            //时间戳是整数，否则要parseInt转换
+            let time = new Date(shijianchuo);
+            let y = time.getFullYear();
+            let m = time.getMonth() + 1;
+            let d = time.getDate() + 1;
+            let h = time.getHours() + 1;
+            let mm = time.getMinutes() + 1;
+            let s = time.getSeconds() + 1;
+            //return y + '-' + add0(m) + '-' + add0(d) + ' ' + add0(h) + ':' + add0(mm) + ':' + add0(s);
+            return y + '-' + add0(m) + '-' + add0(d);
+        }
+
+        function add0(m) {
+            return m < 10 ? '0' + m : m
+        }
+
+
 </script>
 </body>
 </html>
