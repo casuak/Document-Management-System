@@ -1,12 +1,13 @@
 package team.abc.ssm.modules.document.authorStatistics.dao;
 
 import team.abc.ssm.modules.document.authorStatistics.entity.AuthorStatistics;
+import team.abc.ssm.modules.document.paper.entity.Paper;
 
 import java.util.List;
 import java.util.Map;
 
 public interface AuthorStatisticsMapper {
-    /****************** 2.0版本************************/
+    /****************** 1.0版本************************/
     /*List<AuthorStatistics> getAuthorListByPage(AuthorStatistics authorStatistics);
     Integer getAuthorCount(AuthorStatistics authorStatistics);*/
 
@@ -41,7 +42,6 @@ public interface AuthorStatisticsMapper {
 
    List<AuthorStatistics> getAuthorListBySchool(AuthorStatistics authorStatistics);
     List<AuthorStatistics> getAuthorListByMajor(AuthorStatistics authorStatistics);
-
 
 
 }
