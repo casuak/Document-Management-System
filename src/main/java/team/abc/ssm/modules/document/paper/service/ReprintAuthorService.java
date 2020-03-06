@@ -193,6 +193,9 @@ public class ReprintAuthorService {
      */
     private Set<String> getBITAuthor(String s) {
         Set<String> ret = new HashSet<>();
+        if (s == null)
+            return ret;
+
         List<String> tmp = new ArrayList<>();
         String[] split = s.split(";");
         for (String value : split) {

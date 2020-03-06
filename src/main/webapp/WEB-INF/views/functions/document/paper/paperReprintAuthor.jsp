@@ -17,7 +17,7 @@
 <body>
 <div id="app" v-cloak v-loading="loading.fullScreen">
     <%-- 提示 --%>
-    <%--    <el-alert title="提示" type="info" description="通讯作者匹配前需完成作者匹配" show-icon></el-alert>--%>
+        <el-alert title="提示" type="info" description="通讯作者匹配前需完成作者匹配" show-icon></el-alert>
 
     <%-- 顶栏 --%>
     <div style="padding: 15px 20px 6px 15px;">
@@ -75,6 +75,16 @@
             </template>
         </el-table-column>
 
+        <el-table-column label="通讯作者" width="200" fixed="left" header-align="center" align="center">
+            <template slot-scope="{row}">
+                <el-Tooltip open-delay="500" effect="dark" :content="row.rpimport" placement="top">
+                    <div style="overflow: hidden;text-overflow: ellipsis;white-space: nowrap;width: 95%;">
+                        {{ row.rpimport }}
+                    </div>
+                </el-Tooltip>
+            </template>
+        </el-table-column>
+
         <el-table-column label="第一匹配作者" width="200" align="center">
             <template slot-scope="{row}">
                 <el-Tooltip open-delay="500" effect="dark" :content="getAuthor(row, 1)" placement="top">
@@ -90,16 +100,6 @@
                 <el-Tooltip open-delay="500" effect="dark" :content="getAuthor(row, 2)" placement="top">
                     <div style="overflow: hidden;text-overflow: ellipsis;white-space: nowrap;width: 95%;">
                         {{ getAuthor(row, 2) }}
-                    </div>
-                </el-Tooltip>
-            </template>
-        </el-table-column>
-
-        <el-table-column label="通讯作者" width="350" fixed="left" header-align="center" align="center">
-            <template slot-scope="{row}">
-                <el-Tooltip open-delay="500" effect="dark" :content="row.rpimport" placement="top">
-                    <div style="overflow: hidden;text-overflow: ellipsis;white-space: nowrap;width: 95%;">
-                        {{ row.rpimport }}
                     </div>
                 </el-Tooltip>
             </template>
