@@ -250,6 +250,15 @@ public class AuthorStatisticsService {
         return 0;
     }
 
+    /** 更新论文统计接口 */
+    public int updatePaperCount(List<Paper> paperList){
+        List<Paper> oldlist = paperDao.selectDeleteListByIds(paperList);
+        deletePaperCount(oldlist);
+        addPaperCount(paperList);
+        return 1;
+    }
+
+
     //新增专利
     public int addPatentCount(List<DocPatent> patentList){
         if(patentList.size() == 0) return -1;

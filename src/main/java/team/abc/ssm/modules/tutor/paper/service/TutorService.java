@@ -1,9 +1,12 @@
 package team.abc.ssm.modules.tutor.paper.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import team.abc.ssm.modules.document.authorStatistics.service.AuthorStatisticsService;
+import team.abc.ssm.modules.document.paper.entity.Paper;
 import team.abc.ssm.modules.sys.dao.FunctionDao;
 import team.abc.ssm.modules.tutor.paper.dao.TutorPaperMapper;
 import team.abc.ssm.modules.tutor.paper.entity.ClaimPaper;
@@ -17,6 +20,9 @@ public class TutorService {
 
     @Autowired
     FunctionDao functionDao;
+
+    @Autowired
+    AuthorStatisticsService authorStatisticsService;
 
     public List<TutorPaper> selectTutorPaperListByPage(TutorPaper tutorPaper) {
         //获取作者的所有论文
@@ -55,9 +61,23 @@ public class TutorService {
     @Transactional
     public Integer doTutorClaim(ClaimPaper claimPaper){
         if(tutorPaperMapper.updateClaimStatus(claimPaper) == 1){
-            if(tutorPaperMapper.updatePaperInfo(claimPaper.getTutorPaper().get(0)) >= 1){
-                return 1;
-            }else return -1;
+            if(claimPaper.getStatus() == 1){
+                if(tutorPaperMapper.updatePaperInfo(claimPaper.getTutorPaper().get(0)) >= 1){
+                    List<Paper> updateList = new ArrayList<>();
+                    Paper updatePaper = new Paper();
+                    updatePaper.setFirstAuthorType( claimPaper.getTutorPaper().get(0).getFirstAuthorType());
+                    updatePaper.setFirstAuthorId(claimPaper.getTutorPaper().get(0).getFirstAuthorId());
+                    updatePaper.setFirstAuthorName(claimPaper.getTutorPaper().get(0).getFirstAuthorName());
+                    updatePaper.setSecondAuthorType( claimPaper.getTutorPaper().get(0).getSecondAuthorType());
+                    updatePaper.setSecondAuthorId(claimPaper.getTutorPaper().get(0).getSecondAuthorId());
+                    updatePaper.setSecondAuthorName(claimPaper.getTutorPaper().get(0).getSecondAuthorName());
+                    updatePaper.setPublishDate(claimPaper.getTutorPaper().get(0).getPublishDate());
+                    updateList.add(updatePaper);
+                    authorStatisticsService.updatePaperCount(updateList);
+                    return 1;
+                }else return -1;
+            }
+            else return 1;
         }else{
             return -1;
         }
