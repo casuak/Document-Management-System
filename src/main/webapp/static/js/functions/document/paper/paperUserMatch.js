@@ -79,6 +79,10 @@ app = new Vue({
         },
         convertToSuccessByIds: function (ids) {
             let app = this;
+            if (ids.length < 1){
+                window.parent.app.showMessage('请选择论文', 'error');
+                return;
+            }
             window.parent.app.showConfirm(function () {
                 let data = ids;
                 app.loading.table = true;

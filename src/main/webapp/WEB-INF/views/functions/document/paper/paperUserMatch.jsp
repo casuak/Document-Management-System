@@ -27,6 +27,9 @@
             <el-button size="small" type="primary" @click="completePapers()" v-if="status === '2'">
                 全部完成
             </el-button>
+            <el-button size="small" type="success" @click="convertToSuccessByIds(selectionList)" v-if="status === '1'">
+                批量转入成功
+            </el-button>
             <el-button size="small" type="primary" @click="completeImportPaper()" v-if="status === '4'">
                 全部完成
             </el-button>
