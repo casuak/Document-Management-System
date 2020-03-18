@@ -114,6 +114,82 @@ public class ReprintAuthorService {
         String sameCollegeName = null;//同学院姓名
         ReprintAuthorEntry entry;//匹配记录
 
+//        int h = list.size() / 100;
+//        int total = list.size();
+//        for (int i = 0; i <= h; i++) {
+//            toInsertEntry.clear();
+//            toUpdatePaper.clear();
+//
+//            for (int j = 0; j < 100; j++) {
+//                int index = 100 * i + j;
+//                if (index >= total)
+//                    break;
+//                Paper p = list.get(index);
+//
+//                boolean isSuccess = true;//每个作者是否都唯一匹配
+//                String first = p.getFirstAuthorId();//一作工号
+//                String second = p.getSecondAuthorId();//二作工号
+//                String[] authors = p.getRPBIT().split(";");
+//                String school = p.getDanweiCN();//学院
+//
+//                //对于每一个作者
+//                for (String author : authors) {
+//                    boolean hasMatched = false;//是否可以精确匹配
+//                    num = 0;
+//                    sameCollege = 0;
+//                    for (User u : users) {
+//                        if (u.getNicknames().equals(author.trim().toLowerCase())) {
+//                            if (u.getWorkId().equals(first) || u.getWorkId().equals(second)) {//与第一、二作者匹配上
+//                                entry = new ReprintAuthorEntry(p.getId(), author.trim(), u.getWorkId(), u.getRealName(), "0");
+//                                toInsertEntry.add(entry);
+//                                hasMatched = true;
+//                                break;
+//                            } else {
+//                                num++;
+//                                if (u.getSchool().equals(school)) {//匹配学院
+//                                    sameCollege++;
+//                                    sameCollegeWorkId = u.getWorkId();
+//                                    sameCollegeName = u.getRealName();
+//                                }
+//                                workId = u.getWorkId();
+//                                name = u.getRealName();
+//                            }
+//                        }
+//                    }
+//                    if (hasMatched)
+//                        continue;
+//
+//                    if (num == 0) {//没有匹配
+//                        p.setRPStatus("2");
+//                        isSuccess = false;
+//                        entry = new ReprintAuthorEntry(p.getId(), author.trim(), "-", "-", "-1");
+//                    } else if (num == 1) {//唯一匹配
+//                        entry = new ReprintAuthorEntry(p.getId(), author.trim(), workId, name, "0");
+//                    } else if (sameCollege == 1 && sameCollegeWorkId != null) {//多个匹配，但同学院唯一
+//                        entry = new ReprintAuthorEntry(p.getId(), author.trim(), sameCollegeWorkId, sameCollegeName, "0");
+//                    } else {//多个匹配
+//                        p.setRPStatus("2");
+//                        isSuccess = false;
+//                        entry = new ReprintAuthorEntry(p.getId(), author.trim(), "-", "-", "-2");
+//                    }
+//                    toInsertEntry.add(entry);
+//                }
+//                if (isSuccess)
+//                    p.setRPStatus("1");
+//                toUpdatePaper.add(p);
+//            }
+//
+//            //更新、插入
+//            for (Paper p : toUpdatePaper) {
+//                p.preUpdate();
+//                reprintAuthorDao.updatePaperById(p);
+//            }
+//            for (ReprintAuthorEntry e : toInsertEntry) {
+//                e.preInsert();
+//                reprintAuthorDao.insertEntry(e);
+//            }
+//        }
+
         for (Paper p : list) {
             boolean isSuccess = true;//每个作者是否都唯一匹配
             String first = p.getFirstAuthorId();//一作工号
@@ -178,10 +254,6 @@ public class ReprintAuthorService {
             reprintAuthorDao.insertEntry(e);
         }
     }
-
-    //手动修改
-
-    //删除记录
 
     /**
      * @param s RP列数据
