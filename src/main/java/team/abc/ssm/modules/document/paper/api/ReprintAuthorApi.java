@@ -38,6 +38,7 @@ public class ReprintAuthorApi extends BaseApi {
         try {
             reprintAuthorService.init();
         } catch (Exception e) {
+            e.printStackTrace();
             return retMsg.Set(MsgType.ERROR, e.toString());
         }
         return retMsg.Set(MsgType.SUCCESS);
