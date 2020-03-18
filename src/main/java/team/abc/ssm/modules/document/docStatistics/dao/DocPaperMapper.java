@@ -3,6 +3,7 @@ import java.util.List;
 
 import team.abc.ssm.modules.document.docStatistics.entity.StatisticCondition;
 import team.abc.ssm.modules.document.docStatistics.entity.DocPaper;
+import team.abc.ssm.modules.document.paper.entity.ReprintAuthorEntry;
 
 public interface DocPaperMapper {
     int deleteByPrimaryKey(String id);
@@ -69,4 +70,6 @@ public interface DocPaperMapper {
      * @date 2019/8/5 16:25
      **/
     List<DocPaper> getStatisticNumOfPaper(StatisticCondition statisticCondition);
+
+    List<ReprintAuthorEntry> getRPEntryById(String id);
 }

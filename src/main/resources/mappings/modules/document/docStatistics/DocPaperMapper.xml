@@ -521,4 +521,16 @@
         ) as res
     </select>
 
+    <resultMap id="RPMatchEntry" type="team.abc.ssm.modules.document.paper.entity.ReprintAuthorEntry">
+        <result column="rp_name" jdbcType="VARCHAR" property="authorName"/>
+        <result column="rp_work_id" jdbcType="VARCHAR" property="authorWorkId"/>
+        <result column="real_name" jdbcType="VARCHAR" property="realName"/>
+    </resultMap>
+
+    <select id="getRPEntryById" resultMap="RPMatchEntry">
+        select rp_name, rp_work_id, real_name
+        from doc_paper_rp_user_match
+        where paper = #{id} and del_flag = 0 and status = 0
+    </select>
+
 </mapper>

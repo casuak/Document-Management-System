@@ -12,7 +12,7 @@ public class ReprintAuthorEntry extends DataEntity<ReprintAuthorEntry> {
     private String realName;
     private String status;
 
-    public ReprintAuthorEntry(){
+    public ReprintAuthorEntry() {
 
     }
 
@@ -22,5 +22,10 @@ public class ReprintAuthorEntry extends DataEntity<ReprintAuthorEntry> {
         this.authorWorkId = authorWorkId;
         this.realName = realName;
         this.status = status;
+    }
+
+    public String getString() {
+        String str = this.realName + "," + this.authorWorkId;
+        return str;
     }
 }

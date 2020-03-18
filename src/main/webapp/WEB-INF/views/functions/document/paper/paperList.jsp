@@ -413,6 +413,13 @@
                         label="作者列表">
                 </el-table-column>
                 <el-table-column
+                        prop="rpauthor"
+                        width="150"
+                        align="center"
+                        show-overflow-tooltip
+                        label="通讯作者">
+                </el-table-column>
+                <el-table-column
                         label="操作"
                         width="100"
                         fixed="right"

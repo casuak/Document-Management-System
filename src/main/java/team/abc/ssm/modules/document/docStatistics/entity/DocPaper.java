@@ -1,8 +1,11 @@
 package team.abc.ssm.modules.document.docStatistics.entity;
 
 import java.util.Date;
+import java.util.List;
+
 import lombok.Data;
 import team.abc.ssm.common.persistence.DataEntity;
+import team.abc.ssm.modules.document.paper.entity.ReprintAuthorEntry;
 
 import javax.persistence.Transient;
 
@@ -134,4 +137,10 @@ public class DocPaper extends DataEntity<DocPaper> {
      */
     private Double impactFactor;
 
+    //zch add begin
+    /**
+     * 通讯作者
+     */
+    private String RPAuthor;
+    private List<ReprintAuthorEntry> RPAuthorEntry;
 }
