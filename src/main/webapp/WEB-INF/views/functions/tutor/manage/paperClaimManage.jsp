@@ -6,6 +6,7 @@
     <title>ssm</title>
     <%@include file="/WEB-INF/views/include/blankHead.jsp" %>
     <link rel="stylesheet" href="/static/css/functions/tutor/paperClaimManage.css"/>
+
 </head>
 <body>
 <div id="app" v-cloak style="background: white;height: 100%;overflow: hidden;" v-loading="fullScreenLoading">
@@ -29,11 +30,13 @@
                   v-loading="table.entity.loading"
                   height="calc(100% - 100px)"
                   style="width: 100%;overflow-y: hidden;margin-top: 20px;"
-                  class="scroll-bar"
+                  class="scroll-bar tb-edit"
                   @selection-change="table.entity.selectionList=$event"
                   :row-key="getRowKeys"
                   :expand-row-keys="expands"
-                  stripe>
+                  stripe
+                  @cell-click="cellClick"
+                    >
 
             <el-table-column type="expand" >
                 <template slot-scope="props">
@@ -225,7 +228,7 @@
                         <el-button size ="small" type="warning">正在申请</el-button>
                     </template>
                     <template v-else-if="row.status == -1">
-                        <el-button size ="small" type="error">申请失败</el-button>
+                        <el-button size ="small" type="danger">申请失败</el-button>
                     </template>
                 </template>
             </el-table-column>
@@ -235,6 +238,13 @@
                     width="300"
                     align="center"
                     label="备注">
+
+                <template scope="scope">
+                    <el-input size="small" v-model="scope.row.remarks" placeholder="请输入备注" v-if="scope.row.seen" @blur="loseFocus(scope.$index, scope.row)">
+
+                    </el-input>
+                    <span v-else>{{scope.row.remarks}}</span>
+                </template>
             </el-table-column>
             <el-table-column
                     label="操作"

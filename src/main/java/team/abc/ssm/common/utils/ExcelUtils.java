@@ -35,7 +35,7 @@ public class ExcelUtils {
                     break;
                 case "decimal":
                     // TODO
-                    val = cell.getStringCellValue();
+                    val =  (float) cell.getNumericCellValue();
                     if (!StringUtils.isDigit((String) val)) {
                         val = "0";
                     }

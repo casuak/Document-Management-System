@@ -139,6 +139,19 @@ let app = new Vue({
                     type:'error'
                 })
             })
+        },
+        /** 处理备注编辑函数*/
+        loseFocus:function(index, row) {
+            row.seen=false;
+        },
+        cellClick:function(row, column) {
+            if(column.label !== '备注'){
+                console.log(1);
+                row.seen=false;
+            }else{
+                row.seen=true;
+            }
+
         }
     },
     mounted: function () {
