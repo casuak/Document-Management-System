@@ -41,7 +41,7 @@ public class UserApi extends BaseApi {
     @RequestMapping(value = "put", method = RequestMethod.POST)
     @ResponseBody
     public Object put(@RequestBody User user) {
-        if(userService.addUser(user)){
+        if (userService.addUser(user)) {
             userService.initUser();
             return retMsg.Set(MsgType.SUCCESS);
         }
@@ -64,7 +64,7 @@ public class UserApi extends BaseApi {
 
     @RequestMapping(value = "initUser", method = RequestMethod.POST)
     @ResponseBody
-    public Object initUser(){
+    public Object initUser() {
         userService.initUser();
         return retMsg.Set(MsgType.SUCCESS);
     }
@@ -78,7 +78,7 @@ public class UserApi extends BaseApi {
     // 复杂搜索
     @RequestMapping(value = "selectListByPage", method = RequestMethod.POST)
     @ResponseBody
-    public Object selectListByPage(@RequestBody User user){
+    public Object selectListByPage(@RequestBody User user) {
         return retMsg.Set(MsgType.SUCCESS, userService.selectListByPage2(user));
     }
 
@@ -106,19 +106,36 @@ public class UserApi extends BaseApi {
      **/
     @RequestMapping(value = "selectUserListByPage", method = RequestMethod.POST)
     @ResponseBody
-    public Object selectUserListByPage(@RequestBody User user){
+    public Object selectUserListByPage(@RequestBody User user) {
         return retMsg.Set(MsgType.SUCCESS, userService.selectUserListByPage(user));
     }
 
-    @RequestMapping(value = "getSchoolList",method = RequestMethod.POST)
+    @RequestMapping(value = "getSchoolList", method = RequestMethod.POST)
     @ResponseBody
-    public Object getSchoolList(){
-        return retMsg.Set(MsgType.SUCCESS,dictService.getSchoolList());
+    public Object getSchoolList() {
+        return retMsg.Set(MsgType.SUCCESS, dictService.getSchoolList());
     }
 
-    @RequestMapping(value = "getMajorList",method = RequestMethod.POST)
+    @RequestMapping(value = "getMajorList", method = RequestMethod.POST)
     @ResponseBody
-    public Object getMajorList(){
-        return retMsg.Set(MsgType.SUCCESS,dictService.getMajorList());
+    public Object getMajorList() {
+        return retMsg.Set(MsgType.SUCCESS, dictService.getMajorList());
+    }
+
+    /**
+     * @Description 重新初始化别名
+     * @author zch
+     * @date 2020/3/19 12:06
+     * @param
+     */
+    @RequestMapping(value = "reInit", method = RequestMethod.GET)
+    @ResponseBody
+    public Object reInit() {
+        try {
+            userService.reInit();
+        } catch (Exception e) {
+            return retMsg.Set(MsgType.ERROR, e.toString());
+        }
+        return retMsg.Set(MsgType.SUCCESS);
     }
 }

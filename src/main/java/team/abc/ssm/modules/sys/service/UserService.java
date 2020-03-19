@@ -211,4 +211,25 @@ public class UserService {
         page.setTotal(userDao.selectUserSearchCount(user));
         return page;
     }
+
+    public void reInit() {
+        List<User> list = userDao.selectAll();
+        List<User> toUpdate = new ArrayList<>();
+        for (User u : list) {
+            String nicknames = u.getNicknames();
+            if (nicknames == null || nicknames.split(";").length > 2)
+                continue;
+            String realName = u.getRealName();
+            nicknames += PinyinUtils.getPinyin2(realName, true, true) + ";";
+            u.setNicknames(nicknames);
+            toUpdate.add(u);
+            u.preUpdate();
+        }
+
+        if (toUpdate.size() > 0) {
+            for (User u : toUpdate) {
+                userDao.update(u);
+            }
+        }
+    }
 }
