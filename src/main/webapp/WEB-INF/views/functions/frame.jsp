@@ -15,7 +15,7 @@
             <span class="title">
                 <img src="/static/images/beili_logo.png"
                      style="width: 24px;height: 24px;position: relative;bottom: 1px;"/>
-                <span style="top: 1px;position:relative;">研究生院文献管理系统</span>
+                <span style="top: 1px;position:relative;">文献管理系统</span>
             </span>
             <el-popover placement="bottom" trigger="hover">
                 <el-button style="margin-left: 32px;" type="danger" size="small" @click="logout">退出</el-button>

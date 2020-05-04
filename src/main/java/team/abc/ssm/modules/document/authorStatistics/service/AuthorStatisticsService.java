@@ -46,6 +46,8 @@ public class AuthorStatisticsService {
     @Autowired
     UserService userService;
 
+
+
     private  List<User> userList = new ArrayList<>();
 
 
@@ -95,8 +97,8 @@ public class AuthorStatisticsService {
 
 
     //新增论文
-    public int addPaperCount(List<Paper> paperList){
-        if(paperList.size() ==0 ) return -1;
+    public List<Paper> addPaperCount(List<Paper> paperList){
+        if(paperList.size() ==0 ) return null;
         if(userList.size() == 0)
             userList = userService.getAllUsers();
 
@@ -108,68 +110,75 @@ public class AuthorStatisticsService {
         Calendar c = Calendar.getInstance();
         User tmpUser = null;
 
+        List<Paper> revertList=new ArrayList<>();
+
         for(Paper paper :paperList){
-            workId="";
-            c.setTime(paper.getPublishDate());
-            year = c.get(Calendar.YEAR);
-            if(year == 0) continue;
+            try {
+                workId = "";
+                c.setTime(paper.getPublishDate());
+                year = c.get(Calendar.YEAR);
+                if (year == 0) continue;
 
-            if((paper.getFirstAuthorType().equals("student")&&paper.getSecondAuthorType() == null)||(paper.getFirstAuthorType().equals("student") && paper.getSecondAuthorType().equals("student")) ){
-                //第一作者学生 第二作者学生(或空)   第一作者学生+1 老师+1
-                tmpUser = getUser(paper.getFirstAuthorId());
-                workId = tmpUser != null ? tmpUser.getTutorWorkId() : "";
-
-                if(!workId.equals(""))
-                    resultSql += getPaperTypeSql(paper,workId,1,year);
-                    insertSql += getInsertTutorSql(tmpUser,year);
-
-            }else if(paper.getFirstAuthorType()!= null &&paper.getSecondAuthorType()!= null&&paper.getFirstAuthorType().equals("teacher")&& paper.getSecondAuthorType().equals("student")){
-                //第一作者老师 第二作者学生
-                tmpUser = getUser(paper.getSecondAuthorId());
-                workId = tmpUser != null ? tmpUser.getTutorWorkId() : "";
-
-                if(!workId.equals("")) {
-                    if (workId.equals(paper.getFirstAuthorId())) {
-                        //学生在老师名下
-                        resultSql += getPaperTypeSql(paper, paper.getFirstAuthorId(), 1,year);
-                        insertSql += getInsertTutorSql(tmpUser,year);
-
-                    } else {
-                        //学生不在老师名下
-                        resultSql += getPaperTypeSql(paper, paper.getFirstAuthorId(), 3,year);
-                    }
-                }else{
-                    resultSql += getPaperTypeSql(paper, paper.getFirstAuthorId(), 3,year);
+                if (("student".equals(paper.getFirstAuthorType()) && paper.getSecondAuthorType() == null) || (("student".equals(paper.getFirstAuthorType())) && "student".equals(paper.getSecondAuthorType()) )) {
+                    //第一作者学生 第二作者学生(或空)   第一作者学生+1 老师+1
                     tmpUser = getUser(paper.getFirstAuthorId());
-                    insertSql += getInsertTutorSql(tmpUser,year);
-                }
-            }else if(paper.getFirstAuthorType()!= null &&paper.getSecondAuthorType()!= null&&paper.getFirstAuthorType().equals("student") &&paper.getSecondAuthorType().equals("teacher")){
-                //第一作者学生  第二作者老师
+                    workId = tmpUser != null ? tmpUser.getTutorWorkId() : "";
 
-                tmpUser = getUser(paper.getFirstAuthorId());
-                workId = tmpUser != null ? tmpUser.getTutorWorkId() : "";
+                    if (!workId.equals(""))
+                        resultSql += getPaperTypeSql(paper, workId, 1, year);
+                    insertSql += getInsertTutorSql(getUser(workId), year);
 
-                if(!workId.equals("")){
-                    resultSql += getPaperTypeSql(paper, workId, 2,year);
-                    insertSql += getInsertTutorSql(tmpUser,year);
-                    resultSql += getPaperTypeSql(paper, paper.getSecondAuthorId(), 3,year);
-
+                } else if (paper.getFirstAuthorType() != null && paper.getSecondAuthorType() != null && "teacher".equals(paper.getFirstAuthorType()) && "student".equals(paper.getSecondAuthorType())) {
+                    //第一作者老师 第二作者学生
                     tmpUser = getUser(paper.getSecondAuthorId());
-                    insertSql += getInsertTutorSql(tmpUser,year);
-                }else{
-                    resultSql += getPaperTypeSql(paper, paper.getSecondAuthorId(), 3,year);
+                    workId = tmpUser != null ? tmpUser.getTutorWorkId() : "";
 
-                    tmpUser = getUser(paper.getSecondAuthorId());
-                    insertSql += getInsertTutorSql(tmpUser,year);
+                    if (!workId.equals("")) {
+                        if (workId.equals(paper.getFirstAuthorId())) {
+                            //学生在老师名下
+                            resultSql += getPaperTypeSql(paper, paper.getFirstAuthorId(), 1, year);
+                            insertSql += getInsertTutorSql(getUser(paper.getFirstAuthorId()), year);
+
+                        } else {
+                            //学生不在老师名下
+                            resultSql += getPaperTypeSql(paper, paper.getFirstAuthorId(), 3, year);
+                            insertSql += getInsertTutorSql(getUser(paper.getFirstAuthorId()), year);
+                        }
+                    } else {
+                        resultSql += getPaperTypeSql(paper, paper.getFirstAuthorId(), 3, year);
+                        tmpUser = getUser(paper.getFirstAuthorId());
+                        insertSql += getInsertTutorSql(tmpUser, year);
+                    }
+                } else if (paper.getFirstAuthorType() != null && paper.getSecondAuthorType() != null && "student".equals(paper.getFirstAuthorType()) && "teacher".equals(paper.getSecondAuthorType())) {
+                    //第一作者学生  第二作者老师
+
+                    tmpUser = getUser(paper.getFirstAuthorId());
+                    workId = tmpUser != null ? tmpUser.getTutorWorkId() : "";
+
+                    if (!workId.equals("")) {
+                        resultSql += getPaperTypeSql(paper, workId, 2, year);
+                        insertSql += getInsertTutorSql(getUser(workId), year);
+
+                        resultSql += getPaperTypeSql(paper, paper.getSecondAuthorId(), 3, year);
+                        tmpUser = getUser(paper.getSecondAuthorId());
+                        insertSql += getInsertTutorSql(tmpUser, year);
+                    } else {
+                        resultSql += getPaperTypeSql(paper, paper.getSecondAuthorId(), 3, year);
+
+                        tmpUser = getUser(paper.getSecondAuthorId());
+                        insertSql += getInsertTutorSql(tmpUser, year);
+                    }
+                } else if ("teacher".equals(paper.getFirstAuthorType()) && paper.getSecondAuthorType() == null) {
+                    //一作导师 二作空
+                    resultSql += getPaperTypeSql(paper, paper.getFirstAuthorId(), 3, year);
+
+                    tmpUser = getUser(paper.getFirstAuthorId());
+                    insertSql += getInsertTutorSql(tmpUser, year);
+                }else if(paper.getFirstAuthorType() == null){
+                    revertList.add(paper);
                 }
-
-
-            }else if(paper.getFirstAuthorType().equals("teacher") &&paper.getSecondAuthorType() == null){
-                //一作导师 二作空
-                resultSql += getPaperTypeSql(paper,paper.getFirstAuthorId(),3,year);
-
-                tmpUser = getUser(paper.getFirstAuthorId());
-                insertSql += getInsertTutorSql(tmpUser,year);
+            }catch (Exception e){
+                revertList.add(paper);
             }
             year = 0;
         }
@@ -180,8 +189,9 @@ public class AuthorStatisticsService {
 
         resultSql = resultSql.replace("doc_statistics","doc_statistics_year");
         authorStatisticsMapper.doSql(resultSql);
-        return 0;
-    }
+
+        return revertList;
+}
     //删除论文
     public int deletePaperCount(List<Paper> paperList){
         if(paperList.size() ==0 ) return -1;
@@ -200,7 +210,7 @@ public class AuthorStatisticsService {
             if(year == 0) continue;
 
             workId="";
-            if((paper.getFirstAuthorType().equals("student")&&paper.getSecondAuthorType() == null)||(paper.getFirstAuthorType().equals("student") && paper.getSecondAuthorType().equals("student")) ){
+            if((paper.getFirstAuthorType().equals("student")&&paper.getSecondAuthorType() == null)||(paper.getFirstAuthorType().equals("student") && paper.getSecondAuthorType().equals("student") ) ){
                 //第一作者学生 第二作者学生(或空)   第一作者学生+1 老师+1
                 tmpUser = getUser(paper.getFirstAuthorId());
                 workId = tmpUser != null ? tmpUser.getTutorWorkId() : "";

@@ -14,6 +14,7 @@ import team.abc.ssm.modules.document.docStatistics.dao.DocPaperMapper;
 import team.abc.ssm.modules.document.docStatistics.entity.StatisticCondition;
 import team.abc.ssm.modules.document.docStatistics.entity.DocPaper;
 import team.abc.ssm.modules.document.docStatistics.service.DocPaperService;
+import team.abc.ssm.modules.document.paper.entity.ReprintAuthorEntry;
 import team.abc.ssm.modules.sys.service.DictService;
 
 import javax.annotation.Resource;
@@ -156,18 +157,26 @@ public class DocPaperApi extends BaseApi {
         //4.直接查询符合条件的paperList(statisticCondition中不含page，所以不会有分页的数目限制)
         List<DocPaper> paperList = docPaperService.selectAllPaperByPage(statisticCondition);
 
+        int maxNumber = 0;
+        for (DocPaper paper : paperList) {
+            String id = paper.getId();
+            paper.setRPAuthor(docPaperService.getReprintAuthor(id));
+            paper.setRPAuthorEntry(docPaperMapper.getRPEntryById(id));
+            maxNumber = Math.max(paper.getRPAuthorEntry().size(),maxNumber);
+        }
+
         //5.导出
         HSSFWorkbook wb = new HSSFWorkbook();
 
         HSSFSheet sheet = wb.createSheet("论文统计结果");
         String[] excelHeader = {
                 "序号", "论文名称", "ISSN", "分区", "影响因子", "所属学院", "论文种类", "出版日期",
-                "第一作者", "第一作者中文名", "第一作者工号", "第一作者类型", "第二作者", "第二作者中文名", "第二作者工号", "第二作者类型", "入藏号", "作者列表"
+                "第一作者", "第一作者中文名", "第一作者工号", "第一作者类型", "第二作者", "第二作者中文名", "第二作者工号", "第二作者类型", "入藏号", "作者列表","通讯作者列表"
         };
         // 单元格列宽
         int[] excelHeaderWidth = {
                 40, 300, 150, 150, 150, 200, 120, 200,
-                160, 150, 150, 120, 160, 150, 150, 120, 250, 400
+                160, 150, 150, 120, 160, 150, 150, 120, 250, 400,400
         };
 
         HSSFRow row = sheet.createRow((int) 0);
@@ -196,11 +205,22 @@ public class DocPaperApi extends BaseApi {
         for (int i = 0; i < excelHeaderWidth.length; i++) {
             sheet.setColumnWidth(i, 32 * excelHeaderWidth[i]);
         }
+        for (int i = 0; i < maxNumber*2; i++) {
+            sheet.setColumnWidth(i+excelHeaderWidth.length, 32 * 200);
+        }
         // 添加表格头
         for (int i = 0; i < excelHeader.length; i++) {
             HSSFCell cell = row.createCell(i);
             cell.setCellValue(excelHeader[i]);
             cell.setCellStyle(style1);
+        }
+        for (int i = 1; i <= maxNumber*2; i+=2) {
+            HSSFCell cell = row.createCell(i+excelHeaderWidth.length-1);
+            cell.setCellValue("通讯作者"+(i/2+1)+"姓名");
+            cell.setCellStyle(style1);
+            HSSFCell cell2 = row.createCell(i+excelHeaderWidth.length);
+            cell2.setCellValue("通讯作者"+(i/2+1)+"工号");
+            cell2.setCellStyle(style1);
         }
         row = sheet.createRow((int) 1);
 
@@ -289,6 +309,24 @@ public class DocPaperApi extends BaseApi {
             cell = row.createCell(cellNum++);
             cell.setCellValue(paperList.get(i).getAuthorList());
             cell.setCellStyle(style);
+
+            //第18列：通讯作者列表
+            StringBuilder authors= new StringBuilder("");
+            for(ReprintAuthorEntry reprintAuthorEntry : paperList.get(i).getRPAuthorEntry()){
+                authors.append(reprintAuthorEntry.getAuthorName()+";");
+            }
+            cell = row.createCell(cellNum++);
+            cell.setCellValue(authors.toString());
+            cell.setCellStyle(style);
+            //第19列之后 通讯作者列
+            for(ReprintAuthorEntry reprintAuthorEntry : paperList.get(i).getRPAuthorEntry()){
+                cell = row.createCell(cellNum++);
+                cell.setCellValue(reprintAuthorEntry.getAuthorName());
+                cell.setCellStyle(style);
+                cell = row.createCell(cellNum++);
+                cell.setCellValue(reprintAuthorEntry.getAuthorWorkId());
+                cell.setCellStyle(style);
+            }
         }
 
         httpServletResponse.setContentType("application/vnd.ms-excel");

@@ -240,9 +240,12 @@ public class PaperService {
         Paper paper = new Paper();
         paper.setStatus("2");
         List<Paper> result = paperDao.selectListByStatus(paper);
-        authorStatisticsService.addPaperCount(result);
-
+        List<Paper> revertList = authorStatisticsService.addPaperCount(result);
         paperDao.completeAll();
+
+        if(revertList != null && revertList.size()>0)
+            paperDao.convertToSuccessByIds(revertList);
+
 
     }
 
