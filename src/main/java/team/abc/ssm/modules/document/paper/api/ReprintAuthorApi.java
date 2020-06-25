@@ -3,6 +3,7 @@ package team.abc.ssm.modules.document.paper.api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import team.abc.ssm.common.persistence.Page;
 import team.abc.ssm.common.web.BaseApi;
 import team.abc.ssm.common.web.MsgType;
@@ -136,5 +137,16 @@ public class ReprintAuthorApi extends BaseApi {
             return retMsg.Set(MsgType.ERROR, e.toString());
         }
         return retMsg.Set(MsgType.SUCCESS);
+    }
+
+    @RequestMapping(value = "uploadFile", method = RequestMethod.POST)
+    @ResponseBody
+    public Object uploadFile(@RequestParam MultipartFile file) {
+        try {
+            String msg = reprintAuthorService.uploadFile(file);
+            return retMsg.Set(MsgType.SUCCESS, msg);
+        } catch (Exception e) {
+            return retMsg.Set(MsgType.ERROR, e.toString());
+        }
     }
 }

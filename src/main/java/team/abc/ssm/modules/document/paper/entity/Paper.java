@@ -361,5 +361,13 @@ public class Paper extends DataEntity<Paper> {
     public void setMatchedAuthor(String matchedAuthor) {
         this.matchedAuthor = matchedAuthor;
     }
+
+    public Paper() {
+    }
+
+    public Paper(String WOS, String RP) {
+        this.storeNum = WOS;
+        this.RPImport = RP;
+    }
     /* zch add end*/
 }

@@ -161,4 +161,19 @@
     <update id="updatePaperRPStatusById">
         UPDATE doc_paper SET status_rp = '1' WHERE id = #{id}
     </update>
+
+    <update id="importRPByList">
+<!--        UPDATE doc_paper SET rp_import = CASE store_num-->
+<!--        <foreach item="item" collection="list">-->
+<!--            WHEN #{item.storeNum} THEN #{item.RPImport}-->
+<!--        </foreach>-->
+<!--        END-->
+<!--        WHERE-->
+<!--        <foreach item="item" collection="list">-->
+<!--            store_num = #{item.storeNum}-->
+<!--        </foreach>-->
+        <foreach collection="list" item="item" separator=";">
+            UPDATE doc_paper SET rp_import = #{item.RPImport} WHERE store_num = #{item.storeNum}
+        </foreach>
+    </update>
 </mapper>

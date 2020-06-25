@@ -101,7 +101,12 @@ let app = new Vue({
                 value: 'doctor',
                 label: '博士后'
             }
-        ]
+        ],
+        uploadDialog: {
+            visible: false,
+            loading: false,
+            fileList: [],
+        }
     },
     methods: {
         getPaperList: function () {
@@ -414,8 +419,39 @@ let app = new Vue({
             this.searchUserDialog.table.entity.params.pageIndex = newIndex;
             this.refreshTable_entity();
         },
+        beforeUpload: function (file) {
+            this.uploadDialog.loading = true;
+            let suffix = file.name.split('.').pop();
+            if (suffix !== 'xlsx') {
+                this.$message({
+                    message: '仅支持.xlsx文件',
+                    type: 'error'
+                });
+                this.uploadDialog.loading = false;
+                return false;
+            }
+        },
+        onUploadSuccess: function (response, file, fileList) {
+            this.uploadDialog.loading = false;
+            if (response.code === 'success')
+                this.$message({
+                    message: '上传成功，' + response.data,
+                    type: 'success'
+                });
+            else
+                this.$message({
+                    message: '服务器错误：\n' + response.data,
+                    type: 'error'
+                });
+            this.$refs.upload.clearFiles()
+        }
     },
     mounted: function () {
         this.getPaperList();
+        this.$message({
+            showClose: true,
+            message: '提示：通讯作者匹配前需完成作者匹配',
+            duration: 5 * 1000
+        });
     }
 });

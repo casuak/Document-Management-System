@@ -1,16 +1,22 @@
 package team.abc.ssm.modules.document.paper.service;
 
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+import team.abc.ssm.common.utils.SystemPath;
 import team.abc.ssm.modules.document.paper.dao.ReprintAuthorDao;
 import team.abc.ssm.modules.document.paper.entity.Paper;
 import team.abc.ssm.modules.document.paper.entity.ReprintAuthorEntry;
 import team.abc.ssm.modules.sys.entity.User;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.*;
 
 @Service
 public class ReprintAuthorService {
@@ -341,5 +347,33 @@ public class ReprintAuthorService {
             entry.preInsert();
             reprintAuthorDao.insertEntry(entry);
         }
+    }
+
+    public String uploadFile(MultipartFile file) throws IOException {
+        File f = new File(SystemPath.getRootPath() + SystemPath.getTempDirPath()
+                + UUID.randomUUID().toString() + ".xlsx");
+        file.transferTo(f);
+
+        InputStream inputStream = new FileInputStream(f);
+        XSSFWorkbook xssfWorkbook = new XSSFWorkbook(inputStream);
+        Sheet sheet = xssfWorkbook.getSheetAt(0);
+        List<Paper> toUpdate = new ArrayList<>();
+        String WOS;
+        String RP;
+        int cnt = -1;
+        for (Row row : sheet) {
+            if (row.getCell(62) != null)
+                WOS = row.getCell(62).getStringCellValue();
+            else
+                continue;
+            if (row.getCell(23) != null)
+                RP = row.getCell(23).getStringCellValue();
+            else
+                continue;
+            toUpdate.add(new Paper(WOS, RP));
+            cnt++;
+        }
+        reprintAuthorDao.importRPByList(toUpdate);
+        return "本次导入了" + cnt + "条合法数据";
     }
 }

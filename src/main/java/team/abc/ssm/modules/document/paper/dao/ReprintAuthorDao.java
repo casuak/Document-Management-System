@@ -42,4 +42,6 @@ public interface ReprintAuthorDao {
     void deleteEntryByPaperId(String paper);
 
     void updatePaperRPStatusById(String id);
+
+    int importRPByList(List<Paper> list);
 }

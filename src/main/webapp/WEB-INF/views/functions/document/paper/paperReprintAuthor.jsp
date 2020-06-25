@@ -17,7 +17,7 @@
 <body>
 <div id="app" v-cloak v-loading="loading.fullScreen">
     <%-- 提示 --%>
-        <el-alert title="提示" type="info" description="通讯作者匹配前需完成作者匹配" show-icon></el-alert>
+    <%--        <el-alert title="提示" type="info" description="通讯作者匹配前需完成作者匹配" show-icon></el-alert>--%>
 
     <%-- 顶栏 --%>
     <div style="padding: 15px 20px 6px 15px;">
@@ -38,6 +38,9 @@
             </el-button>
             <el-button size="small" type="primary" @click="completePaperEntryByStatus()" v-if="status === '1'">
                 全部完成
+            </el-button>
+            <el-button size="small" type="success" @click="uploadDialog.visible = true" v-if="status === '-1'">
+                导入通讯作者信息
             </el-button>
         </span>
 
@@ -314,7 +317,24 @@
         </el-pagination>
     </el-dialog>
 
-
+    <%--导入通讯作者信息--%>
+    <el-dialog title="上传文件" :visible.sync="uploadDialog.visible">
+        <div style="display: flex;justify-content: center">
+            <Upload type="drag" action="/api/doc/rp/uploadFile"
+                    ref="upload" :file-list="uploadDialog.fileList"
+                    :before-upload="beforeUpload"
+                    :on-success="onUploadSuccess"
+                    :default-file-list="uploadDialog.defaultFileList"
+                    style="width: 50%" size="small"
+                    v-loading="uploadDialog.loading">
+                <div style="padding: 20px 0">
+                    <Icon type="ios-cloud-upload" size="52" style="color: #3399ff"></Icon>
+                    <p style="color: darkgray;">请上传论文</p>
+                    <p style="color: darkgray;">点击或者拖拽文件上传</p>
+                </div>
+            </Upload>
+        </div>
+    </el-dialog>
 </div>
 </body>
 <%@include file="/WEB-INF/views/include/blankScript.jsp" %>
